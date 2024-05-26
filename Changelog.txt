@@ -1,0 +1,37 @@
+Rosh v1.22
+
+> (#) Fixed BadPackets/C
+> (#) Fixed Jump/A
+> (#) Fixed Tower/B
+> (#) Fixed Nuker/C (Underneath falses, no bed blocks, non solid blocks falses) 
+> (#) Fixed 'module' command + Save when leave
+> (#) Fixed Nuker checks not setting the block back (A,B,D)
+> (#) Fixed a false flag that could occur on Scaffold/A's no-rot check (there are plenty)
+ 
+> (+) Started to work on a report UI (Finish + add command)
+> (+) Added BadPackets/E (Checks for sending too many packets = blink) Add from Isolate
+> (+) Added Scaffold/G (filter)
+> (+) Added Scaffold/H (fix)
+> (+) Added Jump/B
+> (+) Added Fly/D
+> (+) Added Invmove/A
+> (+) Added Aim/A (Idea: Check for straight line movement/doing 90 degrees angles etc)
+> (+) Added Aim/C
+> (+) Added Aim/D
+> (+) Added Aim/E
+> (+) Added an option to change the preset mid game
+(+) Added an theme switcher via config (add further compatibility)
+(+) Added BadEnchants/A (level higher than what item supports)
+(+) Added BadEnchants/B (negative enchantments)
+(+) Added BadEnchants/C (unsupported enchantment)
+(+) Added BadEnchants/D (duplicate enchantments)
+
+(-) Removed banlist as it was ineffective/bypassable with ease
+
+(*) Scaled up the logo to fit the new server logo
+(*) Improved Timer/A (now works vertically)
+(*) Speed/A and Fly/D will now exclude players in gamemode creative
+(*) Improved Performance by removing uneccesary stuff/optimizing
+(*) Console warns whenever a player gets punished will now only be displayed if 'console_debug' is enabled via config
+(*) Fly/D can now only be accessed through the beta preset
+> (*) Tons of ui overhaules (Now shows the state +/- , bug fixes, etc.)   (fix inverted + bugs)
