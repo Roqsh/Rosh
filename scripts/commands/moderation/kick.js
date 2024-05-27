@@ -1,4 +1,4 @@
-import * as Minecraft from "@minecraft/server";
+import * as Minecraft from "@minecraft/server"; 
 
 const world = Minecraft.world;
 

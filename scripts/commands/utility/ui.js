@@ -9,11 +9,11 @@ import config from "../../data/config.js";
 
 export function ui(message) {
 
-    const themecolor = config.themecolor;
     // validate that required params are defined
     if(typeof message !== "object") throw TypeError(`message is type of ${typeof message}. Expected "object".`);
     
     const player = message.sender;
+    const themecolor = config.themecolor;
     
     // get the player's inventory component
     const container = player.getComponent("inventory").container;

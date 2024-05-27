@@ -54,7 +54,7 @@ export function commandHandler(message) {
     const args = message.message.slice(prefix.length).split(/ +/);
     const command = args.shift().toLowerCase().trim();
 
-    if(config.debug) console.warn(`${new Date().toISOString()} | ${player.name} used the command: ${prefix}${command} ${args.join(" ")}`);
+    //if(config.debug) console.warn(`${new Date().toISOString()} | ${player.name} used the command: ${prefix}${command} ${args.join(" ")}`);
 
     let commandData;
     let commandName;

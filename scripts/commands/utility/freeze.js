@@ -1,5 +1,4 @@
 import * as Minecraft from "@minecraft/server";
-import config from "../../data/config.js";
 
 const world = Minecraft.world;
 
@@ -14,10 +13,9 @@ export function freeze(message, args) {
     if(typeof message !== "object") throw TypeError(`message is type of ${typeof message}. Expected "object".`);
     if(typeof args !== "object") throw TypeError(`args is type of ${typeof args}. Expected "object".`);
 
-    const themecolor = config.themecolor;
     const player = message.sender;
     
-    if(!args.length) return player.sendMessage(`§r${themecolor}Rosh §j> §cYou need to provide which target to freeze.`);
+    if(!args.length) return player.sendMessage(`§r§uRosh §j> §cYou need to provide which target to freeze.`);
     
     let member;
 
@@ -26,7 +24,7 @@ export function freeze(message, args) {
         break;
     }
     
-    if(!member) return player.sendMessage(`§r${themecolor}Rosh §j> §cCouldn't find that player.`);
+    if(!member) return player.sendMessage(`§r§uRosh §j> §cCouldn't find that player.`);
    
     member.runCommandAsync("function tools/freeze");
 }
