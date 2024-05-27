@@ -2,32 +2,6 @@ import config from "./data/config.js";
 import data from "./data/data.js";
 import { world } from "@minecraft/server";
 
-
-/**
- * @name banAnimation
- * @param {import("@minecraft/server").Player} player - The player where the animation gets executed
- * @param {number} type - The type of the animation
- * @example banAnimation(rqosh, 2)
- * @remarks Executes an animation when getting banned default
-*/
-
-export async function banAnimation(player, type) {
-
-    const banMessages = {
-      "type1": {
-        particle: "huge_explosion_emitter"
-      },
-      "type2": {
-        particle: "totem_particle"
-      }
-    };
-  
-    const banMessage = banMessages[type];
-  
-    player.runCommandAsync(`particle minecraft:${banMessage.particle} ~ ~ ~`);   
-}
-
-
 /**
  * @name flag
  * @param {object} player - The player object
@@ -40,7 +14,7 @@ export async function banAnimation(player, type) {
  * @param {number | undefined} [slot] - Slot to clear an item out.
  * @example flag(player, "Spammer", "B", "Combat", undefined, undefined, undefined, msg, undefined);
  * @remarks Alerts staff if a player fails a check.
-*/
+ */
 
 export function flag(player, check, checkType, debugName, debug, shouldTP = false, cancelObject, slot) {
 
@@ -57,7 +31,7 @@ export function flag(player, check, checkType, debugName, debug, shouldTP = fals
 
     const themecolor = config.themecolor;
  
-    // remove characters that may break commands, and newlines
+    // remove characters that may break commands, and newlines crash
     debug = String(debug).replace(/"|\\|\n/gm, "");
 
     // malicious users may try make the debug field ridiculously large to lag any clients that may try to view the alert (anybody with the 'notify' tag)
@@ -132,7 +106,7 @@ export function flag(player, check, checkType, debugName, debug, shouldTP = fals
 
     if(currentVl > checkData.minVlbeforePunishment) {
 
-        if(punishment === "kick") {
+        if (punishment === "kick") {
 
             let banLength2;
 
@@ -217,29 +191,6 @@ export function flag(player, check, checkType, debugName, debug, shouldTP = fals
             player.runCommandAsync(`tellraw @a[tag=notify,tag=op] {"rawtext":[{"text":"§r${themecolor}Rosh §j> §8${player.name} §chas been muted for ${themecolor}${check}§j/${themecolor}${checkType.toUpperCase()} §c!"}]}`);
 
         }
-
-        if (punishment === "crash") {
-
-            player.runCommandAsync(`tellraw @a[tag=notify] {"rawtext":[{"text":"§r${themecolor}Rosh §j> §8${player.name} §chas been crashed for ${themecolor}${check}§j/${themecolor}${checkType.toUpperCase()} §c!"}]}`); 
-
-        }
-    }
-
-}
-
-
-
-/**
- * @name crashPlayer
- * @param {import("@minecraft/server").Player} player - The player who will get crashed
- * @example crashPlayer(rqosh);
- * @remarks Sends a lot of garbage to the player untill he crashes (unused)
-*/
-
-export function crashPlayer(player) {
-
-    for(let i = 0; i < 5; i++) {
-        player.runCommandAsync(`particle minecraft:villager_angry ~ ~1 ~`);     
     }
 }
 
@@ -250,56 +201,99 @@ export function crashPlayer(player) {
  * @param {import("@minecraft/server").Player} player - The player object
  * @example banMessage(rqosh);
  * @remarks Bans the player from the game.
-*/
+ */
 
 export function banMessage(player) {
+    if (typeof player !== "object") throw TypeError(`Error: player is type of ${typeof player}. Expected "object"`);
 
-    if(typeof player !== "object") throw TypeError(`Error: player is type of ${typeof player}. Expected "object"`);
+    if (config.flagWhitelist.includes(player.name) && player.hasTag("op")) return;
 
-    if(config.flagWhitelist.includes(player.name) && player.hasTag("op")) return;
-
-    if(data.unbanQueue.includes(player.name.toLowerCase().split(" ")[0])) {
-
+    if (data.unbanQueue.includes(player.name.toLowerCase().split(" ")[0])) {
         player.removeTag("isBanned");
         player.runCommandAsync(`tellraw @a[tag=notify] {"rawtext":[{"text":"§r§uRosh §j> §8${player.name} §ahas been found in the unban queue and has been unbanned !"}]}`);
 
         player.getTags().forEach(t => {
-            if(t.includes("reason:") || t.includes("by:") || t.includes("time:")) player.removeTag(t);
+            if (t.includes("Reason:") || t.includes("Length")) player.removeTag(t);
         });
 
-        for (let i = -1; i < data.unbanQueue.length; i++) {
-            if(data.unbanQueue[i] !== player.name.toLowerCase().split(" ")[0]) continue;
+        for (let i = 0; i < data.unbanQueue.length; i++) {
+            if (data.unbanQueue[i] !== player.name.toLowerCase().split(" ")[0]) continue;
             data.unbanQueue.splice(i, 1);
             break;
         }
 
         return;
-
     }
 
     let reason;
     let time;
 
     player.getTags().forEach(t => {
-        if(t.includes("§uReason:")) reason = t.slice(7);
-            else if(t.includes("§9Length")) time = t.slice(5);
+        if (t.includes("Reason:")) reason = t.slice(7);
+        else if (t.includes("Length:")) time = t.slice(7);
     });
 
-    if(time) {
-        if(time < Date.now()) {
+    if (time) {
+        if (Number(time) < Date.now()) {
             player.runCommandAsync(`tellraw @a[tag=notify] {"rawtext":[{"text":"§r§uRosh §j> §8${player.name}'s §aban has expired and has now been unbanned !"}]}`);
             player.removeTag("isBanned");
             player.getTags().forEach(t => {
-                if(t.includes("§uReason:") || t.includes("§9Length")) player.removeTag(t);
+                if (t.includes("Reason:") || t.includes("Length:")) player.removeTag(t);
             });
             return;
         }
-        
-        time = msToTime(Number(time));
-        time = `${time.w} weeks, ${time.d} days, ${time.h} hours, ${time.m} minutes, ${time.s} seconds`;
-    } 
 
-    player.triggerEvent("scythe:kick");
+        const remainingTime = msToTime(Number(time) - Date.now());
+        time = `${remainingTime.weeks} weeks, ${remainingTime.days} days, ${remainingTime.hours} hours, ${remainingTime.minutes} minutes, ${remainingTime.seconds} seconds`;
+    }
+
+    player.runCommandAsync(`kick "${player.name}" §r${config.themecolor}Rosh §j> §cYou have been banned for §u${reason || "Cheat Detection"}§c!\n\n§r${time ? `§9Length §8- §9${time}` : ""}`);
+}
+
+
+
+/**
+ * @name animation
+ * @param {import("@minecraft/server").Player} player - The player where the animation gets executed
+ * @param {number} type - The type of the animation
+ * @example animation(rqosh, 2); // Executes the totem particle animation
+ * @remarks Executes an animation on the player
+ * @throws {TypeError} If player is not an object or type is not a number
+ */
+
+export async function animation(player, type) {
+    // Validate the input
+    if (typeof player !== 'object' || player === null) {
+        throw new TypeError(`Error: player is type of ${typeof player}. Expected "object".`);
+    }
+
+    if (typeof type !== 'number') {
+        throw new TypeError(`Error: type is type of ${typeof type}. Expected "number".`);
+    }
+
+    // Define the available animations
+    const animations = {
+        1: "huge_explosion_emitter",
+        2: "totem_particle",
+        3: "campfire_smoke_particle",
+        4: "critical_hit_emitter",
+        5: "mobflame_single"
+    };
+
+    // Get the animation based on the type
+    const animation = animations[type];
+
+    // Check if the animation exists
+    if (!animation) {
+        throw new Error(`Error: No animation found for type ${type}.`);
+    }
+
+    // Execute the animation
+    try {
+        await player.runCommandAsync(`particle minecraft:${animation} ~ ~ ~`);
+    } catch (error) {
+        console.error(`Error: Failed to execute animation for player. ${error.message}`);
+    }
 }
 
 
@@ -314,6 +308,7 @@ export function banMessage(player) {
  */
 
 export function parseTime(str) {
+    // Validate the input
     if (typeof str !== "string") {
         throw new TypeError(`Error: str is type of ${typeof str}. Expected "string"`);
     }
@@ -509,6 +504,8 @@ export function uppercaseFirstLetter(string) {
     if (typeof string !== 'string') {
         return string;
     }
+
+    // Check if the input is an empty string
     if (string.length === 0) {
         return string;
     }
@@ -534,6 +531,8 @@ export function lowercaseFirstLetter(string) {
     if (typeof string !== 'string') {
         return string;
     }
+
+    // Check if the input is an empty string
     if (string.length === 0) {
         return string;
     }
