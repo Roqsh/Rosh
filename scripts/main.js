@@ -154,289 +154,296 @@ world.afterEvents.entityHurt.subscribe((data) => {
 system.runInterval(() => {
 
     let currentVL;
+    const themecolor = config.themecolor;
 
     if(system.currentTick % 20 == 0) {
 
-	   const deltaDate = Date.now() - lastDate;
-	   const lag = deltaDate / 1000;
+       const deltaDate = Date.now() - lastDate;
+       const lag = deltaDate / 1000;
 
-	   tps = Minecraft.TicksPerSecond / lag;
-	   lagValue = lag;
-	   lastDate = Date.now();
+       tps = Minecraft.TicksPerSecond / lag;
+       lagValue = lag;
+       lastDate = Date.now();
     }
 
-	for(const player of world.getPlayers()) {
+    for(const player of world.getPlayers()) {
 
-		const rotation = player.getRotation();
-		const velocity = player.getVelocity();
-		const speed = getSpeed(player);
+        try {
+            const rotation = player.getRotation();
+            const velocity = player.getVelocity();
+            const speed = getSpeed(player);
 
-		player.removeTag("noPitchDiff");
+            player.removeTag("noPitchDiff");
 
-		if(player.hasTag("auto")) {
-			setScore(player, "autoban", 1);
-		}
-		if(player.hasTag("noauto")) {
-			setScore(player, "autoban", 0);
-		}
-		
-		const selectedSlot = player.selectedSlot;
+            if(player.hasTag("auto")) {
+                setScore(player, "autoban", 1);
+            }
+            if(player.hasTag("noauto")) {
+                setScore(player, "autoban", 0);
+            }
+            
+            const selectedSlot = player.selectedSlot;
 
-		if(player.hasTag("isBanned")) banMessage(player);
-		if(player.blocksBroken >= 1 && config.modules.nukerA.enabled) player.blocksBroken = 0;
-		if(player.entitiesHit?.length >= 1 && config.modules.killauraC.enabled) player.entitiesHit = [];
+            if(player.hasTag("isBanned")) banMessage(player);
+            if(player.blocksBroken >= 1 && config.modules.nukerA.enabled) player.blocksBroken = 0;
+            if(player.entitiesHit?.length >= 1 && config.modules.killauraC.enabled) player.entitiesHit = [];
 
-		if(Date.now() - player.startBreakTime < config.modules.autotoolA.startBreakDelay && player.lastSelectedSlot !== selectedSlot) {
-			player.flagAutotoolA = true;
-			player.autotoolSwitchDelay = Date.now() - player.startBreakTime;
-		}
-		if(player.flagNamespoofA) {
-			flag(player, "Namespoof", "A", "nameLength", player.name.length, false);
-			player.flagNamespoofA = true;
-			currentVL++;
-		}
-		if(player.flagNamespoofB) {
-			flag(player, "Namespoof", "B", undefined, false);
-			player.flagNamespoofB = true;
-			currentVL++;
-		}
-		if(player.hasTag("moving")) {
-			player.runCommandAsync(`scoreboard players set @s xPos ${Math.floor(player.location.x)}`);
-			player.runCommandAsync(`scoreboard players set @s yPos ${Math.floor(player.location.y)}`);
-			player.runCommandAsync(`scoreboard players set @s zPos ${Math.floor(player.location.z)}`);
-		}
+            if(Date.now() - player.startBreakTime < config.modules.autotoolA.startBreakDelay && player.lastSelectedSlot !== selectedSlot) {
+                player.flagAutotoolA = true;
+                player.autotoolSwitchDelay = Date.now() - player.startBreakTime;
+            }
+            if(player.flagNamespoofA) {
+                flag(player, "Namespoof", "A", "nameLength", player.name.length, false);
+                player.flagNamespoofA = true;
+                currentVL++;
+            }
+            if(player.flagNamespoofB) {
+                flag(player, "Namespoof", "B", undefined, false);
+                player.flagNamespoofB = true;
+                currentVL++;
+            }
+            if(player.hasTag("moving")) {
+                player.runCommandAsync(`scoreboard players set @s xPos ${Math.floor(player.location.x)}`);
+                player.runCommandAsync(`scoreboard players set @s yPos ${Math.floor(player.location.y)}`);
+                player.runCommandAsync(`scoreboard players set @s zPos ${Math.floor(player.location.z)}`);
+            }
 
-		if(getScore(player, "kickvl", 0) > config.ViolationsBeforeBan / 2 && !player.hasTag("strict")) {
-			try {
-				player.addTag("strict");
-			} catch (error) {
-				player.runCommandAsync(`tag "${player.name}" add strict`);
+            if(getScore(player, "kickvl", 0) > config.ViolationsBeforeBan / 2 && !player.hasTag("strict")) {
+                try {
+                    player.addTag("strict");
+                } catch (error) {
+                    player.runCommandAsync(`tag "${player.name}" add strict`);
+                }
+            }
+            
+            if(config.autoReset) {
+                if(getScore(player, "tick_counter2", 0) > 300) {
+                    if(!player.hasTag("reported") && player.hasTag("strict")) {
+                        player.removeTag("strict");
+                    }
+                    player.runCommandAsync("function tools/resetwarns");
+                    setScore(player, "tick_counter2", 0);
+                }
+            }
+
+            const blockBelow = player.dimension.getBlock({x: player.location.x, y: player.location.y - 1, z: player.location.z}) ?? {typeId: "minecraft:air"};
+
+            if(blockBelow.typeId.includes("ice")) {
+                player.addTag("ice");
+            }
+            if(blockBelow.typeId.includes("slime")) {
+                player.addTag("slime");
+            }
+            if(player.hasTag("trident")) {
+                setScore(player, "right", 0);
+            }
+            if(blockBelow.typeId.includes("end_portal")) {
+                player.addTag("end_portal");
+            }
+            if(blockBelow.typeId.includes("stairs")) {
+                player.addTag("stairs");
+            }
+            if(player.hasTag("slime")) {
+                setScore(player, "tick_counter2", 0);
+            }
+
+            tag_system(player);
+
+            if(Math.abs(player.fallDistance) > 0) {
+                if(lastFallDistance.get(player)) {
+                    const fallSpeed = player.fallDistance - lastFallDistance.get(player);
+                    if(fallSpeed === -0.5125312805175781) {
+                        flag(player, "Speed", "B2", "fallSpeed", fallSpeed);
+                    }
+                }
+                lastFallDistance.set(player, player.fallDistance);
+            }
+            
+
+            const tickValue = getScore(player, "tickValue", 0);
+            setScore(player, "tickValue", tickValue + 1);
+
+
+            // Invmove/A delay
+            const invmove_delay = getScore(player, "invmove_delay", 0);
+            if(player.hasTag("hasGUIopen")) {
+                setScore(player, "invmove_delay", invmove_delay + 1);
+            } else setScore(player, "invmove_delay", 0);
+
+
+            // Fly/D delay
+            const flyTime = getScore(player, "airTime", 0);
+            if(!player.isOnGround && !player.hasTag("ground") && aroundAir(player)) {
+                setScore(player, "airTime", flyTime + 1);
+            } else setScore(player, "airTime", 0);
+
+            
+            debug(player, "Speed", speed, "devspeed");
+            debug(player, "Tick", tickValue, "devtick");
+            debug(player, "FallDistance", player.fallDistance, "devfalldistance");
+            debug(player, "YVelocity", velocity.y, "devvelocity");
+            debug(player, "XRotation", rotation.x, "devrotationx");
+            debug(player, "YRotation", rotation.y, "devrotationy");
+
+
+            if(player.isOnGround) {			
+                player.lastGoodPosition = player.location;			
+            }
+
+            
+            if(config.generalModules.fly) {
+                fly_a(player);
+                fly_b(player);
+                fly_c(player);
+                fly_d(player);
+            }
+
+            if(config.generalModules.speed) {
+                speed_a(player);
+                speed_b(player);
+            }
+
+            if(config.generalModules.motion && !player.hasTag("end_portal")) {
+                motion_a(player);
+                motion_b(player);
+                motion_c(player);
+                motion_d(player);
+            }
+
+            if(config.generalModules.misc) {
+                badpackets_d(player);			
+                badpackets_f(player);
+                badpackets_h(player);
+                badpackets_i(player);
+                badpackets_j(player);
+                exploit_a(player);
+                exploit_b(player);
+                timer_a(player, player.lastPosition, lagValue);
+            }
+
+            if(config.generalModules.movement) {
+                strafe_a(player);
+                strafe_b(player);
+                noslow_a(player);
+                noslow_b(player);
+                sprint_a(player);
+                invmove_a(player);
+                jump_a(player);
+                jump_b(player);
+            }
+
+            if(config.generalModules.aim) {
+                //aim_a(player);
+                aim_b(player);
+                aim_c(player);
+                //aim_d(player);
+                //aim_e(player);
+            }
+
+            if(config.generalModules.autoclicker) {
+                autoclicker_a(player);
+            }
+
+
+            const container = player.getComponent("inventory")?.container;
+
+            for(let i = 0; i < 36; i++) {
+
+                const item = container.getItem(i);
+                if(!item) continue;
+
+                const itemType = item.type ?? ItemTypes.get("minecraft:book");
+                const item2 = new ItemStack(itemType, item.amount);
+                const itemEnchants = item.getComponent("enchantable")?.getEnchantments() ?? [];
+                const item2Enchants = item2.getComponent("enchantable");
+                const enchantments = [];
+
+                for(const enchantData of itemEnchants) {
+
+                    const enchantTypeId = enchantData.type.id;
+
+                    
+                    if(config.modules.badenchantsA.enabled) {
+
+                        const maxLevel = config.modules.badenchantsA.levelExclusions[enchantData.type] ?? enchantData.type.maxLevel;
+
+                        if(enchantData.level > maxLevel) {
+                            flag(player, "BadEnchants", "A", "enchantment", `${enchantTypeId},level=${enchantData.level},slot=${i}`);
+                            container.setItem(i, undefined);
+                        }
+                    }
+
+                    
+                    if(config.modules.badenchantsB.enabled && enchantData.level <= 0) {
+
+                        flag(player, "BadEnchants", "B", "enchantment", `${enchantTypeId},level=${enchantData.level},slot=${i}`);
+                        container.setItem(i, undefined);
+                    }
+
+                    
+                    if(config.modules.badenchantsC.enabled && item2Enchants) {
+
+                        if(!item2Enchants.canAddEnchantment({type: enchantData.type, level: 1})) {
+                            flag(player, "BadEnchants", "C", "item", `${item.typeId},enchantment=${enchantTypeId},level=${enchantData.level},slot=${i}`);
+                            container.setItem(i, undefined);
+                        }
+
+                        if(config.modules.badenchantsC.multi_protection) {
+                            item2Enchants.addEnchantment({type: enchantData.type, level: 1});
+                        }
+                    }
+
+                    
+                    if(config.modules.badenchantsD.enabled) {
+
+                        if(enchantments.includes(enchantTypeId)) {
+                            flag(player, "BadEnchants", "D", "enchantments", `${enchantments.join(", ")},slot=${i}`);
+                            container.setItem(i, undefined);
+                        }
+
+                        enchantments.push(enchantTypeId);
+                    }
+                }
+            }
+            
+
+            dependencies_e(player);
+            dependencies_f(player, tickValue, velocity);
+
+            
+            player.removeTag("attacking");
+            player.removeTag("itemUse");
+            player.removeTag("breaking");
+            
+            if(tickValue > 19) {
+				const currentCounter = getScore(player, "tick_counter", 0);
+				setScore(player, "tick_counter", currentCounter + 1);
+				setScore(player, "tick_counter2", getScore(player, "tick_counter2", 0) + 1);
+				setScore(player, "tag_reset", getScore(player, "tag_reset", 0) + 1);
+				setScore(player, "scaffold_g_reset", getScore(player, "scaffold_g_reset", 0) + 1);
+				player.removeTag("snow");
 			}
-		}
-		
-		if(config.autoReset) {
-			if(getScore(player, "tick_counter2", 0) > 300) {
-				if(!player.hasTag("reported") && player.hasTag("strict")) {
-					player.removeTag("strict");
-				}
-				player.runCommandAsync("function tools/resetwarns");
-				setScore(player, "tick_counter2", 0);
-			}
-		}
+	
+			if(getScore(player, "tag_reset", 0) > 5) {
+				player.removeTag("slime")
+				player.removeTag("placing");
+				player.removeTag("ice");
+				player.removeTag("damaged");
+				player.removeTag("fall_damage");
+				player.removeTag("end_portal");
+				player.removeTag("stairs");
+				player.removeTag("timer_bypass");
+				player.removeTag("ender_pearl");
+				player.removeTag("trident");
+				player.removeTag("bow");
+				setScore(player, "tag_reset", 0);
+			}	
 
-		const blockBelow = player.dimension.getBlock({x: player.location.x, y: player.location.y - 1, z: player.location.z}) ?? {typeId: "minecraft:air"};
-
-		if(blockBelow.typeId.includes("ice")) {
-			player.addTag("ice");
-		}
-		if(blockBelow.typeId.includes("slime")) {
-			player.addTag("slime");
-		}
-		if(player.hasTag("trident")) {
-			setScore(player, "right", 0);
-		}
-		if(blockBelow.typeId.includes("end_portal")) {
-			player.addTag("end_portal");
+        } catch (error) {		
+            console.error(error, error.stack);
+            tellStaff(`§r${themecolor}Rosh §j> §cThere was an error while running the 'system.runInterval' event. Please forward this message to Rosh's Discord:\n§u> §8${error} §u<\n§u> §8${error.stack} §u<`);
         }
-		if(blockBelow.typeId.includes("stairs")) {
-			player.addTag("stairs");
-		}
-		if(player.hasTag("slime")) {
-			setScore(player, "tick_counter2", 0);
-		}
-
-		tag_system(player);
-
-		if(Math.abs(player.fallDistance) > 0) {
-			if(lastFallDistance.get(player)) {
-				const fallSpeed = player.fallDistance - lastFallDistance.get(player);
-				if(fallSpeed === -0.5125312805175781) {
-					flag(player, "Speed", "B2", "fallSpeed", fallSpeed);
-				}
-			}
-			lastFallDistance.set(player, player.fallDistance);
-		}
-		
-
-		const tickValue = getScore(player, "tickValue", 0);
-		setScore(player, "tickValue", tickValue + 1);
-
-
-        // Invmove/A delay
-        const invmove_delay = getScore(player, "invmove_delay", 0);
-		if(player.hasTag("hasGUIopen")) {
-			setScore(player, "invmove_delay", invmove_delay + 1);
-		} else setScore(player, "invmove_delay", 0);
-
-
-        // Fly/D delay
-		const flyTime = getScore(player, "airTime", 0);
-		if(!player.isOnGround && !player.hasTag("ground") && aroundAir(player)) {
-			setScore(player, "airTime", flyTime + 1);
-		} else setScore(player, "airTime", 0);
-
-		
-		debug(player, "Speed", speed, "devspeed");
-		debug(player, "Tick", tickValue, "devtick");
-		debug(player, "FallDistance", player.fallDistance, "devfalldistance");
-        debug(player, "YVelocity", velocity.y, "devvelocity");
-		debug(player, "XRotation", rotation.x, "devrotationx");
-		debug(player, "YRotation", rotation.y, "devrotationy");
-
-
-		if(player.isOnGround) {			
-		    player.lastGoodPosition = player.location;			
-		}
-
-		
-		if(config.generalModules.fly) {
-			fly_a(player);
-			fly_b(player);
-			fly_c(player);
-			fly_d(player);
-		}
-
-		if(config.generalModules.speed) {
-			speed_a(player);
-			speed_b(player);
-		}
-
-		if(config.generalModules.motion && !player.hasTag("end_portal")) {
-			motion_a(player);
-			motion_b(player);
-			motion_c(player);
-			motion_d(player);
-		}
-
-		if(config.generalModules.misc) {
-			badpackets_d(player);			
-			badpackets_f(player);
-			badpackets_h(player);
-			badpackets_i(player);
-			badpackets_j(player);
-			exploit_a(player);
-			exploit_b(player);
-			timer_a(player, player.lastPosition, lagValue);
-		}
-
-		if(config.generalModules.movement) {
-			strafe_a(player);
-			strafe_b(player);
-			noslow_a(player);
-			noslow_b(player);
-			sprint_a(player);
-			invmove_a(player);
-			jump_a(player);
-			jump_b(player);
-		}
-
-		if(config.generalModules.aim) {
-			//aim_a(player);
-			aim_b(player);
-			aim_c(player);
-			//aim_d(player);
-			//aim_e(player);
-		}
-
-		if(config.generalModules.autoclicker) {
-			autoclicker_a(player);
-		}
-
-
-		const container = player.getComponent("inventory")?.container;
-
-		for(let i = 0; i < 36; i++) {
-
-			const item = container.getItem(i);
-			if(!item) continue;
-
-			const itemType = item.type ?? ItemTypes.get("minecraft:book");
-			const item2 = new ItemStack(itemType, item.amount);
-			const itemEnchants = item.getComponent("enchantable")?.getEnchantments() ?? [];
-			const item2Enchants = item2.getComponent("enchantable");
-			const enchantments = [];
-
-			for(const enchantData of itemEnchants) {
-
-				const enchantTypeId = enchantData.type.id;
-
-				
-				if(config.modules.badenchantsA.enabled) {
-
-					const maxLevel = config.modules.badenchantsA.levelExclusions[enchantData.type] ?? enchantData.type.maxLevel;
-
-					if(enchantData.level > maxLevel) {
-						flag(player, "BadEnchants", "A", "enchantment", `${enchantTypeId},level=${enchantData.level},slot=${i}`);
-						container.setItem(i, undefined);
-					}
-				}
-
-				
-				if(config.modules.badenchantsB.enabled && enchantData.level <= 0) {
-
-					flag(player, "BadEnchants", "B", "enchantment", `${enchantTypeId},level=${enchantData.level},slot=${i}`);
-					container.setItem(i, undefined);
-				}
-
-				
-				if(config.modules.badenchantsC.enabled && item2Enchants) {
-
-					if(!item2Enchants.canAddEnchantment({type: enchantData.type, level: 1})) {
-						flag(player, "BadEnchants", "C", "item", `${item.typeId},enchantment=${enchantTypeId},level=${enchantData.level},slot=${i}`);
-						container.setItem(i, undefined);
-					}
-
-					if(config.modules.badenchantsC.multi_protection) {
-						item2Enchants.addEnchantment({type: enchantData.type, level: 1});
-					}
-				}
-
-				
-				if(config.modules.badenchantsD.enabled) {
-
-					if(enchantments.includes(enchantTypeId)) {
-						flag(player, "BadEnchants", "D", "enchantments", `${enchantments.join(", ")},slot=${i}`);
-						container.setItem(i, undefined);
-					}
-
-					enchantments.push(enchantTypeId);
-				}
-			}
-		}
-		
-
-        dependencies_e(player);
-		dependencies_f(player, tickValue, velocity);
-
-		
-		player.removeTag("attacking");
-		player.removeTag("itemUse");
-		player.removeTag("breaking");
-		
-		if(tickValue > 19) {
-			const currentCounter = getScore(player, "tick_counter", 0);
-			setScore(player, "tick_counter", currentCounter + 1);
-			setScore(player, "tick_counter2", getScore(player, "tick_counter2", 0) + 1);
-			setScore(player, "tag_reset", getScore(player, "tag_reset", 0) + 1);
-			setScore(player, "scaffold_g_reset", getScore(player, "scaffold_g_reset", 0) + 1);
-			player.removeTag("snow");
-		}
-
-		if(getScore(player, "tag_reset", 0) > 5) {
-			player.removeTag("slime")
-			player.removeTag("placing");
-			player.removeTag("ice");
-			player.removeTag("damaged");
-			player.removeTag("fall_damage");
-			player.removeTag("end_portal");
-			player.removeTag("stairs");
-			player.removeTag("timer_bypass");
-			player.removeTag("ender_pearl");
-			player.removeTag("trident");
-			player.removeTag("bow");
-			setScore(player, "tag_reset", 0);
-		}	
-	}
+    }
 });
 
 
