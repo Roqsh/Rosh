@@ -228,6 +228,7 @@ export function flag(player, check, checkType, debugName, debug, shouldTP = fals
 }
 
 
+
 /**
  * @name crashPlayer
  * @param {import("@minecraft/server").Player} player - The player who will get crashed
@@ -241,6 +242,7 @@ export function crashPlayer(player) {
         player.runCommandAsync(`particle minecraft:villager_angry ~ ~1 ~`);     
     }
 }
+
 
 
 /**
@@ -301,6 +303,7 @@ export function banMessage(player) {
 }
 
 
+
 /**
  * @name parseTime
  * @param {string} str - The time value to convert to milliseconds
@@ -349,6 +352,7 @@ export function parseTime(str) {
 }
 
 
+
 /**
  * @name msToTime
  * @param {number} [milliseconds=0] - The number of milliseconds to convert
@@ -388,6 +392,7 @@ export function msToTime(milliseconds = 0) {
     // Return the converted time as an object
     return { weeks, days, hours, minutes, seconds };
 }
+
 
 
 /**
@@ -440,6 +445,7 @@ export function getScore(player, objectiveName, defaultValue = 0) {
 }
 
 
+
 /**
  * @name setScore
  * @param {import("@minecraft/server").Entity} player - The player to set the score for
@@ -487,28 +493,55 @@ export function setScore(player, objectiveName, value) {
 }
 
 
+
 /**
  * @name uppercaseFirstLetter
- * @param {string} string - The string to modify
- * @remarks Uppercase the first string
- * @returns {string} string - The updated string
-*/
+ * @param {string} string - The string to modify.
+ * @returns {string} The updated string with the first letter capitalized, or the original input if it is not a string/or length = 0.
+ * @example uppercaseFirstLetter('hello'); // returns 'Hello'
+ * @example uppercaseFirstLetter(''); // returns ''
+ * @example uppercaseFirstLetter(123); // returns 123
+ * @remarks Capitalizes the first letter of the given string.
+ */
 
 export function uppercaseFirstLetter(string) {
-	return string[0].toUpperCase() + string.slice(1);
+    // Check if the input is a string
+    if (typeof string !== 'string') {
+        return string;
+    }
+    if (string.length === 0) {
+        return string;
+    }
+
+    const [first, ...rest] = string;
+    return `${first.toUpperCase()}${rest.join('')}`;
 }
+
 
 
 /**
  * @name lowercaseFirstLetter
  * @param {string} string - The string to modify
- * @remarks Lowercase the first string
- * @returns {string} string - The updated string
-*/
+ * @returns {string} The updated string with the first letter lowercased, or the original input if it is not a string/or length = 0.
+ * @example lowercaseFirstLetter('Hello'); // returns 'hello'
+ * @example lowercaseFirstLetter(''); // returns ''
+ * @example lowercaseFirstLetter(123); // returns 123
+ * @remarks Lowercases the first letter of the given string.
+ */
 
 export function lowercaseFirstLetter(string) {
-	return string[0].toLowerCase() + string.slice(1);
+    // Check if the input is a string
+    if (typeof string !== 'string') {
+        return string;
+    }
+    if (string.length === 0) {
+        return string;
+    }
+
+	const [first, ...rest] = string;
+    return `${first.toLowerCase()}${rest.join('')}`;
 }
+
 
 
 /**
@@ -537,6 +570,7 @@ export function getBlocksBetween(pos1, pos2) {
 }
 
 
+
 /**
  * @name tellStaff
  * @remarks Send a message to all Rosh-Opped players
@@ -549,6 +583,7 @@ export function tellStaff(message, tags = ["op"]) {
         player.sendMessage(message);
     }
 }
+
 
 
 /**
@@ -567,6 +602,7 @@ export function addOp(initiator, player) {
 }
 
 
+
 /**
  * @name removeOp
  * @remarks Remove Rosh-Op status from a player
@@ -581,6 +617,7 @@ export function removeOp(initiator, player) {
 
     player.sendMessage("§r§uRosh §j> §cYou are no longer Rosh-Op.");
 }
+
 
 
 /**
@@ -607,6 +644,7 @@ export function findPlayerByName(name) {
 }
 
 
+
 /**
  * @name getClosestPlayer
  * @param {object} entity - The entity to check
@@ -629,6 +667,7 @@ export function getClosestPlayer(entity) {
 }
 
 
+
 /**
  * @name angleCalc
  * @param {import("@minecraft/server").Player} player - The Player to calculate the angle on
@@ -647,6 +686,7 @@ export function angleCalc(player, entityHit) {
 }
 
 
+
 /**
  * @name getSpeed
  * @param {import("@minecraft/server").Player} player - The Player to get the speed from
@@ -659,6 +699,7 @@ export function getSpeed(player) {
     
     return speed;
 }
+
 
 
 /**
@@ -685,6 +726,7 @@ export function aroundAir(player) {
 }
 
 
+
 /**
  * @name inAir - Returns true if a player is in air (Paradox Anticheat Code)
  * @param {object} player - The player that you are checking
@@ -705,6 +747,7 @@ export function inAir(player) {
 }
 
 
+
 /**
  * @name setSound - Plays a sound for a player
  * @param {object} player - The player running the sound function
@@ -716,6 +759,7 @@ export function inAir(player) {
 export function setSound(player, id) {
     player.runCommandAsync(`playsound ${id} @s`);
 }
+
 
 
 /**
@@ -731,6 +775,7 @@ export function setSound(player, id) {
 export function debug(player, name, debug, tag) {
     player.runCommandAsync(`tellraw @s[tag=op, tag=${tag}] {"rawtext":[{"text":"§r§uDebug §j> ${name}: §8${debug}"}]}`);
 }
+
 
 
 /**
