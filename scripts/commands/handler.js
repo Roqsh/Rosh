@@ -26,7 +26,6 @@ import { ui } from "./utility/ui.js";
 import { resetwarns } from "./moderation/resetwarns.js";
 import { version } from "./other/version.js";
 import { deop } from "./moderation/deop.js";
-import { crash } from "./utility/crash.js";
 import { kickall } from "./moderation/kickall.js";
 import { testban } from "./other/testban.js";
 import { about } from "./utility/about.js";
@@ -40,6 +39,7 @@ import { module } from "./settings/module.js";
 */
 
 const prefix = config.customcommands.prefix;
+const themecolor = config.themecolor;
 
 export function commandHandler(message) {
 
@@ -81,7 +81,7 @@ export function commandHandler(message) {
             if(!commandData) {
 
                 if(config.customcommands.sendInvalidCommandMsg) {
-                    player.sendMessage(`§r§uRosh §j> §cDid not find §8${command}`);
+                    player.sendMessage(`§r${themecolor}Rosh §j> §cDid not find §8${command}`);
                     message.cancel = true;
                 }
 
@@ -92,19 +92,19 @@ export function commandHandler(message) {
         message.cancel = true;
 
         if(commandData.requiredTags.length >= 1 && commandData.requiredTags.some(tag => !player.hasTag(tag))) {
-            player.sendMessage("§r§uRosh §j> §cYou must be Op to use this command!");
+            player.sendMessage(`§r${themecolor}Rosh §j> §cYou must be Op to use this command!`);
             return;
         }
 
         if(!commandData.enabled) {
-            player.sendMessage("§r§uRosh §j> §cThis command is disabled");
+            player.sendMessage(`§r${themecolor}Rosh §j> §cThis command is disabled`);
             return;
         }
         
         runCommand(message, commandName, args);
     } catch (error) {
         console.error(`${new Date().toISOString()} | ${error} ${error.stack}`);
-        player.sendMessage(`§r§uRosh §j> §cThere was an error while trying to run this command`);
+        player.sendMessage(`§r${themecolor}Rosh §j> §cThere was an error while trying to run this command`);
         
     }
 }
@@ -114,10 +114,7 @@ export function commandHandler(message) {
  * @name commandHandler
  * @param {object} player - The player that has sent the message
  * @param {object} message - Message data
- * @name commandHandler
- * @param {object} player - The player that has sent the message
- * @param {object} message - Message data
-*/
+ */
 
 function runCommand(msg, commandName, args) {
     const message = {};
@@ -157,7 +154,6 @@ function runCommand(msg, commandName, args) {
                 else if(commandName === "ui") ui(message);
                 else if(commandName === "resetwarns") resetwarns(message, args);
                 else if(commandName === "version") version(message);
-                else if(commandName === "crash") crash(message, args);
                 else if(commandName === "kickall") kickall(message);
                 else if(commandName === "testban") testban(message, args);
                 else if(commandName === "about") about(message, args);
@@ -166,7 +162,7 @@ function runCommand(msg, commandName, args) {
                 else throw Error(`Command ${commandName} was found in config.js but no handler for it was found`);
         } catch (error) {
             console.error(`${new Date().toISOString()} | ${error} ${error.stack}`);
-            message.sender.sendMessage(`§r§uRosh §j> §cThere was an error while trying to run this command`);
+            message.sender.sendMessage(`§r${themecolor}Rosh §j> §cThere was an error while trying to run this command`);
         }
     });
 }
