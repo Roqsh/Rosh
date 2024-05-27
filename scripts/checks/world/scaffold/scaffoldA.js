@@ -1,0 +1,123 @@
+import config from "../../../data/config.js";
+import { flag, getSpeed } from "../../../util";
+
+/**
+ * @name scaffold_a
+ * @param {player} player - The player to check
+ * @param {block} block - The placed block
+ * @remarks Checks for diagonal scaffolds
+*/
+
+const scaffold_a_map = new Map();
+
+function is_diag_recode(neww, player, old) {
+    return Math.abs(neww.x) !== Math.abs(old.x) && Math.abs(neww.z) !== Math.abs(old.z) && (Math.abs(neww.x - old.x) < 2) && (Math.abs(neww.z - old.z) < 2) && Math.abs(neww.y < player.location.y) && old.y === neww.y
+}
+
+function is_decrease(origin, point1, point2, point3) {
+
+    const distance1 = calculateDistance(origin, point1);
+    const distance2 = calculateDistance(origin, point2);
+    const distance3 = calculateDistance(origin, point3);
+    const isOneThreeDistanceEqual = calculateDistance(point1, point3) === 1;
+    
+    return (
+        isOneThreeDistanceEqual &&
+        distance1 > distance2 &&
+        distance1 > distance3 &&
+        distance2 > distance3
+    );
+}
+
+function calculateDistance(origin, point) {
+
+    const dx = point.x - origin.x;
+    const dz = point.z - origin.z;
+    
+    return Math.hypot(dx, dz);
+}
+
+export function scaffold_a(player, block) {
+
+    if (config.modules.scaffoldA.enabled && scaffold_a_map.has(player.name)) {
+
+        const place_location = { x: block.location.x, y: block.location.y, z: block.location.z };
+        const last_place_location = scaffold_a_map.get(player.name)?.a;
+        const old_place_location = scaffold_a_map.get(player.name)?.b;
+        const pitch_values = scaffold_a_map.get(player.name)?.pitch;
+        const yaw_values = scaffold_a_map.get(player.name)?.yaw;
+        const distance = Math.sqrt(Math.pow(block.location.x - player.location.x, 2) + Math.pow(block.location.z - player.location.z, 2));
+
+        if (last_place_location && old_place_location && pitch_values) {
+
+            const xDist = Math.abs(place_location.x) - Math.abs(last_place_location.x);
+            const zDist = Math.abs(place_location.z) - Math.abs(last_place_location.z);
+            const isSameX = xDist === 0 && xDist === Math.abs(old_place_location.x);
+            const isSameZ = zDist === 0 && zDist === Math.abs(old_place_location.z);
+
+            if(isSameX || isSameZ) {
+                const isPitchChange = Math.abs(pitch_values.new - pitch_values.mid) > 0.05 &&
+                                       Math.abs(pitch_values.mid - pitch_values.old) > 0.05;
+                const isYawSame = Math.abs(yaw_values.new - yaw_values.mid) === 0 &&
+                                  Math.abs(yaw_values.mid - yaw_values.old) === 0;
+
+                if (isPitchChange && isYawSame) {
+                    flag(player, "Scaffold", "A", "yaw", player.getRotation().y);
+                }
+            }
+
+            if(is_diag_recode(place_location, player, old_place_location)) {
+                
+                const isPitchEqual = Math.abs(pitch_values.new - pitch_values.mid) === 0 && Math.abs(pitch_values.new - pitch_values.old) === 0;          
+                const isYawEqual = Math.abs(yaw_values.new - yaw_values.mid) === 0 && Math.abs(yaw_values.new - yaw_values.old) === 0;                           
+                const arePitchAndYawDifferent = Math.abs(pitch_values.new - pitch_values.mid) !== 0 && Math.abs(yaw_values.new - yaw_values.mid) !== 0;                                         
+                const isDiagonalConditionMet = isPitchEqual && isYawEqual || isYawEqual && isPitchEqual && arePitchAndYawDifferent;
+                                            
+                if(isDiagonalConditionMet && distance > 1.3) {              
+                    flag(player, "Scaffold", "A", "no-rot", `true, distance=${distance}`);
+                }
+
+                const rotx = player.getRotation().x;
+                const diff_1 = Math.abs(yaw_values.mid - yaw_values.new);   
+                const diff_2 = Math.abs(yaw_values.new - player.getRotation().y);
+
+                if(distance > 2.8 && !is_decrease(player, place_location, last_place_location, old_place_location)) {
+                    flag(player, "Scaffold", "A", "distance", distance);
+                }
+
+                if(diff_2 < 10 && diff_1 < 10 && !is_decrease(player, place_location, last_place_location, old_place_location) && diff_1 > 0.5 && diff_2 > 0.5 && !config.modules.scaffoldA.nofalse && getSpeed(player) > 0.1) {
+                    flag(player, "Scaffold", "A", "yaw-diff", (diff_1 + diff_2) / 2, false);
+                }
+
+                if(rotx < 44.5 && pitch_values.mid < 44.5 && distance < 1) {
+                    flag(player, "Scaffold", "A", "pitch", pitch_values.new);
+                } 
+
+                if(getSpeed(player) > 1) {
+                    flag(player, "Scaffold", "A", "speed", getSpeed(player), false);
+                }
+
+                if(!player.hasTag("itemUse") && !is_decrease(player, place_location, last_place_location, old_place_location) && diff_1 > 2 && diff_2 > 2 && getSpeed(player) > 0.5) {
+                    flag(player, "Scaffold", "A", "itemUse", "false", true);
+                }
+            } 
+        }
+    }
+
+    const rotation = player.getRotation();
+
+    scaffold_a_map.set(player.name, {
+        a: { x: block.location.x, y: block.location.y, z: block.location.z },
+        b: scaffold_a_map.get(player.name)?.a || { x: 0, y: 0, z: 0 },
+        pitch: {
+            new: rotation.x,
+            mid: scaffold_a_map.get(player.name)?.pitch?.new || 0,
+            old: scaffold_a_map.get(player.name)?.pitch?.mid || 0
+        },
+        yaw: {
+            new: rotation.y,
+            mid: scaffold_a_map.get(player.name)?.yaw?.new || 0,
+            old: scaffold_a_map.get(player.name)?.yaw?.mid || 0
+        }
+    });
+}
