@@ -1,6 +1,6 @@
 import * as Minecraft from "@minecraft/server";
 import { parseTime } from "../../util.js";
-import { banAnimation } from "../../util.js";
+import { animation } from "../../util.js";
 
 const world = Minecraft.world;
 
@@ -32,8 +32,8 @@ export function testban(message, args) {
     }
 
     if(!member) return player.sendMessage("§r§uRosh §j> §cCouldn't find that player.");
-    banAnimation(member, "type1");
-    banAnimation(member, "type2");
-    banAnimation(member, "type3");
+    animation(member, "type1");
+    animation(member, "type2");
+    animation(member, "type3");
     player.runCommandAsync(`tellraw @a[tag=op] {"rawtext":[{"text":"§r§uRosh §j> §8${player.nameTag} §chas banned §8${member.nameTag}"}]}`);
 }
