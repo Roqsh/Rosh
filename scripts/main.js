@@ -3,7 +3,7 @@ import { world, system, ItemTypes, ItemStack } from "@minecraft/server";
 import config from "./data/config.js";
 import data from "./data/data.js";
 import { tag_system } from "./utils/mathUtil.js";
-import { flag, banMessage, getScore, setScore, getSpeed, aroundAir, debug } from "./util.js";
+import { flag, banMessage, getScore, setScore, getSpeed, aroundAir, tellStaff, debug } from "./util.js";
 import { commandHandler } from "./commands/handler.js";
 import { mainGui, playerSettingsMenuSelected } from "./ui/mainGui.js";
 
@@ -737,6 +737,16 @@ world.afterEvents.itemUse.subscribe((itemUse) => {
 		mainGui(player);
 	}
 
+});
+
+
+system.beforeEvents.watchdogTerminate.subscribe((watchdogTerminate) => {
+	
+	watchdogTerminate.cancel = true;
+
+	const themecolor = config.themecolor;
+
+	tellStaff(`§r${themecolor}Rosh§r §j> §cA Watchdog Exception has been detected, but it has been cancelled successfully.\nTermination-Reason: §8${watchdogTerminate.terminateReason}`);
 });
 
 
