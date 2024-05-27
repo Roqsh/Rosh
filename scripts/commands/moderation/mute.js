@@ -1,5 +1,6 @@
 import * as Minecraft from "@minecraft/server";
-import { banAnimation  } from "../../util";
+import { animation  } from "../../util";
+
 const world = Minecraft.world;
 
 export function mute(message, args) {
@@ -29,6 +30,6 @@ export function mute(message, args) {
 
     member.runCommandAsync("ability @s mute true");
 
-    banAnimation(player, "type2");
+    animation(player, 5);
     player.runCommandAsync(`tellraw @a[tag=op] {"rawtext":[{"text":"§r§uRosh §j> §8${player.nameTag} §chas muted §8${member.nameTag} §cfor §8${reason}"}]}`);
 }
