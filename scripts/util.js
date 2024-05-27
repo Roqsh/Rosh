@@ -105,13 +105,11 @@ export function flag(player, check, checkType, debugName, debug, shouldTP = fals
     const message = `§8${player.name} §jwas flagged for ${themecolor}${check}§j/${themecolor}${checkType}§j ${currentVl}x`;  
     data.recentLogs.push(message);
     
-
-    
     const punishment = checkData.punishment?.toLowerCase();
+
     if(typeof punishment !== "string") throw TypeError(`Error: punishment is type of ${typeof punishment}. Expected "string"`);
 
-
-    if(punishment === "none" || punishment === "") return;
+    if(punishment === "none" || punishment === "" || currentVl < checkData.minVlbeforePunishment) return;
 
     
     if(config.fancy_kick_calculation.on) {
@@ -308,81 +306,136 @@ export function banMessage(player) {
  * @param {string} str - The time value to convert to milliseconds
  * @example parseTime("24d"); // returns 2073600000
  * @remarks Parses a time string into milliseconds.
- * @returns {number | null} str - The converted string
-*/
+ * @returns {number | null} The converted time in milliseconds, or null if the input is invalid
+ * @throws {TypeError} If the input is not a string
+ */
 
 export function parseTime(str) {
+    if (typeof str !== "string") {
+        throw new TypeError(`Error: str is type of ${typeof str}. Expected "string"`);
+    }
 
-    if(typeof str !== "string") throw TypeError(`Error: str is type of ${typeof str}. Expected "string"`);
-
+    // Match the input string to a pattern of one or more digits followed by a single time unit character
     const time = str.match(/^(\d+)([smhdwy])$/);
 
-    if(time) {
-        const [, num, unit] = time;
-        const ms = {
-            s: 1000,
-            m: 60000,
-            h: 3600000,
-            d: 86400000,
-            w: 604800000,
-            y: 31536000000
-        }[unit];
-        return ms * Number(num);
+    // If the input does not match the expected pattern, return null
+    if (!time) {
+        return null;
     }
-    return time;
+
+    // Extract the number and the unit from the matched groups
+    const [, num, unit] = time;
+
+    // Define a mapping from unit characters to milliseconds
+    const unitToMs = {
+        s: 1000,
+        m: 60000,
+        h: 3600000,
+        d: 86400000,
+        w: 604800000,
+        y: 31536000000
+    };
+
+    // Convert the number string to an integer and multiply by the corresponding milliseconds value
+    const milliseconds = unitToMs[unit] * Number(num);
+
+    // Check for overflow or invalid large numbers, if necessary
+    if (!Number.isFinite(milliseconds)) {
+        return null;
+    }
+
+    // Return the calculated milliseconds value
+    return milliseconds;
 }
 
 
 /**
  * @name msToTime
- * @param {number} ms - The string to convert
- * @example str(88200000); // Returns { d: 1, h: 0, m: 30, s: 0 }
- * @remarks Convert milliseconds to seconds, minutes, hours, days and weeks
- * @returns {object} str - The converted string
-*/
+ * @param {number} [milliseconds=0] - The number of milliseconds to convert
+ * @returns {Object} An object containing the converted time in weeks, days, hours, minutes, and seconds
+ * @throws {TypeError} Throws if the input is not a number or is negative
+ * @example msToTime(88200000); // Returns { weeks: 0, days: 1, hours: 0, minutes: 30, seconds: 0 }
+ */
 
-export function msToTime(ms) {
-    
-    if(typeof ms !== "number") throw TypeError(`Error: ms is type of ${typeof ms}. Expected "number"`);
+export function msToTime(milliseconds = 0) {
+    // Validate the input
+    if (typeof milliseconds !== 'number' || milliseconds < 0) {
+        throw new TypeError(`Error: milliseconds must be a non-negative number. Received: ${milliseconds}`);
+    }
 
-    const now = Date.now();
-    if(ms > now) ms = ms - now;
+    // Define constants for time conversion
+    const msPerSecond = 1000;
+    const msPerMinute = 60 * msPerSecond;
+    const msPerHour = 60 * msPerMinute;
+    const msPerDay = 24 * msPerHour;
+    const msPerWeek = 7 * msPerDay;
 
-    const w = Math.floor(ms / (1000 * 60 * 60 * 24 * 7));
-    const d = Math.floor((ms % (1000 * 60 * 60 * 24 * 7)) / (1000 * 60 * 60 * 24));
-    const h = Math.floor((ms % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-    const m = Math.floor((ms % (1000 * 60 * 60)) / (1000 * 60));
-    const s = Math.floor((ms % (1000 * 60)) / 1000);
+    // Calculate the time components
+    const weeks = Math.floor(milliseconds / msPerWeek);
+    const remainingAfterWeeks = milliseconds % msPerWeek;
 
-    return {
-        w: w,
-        d: d,
-        h: h,
-        m: m,
-        s: s
-    };
+    const days = Math.floor(remainingAfterWeeks / msPerDay);
+    const remainingAfterDays = remainingAfterWeeks % msPerDay;
+
+    const hours = Math.floor(remainingAfterDays / msPerHour);
+    const remainingAfterHours = remainingAfterDays % msPerHour;
+
+    const minutes = Math.floor(remainingAfterHours / msPerMinute);
+    const remainingAfterMinutes = remainingAfterHours % msPerMinute;
+
+    const seconds = Math.floor(remainingAfterMinutes / msPerSecond);
+
+    // Return the converted time as an object
+    return { weeks, days, hours, minutes, seconds };
 }
 
 
 /**
  * @name getScore
  * @param {import("@minecraft/server").Entity} player - The player to get the scoreboard value from
- * @param {string} objectiveName - The player to get the scoreboard value from
- * @param {number} [value] - Default value to return if unable to get scoreboard score
- * @example getScore(player, "cbevl", 0)
+ * @param {string} objectiveName - The name of the scoreboard objective
+ * @param {number} [defaultValue=0] - Default value to return if unable to get scoreboard score
+ * @example getScore(player, "delay", 1); // Gets the scoreboard objective value for the player, returns 1 if unable to get scoreboard score
  * @remarks Gets the scoreboard objective value for a player
  * @returns {number} score - The scoreboard objective value
-*/
+ * @throws {TypeError} If player is not an object, objectiveName is not a string, or defaultValue is not a number
+ */
 
-export function getScore(player, objectiveName, value) {
-    if(typeof player !== "object") throw TypeError(`Error: player is type of ${typeof player}. Expected "object"`);
-    if(typeof objectiveName !== "string") throw TypeError(`Error: objective is type of ${typeof objectiveName}. Expected "string"`);
-    if(typeof value !== "number") throw TypeError(`Error: defaultValue is type of ${typeof value}. Expected "number"`);
+export function getScore(player, objectiveName, defaultValue = 0) {
+    // Check if the player is an object
+    if (typeof player !== 'object' || player === null) {
+        throw new TypeError(`Error: player is type of ${typeof player}. Expected "object".`);
+    }
+
+    // Check if the objectiveName is a string
+    if (typeof objectiveName !== 'string') {
+        throw new TypeError(`Error: objectiveName is type of ${typeof objectiveName}. Expected "string".`);
+    }
+
+    // Check if the defaultValue is a number
+    if (typeof defaultValue !== 'number') {
+        throw new TypeError(`Error: defaultValue is type of ${typeof defaultValue}. Expected "number".`);
+    }
 
     try {
-       return world.scoreboard.getObjective(objectiveName)?.getScore(player) ?? value;
-    } catch {
-        return value;
+        // Get the objective, or create it if it doesn't exist
+        let objective = world.scoreboard.getObjective(objectiveName);
+        if (!objective) {
+            player.runCommandAsync(`/scoreboard objectives add ${objectiveName} dummy`);
+            objective = world.scoreboard.getObjective(objectiveName);
+        }
+
+        // Check if the objective was successfully created or retrieved
+        if (!objective) {
+            throw new Error(`Failed to create or retrieve objective "${objectiveName}".`);
+        }
+
+        // Get the score for the player
+        const score = objective.getScore(player);
+        return typeof score === 'number' ? score : defaultValue;
+    } catch (error) {
+        console.error(`Error: Failed to get score for player. ${error.message}`);
+        return defaultValue;
     }
 }
 
@@ -392,19 +445,45 @@ export function getScore(player, objectiveName, value) {
  * @param {import("@minecraft/server").Entity} player - The player to set the score for
  * @param {string} objectiveName - The scoreboard objective
  * @param {number} value - The new value of the scoreboard objective
- * @example setScore(player, "cbevl", 0)
+ * @example setScore(player, "delay", 2); // Sets the scoreboard objective "delay" to 2
  * @remarks Sets the scoreboard objective value for a player
-*/
+ * @throws {TypeError} If player is not an object, objectiveName is not a string, or value is not a number
+ */
 
 export function setScore(player, objectiveName, value) {
-    if(typeof player !== "object") throw TypeError(`Error: player is type of ${typeof player}. Expected "object"`);
-    if(typeof objectiveName !== "string") throw TypeError(`Error: objective is type of ${typeof objectiveName}. Expected "string"`);
-    if(typeof value !== "number") throw TypeError(`Error: value is type of ${typeof value}. Expected "number"`);
+    // Check if the player is an object
+    if (typeof player !== 'object' || player === null) {
+        throw new TypeError(`Error: player is type of ${typeof player}. Expected "object".`);
+    }
 
-    const obj = world.scoreboard.getObjective(objectiveName);
-    if(!obj) player.runCommandAsync(`/scoreboard objectives add ${objectiveName} dummy`);
-    
-    world.scoreboard.getObjective(objectiveName).setScore(player, value);
+    // Check if the objectiveName is a string
+    if (typeof objectiveName !== 'string') {
+        throw new TypeError(`Error: objectiveName is type of ${typeof objectiveName}. Expected "string".`);
+    }
+
+    // Check if the value is a number
+    if (typeof value !== 'number') {
+        throw new TypeError(`Error: value is type of ${typeof value}. Expected "number".`);
+    }
+
+    try {
+        // Get the objective, or create it if it doesn't exist
+        let objective = world.scoreboard.getObjective(objectiveName);
+        if (!objective) {
+            player.runCommandAsync(`/scoreboard objectives add ${objectiveName} dummy`);
+            objective = world.scoreboard.getObjective(objectiveName);
+        }
+
+        // Check if the objective was successfully created or retrieved
+        if (!objective) {
+            throw new Error(`Failed to create or retrieve objective "${objectiveName}".`);
+        }
+
+        // Set the score for the player
+        objective.setScore(player, value);
+    } catch (error) {
+        console.error(`Error: Failed to set score for player. ${error.message}`);
+    }
 }
 
 
