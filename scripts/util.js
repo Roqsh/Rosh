@@ -54,6 +54,8 @@ export function flag(player, check, checkType, debugName, debug, shouldTP = fals
     if(typeof slot !== "number" && typeof slot !== "undefined") throw TypeError(`Error: slot is type of ${typeof slot}. Expected "number" or "undefined`);
 
     if(config.disable_flags_from_rosh_op && player.hasTag("op")) return;
+
+    const themecolor = config.themecolor;
  
     // remove characters that may break commands, and newlines
     debug = String(debug).replace(/"|\\|\n/gm, "");
@@ -82,16 +84,10 @@ export function flag(player, check, checkType, debugName, debug, shouldTP = fals
 
     if(config.console_debug) console.warn(`Rosh > ${player.nameTag} failed ${check}/${checkType.toUpperCase()} - {${debugName}=${debug}, V=${currentVl}}`);
     
-    //Purple Theme - Default
-    player.runCommandAsync(`tellraw @a[tag=notify,tag=debug,tag=!blue,tag=!red] {"rawtext":[{"text":"§r§uRosh §j> §8${player.nameTag} §jfailed §u${check}§j/§u${checkType.toUpperCase()}§j - {${debugName}=${debug}, V=${currentVl}}"}]}`);
-    player.runCommandAsync(`tellraw @a[tag=notify,tag=!debug,tag=!blue,tag=!red] {"rawtext":[{"text":"§r§uRosh §j> §8${player.nameTag} §jfailed §u${check}§j/§u${checkType.toUpperCase()}§j - {V=${currentVl}}"}]}`);
-    //Blue Theme
-    player.runCommandAsync(`tellraw @a[tag=notify,tag=debug,tag=blue,tag=!red] {"rawtext":[{"text":"§r§9Rosh §j> §8${player.nameTag} §jfailed §9${check}§j/§9${checkType.toUpperCase()}§j - {${debugName}=${debug}, V=${currentVl}}"}]}`);
-    player.runCommandAsync(`tellraw @a[tag=notify,tag=!debug,tag=blue,tag=!red] {"rawtext":[{"text":"§r§9Rosh §j> §8${player.nameTag} §jfailed §9${check}§j/§9${checkType.toUpperCase()}§j - {V=${currentVl}}"}]}`);
-    //Red Theme
-    player.runCommandAsync(`tellraw @a[tag=notify,tag=debug,tag=red,tag=!blue] {"rawtext":[{"text":"§r§cRosh §j> §8${player.nameTag} §jfailed §c${check}§j/§c${checkType.toUpperCase()}§j - {${debugName}=${debug}, V=${currentVl}}"}]}`);
-    player.runCommandAsync(`tellraw @a[tag=notify,tag=!debug,tag=red,tag=!blue] {"rawtext":[{"text":"§r§cRosh §j> §8${player.nameTag} §jfailed §c${check}§j/§c${checkType.toUpperCase()}§j - {V=${currentVl}}"}]}`);
     
+    player.runCommandAsync(`tellraw @a[tag=notify,tag=debug] {"rawtext":[{"text":"§r${themecolor}Rosh §j> §8${player.nameTag} §jfailed ${themecolor}${check}§j/${themecolor}${checkType.toUpperCase()}§j - {${debugName}=${debug}, V=${currentVl}}"}]}`);
+    player.runCommandAsync(`tellraw @a[tag=notify,tag=!debug] {"rawtext":[{"text":"§r${themecolor}Rosh §j> §8${player.nameTag} §jfailed ${themecolor}${check}§j/${themecolor}${checkType.toUpperCase()}§j - {V=${currentVl}}"}]}`);
+      
 
     if(typeof slot === "number") {
 		const container = player.getComponent("inventory").container;
@@ -106,7 +102,7 @@ export function flag(player, check, checkType, debugName, debug, shouldTP = fals
     if(!checkData.enabled) throw Error(`${check}/${checkType} was flagged but the module was disabled.`);
 
 
-    const message = `§8${player.name} §jwas flagged for §u${check}§j/§u${checkType}§j ${currentVl}x`;  
+    const message = `§8${player.name} §jwas flagged for ${themecolor}${check}§j/${themecolor}${checkType}§j ${currentVl}x`;  
     data.recentLogs.push(message);
     
 
@@ -127,12 +123,12 @@ export function flag(player, check, checkType, debugName, debug, shouldTP = fals
 
         if(movement_vl > config.fancy_kick_calculation.movement && combat_vl > config.fancy_kick_calculation.combat && world_vl > config.fancy_kick_calculation.block && misc_vl > config.fancy_kick_calculation.other) {
             player.addTag("strict");
-            console.warn(`§r§uRosh §j> §8${player.name} §chas been kicked for §u${check}§j/§u${checkType} §c!`);
+            console.warn(`§r${themecolor}Rosh §j> §8${player.name} §chas been kicked for ${themecolor}${check}§j/${themecolor}${checkType} §c!`);
             const message = `§8${player.name} §chas been kicked!`;
             data.recentLogs.push(message)           
             
-            player.runCommandAsync(`tellraw @a[tag=notify] {"rawtext":[{"text":"§r§uRosh §j> §8${player.name} §chas been kicked for §u${check}§j/§u${checkType} §c!"}]}`);
-            player.runCommandAsync(`kick "${player.name}" §r§uRosh §j> §cKicked for §u${check} §c!`);
+            player.runCommandAsync(`tellraw @a[tag=notify] {"rawtext":[{"text":"§r${themecolor}Rosh §j> §8${player.name} §chas been kicked for ${themecolor}${check}§j/${themecolor}${checkType} §c!"}]}`);
+            player.runCommandAsync(`kick "${player.name}" §r${themecolor}Rosh §j> §cKicked for ${themecolor}${check} §c!`);
         }
     }
 
@@ -150,10 +146,10 @@ export function flag(player, check, checkType, debugName, debug, shouldTP = fals
 
                     if(getScore(player, "autoban", 0) > 0) {
                         player.addTag("isBanned");
-                        player.addTag(`§uReason: Cheat Detection`);
+                        player.addTag(`reason: Cheat Detection`);
                         banLength2 = parseTime("30d");
-                        player.addTag(`§9Length: ${Date.now() + banLength2}`);
-                        console.warn(`Rosh > ${player.name} has been banned for ${check}/${checkType}`);
+                        player.addTag(`Time: ${Date.now() + banLength2}`);
+                        if(config.console_debug) console.warn(`Rosh > ${player.name} has been banned for ${check}/${checkType}`);
 
                         const message = `§8${player.name} §chas been banned!`;   
                         data.recentLogs.push(message)
@@ -167,12 +163,12 @@ export function flag(player, check, checkType, debugName, debug, shouldTP = fals
 
                     player.runCommandAsync("function tools/resetwarns");
                     player.addTag("strict");
-                    console.warn(`Rosh > ${player.name} has been kicked for ${check}/${checkType}`);
+                    if(config.console_debug) console.warn(`Rosh > ${player.name} has been kicked for ${check}/${checkType}`);
 
                     const message = `§8${player.name} §chas been kicked!`;    
                     data.recentLogs.push(message)                              
-                    player.runCommandAsync(`tellraw @a[tag=notify,tag=op] {"rawtext":[{"text":"§r§uRosh §j> §8${player.name} §chas been kicked for §u${check}§j/§u${checkType.toUpperCase()} §c!"}]}`);
-                    player.runCommandAsync(`kick "${player.name}" §r§uRosh §j> §cKicked for §u${check} §c!`);
+                    player.runCommandAsync(`tellraw @a[tag=notify,tag=op] {"rawtext":[{"text":"§r${themecolor}Rosh §j> §8${player.name} §chas been kicked for ${themecolor}${check}§j/${themecolor}${checkType.toUpperCase()} §c!"}]}`);
+                    player.runCommandAsync(`kick "${player.name}" §r${themecolor}Rosh §j> §cKicked for ${themecolor}${check} §c!`);
 
                 }
 
@@ -189,7 +185,7 @@ export function flag(player, check, checkType, debugName, debug, shouldTP = fals
 
                 player.addTag("isBanned");
                 const punishmentLength = checkData.punishmentLength?.toLowerCase();
-                console.warn(`Rosh > ${player.name} has been banned for ${check}/${checkType}`);
+                if(config.console_debug) console.warn(`Rosh > ${player.name} has been banned for ${check}/${checkType}`);
 
                 player.getTags().forEach(t => {
                     if(t.includes("§uReason:") || t.includes("§9Length:")) player.removeTag(t);
@@ -205,7 +201,7 @@ export function flag(player, check, checkType, debugName, debug, shouldTP = fals
               
                 const message = `§8${player.name} §chas been banned!`;   
                 data.recentLogs.push(message)
-                player.runCommandAsync(`tellraw @a[tag=notify,tag=op] {"rawtext":[{"text":"§r§uRosh §j> §8${player.name} §chas been banned for §u${check}§j/§u${checkType.toUpperCase()} §c!"}]}`);
+                player.runCommandAsync(`tellraw @a[tag=notify,tag=op] {"rawtext":[{"text":"§r${themecolor}Rosh §j> §8${player.name} §chas been banned for ${themecolor}${check}§j/${themecolor}${checkType.toUpperCase()} §c!"}]}`);
                                 
             }
 
@@ -214,18 +210,19 @@ export function flag(player, check, checkType, debugName, debug, shouldTP = fals
         if (punishment === "mute") {
 
             player.addTag("isMuted");
-            player.sendMessage(`§r§uRosh §j> §cYou have been muted!`);
+            player.sendMessage(`§r${themecolor}Rosh §j> §cYou have been muted!`);
             player.runCommandAsync("ability @s mute true");
+            if(config.console_debug) console.warn(`Rosh > ${player.name} has been muted for ${check}/${checkType}`);
 
             const message = `§8${player.name} §chas been muted!`;    
             data.recentLogs.push(message)
-            player.runCommandAsync(`tellraw @a[tag=notify,tag=op] {"rawtext":[{"text":"§r§uRosh §j> §8${player.name} §chas been muted for §u${check}§j/§u${checkType.toUpperCase()} §c!"}]}`);
+            player.runCommandAsync(`tellraw @a[tag=notify,tag=op] {"rawtext":[{"text":"§r${themecolor}Rosh §j> §8${player.name} §chas been muted for ${themecolor}${check}§j/${themecolor}${checkType.toUpperCase()} §c!"}]}`);
 
         }
 
         if (punishment === "crash") {
 
-            player.runCommandAsync(`tellraw @a[tag=notify] {"rawtext":[{"text":"§r§uRosh §j> §8${player.name} §chas been crashed for §u${check}§j/§u${checkType.toUpperCase()} §c!"}]}`); 
+            player.runCommandAsync(`tellraw @a[tag=notify] {"rawtext":[{"text":"§r${themecolor}Rosh §j> §8${player.name} §chas been crashed for ${themecolor}${check}§j/${themecolor}${checkType.toUpperCase()} §c!"}]}`); 
 
         }
     }

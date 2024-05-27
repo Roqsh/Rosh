@@ -1,10 +1,10 @@
 import * as Minecraft from "@minecraft/server";
-import config from "./data/config.js";
 import { world, system, ItemTypes, ItemStack } from "@minecraft/server";
+import config from "./data/config.js";
+import data from "./data/data.js";
 import { tag_system } from "./utils/mathUtil.js";
 import { flag, banMessage, getScore, setScore, getSpeed, aroundAir, debug } from "./util.js";
 import { commandHandler } from "./commands/handler.js";
-import data from "./data/data.js";
 import { mainGui, playerSettingsMenuSelected } from "./ui/mainGui.js";
 
 // Misc
@@ -75,6 +75,10 @@ import { aim_c } from "./checks/combat/aim/aimC.js";
 
 const lastMessage = new Map();
 const lastFallDistance = new Map();
+
+let tps = 20;
+let lagValue = 1;
+let lastDate = Date.now();
 
 
 world.beforeEvents.chatSend.subscribe((msg) => {
@@ -150,9 +154,6 @@ world.afterEvents.entityHurt.subscribe((data) => {
 system.runInterval(() => {
 
     let currentVL;
-	let tps = 20;
-    let lagValue = 1;
-    let lastDate = Date.now();
 
     if(system.currentTick % 20 == 0) {
 
