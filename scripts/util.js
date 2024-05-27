@@ -202,7 +202,6 @@ export function flag(player, check, checkType, debugName, debug, shouldTP = fals
  * @example banMessage(rqosh);
  * @remarks Bans the player from the game.
  */
-
 export function banMessage(player) {
     if (typeof player !== "object") throw TypeError(`Error: player is type of ${typeof player}. Expected "object"`);
 
@@ -260,7 +259,6 @@ export function banMessage(player) {
  * @remarks Executes an animation on the player
  * @throws {TypeError} If player is not an object or type is not a number
  */
-
 export async function animation(player, type) {
     // Validate the input
     if (typeof player !== 'object' || player === null) {
@@ -306,7 +304,6 @@ export async function animation(player, type) {
  * @returns {number | null} The converted time in milliseconds, or null if the input is invalid
  * @throws {TypeError} If the input is not a string
  */
-
 export function parseTime(str) {
     // Validate the input
     if (typeof str !== "string") {
@@ -355,7 +352,6 @@ export function parseTime(str) {
  * @throws {TypeError} Throws if the input is not a number or is negative
  * @example msToTime(88200000); // Returns { weeks: 0, days: 1, hours: 0, minutes: 30, seconds: 0 }
  */
-
 export function msToTime(milliseconds = 0) {
     // Validate the input
     if (typeof milliseconds !== 'number' || milliseconds < 0) {
@@ -400,7 +396,6 @@ export function msToTime(milliseconds = 0) {
  * @returns {number} score - The scoreboard objective value
  * @throws {TypeError} If player is not an object, objectiveName is not a string, or defaultValue is not a number
  */
-
 export function getScore(player, objectiveName, defaultValue = 0) {
     // Check if the player is an object
     if (typeof player !== 'object' || player === null) {
@@ -450,7 +445,6 @@ export function getScore(player, objectiveName, defaultValue = 0) {
  * @remarks Sets the scoreboard objective value for a player
  * @throws {TypeError} If player is not an object, objectiveName is not a string, or value is not a number
  */
-
 export function setScore(player, objectiveName, value) {
     // Check if the player is an object
     if (typeof player !== 'object' || player === null) {
@@ -498,7 +492,6 @@ export function setScore(player, objectiveName, value) {
  * @example uppercaseFirstLetter(123); // returns 123
  * @remarks Capitalizes the first letter of the given string.
  */
-
 export function uppercaseFirstLetter(string) {
     // Check if the input is a string
     if (typeof string !== 'string') {
@@ -525,7 +518,6 @@ export function uppercaseFirstLetter(string) {
  * @example lowercaseFirstLetter(123); // returns 123
  * @remarks Lowercases the first letter of the given string.
  */
-
 export function lowercaseFirstLetter(string) {
     // Check if the input is a string
     if (typeof string !== 'string') {
