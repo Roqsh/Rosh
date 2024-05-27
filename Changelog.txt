@@ -27,6 +27,7 @@ Rosh v1.22
 (+) Added BadEnchants/D (duplicate enchantments)
 
 (-) Removed banlist as it was ineffective/bypassable with ease
+(-) Disabled console debug when somebody used a command
 
 (*) Scaled up the logo to fit the new server logo
 (*) Improved Timer/A (now works vertically)
