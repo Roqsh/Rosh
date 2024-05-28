@@ -137,8 +137,8 @@ function kickPlayerMenu(player, playerSelected, lastMenu = 0) {
         if(!isSilent) player.runCommandAsync(`kick "${playerSelected.name}" ${reason}`);
         playerSelected.triggerEvent("scythe:kick");
 
-        if(isSilent) player.runCommandAsync(`tellraw @a[tag=op] {"rawtext":[{"text":"§r${themecolor}Rosh §j> §8${player.nameTag} §chas kicked §8${playerSelected.name} §c(Silent) for §8${reason}"}]}`);
-        if(!isSilent) player.runCommandAsync(`tellraw @a[tag=op] {"rawtext":[{"text":"§r${themecolor}Rosh §j> §8${player.nameTag} §chas kicked §8${playerSelected.name} §cfor §8${reason}"}]}`);
+        if(isSilent) player.runCommandAsync(`tellraw @a[tag=op] {"rawtext":[{"text":"§r${themecolor}Rosh §j> §8${player.nameTag} §chas kicked §8${playerSelected.name} §c(Silent) for: §8${reason}"}]}`);
+        if(!isSilent) player.runCommandAsync(`tellraw @a[tag=op] {"rawtext":[{"text":"§r${themecolor}Rosh §j> §8${player.nameTag} §chas kicked §8${playerSelected.name} §cfor: §8${reason}"}]}`);
 
     });
 }
@@ -173,17 +173,16 @@ function banPlayerMenu(player, playerSelected, lastMenu = 0) {
         // remove old ban tags
         playerSelected.getTags().forEach(t => {
             t = t.replace(/"/g, "");
-            if(t.startsWith("reason:") || t.startsWith("by:") || t.startsWith("time:")) playerSelected.removeTag(t);
+            if(t.startsWith("Reason:") || t.startsWith("Length:")) playerSelected.removeTag(t);
         });
         if(playerSelected.hasTag("op")){ 
             playerSelected.sendMessage(`§r${themecolor}Rosh §j> §8${playerSelected.name} §cis an Rosh-Op and cannot be banned!`)
         } else {
             playerSelected.addTag(`reason:${reason}`);
-            playerSelected.addTag(`by:${player.nameTag}`);
-            if(banLength && shouldPermBan === "false") playerSelected.addTag(`time:${Date.now() + banLength}`);
+            if(banLength && shouldPermBan === "false") playerSelected.addTag(`Length:${Date.now() + banLength}`);
             playerSelected.addTag("isBanned");
         
-            player.runCommandAsync(`tellraw @a[tag=op] {"rawtext":[{"text":"§r${themecolor}Rosh §j> §8${player.nameTag} §chas banned §8${playerSelected.nameTag}§cfor §8${reason}"}]}`);
+            player.runCommandAsync(`tellraw @a[tag=op] {"rawtext":[{"text":"§r${themecolor}Rosh §j> §8${player.nameTag} §chas banned §8${playerSelected.nameTag} §cfor: §8${reason}"}]}`);
         }
     });
 }
@@ -639,6 +638,7 @@ function logsMenu(player) {
 
         .title("Rosh Logs")
         .body(`${text}`)
+        .button(`Log Settings`)
         .button("Back");
     
     menu.show(player).then((response) => {
