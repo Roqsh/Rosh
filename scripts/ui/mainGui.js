@@ -223,9 +223,9 @@ function settingsMenu(player) {
     player.playSound("mob.chicken.plop");
     const menu = new MinecraftUI.ActionFormData()
         .title("Settings Menu")
-        .button("Notifications")
-        .button("AutoBan")
-        .button("Preset")
+        .button(`Notifications\n${player.hasTag("notify") ? "§8[§a+§8]" : "§8[§c-§8]"}`)
+        .button(`AutoBan\n${player.hasTag("auto") ? "§8[§a+§8]" : "§8[§c-§8]"}`)
+        .button(`Preset\n${player.hasTag("nostable") ? "§8[§jBeta§8]" : "§8[§jStable§8]"}`)
         .button("Back")
     
     menu.show(player).then((response) => {    
