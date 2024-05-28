@@ -664,7 +664,7 @@ function debugSettingsMenu(player) {
         .button(`Packets\n${player.hasTag("packetlogger") ? "§8[§a+§8]" : "§8[§c-§8]"}`)
         .button(`Speed\n${player.hasTag("devspeed") ? "§8[§a+§8]" : "§8[§c-§8]"}`)
         .button(`FallDistance\n${player.hasTag("devfalldistance") ? "§8[§a+§8]" : "§8[§c-§8]"}`)
-        .button(`Ticks\n${player.hasTag("devtick") ? "§8[§a+§8]" : "§8[§c-§8]"}`)
+        .button(`Tps\n${player.hasTag("devtps") ? "§8[§a+§8]" : "§8[§c-§8]"}`)
         .button(`XRotation\n${player.hasTag("devrotationx") ? "§8[§a+§8]" : "§8[§c-§8]"}`)
         .button(`YRotation\n${player.hasTag("devrotationy") ? "§8[§a+§8]" : "§8[§c-§8]"}`)
         .button(`Cps\n${player.hasTag("cps") ? "§8[§a+§8]" : "§8[§c-§8]"}`)
@@ -676,7 +676,7 @@ function debugSettingsMenu(player) {
         if(response.selection === 1) player.runCommandAsync("function ui/packets"); 
         if(response.selection === 2) player.runCommandAsync("function ui/devspeed");
         if(response.selection === 3) player.runCommandAsync("function ui/devfalldistance");
-        if(response.selection === 4) player.runCommandAsync("function ui/devtick");
+        if(response.selection === 4) player.runCommandAsync("function ui/devtps");
         if(response.selection === 5) player.runCommandAsync("function ui/devrotationx");
         if(response.selection === 6) player.runCommandAsync("function ui/devrotationy");
         if(response.selection === 7) player.runCommandAsync("function ui/devcps");
