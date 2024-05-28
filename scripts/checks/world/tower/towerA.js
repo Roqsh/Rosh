@@ -19,9 +19,11 @@ export function tower_a(player, block) {
         const rotation = player.getRotation();
 
         if(lastBlock.has(player.name)) {
+
+            const last = lastBlock.get(player.name);
             
-            const upwards = block.location.y > lastBlock.get(player.name)?.y;
-            const sameXZblock = block.location.x === lastBlock.get(player.name)?.x && block.location.z === lastBlock.get(player.name)?.z;
+            const upwards = block.location.y > last.y;
+            const sameXZblock = block.location.x === last.x && block.location.z === last.z;
             const above = block.location.y > player.location.y;
 
             if(upwards && sameXZblock && above && rotation.x > 50) {

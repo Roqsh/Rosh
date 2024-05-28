@@ -13,6 +13,9 @@ export function strafe_b(player) {
 
     if(config.modules.strafeB.enabled) {
 
+        const preset = config.preset?.toLowerCase();
+        if(preset === "stable") return;
+
         const velocity = player.getVelocity();
 
         if(data.get(player.name)) {

@@ -14,7 +14,11 @@ export function scaffold_f(player, block) {
 
         if(player.isFlying) return;
 
-        const distance = Math.sqrt(Math.pow(block.location.x - player.location.x, 2) + Math.pow(block.location.y - player.location.y, 2) + Math.pow(block.location.z - player.location.z, 2));
+        const distance = Math.sqrt(
+            Math.pow(block.location.x - player.location.x, 2) + 
+            Math.pow(block.location.y - player.location.y, 2) + 
+            Math.pow(block.location.z - player.location.z, 2)
+        );
 
         if(distance < 1.85) {
             const valueOfBlocks = getScore(player, "scaffoldAmount", 0);

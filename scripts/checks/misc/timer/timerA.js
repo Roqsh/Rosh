@@ -14,7 +14,11 @@ export function timer_a(player, lastPosition, Value){
     if(player.lastPosition && config.modules.timerA.enabled && !player.hasTag("placing")) {
 
         const velocity = player.getVelocity();
-        const calcVelocity = {x: player.location.x - lastPosition.x, y:player.location.y - lastPosition.y, z: player.location.z - lastPosition.z};
+        const calcVelocity = {
+            x: player.location.x - lastPosition.x, 
+            y: player.location.y - lastPosition.y, 
+            z: player.location.z - lastPosition.z
+        };
 
         const ServerSpeed = Math.hypot(Math.hypot(calcVelocity.x, calcVelocity.z), calcVelocity.y);
         const ClientSpeed = Math.hypot(Math.hypot(velocity.x, velocity.z), velocity.y);
@@ -36,8 +40,10 @@ export function timer_a(player, lastPosition, Value){
             debug(player, "Timer", `${timer / player.timerHold.length} V:${Value}`, "timer-debug");
                
             if(timerData.has(player.name)) {
+
                 let timer_lev = config.modules.timerA.timer_level;
                 let timer_lev_low = config.modules.timerA.timer_level_low;
+
                 if(config.modules.timerA.strict && player.hasTag("strict")) {
                     timer_lev--;
                     timer_lev_low++;
@@ -60,9 +66,7 @@ export function timer_a(player, lastPosition, Value){
                 timerData.set(player.name, {t: timer / player.timerHold.length});
             }
             player.timerHold.splice(0);
-
         }
     }
-
     player.lastPosition = player.location;
 }

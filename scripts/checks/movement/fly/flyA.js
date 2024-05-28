@@ -18,20 +18,20 @@ export function fly_a(player) {
             let max_v_up = 0.62;
 
             if(player.isJumping) max_v_up = 0.8;
-            if(player.getEffect("jump_boost")) max_v_up + player.getEffect("jump_boost").amplifier * 1.5 + 0.1;
-            if(player.hasTag("placing")) max_v_up + 6;
-            if(player.hasTag("damaged")) max_v_up + 4;
-            if(player.hasTag("elytra")) max_v_up + 20;
+            if(player.getEffect("jump_boost")) max_v_up += player.getEffect("jump_boost").amplifier * 1.5 + 0.1;
+            if(player.hasTag("placing")) max_v_up += 6;
+            if(player.hasTag("damaged")) max_v_up += 4;
+            if(player.hasTag("elytra")) max_v_up += 20;
             if(getScore(player, "tick_counter2", 0) < 8) return;
             if(player.fallDistance > 25) return;
 
-            if(velocity.y > max_v_up) flag(player, "Fly", "A", "yVelocity", velocity.y);
+            if(velocity.y > max_v_up) flag(player, "Fly", "A", "yVelocity", `${velocity.y},maxup=${max_v_up}`);
             
             let min_v_down = -5.2 - player.fallDistance;
 
             if(player.hasTag("elytra")) min_v_down = -20;
             if(player.hasTag("damaged")) min_v_down = -4;
-            if(velocity.y < min_v_down) flag(player, "Fly", "A", "yVelocity", velocity.y);
+            if(velocity.y < min_v_down) flag(player, "Fly", "A", "yVelocity", `${velocity.y},mindown=${min_v_down}`);
 
         }  
     }

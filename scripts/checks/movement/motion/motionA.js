@@ -5,19 +5,14 @@ import { flag, getSpeed } from "../../../util";
 
 export function motion_a(player) {
 
-    if(config.modules.motionA.enabled) {
+    if (config.modules.motionA.enabled) {
 
-        const playerSpeed = getSpeed(player);
+        if (player.getEffect("speed").amplifier > 5 || !player.hasTag("ground")) return;
+
+        const speed = getSpeed(player);
         
-        if(playerSpeed > config.modules.motionA.speed) {
-
-            if(player.getEffect("speed").amplifier > 5) {
-                return;
-            }
-
-            if(player.hasTag("ground")) {
-                flag(player, "Motion", "A", "speed", playerSpeed, true);
-            }
+        if (speed > config.modules.motionA.speed) {          
+            flag(player, "Motion", "A", "speed", speed, true);  
         }
     }  
 }

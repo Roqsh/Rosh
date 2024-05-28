@@ -24,10 +24,12 @@ export function tower_b(player, block) {
         if(player.getEffect("jump_boost")) min_delay -= 300;
 
         if(lastTime.has(player.name)) {
+
+            const last = lastTime.get(player.name);
             
-            const delay = Date.now() - lastTime.get(player.name)?.time;
-            const upwards = block.location.y > lastTime.get(player.name)?.y;
-            const sameXZ = block.location.x === lastTime.get(player.name)?.x && block.location.z === lastTime.get(player.name)?.z;
+            const delay = Date.now() - last.time;
+            const upwards = block.location.y > last.y;
+            const sameXZ = block.location.x === last.x && block.location.z === last.z;
             const below = block.location.y < player.location.y
 
             debug(player, "Delay", delay, "delay");

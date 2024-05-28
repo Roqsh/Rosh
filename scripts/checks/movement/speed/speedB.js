@@ -1,27 +1,64 @@
 import config from "../../../data/config.js";
 import { flag, getSpeed } from "../../../util";
 
+const lastVelocity = new Map();
+
 /**
  * @name speed_b
  * @param {player} player - The player to check
- * @remarks Checks for having sus velocities
-*/
-
+ * @remarks Checks for having rounded velocities
+ */
 export function speed_b(player) {
 
-    const playerSpeed = getSpeed(player);
-    const playerVelocity = player.getVelocity();
+    const speed = getSpeed(player);
+    const velocity = player.getVelocity();
 
-    if(config.modules.speedB.enabled) {
+    if (config.modules.speedB.enabled) {
+ 
+        if (speed > 0.2) {
 
-        if(playerSpeed > 0.2 && !player.hasTag("damaged") && !player.hasTag("ice") && !player.hasTag("slime") && !player.isFlying && !player.hasTag("spec") && !player.hasTag("elytra")) {
-
-            const yV = Math.abs(playerVelocity.y).toFixed(4);
-            const prediction = yV === "0.1000" || yV === "0.6000" || yV === "0.8000" || yV === "0.9000" || yV === "0.0830" || yV === "0.2280" || yV === "0.3200" || yV === "0.2302" || yV === "0.0428" || yV === "0.1212" || yV === "0.0428" || yV === "1.1661" || yV === "1.0244" || yV === "0.3331";
+            const yVelocity = Math.abs(velocity.y);
             
-            if(prediction) {
-                flag(player, "Speed", "B", "yVelocity", playerVelocity.y, true);
+            if (yVelocity !== 0) {
+
+                const rounded = Number.isInteger(yVelocity);
+
+                if (rounded) {
+                    flag(player, "Speed", "B", "yVelocity", velocity.y, true);
+                }
             }
+
+            if (lastVelocity.has(player.name)) {
+
+                const lastVel = lastVelocity.get(player.name);
+
+                const velocityDiff = {
+                    x: Math.abs(velocity.x - lastVel.x),
+                    y: Math.abs(velocity.y - lastVel.y),
+                    z: Math.abs(velocity.z - lastVel.z)
+                };
+
+                if (
+                    velocityDiff["x"] === 0 || 
+                    velocityDiff["y"] === 0 || 
+                    velocityDiff["z"] === 0
+                ) return;
+
+                if (
+                    Number.isInteger(velocityDiff["x"]) || 
+                    Number.isInteger(velocityDiff["y"]) || 
+                    Number.isInteger(velocityDiff["z"])
+                ) {
+                    flag(player, "Speed", "B", "velocityDiff", `${velocityDiff["x"]},${velocityDiff["y"]},${velocityDiff["z"]}`, false);
+                }
+
+            }
+
+            lastVelocity.set(player.name, {
+                x: velocity.x,
+                y: velocity.y,
+                z: velocity.z
+            });
         }
     }
 }

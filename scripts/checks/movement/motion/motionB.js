@@ -13,7 +13,7 @@ export function motion_b(player) {
 
         const yVelocity = player.getVelocity().y;
 
-        if(Math.abs(yVelocity) > 40) {
+        if(Math.abs(yVelocity) > 30) {
             flag(player, "Motion", "B", "yVelocity", yVelocity);
         }
     }
