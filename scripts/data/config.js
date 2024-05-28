@@ -4,7 +4,7 @@ export default
 
     "kicksBeforeBan": 2, // The Amount of kicks a player is allowed to recieve before getting banned.
 
-    "disable_flags_from_rosh_op": false, // Ignores staff when enabled - Enable with caution!
+    "exclude_staff": false, // Ignores staff when enabled - Enable with caution!
 
     "console_debug": true, // Shows flags and punishments in the console
 
