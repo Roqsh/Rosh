@@ -225,7 +225,7 @@ function settingsMenu(player) {
         .title("Settings Menu")
         .button(`Notifications\n${player.hasTag("notify") ? "§8[§a+§8]" : "§8[§c-§8]"}`)
         .button(`AutoBan\n${player.hasTag("auto") ? "§8[§a+§8]" : "§8[§c-§8]"}`)
-        .button(`Preset\n${player.hasTag("nostable") ? "§8[§jBeta§8]" : "§8[§jStable§8]"}`)
+        .button(`Preset\n${player.hasTag("stable") ? "§8Stable" : "§8Beta"}`)
         .button("Back")
     
     menu.show(player).then((response) => {    
@@ -589,9 +589,9 @@ function worldSettingsMenu(player) {
     const menu = new MinecraftUI.ActionFormData()
 
         .title("Server Options")
-        .button(`Regeneration`)
-        .button(`PvP`)
-        .button(`Keep Inventory`)
+        .button(`Regeneration\n${player.hasTag("regeneration") ? "§8[§a+§8]" : "§8[§c-§8]"}`)
+        .button(`PvP\n${player.hasTag("pvp") ? "§8[§a+§8]" : "§8[§c-§8]"}`)
+        .button(`Keep Inventory\n${player.hasTag("inventory") ? "§8[§a+§8]" : "§8[§c-§8]"}`)
         .button("Back");
     
     menu.show(player).then((response) => {
