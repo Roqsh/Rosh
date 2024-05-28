@@ -2,7 +2,7 @@ import * as Minecraft from "@minecraft/server";
 import { world, system, ItemTypes, ItemStack } from "@minecraft/server";
 import config from "./data/config.js";
 import data from "./data/data.js";
-import { tag_system } from "./utils/mathUtil.js";
+import { tag_system, setTitle } from "./utils/gameUtil.js";
 import { flag, banMessage, getScore, setScore, getSpeed, aroundAir, tellStaff, debug } from "./util.js";
 import { commandHandler } from "./commands/handler.js";
 import { mainGui, playerSettingsMenuSelected } from "./ui/mainGui.js";
@@ -69,12 +69,10 @@ import { autoclicker_a } from "./checks/combat/autoclicker/autoclickerA.js";
 //import { aim_a } from "./checks/combat/aim/aimA.js";
 import { aim_b } from "./checks/combat/aim/aimB.js";
 import { aim_c } from "./checks/combat/aim/aimC.js";
+// FIXME:
 //import { aim_d } from "./checks/combat/aim/aimD.js";
 //import { aim_e } from "./checks/combat/aim/aimE.js";
 
-
-const lastMessage = new Map();
-const lastFallDistance = new Map();
 
 let tps = 20;
 let lagValue = 1;
@@ -93,8 +91,6 @@ world.beforeEvents.chatSend.subscribe((msg) => {
 	if(message.includes("Horion") || message.includes("Borion") || message.includes("Packet") || message.includes("Vector") || message.includes("Prax") || message.includes("Zephyr") || message.includes("Nuvola") || message.includes("Aelous") || message.includes("Disepi") || message.includes("Ambrosial") || message.includes("Lunaris") || message.includes("Nigga") || message.includes("Niger")) {
 		msg.cancel = true;
 	}
-
-	lastMessage.set(player, message);
 
 	if(player.hasTag("isMuted")) {
 		msg.cancel = true;
@@ -245,18 +241,7 @@ system.runInterval(() => {
 			setScore(player, "tick_counter2", 0);
 		}
 
-		tag_system(player);
-
-		if(Math.abs(player.fallDistance) > 0) {
-			if(lastFallDistance.get(player)) {
-				const fallSpeed = player.fallDistance - lastFallDistance.get(player);
-				if(fallSpeed === -0.5125312805175781) {
-					flag(player, "Speed", "B2", "fallSpeed", fallSpeed);
-				}
-			}
-			lastFallDistance.set(player, player.fallDistance);
-		}
-		
+		tag_system(player);	
 
 		const tickValue = getScore(player, "tickValue", 0);
 		setScore(player, "tickValue", tickValue + 1);
@@ -275,9 +260,11 @@ system.runInterval(() => {
 			setScore(player, "airTime", flyTime + 1);
 		} else setScore(player, "airTime", 0);
 
-		
+		if (player.hasTag("devtps")) {
+			setTitle(player, undefined, undefined, `§r§uDebug §j> Tps: §8${tps}`);
+		}
+
 		debug(player, "Speed", speed, "devspeed");
-		debug(player, "Tick", tickValue, "devtick");
 		debug(player, "FallDistance", player.fallDistance, "devfalldistance");
         debug(player, "YVelocity", velocity.y, "devvelocity");
 		debug(player, "XRotation", rotation.x, "devrotationx");
@@ -301,7 +288,7 @@ system.runInterval(() => {
 			speed_b(player);
 		}
 
-		if(config.generalModules.motion && !player.hasTag("end_portal")) {
+		if(config.generalModules.motion) {
 			motion_a(player);
 			motion_b(player);
 			motion_c(player);

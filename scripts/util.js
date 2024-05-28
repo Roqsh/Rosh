@@ -3,49 +3,45 @@ import data from "./data/data.js";
 import { world } from "@minecraft/server";
 
 /**
+ * Alerts staff if a player fails a check.
  * @name flag
  * @param {object} player - The player object
  * @param {string} check - What check ran the function.
  * @param {string} checkType - What sub-check ran the function (ex. a, b ,c).
  * @param {string | undefined} [debugName] - Name for the debug value.
- * @param {string | number | undefined} [debug] - Debug info.
+ * @param {string | number | object | undefined} [debug] - Debug info.
  * @param {boolean} [shouldTP] - Whether to tp the player to itself.
  * @param {object | undefined} [cancelObject] - object with property "cancel" to cancel.
- * @param {number | undefined} [slot] - Slot to clear an item out.
  * @example flag(player, "Spammer", "B", "Combat", undefined, undefined, undefined, msg, undefined);
- * @remarks Alerts staff if a player fails a check.
  */
+export function flag(player, check, checkType, debugName, debug, shouldTP = false, cancelObject) {
+    // Validate the inputs
+    if (typeof player !== "object") throw TypeError(`Error: player is type of ${typeof player}. Expected "object"`);
+    if (typeof check !== "string") throw TypeError(`Error: check is type of ${typeof check}. Expected "string"`);
+    if (typeof checkType !== "string") throw TypeError(`Error: checkType is type of ${typeof checkType}. Expected "string"`);
+    if (typeof debugName !== "string" && typeof debugName !== "undefined") throw TypeError(`Error: debugName is type of ${typeof debugName}. Expected "string" or "undefined"`);
+    if (typeof debug !== "string" && typeof debug !== "number" && typeof debug !== "object" && typeof debug !== "undefined") throw TypeError(`Error: debug is type of ${typeof debug}. Expected "string", "number" or "undefined"`);
+    if (typeof shouldTP !== "boolean") throw TypeError(`Error: shouldTP is type of ${typeof shouldTP}. Expected "boolean"`);
+    if (typeof cancelObject !== "object" && typeof cancelObject !== "undefined") throw TypeError(`Error: cancelObject is type of ${typeof cancelObject}. Expected "object" or "undefined`);
 
-export function flag(player, check, checkType, debugName, debug, shouldTP = false, cancelObject, slot) {
-
-    if(typeof player !== "object") throw TypeError(`Error: player is type of ${typeof player}. Expected "object"`);
-    if(typeof check !== "string") throw TypeError(`Error: check is type of ${typeof check}. Expected "string"`);
-    if(typeof checkType !== "string") throw TypeError(`Error: checkType is type of ${typeof checkType}. Expected "string"`);
-    if(typeof debugName !== "string" && typeof debugName !== "undefined") throw TypeError(`Error: debugName is type of ${typeof debugName}. Expected "string" or "undefined"`);
-    if(typeof debug !== "string" && typeof debug !== "number" && typeof debug !== "undefined") throw TypeError(`Error: debug is type of ${typeof debug}. Expected "string", "number" or "undefined"`);
-    if(typeof shouldTP !== "boolean") throw TypeError(`Error: shouldTP is type of ${typeof shouldTP}. Expected "boolean"`);
-    if(typeof cancelObject !== "object" && typeof cancelObject !== "undefined") throw TypeError(`Error: cancelObject is type of ${typeof cancelObject}. Expected "object" or "undefined`);
-    if(typeof slot !== "number" && typeof slot !== "undefined") throw TypeError(`Error: slot is type of ${typeof slot}. Expected "number" or "undefined`);
-
-    if(config.disable_flags_from_rosh_op && player.hasTag("op")) return;
-
-    const themecolor = config.themecolor;
+    // Excludes Staff from getting flagged if the setting is enabled via config
+    if (config.exclude_staff && player.hasTag("op")) return;
  
-    // remove characters that may break commands, and newlines crash
+    // Remove characters that may break commands or newlines
     debug = String(debug).replace(/"|\\|\n/gm, "");
 
-    // malicious users may try make the debug field ridiculously large to lag any clients that may try to view the alert (anybody with the 'notify' tag)
-    if(debug.length > 256) {
+    // Limit the debug length to prevent malicous users abusing it to lag anybody trying to view the alert
+    if (debug.length > 256) {
         const extraLength = debug.length - 256;
         debug = debug.slice(0, -extraLength) + `(+${extraLength} additional characters)`;
     }
     
+    // Set the player back if set to true in flag and enabled via config (config.silent === false)
     const rotation = player.getRotation();
+    if (shouldTP && config.silent === false) player.teleport(check === "Crasher" ? {x: 30000000, y: 30000000, z: 30000000} : player.lastGoodPosition, {dimension: player.dimension, rotation: {x: rotation.x, y: rotation.y}, keepVelocity: true});
 
-
-    if(shouldTP && config.silent === false) player.teleport(check === "Crasher" ? {x: 30000000, y: 30000000, z: 30000000} : player.lastGoodPosition, {dimension: player.dimension, rotation: {x: rotation.x, y: rotation.y}, keepVelocity: false});
-
-    if(cancelObject) cancelObject.cancel = true;
+    // Cancels the event if set to true in flag
+    if (cancelObject) cancelObject.cancel = true;
   
 
     const scoreboardObjective = check === "CommandBlockExploit" ? "cbevl" : `${check.toLowerCase()}vl`;
@@ -56,37 +52,31 @@ export function flag(player, check, checkType, debugName, debug, shouldTP = fals
     setScore(player, scoreboardObjective, currentVl + 1);
     currentVl++;
 
-    if(config.console_debug) console.warn(`Rosh > ${player.nameTag} failed ${check}/${checkType.toUpperCase()} - {${debugName}=${debug}, V=${currentVl}}`);
+    if(config.console_debug) console.warn(`Rosh > ${player.nameTag} failed ${check}/${checkType.toUpperCase()} - {${debugName}=${debug}, V=${currentVl}}`);    
     
-    
+    // Displays the alert to the staff
+    const themecolor = config.themecolor;
     player.runCommandAsync(`tellraw @a[tag=notify,tag=debug] {"rawtext":[{"text":"§r${themecolor}Rosh §j> §8${player.nameTag} §jfailed ${themecolor}${check}§j/${themecolor}${checkType.toUpperCase()}§j - {${debugName}=${debug}, V=${currentVl}}"}]}`);
     player.runCommandAsync(`tellraw @a[tag=notify,tag=!debug] {"rawtext":[{"text":"§r${themecolor}Rosh §j> §8${player.nameTag} §jfailed ${themecolor}${check}§j/${themecolor}${checkType.toUpperCase()}§j - {V=${currentVl}}"}]}`);
-      
-
-    if(typeof slot === "number") {
-		const container = player.getComponent("inventory").container;
-		container.setItem(slot, undefined);
-	}
-
+	
+    // Checks for the config data of the check and if the check is disabled (throws error if so, but shouldnt happen as every check checks if its enabled or not before flagging)
     const checkData = config.modules[check.toLowerCase() + checkType.toUpperCase()];
-    if(!checkData) throw Error(`No valid check data found for ${check}/${checkType}.`);
+    if (!checkData) throw Error(`No valid check data found for ${check}/${checkType}.`);   
 
     const kickvl = getScore(player, "kickvl", 0);
-    
-    if(!checkData.enabled) throw Error(`${check}/${checkType} was flagged but the module was disabled.`);
 
+    if (!checkData.enabled) throw Error(`${check}/${checkType} was flagged but the module was disabled.`);
 
+    // Log the flag to the ui log section
     const message = `§8${player.name} §jwas flagged for ${themecolor}${check}§j/${themecolor}${checkType}§j ${currentVl}x`;  
     data.recentLogs.push(message);
     
+    // Checks for the punishment of the failed check
     const punishment = checkData.punishment?.toLowerCase();
+    if (typeof punishment !== "string") throw TypeError(`Error: punishment is type of ${typeof punishment}. Expected "string"`);
+    if (punishment === "none" || currentVl < checkData.minVlbeforePunishment) return;
 
-    if(typeof punishment !== "string") throw TypeError(`Error: punishment is type of ${typeof punishment}. Expected "string"`);
-
-    if(punishment === "none" || punishment === "" || currentVl < checkData.minVlbeforePunishment) return;
-
-    
-    if(config.fancy_kick_calculation.on) {
+    if (config.fancy_kick_calculation.on) {
 
         const movement_vl = getScore(player, "motionvl", 0) + getScore(player, "flyvl", 0) + getScore(player, "speedvl", 0) + getScore(player, "strafevl", 0) + getScore(player, "noslowvl", 0) + getScore(player, "invalidsprintvl", 0);
         const combat_vl = getScore(player, "reachvl", 0) + getScore(player, "killauravl", 0) + getScore(player, "autoclickervl", 0) + getScore(player, "hitboxvl", 0);
@@ -104,7 +94,7 @@ export function flag(player, check, checkType, debugName, debug, shouldTP = fals
         }
     }
 
-    if(currentVl > checkData.minVlbeforePunishment) {
+    if (currentVl > checkData.minVlbeforePunishment) {
 
         if (punishment === "kick") {
 
@@ -297,10 +287,10 @@ export async function animation(player, type) {
 
 
 /**
+ * Parses a time string into milliseconds.
  * @name parseTime
  * @param {string} str - The time value to convert to milliseconds
  * @example parseTime("24d"); // returns 2073600000
- * @remarks Parses a time string into milliseconds.
  * @returns {number | null} The converted time in milliseconds, or null if the input is invalid
  * @throws {TypeError} If the input is not a string
  */
@@ -346,6 +336,7 @@ export function parseTime(str) {
 
 
 /**
+ * Converts milliseconds to a human-readable time string.
  * @name msToTime
  * @param {number} [milliseconds=0] - The number of milliseconds to convert
  * @returns {Object} An object containing the converted time in weeks, days, hours, minutes, and seconds
@@ -387,12 +378,13 @@ export function msToTime(milliseconds = 0) {
 
 
 /**
+ * Gets the scoreboard objective value for a player.
  * @name getScore
  * @param {import("@minecraft/server").Entity} player - The player to get the scoreboard value from
  * @param {string} objectiveName - The name of the scoreboard objective
  * @param {number} [defaultValue=0] - Default value to return if unable to get scoreboard score
  * @example getScore(player, "delay", 1); // Gets the scoreboard objective value for the player, returns 1 if unable to get scoreboard score
- * @remarks Gets the scoreboard objective value for a player
+ * @remarks Returns default value if unable to get score
  * @returns {number} score - The scoreboard objective value
  * @throws {TypeError} If player is not an object, objectiveName is not a string, or defaultValue is not a number
  */
@@ -437,12 +429,12 @@ export function getScore(player, objectiveName, defaultValue = 0) {
 
 
 /**
+ * Sets the scoreboard objective value for a player.
  * @name setScore
  * @param {import("@minecraft/server").Entity} player - The player to set the score for
  * @param {string} objectiveName - The scoreboard objective
  * @param {number} value - The new value of the scoreboard objective
  * @example setScore(player, "delay", 2); // Sets the scoreboard objective "delay" to 2
- * @remarks Sets the scoreboard objective value for a player
  * @throws {TypeError} If player is not an object, objectiveName is not a string, or value is not a number
  */
 export function setScore(player, objectiveName, value) {
@@ -484,13 +476,14 @@ export function setScore(player, objectiveName, value) {
 
 
 /**
+ * Capitalizes the first letter of the given string.
  * @name uppercaseFirstLetter
- * @param {string} string - The string to modify.
- * @returns {string} The updated string with the first letter capitalized, or the original input if it is not a string/or length = 0.
+ * @param {string} string - The string to modify
+ * @returns {string} The updated string with the first letter capitalized
  * @example uppercaseFirstLetter('hello'); // returns 'Hello'
  * @example uppercaseFirstLetter(''); // returns ''
  * @example uppercaseFirstLetter(123); // returns 123
- * @remarks Capitalizes the first letter of the given string.
+ * @remarks Gives back the original input if it is not a string/or length = 0
  */
 export function uppercaseFirstLetter(string) {
     // Check if the input is a string
@@ -510,13 +503,14 @@ export function uppercaseFirstLetter(string) {
 
 
 /**
+ * Lowercases the first letter of the given string.
  * @name lowercaseFirstLetter
  * @param {string} string - The string to modify
- * @returns {string} The updated string with the first letter lowercased, or the original input if it is not a string/or length = 0.
+ * @returns {string} The updated string with the first letter lowercased
  * @example lowercaseFirstLetter('Hello'); // returns 'hello'
  * @example lowercaseFirstLetter(''); // returns ''
  * @example lowercaseFirstLetter(123); // returns 123
- * @remarks Lowercases the first letter of the given string.
+ * @remarks Gives back the original input if it is not a string/or length = 0
  */
 export function lowercaseFirstLetter(string) {
     // Check if the input is a string
@@ -536,23 +530,30 @@ export function lowercaseFirstLetter(string) {
 
 
 /**
+ * Find every possible coordinate between two sets of Vector3.
  * @name getBlocksBetween
- * @remarks Find every possible coordinate between two sets of Vector3
  * @param {object} pos1 - First set of coordinates
  * @param {object} pos2 - Second set of coordinates
  * @returns {Array} coordinates - Each possible coordinate
-*/
-
+ */
 export function getBlocksBetween(pos1, pos2) {
-    const { x: minX, y: minY, z: minZ } = pos1;
-    const { x: maxX, y: maxY, z: maxZ } = pos2;
+    const { x: x1, y: y1, z: z1 } = pos1;
+    const { x: x2, y: y2, z: z2 } = pos2;
+
+    // Ensure min and max coordinates are correctly assigned
+    const minX = Math.min(x1, x2);
+    const maxX = Math.max(x1, x2);
+    const minY = Math.min(y1, y2);
+    const maxY = Math.max(y1, y2);
+    const minZ = Math.min(z1, z2);
+    const maxZ = Math.max(z1, z2);
 
     const coordinates = [];
 
-    for(let x = minX; x <= maxX; x++) {
-        for(let y = minY; y <= maxY; y++) {
-            for(let z = minZ; z <= maxZ; z++) {
-                coordinates.push({x, y, z});
+    for (let x = minX; x <= maxX; x++) {
+        for (let y = minY; y <= maxY; y++) {
+            for (let z = minZ; z <= maxZ; z++) {
+                coordinates.push({ x, y, z });
             }
         }
     }
@@ -563,23 +564,96 @@ export function getBlocksBetween(pos1, pos2) {
 
 
 /**
- * @name tellStaff
- * @remarks Send a message to all Rosh-Opped players
- * @param {string} message - The message to send
- * @param {Array} tags - What tags should be sent the message
-*/
+ * Calculates the angle between a player and another entity.
+ * @name angleCalculation
+ * @param {import("@minecraft/server").Player} player - The player entity.
+ * @param {import("@minecraft/server").Entity} entity - The entity to calculate the angle to.
+ * @returns {number} The angle between the player and the entity in degrees.
+ */
+export function angleCalculation(player, entity) {
+    // Get positions of player and entity
+    const playerPosition = { x: player.location.x, y: player.location.y, z: player.location.z };
+    const entityPosition = { x: entity.location.x, y: entity.location.y, z: entity.location.z };
 
-export function tellStaff(message, tags = ["op"]) {
-    for(const player of world.getPlayers({tags})) {
-        player.sendMessage(message);
+    // Calculate angle between player and entity
+    let angleRadians = Math.atan2((entityPosition.z - playerPosition.z), (entityPosition.x - playerPosition.x));
+    let angleDegrees = angleRadians * (180 / Math.PI); // Convert radians to degrees
+
+    // Adjust angle to be within [0, 360) range
+    angleDegrees %= 360;
+    if (angleDegrees < 0) {
+        angleDegrees += 360;
     }
+
+    return angleDegrees;
 }
 
 
 
 /**
+ * Finds the nearest player to a given entity.
+ * @name getClosestPlayer
+ * @param {object} entity - The entity to check.
+ * @returns {object|null} - The closest player object, or null if no player is found.
+ */
+export function getClosestPlayer(entity) {
+    // Check if entity is an object
+    if (typeof entity !== "object") {
+        throw new TypeError(`Error: entity is of type ${typeof entity}. Expected "object".`);
+    }
+
+    // Check if the entity has necessary properties
+    if (!entity.dimension || !entity.location) {
+        throw new Error("Error: Entity is missing necessary properties (dimension or location).");
+    }
+
+    // Get players in the same dimension as the entity
+    const playersInDimension = entity.dimension.getPlayers();
+
+    // Initialize variables for tracking the closest player and its distance
+    let closestPlayer = null;
+    let closestDistanceSquared = Infinity;
+
+    // Iterate through players to find the closest one
+    for (const player of playersInDimension) {
+        // Calculate squared distance between entity and player
+        const dx = entity.location.x - player.location.x;
+        const dy = entity.location.y - player.location.y;
+        const dz = entity.location.z - player.location.z;
+        const distanceSquared = dx * dx + dy * dy + dz * dz;
+
+        // Update closest player if this player is closer
+        if (distanceSquared < closestDistanceSquared) {
+            closestPlayer = player;
+            closestDistanceSquared = distanceSquared;
+        }
+    }
+
+    return closestPlayer;
+}
+
+
+
+/**
+ * Finds a player object by a player name.
+ * @name findPlayerByName
+ * @param {string} name - The player to look for
+ * @returns {import("@minecraft/server").Player | undefined} [player] - The player found
+ */
+export function findPlayerByName(name) {
+    const searchName = name.toLowerCase();
+
+    return world.getPlayers().find(player => {
+        const lowercaseName = player.name.toLowerCase();
+        return lowercaseName === searchName;
+    });
+}
+
+
+
+/**
+ * Add Rosh-Op status to a player
  * @name addOp
- * @remarks Add Rosh-Op status to a player
  * @param {import("@minecraft/server").Player} initiator - The player that initiated the request
  * @param {import("@minecraft/server").Player} player - The player that will be given Rosh-Op status
 */
@@ -595,8 +669,8 @@ export function addOp(initiator, player) {
 
 
 /**
+ * Remove Rosh-Op status from a player
  * @name removeOp
- * @remarks Remove Rosh-Op status from a player
  * @param {import("@minecraft/server").Player} initiator - The player that initiated the request
  * @param {import("@minecraft/server").Player} player - The player who will get his Rosh-Op status removed
 */
@@ -612,49 +686,54 @@ export function removeOp(initiator, player) {
 
 
 /**
- * @name findPlayerByName
- * @remarks Finds a player object by a player name
- * @param {string} name - The player to look for
- * @returns {import("@minecraft/server").Player | undefined} [player] - The player found
-*/
-
-export function findPlayerByName(name) {
-	const searchName = name.toLowerCase().replace(/\\|@/g, "");
-
-    let player;
-
-    for(const pl of world.getPlayers()) {
-        const lowercaseName = pl.name.toLowerCase();
-        if(searchName !== lowercaseName && !lowercaseName.includes(searchName)) continue;
-
-		player = pl;
-		break;
-	}
-
-	return player;
+ * Send a message to all Rosh-Opped players
+ * @name tellStaff
+ * @param {string} message - The message to send
+ * @param {Array} tags - What tags should be sent the message
+ */
+export function tellStaff(message, tags = ["op"]) {
+    for(const player of world.getPlayers({tags})) {
+        player.sendMessage(message);
+    }
 }
 
 
 
 /**
- * @name getClosestPlayer
- * @param {object} entity - The entity to check
- * @example getClosestPlayer(entity);
- * @remarks Gets the nearest player to an entity.
- * @returns {object} player - The player that was found
+ * Sends a message to a player.
+ * @name tellPlayer
+ * @param {object} player - The player that should receive the message
+ * @param {string} message - The message the player will be told
+ */
+export function tellPlayer(player, message) {
+    player.runCommandAsync(`tellraw "${player.name}" {"rawtext":[{"text":"${message}"}]}`);
+}
+
+
+
+/**
+ * Gets a players speed.
+ * @name getSpeed
+ * @param {import("@minecraft/server").Player} player - The Player to get the speed from
 */
 
-export function getClosestPlayer(entity) {
+export function getSpeed(player) {
+    const velocity = player.getVelocity();
+    const speed = Number(Math.sqrt(Math.abs(velocity.x**2 + velocity.z**2)));
+    
+    return speed;
+}
 
-    if(typeof entity !== "object") return TypeError(`Error: entity is type of ${typeof entity}. Expected "object"`);
 
-    const nearestPlayer = [...entity.dimension.getPlayers({
-        closest: 1,
-        location: {x: entity.location.x, y: entity.location.y, z: entity.location.z}
-    })][0];
 
-    return nearestPlayer;
+/**
+ * Calculates a players horizontal velocity.
+ * @name hVelocity
+ * @param {import("@minecraft/server").Player} player - The Player to get the velocity from
+*/
 
+export function hVelocity(player) {
+    return (player.getVelocity().x + player.getVelocity().z) / 2
 }
 
 
@@ -674,21 +753,6 @@ export function angleCalc(player, entityHit) {
     angle = Math.abs(angle); 
 
     return angle;
-}
-
-
-
-/**
- * @name getSpeed
- * @param {import("@minecraft/server").Player} player - The Player to get the speed from
- * @remarks Gets a players speed
-*/
-
-export function getSpeed(player) {
-    const velocity = player.getVelocity();
-    const speed = Number(Math.sqrt(Math.abs(velocity.x**2 + velocity.z**2)));
-    
-    return speed;
 }
 
 
@@ -740,11 +804,11 @@ export function inAir(player) {
 
 
 /**
- * @name setSound - Plays a sound for a player
+ * Plays a sound for a player.
+ * @name setSound
  * @param {object} player - The player running the sound function
  * @param {string} id - The id of the played sound
  * @example setSound(rqosh, "mob.goat.death.screamer");
- * @remarks Plays the specific sound to rqosh
 */
 
 export function setSound(player, id) {
@@ -754,27 +818,16 @@ export function setSound(player, id) {
 
 
 /**
- * @name debug - Debugs a certain value
+ * Debugs a certain value.
+ * @name debug
  * @param {object} player - The player running the debug function
  * @param {string} name - What type of information is debugged
- * @param {number} debug - The debug information
- * @param {string} tag - What tag the player needs to have to recieve the debug
- * @example debug(rqosh, "Speed", speed, debug);
- * @remarks Debugs a player's speed if he has the debug tag
+ * @param {string | number | object} debug - The debug information
+ * @param {string} tag - What tag the player needs to have to receive the debug
+ * @example debug(rqosh, "Speed", speed, debug); // Debugs a player's speed if he has the debug tag
+ * @remarks Requires the player to have the specified tag to recieve the debug information
 */
 
 export function debug(player, name, debug, tag) {
     player.runCommandAsync(`tellraw @s[tag=op, tag=${tag}] {"rawtext":[{"text":"§r§uDebug §j> ${name}: §8${debug}"}]}`);
-}
-
-
-
-/**
- * @name hVelocity
- * @param {import("@minecraft/server").Player} player - The Player to get the velocity from
- * @remarks Calculates a players horizontal velocity
-*/
-
-export function hVelocity(player) {
-    return (player.getVelocity().x + player.getVelocity().z) / 2
 }
