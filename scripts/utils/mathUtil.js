@@ -1,22 +1,3 @@
-export function tag_system(player) {
-    player.runCommandAsync(`tag @a[m=!c] remove gmc`);
-    player.runCommandAsync(`tag @a[m=!s] remove gms`);
-    player.runCommandAsync(`tag @a[m=!a] remove gma`);
-    player.runCommandAsync(`tag @a[m=!spectator] remove spec`);
-
-    player.runCommandAsync(`tag @a[hasitem={item=ender_pearl,location=slot.weapon.mainhand}] add ender_pearl`);
-    player.runCommandAsync(`tag @a[hasitem={item=trident,location=slot.weapon.mainhand}] add trident`);
-    player.runCommandAsync(`tag @a[hasitem={item=bow,location=slot.weapon.mainhand}] add bow`);
-    player.runCommandAsync(`tag @a[m=c] add gmc`);
-    player.runCommandAsync(`tag @a[m=s] add gms`);
-    player.runCommandAsync(`tag @a[m=a] add gma`);
-    player.runCommandAsync(`tag @a[m=spectator] add spec`);
-
-    player.runCommandAsync(`scoreboard players add @a[tag=right,scores={right=..1000}] right 1`);
-    player.runCommandAsync(`scoreboard players add @a[tag=!moving,scores={last_move=..1000}] last_move 1`);
-}
-
-
 export function getAbsoluteGcd(current, last) {
     const EXPANDER = 1.6777216E7;
 
