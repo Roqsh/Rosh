@@ -2,24 +2,20 @@ import config from "../../../data/config.js";
 import { flag } from "../../../util";
 
 /**
+ * Checks for attacking invalid entities or while using an item.
  * @name killaura_b
  * @param {player} player - The player to check
  * @param {entity} entity - The attacked entity
- * @remarks Checks for no-swing [Beta]
-*/
+ */
+export function killaura_b(player, entity) {
 
-export function killaura_b(player) {
+	if (config.modules.killauraB.enabled) {
 
-	if(config.modules.killauraB.enabled) {
+		const Id = entity.typeId;
+		const invalid = Id == "minecraft:xp_orb" || Id == "minecraft:xp_bottle" || Id == "minecraft:splash_potion" || Id == "minecraft:snowball"
 
-		const preset = config.preset?.toLowerCase();
-        if(preset === "stable") return;
+        if (invalid) flag(player, "Killaura", "B", "invalid_entity", Id);
 
-		if(Date.now() - player.firstAttack >= config.modules.killauraB.delay) {
-
-			if(!player.hasTag("left")) {
-				flag(player, "Killaura", "B", "noswing", "true");
-			}
-		}
+		if (player.hasTag("right")) flag(player, "Killaura", "B", "using", "item");
 	}
 }

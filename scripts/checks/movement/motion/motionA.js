@@ -7,7 +7,12 @@ export function motion_a(player) {
 
     if (config.modules.motionA.enabled) {
 
-        if (player.getEffect("speed").amplifier > 5 || !player.hasTag("ground")) return;
+        if (!player.hasTag("ground")) return;
+
+        if (player.getEffect("speed")) {
+
+            if (player.getEffect("speed").amplifier > 5) return;
+        }
 
         const speed = getSpeed(player);
         

@@ -2,23 +2,31 @@ import config from "../../../data/config.js";
 import { flag, angleCalc } from "../../../util";
 
 /**
+ * Checks for not looking at the attacked entity.
  * @name hitbox_a
  * @param {player} player - The player to check
  * @param {entity} entity - The attacked entity
- * @remarks Checks for attacking with a too high angle (behind you)
-*/
-
+ * @remarks To reduce false flags when flicking it is recommended 
+ * to set the angle to 55+ , The distance check is rquired to not 
+ * false flag when walking through the entity
+ */
 export function hitbox_a(player, entity) {
 
-    if(config.modules.hitboxA.enabled) {
+    if (config.modules.hitboxA.enabled) {
 
-        if(angleCalc(player, entity) > config.modules.hitboxA.angle) {
+        const angle = angleCalc(player, entity);
 
-            const distance = Math.sqrt(Math.pow(entity.location.x - player.location.x, 2) + Math.pow(entity.location.y - player.location.y, 2) + Math.pow(entity.location.z - player.location.z, 2));
+        if (angle > config.modules.hitboxA.angle) {
 
-            if(distance > 2.25) {
-                flag(player, "Hitbox", "A", "angle", angleCalc(player, entity));
-            }
+            const distance = Math.sqrt(
+                Math.pow(entity.location.x - player.location.x, 2) + 
+                Math.pow(entity.location.y - player.location.y, 2) + 
+                Math.pow(entity.location.z - player.location.z, 2)
+            );
+
+            if (distance > config.modules.hitboxA.distance) {
+                flag(player, "Hitbox", "A", "angle", angle);
+            }   
         }
     }
 }

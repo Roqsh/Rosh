@@ -2,14 +2,14 @@ import config from "../../../data/config.js"
 import { flag, setScore, getScore } from "../../../util";
 
 /**
+ * Checks for not looking at the placed block
  * @name scaffold_c
  * @param {player} player - The player to check
  * @param {block} block - The placed block
- * @remarks Checks for not looking at the placed block
  */
 export function scaffold_c(player, block) {
 
-    if(config.modules.scaffoldC.enabled) {
+    if (config.modules.scaffoldC.enabled) {
 
         const rotation = player.getRotation();
         const velocity = player.getVelocity();
@@ -26,7 +26,7 @@ export function scaffold_c(player, block) {
                                 
             if (!player.hasTag("right") && velocity.y < 0.1) {
 
-                if (rotation.x < 44.035) {
+                if (rotation.x < 44.0035) {
                     flag(player, "Scaffold", "C", "xRot", rotation.x);
                     setScore(player, "c", 1);
                 }
@@ -39,7 +39,10 @@ export function scaffold_c(player, block) {
             setScore(player, "c", 0);
         }
 
-        const distance = Math.sqrt(Math.pow(block.location.x - player.location.x, 2) + Math.pow(block.location.z - player.location.z, 2));
+        const distance = Math.sqrt(
+            Math.pow(block.location.x - player.location.x, 2) + 
+            Math.pow(block.location.z - player.location.z, 2)
+        );
 
         if (Math.abs(rotation.x) > 75 && distance > 2.25) {
             flag(player, "Scaffold", "C", "distance", `${distance},xRot=${rotation.x}`);

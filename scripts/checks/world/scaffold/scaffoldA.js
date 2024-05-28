@@ -90,10 +90,6 @@ export function scaffold_a(player, block) {
 
                 if(diff_2 < 10 && diff_1 < 10 && !is_decrease(player, place_location, last_place_location, old_place_location) && diff_1 > 0.5 && diff_2 > 0.5 && !config.modules.scaffoldA.nofalse && getSpeed(player) > 0.1) {
                     flag(player, "Scaffold", "A", "yaw-diff", (diff_1 + diff_2) / 2, false);
-                }
-
-                if(rotx < 44.5 && pitch_values.mid < 44.5 && distance < 1) {
-                    flag(player, "Scaffold", "A", "pitch", pitch_values.new);
                 } 
 
                 if(getSpeed(player) > 1) {
