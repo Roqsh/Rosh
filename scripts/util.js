@@ -2,6 +2,7 @@ import config from "./data/config.js";
 import data from "./data/data.js";
 import { world } from "@minecraft/server";
 
+
 /**
  * Alerts staff if a player fails a check.
  * @name flag
@@ -67,9 +68,8 @@ export function flag(player, check, checkType, debugName, debug, shouldTP = fals
 
     if (!checkData.enabled) throw Error(`${check}/${checkType} was flagged but the module was disabled.`);
 
-    // Log the flag to the ui log section
-    const message = `§8${player.name} §jwas flagged for ${themecolor}${check}§j/${themecolor}${checkType}§j ${currentVl}x`;  
-    data.recentLogs.push(message);
+    // Log the flag to the ui log section  
+    data.recentLogs.push(`§8${player.name} §jwas flagged for ${themecolor}${check}§j/${themecolor}${checkType}§j ${currentVl}x`);
     
     // Checks for the punishment of the failed check
     const punishment = checkData.punishment?.toLowerCase();
@@ -150,7 +150,7 @@ export function flag(player, check, checkType, debugName, debug, shouldTP = fals
                 if(config.console_debug) console.warn(`Rosh > ${player.name} has been banned for ${check}/${checkType}`);
 
                 player.getTags().forEach(t => {
-                    if(t.includes("§uReason:") || t.includes("§9Length:")) player.removeTag(t);
+                    if(t.includes("Reason:") || t.includes("Length:")) player.removeTag(t);
                 });
 
                 let banLength;
@@ -158,7 +158,7 @@ export function flag(player, check, checkType, debugName, debug, shouldTP = fals
                 player.addTag(`§uReason: Cheat Detection`);
                 try {
                     banLength = parseTime(punishmentLength);
-                    player.addTag(`§9Length: ${Date.now() + banLength}`);
+                    player.addTag(`Length: ${Date.now() + banLength}`);
                 } catch (error) {}
               
                 const message = `§8${player.name} §chas been banned!`;   
@@ -236,7 +236,7 @@ export function banMessage(player) {
         time = `${remainingTime.weeks} weeks, ${remainingTime.days} days, ${remainingTime.hours} hours, ${remainingTime.minutes} minutes, ${remainingTime.seconds} seconds`;
     }
 
-    player.runCommandAsync(`kick "${player.name}" §r${config.themecolor}Rosh §j> §cYou have been banned for §u${reason || "Cheat Detection"}§c!\n\n§r${time ? `§9Length §8- §9${time}` : ""}`);
+    player.runCommandAsync(`kick "${player.name}" §r${config.themecolor}Rosh §j> §cYou have been banned for §u${reason || "Cheating"}§c!\n§r\n §9Length: §8${time}`);
 }
 
 

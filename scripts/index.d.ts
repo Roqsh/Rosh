@@ -43,6 +43,7 @@ declare module "@minecraft/server" {
 		lastSelectedSlot: number,
 		autotoolSwitchDelay: number,
 		lastMessageSent: number,
+		lastLeftClick: number,
 
 		entitiesHit: Array<String>
 

@@ -348,40 +348,40 @@ system.runInterval(() => {
 				const enchantTypeId = enchantData.type.id;
 
 				
-				if(config.modules.badenchantsA.enabled) {
+				if (config.modules.badenchantsA.enabled) {
 
 					const maxLevel = config.modules.badenchantsA.levelExclusions[enchantData.type] ?? enchantData.type.maxLevel;
 
-					if(enchantData.level > maxLevel) {
+					if (enchantData.level > maxLevel) {
 						flag(player, "BadEnchants", "A", "enchantment", `${enchantTypeId},level=${enchantData.level},slot=${i}`);
 						container.setItem(i, undefined);
 					}
 				}
 
 				
-				if(config.modules.badenchantsB.enabled && enchantData.level <= 0) {
+				if (config.modules.badenchantsB.enabled && enchantData.level <= 0) {
 
 					flag(player, "BadEnchants", "B", "enchantment", `${enchantTypeId},level=${enchantData.level},slot=${i}`);
 					container.setItem(i, undefined);
 				}
 
 				
-				if(config.modules.badenchantsC.enabled && item2Enchants) {
+				if (config.modules.badenchantsC.enabled && item2Enchants) {
 
-					if(!item2Enchants.canAddEnchantment({type: enchantData.type, level: 1})) {
+					if (!item2Enchants.canAddEnchantment({type: enchantData.type, level: 1})) {
 						flag(player, "BadEnchants", "C", "item", `${item.typeId},enchantment=${enchantTypeId},level=${enchantData.level},slot=${i}`);
 						container.setItem(i, undefined);
 					}
 
-					if(config.modules.badenchantsC.multi_protection) {
+					if (config.modules.badenchantsC.multi_protection) {
 						item2Enchants.addEnchantment({type: enchantData.type, level: 1});
 					}
 				}
 
 				
-				if(config.modules.badenchantsD.enabled) {
+				if (config.modules.badenchantsD.enabled) {
 
-					if(enchantments.includes(enchantTypeId)) {
+					if (enchantments.includes(enchantTypeId)) {
 						flag(player, "BadEnchants", "D", "enchantments", `${enchantments.join(", ")},slot=${i}`);
 						container.setItem(i, undefined);
 					}
@@ -550,9 +550,13 @@ world.afterEvents.playerBreakBlock.subscribe((blockBreak) => {
 world.afterEvents.playerLeave.subscribe((playerLeave) => {
 
     const player = playerLeave.player
-    //const message = `§8${player.name} §jleft the server`;
 
-    //data.recentLogs.push(message);
+    if ([...world.getPlayers()].length > 1) {
+
+		const message = `§8${player.name} §jleft the server`;
+		data.recentLogs.push(message);
+
+	}
 
 });
 
@@ -569,27 +573,24 @@ world.afterEvents.playerSpawn.subscribe((playerJoin) => {
 	}
 
 	const message = `§8${player.name} §jjoined the server`;
-
 	data.recentLogs.push(message)
 
+	if(config.modules.spammerA.enabled) player.lastMessageSent = 0;
 	if(config.modules.nukerA.enabled) player.blocksBroken = 0;
-	if(config.customcommands.report.enabled) player.reports = [];
 	if(config.modules.autoclickerA.enabled) player.firstAttack = Date.now();
 	if(config.modules.autoclickerA.enabled) player.cps = 0;
+	if(config.modules.killauraB.enabled) player.lastLeftClick = NaN;
 	if(config.modules.killauraC.enabled) player.entitiesHit = [];
+	if(config.customcommands.report.enabled) player.reports = [];
 
-	player.lastGoodPosition = player.location;
+	if(player.isOnGround) player.lastGoodPosition = player.location;
+	player.gamemode = player.getGameMode();
 
 	setScore(player, "tick_counter2", 0);
 
 	exploit_a(player);
 	
 	player.nameTag = player.nameTag.replace(/[^A-Za-z0-9_\-() ]/gm, "").trim();
-
-	if(!data.loaded) {
-		player.runCommandAsync("scoreboard players set scythe:config gametestapi 1");
-		data.loaded = true;
-	}
 
 	if(player.hasTag("notify")) {
 		player.runCommandAsync('execute at @a[tag=reported] run tellraw @a[tag=notify] {"rawtext":[{"text":"§r§uRosh §j> §8"},{"selector":"@s"},{"text":" §chas been reported while your were offline."}]}');
@@ -635,9 +636,9 @@ world.afterEvents.playerSpawn.subscribe((playerJoin) => {
 });
 
 
-world.afterEvents.entitySpawn.subscribe((entityCreate) => {
+world.afterEvents.entitySpawn.subscribe(({entity}) => {
 
-	const entity = entityCreate.entity;
+	if(!entity.isValid()) return;
 
 });
 
@@ -650,14 +651,27 @@ world.afterEvents.entityHitEntity.subscribe(({ hitEntity: entity, damagingEntity
 		player.addTag("attacking");
 	}
 
+	if(config.modules.killauraB.enabled && !player.hasTag("trident") && !player.getEffect("haste")) {
+
+		system.runTimeout(() => {
+
+			const swingDelay = Date.now() - player.lastLeftClick;
+
+			if(swingDelay > config.modules.killauraB.max_swing_delay) {
+				flag(player, "Killaura", "B", "Combat", `swingDelay=${swingDelay}`);
+			}
+
+		}, config.modules.killauraB.wait_ticks);
+	}
+
 	if(config.generalModules.killaura) {
 		killaura_a(player);
-		killaura_b(player);
+		killaura_b(player, entity);
 		killaura_c(player, entity, player.entitiesHit);
 		killaura_d(player, entity);
 	    killaura_e(player, entity);
-	    killaura_f(player, entity);
-		killaura_g(player, entity);
+	    //killaura_f(player, entity);
+		//killaura_g(player, entity);
 	}
 
 	hitbox_a(player, entity);
@@ -727,6 +741,17 @@ world.afterEvents.itemUse.subscribe((itemUse) => {
 });
 
 
+system.afterEvents.scriptEventReceive.subscribe(({id, sourceEntity }) => {
+
+	if(!sourceEntity) return;
+
+	const splitId = id.split(":");
+	switch(splitId[1]) {
+		case "left":
+			sourceEntity.lastLeftClick = Date.now();
+	}
+});
+
 system.beforeEvents.watchdogTerminate.subscribe((watchdogTerminate) => {
 	
 	watchdogTerminate.cancel = true;
@@ -740,12 +765,15 @@ system.beforeEvents.watchdogTerminate.subscribe((watchdogTerminate) => {
 if([...world.getPlayers()].length >= 1) {
 	for(const player of world.getPlayers()) {
 
+		if(config.modules.spammerA.enabled) player.lastMessageSent = 0;
 		if(config.modules.nukerA.enabled) player.blocksBroken = 0;
 		if(config.modules.autoclickerA.enabled) player.firstAttack = Date.now();
 		if(config.modules.autoclickerA.enabled) player.cps = 0;
+		if(config.modules.killauraB.enabled) player.lastLeftClick = NaN;
 		if(config.modules.killauraC.enabled) player.entitiesHit = [];
 		if(config.customcommands.report.enabled) player.reports = [];
 		
-		player.lastGoodPosition = player.location;
+		if(player.isOnGround) player.lastGoodPosition = player.location;
+		player.gamemode = player.getGameMode();
 	}
 };
