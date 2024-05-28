@@ -544,7 +544,8 @@ export default
             "enabled": false,
             "description": "Checks for no-swing",
             "punishment": "kick",
-			"delay": 200,
+			"wait_ticks": 20,
+			"max_swing_delay": 2000,
             "minVlbeforePunishment": 3
         },
 
@@ -588,12 +589,10 @@ export default
 
         "hitboxA": {
             "enabled": true,
-            "description": "Checks for hitting a player off screen",
-            "angleMobile": 90,
-            "anglePC": 10,
-            "angle": 85,
-            "hits": 15,
+            "description": "Checks for not looking at the attacked entity",
             "punishment": "kick",
+            "angle": 55,
+            "distance": 2.25,
             "minVlbeforePunishment": 5
         },
 
@@ -890,20 +889,7 @@ export default
 
     },
     
-    "misc_modules": {
-        "lag_machine": {
-            "antiArmorStandCluster": {
-                "enabled": true,
-                "radius": 10,
-                "max_armor_stand_count": 10
-            },
-            "antiMinecartCluster": {
-                "enabled": true,
-                "radius": 30,
-                "max_count": 10
-            }
-        }    
-    },
+    "misc_modules": {},
     
     // Extra thhings
     "itemLists": {
