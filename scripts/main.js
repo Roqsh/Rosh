@@ -350,7 +350,7 @@ system.runInterval(() => {
 
 				const enchantTypeId = enchantData.type.id;
 
-				
+				// TODO: Only remove unallowed enchantments and not the entire item
 				if (config.modules.badenchantsA.enabled) {
 
 					const maxLevel = config.modules.badenchantsA.levelExclusions[enchantData.type] ?? enchantData.type.maxLevel;
