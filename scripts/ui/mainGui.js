@@ -225,8 +225,8 @@ function settingsMenu(player) {
         .title("Settings Menu")
         .button(`Notifications\n${player.hasTag("notify") ? "§8[§a+§8]" : "§8[§c-§8]"}`)
         .button(`AutoBan\n${player.hasTag("auto") ? "§8[§a+§8]" : "§8[§c-§8]"}`)
-        .button(`Preset\n${player.hasTag("stable") ? "§8Stable" : "§8Beta"}`)
-        .button("Back")
+        .button(`Preset\n${config.preset === "stable" ? "§8Stable" : "§8Beta"}`)
+        .button("Back");
     
     menu.show(player).then((response) => {    
         if(response.selection === 0) {
@@ -234,11 +234,34 @@ function settingsMenu(player) {
         } else if (response.selection === 1) {
             player.runCommandAsync("function settings/autoban");
         } else if (response.selection === 2) {
-            player.runCommandAsync("function ui/preset");
+            presetsMenu(player);
         } else if (response.selection === 3 || response.canceled) {
             mainGui(player);
         }
     });    
+}
+
+function presetsMenu(player) {
+    player.playSound("mob.chicken.plop");
+    const menu = new MinecraftUI.ActionFormData()
+        .title("Choose preset")
+        .button("Stable")
+        .button("Beta")
+        .button("Back");
+
+    menu.show(player).then((response) => {
+        if (response.selection === 0) {
+            config.preset = "stable";
+            world.setDynamicProperty("config", JSON.stringify(config));
+            player.sendMessage(`§r${themecolor}Rosh §j> §aSet the preset to §8Stable§a!`);
+        } else if (response.selection === 1) {
+            config.preset = "beta";
+            world.setDynamicProperty("config", JSON.stringify(config));
+            player.sendMessage(`§r${themecolor}Rosh §j> §aSet the preset to §8Beta§a!`);
+        } else if (response.selection === 2 || response.canceled) {
+            mainGui(player);
+        }
+    });
 }
 
 
@@ -664,8 +687,10 @@ function logsSettingsMenu(player) {
     menu.show(player).then((response) => {
         if(response.canceled) return mainGui(player);
 
+        // Set constants to the output the player gives
         const [compactMode, showErrors, showDebug, showChat, showJoinLeave] = response.formValues;
 
+        // Set config to the output the player gives by setting them as the constants
         config.logSettings.compactMode = compactMode;
         config.logSettings.showErrors = showErrors;
         config.logSettings.showDebug = showDebug;         // Done
