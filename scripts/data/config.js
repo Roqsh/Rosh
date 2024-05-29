@@ -27,6 +27,14 @@ export default
         "aim": true
     },
 
+    "logSettings": {
+        "compactMode": false,
+        "showErrors": false,
+        "showDebug": false,
+        "showChat": false,
+        "showJoinLeave": true
+    },
+
     "debug": true,
     "fancy_kick_calculation": {
         "on": false,
@@ -732,7 +740,7 @@ export default
             "enabled": true,
             "description": "Checks for invalid velocity",
             "punishment": "kick",
-            "minVlbeforePunishment": 6
+            "minVlbeforePunishment": 4
         },
 
         "strafeA": {
@@ -883,7 +891,7 @@ export default
             "enabled": true,
             "description": "Checks for breaking too far away",
             "punishment": "kick",
-            "reach": 6.25,
+            "reach": 6.65,
             "minVlbeforePunishment": 1
         },
 
