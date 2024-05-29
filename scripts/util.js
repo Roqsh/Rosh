@@ -832,26 +832,32 @@ export function angleCalc(player, entity) {
 
 
 /**
- * @name aroundAir - Returns true if a player is surround by air
+ * @name aroundAir - Returns true if a player is surrounded by air
  * @param {object} player - The player that you are checking
  * @example if(aroundAir(player)) flag(player, "Movement", "A")
  * @remarks Flags for Movement/A if a player is surrounded by air
-*/
-
+ */
 export function aroundAir(player) {
-    let isSurroundedByAir = true;
-    for (let x = -1; x <= 1; x++) {
-        for (let y = -1; y <= 1; y++) {
-            for (let z = -1; z <= 1; z++) {
-                const block = player.dimension.getBlock({ x: player.location.x + x, y: player.location.y + y, z: player.location.z + z });
+    const { x, y, z } = player.location;
+    const dimension = player.dimension;
+
+    // Iterate through the surrounding blocks (3x3x3 cube centered on the player)
+    for (let dx = -1; dx <= 1; dx++) {
+        for (let dy = -1; dy <= 1; dy++) {
+            for (let dz = -1; dz <= 1; dz++) {
+                // Skip the player's current location
+                if (dx === 0 && dy === 0 && dz === 0) continue;
+
+                const block = dimension.getBlock({ x: x + dx, y: y + dy, z: z + dz });
                 if (block.typeId !== "minecraft:air") {
-                    isSurroundedByAir = false;
-                    break;
+                    // Found a non-air block, early exit
+                    return false;
                 }
             }
         }
     }
-    return isSurroundedByAir
+    // All surrounding blocks are air
+    return true;
 }
 
 
