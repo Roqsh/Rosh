@@ -98,6 +98,9 @@ world.beforeEvents.chatSend.subscribe((msg) => {
 	}
 
 	commandHandler(msg);
+	if(config.logSettings.showChat) {
+		data.recentLogs.push(`§r<${player.nameTag}> ${msg.message}`);
+	}
 
 	if(!msg.cancel) {
 		if(player.name !== player.nameTag) {
@@ -547,16 +550,13 @@ world.afterEvents.playerBreakBlock.subscribe((blockBreak) => {
 });
 
 
-world.afterEvents.playerLeave.subscribe((playerLeave) => {
+world.beforeEvents.playerLeave.subscribe((playerLeave) => {
 
     const player = playerLeave.player
 
-    if ([...world.getPlayers()].length > 1) {
-
-		const message = `§8${player.name} §jleft the server`;
-		data.recentLogs.push(message);
-
-	}
+	if(config.logSettings.showJoinLeave) {
+		data.recentLogs.push(`§8${player.name} §jleft the server`);
+	}	
 
 });
 
@@ -572,8 +572,9 @@ world.afterEvents.playerSpawn.subscribe((playerJoin) => {
 		player.runCommandAsync(`tellraw @s {"rawtext":[{"text":"§r${themecolor}Rosh §j> §aWelcome §8${player.name}§a!"}]}`);
 	}
 
-	const message = `§8${player.name} §jjoined the server`;
-	data.recentLogs.push(message)
+	if(config.logSettings.showJoinLeave) {
+		data.recentLogs.push(`§8${player.name} §jjoined the server`)
+	}
 
 	if(config.modules.spammerA.enabled) player.lastMessageSent = 0;
 	if(config.modules.nukerA.enabled) player.blocksBroken = 0;

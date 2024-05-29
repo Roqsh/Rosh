@@ -4,6 +4,7 @@ import { world } from "@minecraft/server";
 
 
 /**
+ * FIXME:
  * Alerts staff if a player fails a check.
  * @name flag
  * @param {object} player - The player object
@@ -55,11 +56,19 @@ export function flag(player, check, checkType, debugName, debug, shouldTP = fals
 
     if(config.console_debug) console.warn(`Rosh > ${player.nameTag} failed ${check}/${checkType.toUpperCase()} - {${debugName}=${debug}, V=${currentVl}}`);    
     
-    // Displays the alert to the staff
+    // Displays the flag to the staff
     const themecolor = config.themecolor;
-    player.runCommandAsync(`tellraw @a[tag=notify,tag=debug] {"rawtext":[{"text":"§r${themecolor}Rosh §j> §8${player.nameTag} §jfailed ${themecolor}${check}§j/${themecolor}${checkType.toUpperCase()}§j - {${debugName}=${debug}, V=${currentVl}}"}]}`);
-    player.runCommandAsync(`tellraw @a[tag=notify,tag=!debug] {"rawtext":[{"text":"§r${themecolor}Rosh §j> §8${player.nameTag} §jfailed ${themecolor}${check}§j/${themecolor}${checkType.toUpperCase()}§j - {V=${currentVl}}"}]}`);
+    player.runCommandAsync(`tellraw @a[tag=notify,tag=debug] {"rawtext":[{"text":"§r${themecolor}Rosh §j> §8${player.nameTag} §jfailed ${themecolor}${check}§j/${themecolor}${checkType.toUpperCase()}§j - {${debugName}=${debug}, §8${currentVl}x§j}"}]}`);
+    player.runCommandAsync(`tellraw @a[tag=notify,tag=!debug] {"rawtext":[{"text":"§r${themecolor}Rosh §j> §8${player.nameTag} §jfailed ${themecolor}${check}§j/${themecolor}${checkType.toUpperCase()}§j - {§8${currentVl}x§j}"}]}`);
 	
+    // Log the flag to the ui log section
+    if(config.logSettings.showDebug) {
+        data.recentLogs.push(`§8${player.name} §jfailed ${themecolor}${check}§j/${themecolor}${checkType} §j- {${debugName}=${debug}, §8${currentVl}x§j}`);
+
+    } else {
+        data.recentLogs.push(`§8${player.name} §jfailed ${themecolor}${check}§j/${themecolor}${checkType} §j- {§8${currentVl}x§j}`);
+    }
+
     // Checks for the config data of the check and if the check is disabled (throws error if so, but shouldnt happen as every check checks if its enabled or not before flagging)
     const checkData = config.modules[check.toLowerCase() + checkType.toUpperCase()];
     if (!checkData) throw Error(`No valid check data found for ${check}/${checkType}.`);   
@@ -67,9 +76,6 @@ export function flag(player, check, checkType, debugName, debug, shouldTP = fals
     const kickvl = getScore(player, "kickvl", 0);
 
     if (!checkData.enabled) throw Error(`${check}/${checkType} was flagged but the module was disabled.`);
-
-    // Log the flag to the ui log section  
-    data.recentLogs.push(`§8${player.name} §jwas flagged for ${themecolor}${check}§j/${themecolor}${checkType}§j ${currentVl}x`);
     
     // Checks for the punishment of the failed check
     const punishment = checkData.punishment?.toLowerCase();
@@ -187,6 +193,7 @@ export function flag(player, check, checkType, debugName, debug, shouldTP = fals
 
 
 /**
+ * FIXME:
  * @name banMessage
  * @param {import("@minecraft/server").Player} player - The player object
  * @example banMessage(rqosh);
@@ -242,11 +249,11 @@ export function banMessage(player) {
 
 
 /**
+ * Executes an animation on the player.
  * @name animation
  * @param {import("@minecraft/server").Player} player - The player where the animation gets executed
  * @param {number} type - The type of the animation
  * @example animation(rqosh, 2); // Executes the totem particle animation
- * @remarks Executes an animation on the player
  * @throws {TypeError} If player is not an object or type is not a number
  */
 export async function animation(player, type) {
@@ -255,8 +262,8 @@ export async function animation(player, type) {
         throw new TypeError(`Error: player is type of ${typeof player}. Expected "object".`);
     }
 
-    if (typeof type !== 'number') {
-        throw new TypeError(`Error: type is type of ${typeof type}. Expected "number".`);
+    if (typeof type !== 'number' || !Number.isInteger(type) || type < 1 || type > 5) {
+        throw new TypeError(`Error: type is not a valid animation type. Expected an integer number between 1 and 5.`);
     }
 
     // Define the available animations
@@ -417,7 +424,7 @@ export function getScore(player, objectiveName, defaultValue = 0) {
             throw new Error(`Failed to create or retrieve objective "${objectiveName}".`);
         }
 
-        // Get the score for the player
+        // Get the score for the player or the default value if unable to get score
         const score = objective.getScore(player);
         return typeof score === 'number' ? score : defaultValue;
     } catch (error) {
@@ -486,13 +493,8 @@ export function setScore(player, objectiveName, value) {
  * @remarks Gives back the original input if it is not a string/or length = 0
  */
 export function uppercaseFirstLetter(string) {
-    // Check if the input is a string
-    if (typeof string !== 'string') {
-        return string;
-    }
-
-    // Check if the input is an empty string
-    if (string.length === 0) {
+    // Check if the input is a string or is an empty string
+    if (typeof string !== 'string' || string.length === 0) {
         return string;
     }
 
@@ -513,13 +515,8 @@ export function uppercaseFirstLetter(string) {
  * @remarks Gives back the original input if it is not a string/or length = 0
  */
 export function lowercaseFirstLetter(string) {
-    // Check if the input is a string
-    if (typeof string !== 'string') {
-        return string;
-    }
-
-    // Check if the input is an empty string
-    if (string.length === 0) {
+    // Check if the input is a string or is an empty string
+    if (typeof string !== 'string' || string.length === 0) {
         return string;
     }
 
@@ -569,21 +566,34 @@ export function getBlocksBetween(pos1, pos2) {
  * @param {import("@minecraft/server").Player} player - The player entity.
  * @param {import("@minecraft/server").Entity} entity - The entity to calculate the angle to.
  * @returns {number} The angle between the player and the entity in degrees.
+ * @throws {TypeError} If player or entity is not an object.
  */
 export function angleCalculation(player, entity) {
+    // Validate the input
+    if (typeof player !== 'object' || player === null) {
+        throw new TypeError(`Error: player is type of ${typeof player}. Expected "object".`);
+    }
+
+    if (typeof entity !== 'object' || entity === null) {
+        throw new TypeError(`Error: entity is type of ${typeof entity}. Expected "object".`);
+    }
+
     // Get positions of player and entity
     const playerPosition = { x: player.location.x, y: player.location.y, z: player.location.z };
     const entityPosition = { x: entity.location.x, y: entity.location.y, z: entity.location.z };
 
-    // Calculate angle between player and entity
-    let angleRadians = Math.atan2((entityPosition.z - playerPosition.z), (entityPosition.x - playerPosition.x));
-    let angleDegrees = angleRadians * (180 / Math.PI); // Convert radians to degrees
+    // Calculate the difference in positions
+    const deltaX = entityPosition.x - playerPosition.x;
+    const deltaZ = entityPosition.z - playerPosition.z;
+
+    // Calculate the angle in radians
+    const angleRadians = Math.atan2(deltaZ, deltaX);
+
+    // Convert the angle to degrees
+    let angleDegrees = angleRadians * (180 / Math.PI);
 
     // Adjust angle to be within [0, 360) range
-    angleDegrees %= 360;
-    if (angleDegrees < 0) {
-        angleDegrees += 360;
-    }
+    angleDegrees = (angleDegrees + 360) % 360;
 
     return angleDegrees;
 }
@@ -686,13 +696,27 @@ export function removeOp(initiator, player) {
 
 
 /**
- * Send a message to all Rosh-Opped players
+ * Sends a message to all players with specified tags (Rosh-Op).
  * @name tellStaff
- * @param {string} message - The message to send
- * @param {Array} tags - What tags should be sent the message
+ * @param {string} message - The message to send.
+ * @param {Array<string>} [tags=["op"]] - The tags that players must have to receive the message.
+ * @throws {TypeError} If message is not a string or tags is not an array of strings.
  */
 export function tellStaff(message, tags = ["op"]) {
-    for(const player of world.getPlayers({tags})) {
+    // Validate the input
+    if (typeof message !== "string") {
+        throw new TypeError(`Error: message is type of ${typeof message}. Expected "string".`);
+    }
+
+    if (!Array.isArray(tags) || !tags.every(tag => typeof tag === "string")) {
+        throw new TypeError(`Error: tags is type of ${typeof tags}. Expected "array of strings".`);
+    }
+
+    // Get all players with the specified tags
+    const players = world.getPlayers({ tags });
+
+    // Send the message to each player
+    for (const player of players) {
         player.sendMessage(message);
     }
 }
@@ -700,28 +724,78 @@ export function tellStaff(message, tags = ["op"]) {
 
 
 /**
- * Sends a message to a player.
+ * Sends a message to a specific player.
  * @name tellPlayer
- * @param {object} player - The player that should receive the message
- * @param {string} message - The message the player will be told
+ * @param {import("@minecraft/server").Player} player - The player that should receive the message.
+ * @param {string} message - The message the player will be told.
+ * @throws {TypeError} If player is not an object or message is not a string.
  */
 export function tellPlayer(player, message) {
-    player.runCommandAsync(`tellraw "${player.name}" {"rawtext":[{"text":"${message}"}]}`);
+    // Validate the input
+    if (typeof player !== "object" || player === null) {
+        throw new TypeError(`Error: player is type of ${typeof player}. Expected "object".`);
+    }
+
+    if (typeof message !== "string") {
+        throw new TypeError(`Error: message is type of ${typeof message}. Expected "string".`);
+    }
+
+    // Send the message to the player
+    try {
+        player.runCommandAsync(`tellraw "${player.name}" {"rawtext":[{"text":"${message}"}]}`);
+    } catch (error) {
+        console.error(`Error: Failed to send message to player. ${error.message}`);
+    }
 }
 
 
 
 /**
- * Gets a players speed.
+ * Gets a player's horizontal speed.
  * @name getSpeed
- * @param {import("@minecraft/server").Player} player - The Player to get the speed from
-*/
-
+ * @param {import("@minecraft/server").Player} player - The player to get the speed from.
+ * @returns {number} The horizontal speed of the player.
+ * @throws {TypeError} If player is not an object.
+ */
 export function getSpeed(player) {
+    // Validate the input
+    if (typeof player !== 'object' || player === null) {
+        throw new TypeError(`Error: player is type of ${typeof player}. Expected "object".`);
+    }
+
+    // Get the player's velocity
     const velocity = player.getVelocity();
-    const speed = Number(Math.sqrt(Math.abs(velocity.x**2 + velocity.z**2)));
-    
-    return speed;
+
+    // Calculate the horizontal speed using the Pythagorean theorem
+    const horizontalSpeed = Math.sqrt(velocity.x ** 2 + velocity.z ** 2);
+
+    // Return the horizontal speed
+    return horizontalSpeed;
+}
+
+
+
+/**
+ * Gets a player's total speed.
+ * @name getTotalSpeed
+ * @param {import("@minecraft/server").Player} player - The player to get the speed from.
+ * @returns {number} The total speed of the player.
+ * @throws {TypeError} If player is not an object.
+ */
+export function getTotalSpeed(player) {
+    // Validate the input
+    if (typeof player !== 'object' || player === null) {
+        throw new TypeError(`Error: player is type of ${typeof player}. Expected "object".`);
+    }
+
+    // Get the player's velocity
+    const velocity = player.getVelocity();
+
+    // Calculate the total speed using the Pythagorean theorem in 3D
+    const totalSpeed = Math.sqrt(velocity.x ** 2 + velocity.y ** 2 + velocity.z ** 2);
+
+    // Return the total speed
+    return totalSpeed;
 }
 
 
@@ -743,9 +817,9 @@ export function hVelocity(player) {
  * @param {import("@minecraft/server").Player} player - The Player to calculate the angle on
 */
 
-export function angleCalc(player, entityHit) {
+export function angleCalc(player, entity) {
     const pos1 = { x: player.location.x, y: player.location.y, z: player.location.z };
-    const pos2 = { x: entityHit.location.x, y: entityHit.location.y, z: entityHit.location.z };
+    const pos2 = { x: entity.location.x, y: entity.location.y, z: entity.location.z };
 
     let angle = Math.atan2((pos2.z - pos1.z), (pos2.x - pos1.x)) * 180 / Math.PI - player.getRotation().y - 90;
 
