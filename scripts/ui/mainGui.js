@@ -160,17 +160,18 @@ function banPlayerMenu(player, playerSelected, lastMenu = 0) {
             return;
         }
 
-        const data = String(response.formValues).split(",");
+        // FIXME: Properly show info to banned player and to chat, make ban length work properly, fix false time output
 
+        const data = String(response.formValues).split(",");
         const shouldPermBan = data.pop();
 
         let banLength = data.pop();
-        // @ts-expect-error
+        
         if(banLength != 0) banLength = parseTime(`${banLength}d`);
 
         const reason = data.join(",").replace(/"|\\/g, "") || "No Reason Provided";
 
-        // remove old ban tags
+        // Remove old ban tags
         playerSelected.getTags().forEach(t => {
             t = t.replace(/"/g, "");
             if(t.startsWith("Reason:") || t.startsWith("Length:")) playerSelected.removeTag(t);
@@ -413,7 +414,7 @@ export function playerSettingsMenuSelected(player, playerSelected) {
     
     menu.show(player).then((response) => {
 
-        switch (response.selection) {
+        switch (response.selection) {  // FIXME: Inconsistencies, inverted outputs and general bugs
             case 0: {
 
                 if(!config.customcommands.ecwipe.enabled) {
@@ -627,10 +628,10 @@ function logsMenu(player) {
     
     player.playSound("mob.chicken.plop");
 
-    let logs = data.recentLogs;          
+    let logs = data.recentLogs;
     let text = "";
-
-    for (let i = 0; i < logs.length; i++) {
+        
+    for(let i = 0; i < logs.length; i++) {
         text = text + logs[i] + "\n";
     }
 
@@ -638,13 +639,43 @@ function logsMenu(player) {
 
         .title("Rosh Logs")
         .body(`${text}`)
-        .button(`Log Settings`)
+        .button(`Log Settings`) // TODO: Compact Mode,  Show errors,  Show Date...
         .button("Back");
     
     menu.show(player).then((response) => {
 
-        if(response.selection === 0) mainGui(player);
+        if(response.selection === 0) logsSettingsMenu(player);
+        if(response.selection === 1) mainGui(player);
 
+    });
+}
+
+function logsSettingsMenu(player) {
+    
+    player.playSound("mob.chicken.plop");
+    const menu = new MinecraftUI.ModalFormData()
+        .title("Log Settings")
+        .toggle("Compact Mode", config.logSettings.compactMode)
+        .toggle("Show Errors", config.logSettings.showErrors)
+        .toggle("Show Debug", config.logSettings.showDebug)
+        .toggle("Show Chat", config.logSettings.showChat)
+        .toggle("Show Join/Leave Messages", config.logSettings.showJoinLeave);
+    
+    menu.show(player).then((response) => {
+        if(response.canceled) return mainGui(player);
+
+        const [compactMode, showErrors, showDebug, showChat, showJoinLeave] = response.formValues;
+
+        config.logSettings.compactMode = compactMode;
+        config.logSettings.showErrors = showErrors;
+        config.logSettings.showDebug = showDebug;         // Done
+        config.logSettings.showChat = showChat;           // Done
+        config.logSettings.showJoinLeave = showJoinLeave; // Done
+
+        // Save config
+        world.setDynamicProperty("config", JSON.stringify(config));
+
+        player.sendMessage(`§r${themecolor}Rosh §j> §aUpdated the log settings:\n§8Compact Mode: ${compactMode}\nShow Errors: ${showErrors}\nShow Debug: ${showDebug}\nShow Chat: ${showChat}\nShow Join/Leave Messages: ${showJoinLeave}`);
     });
 }
 
