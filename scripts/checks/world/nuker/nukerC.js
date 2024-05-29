@@ -67,7 +67,7 @@ export function nuker_c(player, block, blockBreak, Minecraft) {
             blockBreak.cancel = true;
 
             Minecraft.system.run(() => {
-                flag(player, "Nuker", "C", "score", `${score},block=${block.typeId}`);
+                flag(player, "Nuker", "C", "block", `covered,type=${block.typeId}`);
             });
         }
     }
