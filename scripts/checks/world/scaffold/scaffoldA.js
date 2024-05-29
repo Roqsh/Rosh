@@ -5,7 +5,7 @@ import { flag, getSpeed } from "../../../util";
  * @name scaffold_a
  * @param {player} player - The player to check
  * @param {block} block - The placed block
- * @remarks Checks for diagonal scaffolds
+ * @remarks Checks for diagonal scaffolds [Beta]
 */
 
 const scaffold_a_map = new Map();
@@ -38,6 +38,9 @@ function calculateDistance(origin, point) {
 }
 
 export function scaffold_a(player, block) {
+
+    const preset = config.preset?.toLowerCase();
+    if(preset === "stable") return;
 
     if (config.modules.scaffoldA.enabled && scaffold_a_map.has(player.name)) {
 
