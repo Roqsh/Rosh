@@ -20,14 +20,16 @@ export function timer_a(player, lastPosition, Value){
             z: player.location.z - lastPosition.z
         };
 
-        const ServerSpeed = Math.hypot(Math.hypot(calcVelocity.x, calcVelocity.z), calcVelocity.y);
-        const ClientSpeed = Math.hypot(Math.hypot(velocity.x, velocity.z), velocity.y);
+        const ServerSpeed = Math.abs(Math.hypot(Math.hypot(calcVelocity.x, calcVelocity.z), calcVelocity.y));
+        const ClientSpeed = Math.abs(Math.hypot(Math.hypot(velocity.x, velocity.z), velocity.y));
 
         const duped = ServerSpeed / ClientSpeed;
 
         if(player.timerHold == null) player.timerHold = [];
 
         player.timerHold.push(duped * 20 / Value);
+
+        if(duped == 0) return;
         
         if(player.timerHold.length >= 20){
 
@@ -36,8 +38,14 @@ export function timer_a(player, lastPosition, Value){
             for(const currentTH of player.timerHold){
                 timer += currentTH;
             }
+
+            let timerValue = timer / player.timerHold.length / Value;
+
+            if(player.timerHold.length >= 24) {
+		       timerValue += 2;
+            }
           
-            debug(player, "Timer", `${timer / player.timerHold.length} V:${Value}`, "timer-debug");
+            debug(player, "Timer", `${timerValue} V:${Value}`, "timer-debug");
                
             if(timerData.has(player.name)) {
 
@@ -49,7 +57,7 @@ export function timer_a(player, lastPosition, Value){
                     timer_lev_low++;
                 }
 
-                if(timerData.get(player.name)?.t > timer_lev && (timer / player.timerHold.length) > timer_lev || timerData.get(player.name)?.t < timer_lev_low && (timer / player.timerHold.length) < timer_lev_low) {
+                if(timerData.get(player.name)?.t > timer_lev && timerValue > timer_lev || timerData.get(player.name)?.t < timer_lev_low && timerValue < timer_lev_low) {
                    
                     if(Math.abs(player.lastPosition.y - player.location.y) > 5) {
                         timerData.set(player.name, {t: 20});
@@ -63,7 +71,7 @@ export function timer_a(player, lastPosition, Value){
             }
 
             if(!player.hasTag("timer_bypass")) {
-                timerData.set(player.name, {t: timer / player.timerHold.length});
+                timerData.set(player.name, {t: timerValue});
             }
             player.timerHold.splice(0);
         }

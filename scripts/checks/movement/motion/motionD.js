@@ -20,7 +20,7 @@ export function motion_d(player) {
 
     if(lastUpdateTime.get(player.name) && !player.hasTag("stairs") && !player.isFlying) {
 
-        let max_value = 42
+        let max_value = 43
 
         const timeElapsed = now - lastUpdateTime.get(player.name)
         const lastPos = lastpos.get(player.name);
@@ -46,7 +46,7 @@ export function motion_d(player) {
         if(playerSpeed !== 0 && (Math.abs(lastPos.x - actualX) + Math.abs(lastPos.z - actualZ)) / 2 < 5 && !player.hasTag("placing") && !player.hasTag("slime") && player.fallDistance < 3 && !player.getEffect("speed")) {
         
             if (distance > max_value * timeElapsed / 1000.0) {
-                flag(player, "Motion", "D", "speed", playerSpeed, true);
+                flag(player, "Motion", "D", "predicted", ` X:${predictedX}, Y:${predictedY}, Z:${predictedZ}, received= X:${actualX}, Y:${actualY}, Z:${actualZ},dist-diff=${distance}`, true);
             }
         }
     }

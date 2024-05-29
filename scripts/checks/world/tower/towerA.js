@@ -1,32 +1,31 @@
 import config from "../../../data/config.js";
 import { flag } from "../../../util";
 
+const lastBlock = new Map();
+
 /**
+ * Checks for not looking at the place block.
  * @name tower_a
  * @param {player} player - The player to check
  * @param {block} block - The placed block
- * @remarks Checks for getting pushed out of the tower due to BDS
-*/
-
-const lastBlock = new Map();
-
+ */
 export function tower_a(player, block) {
 
-    if(config.modules.towerA.enabled) {
+    if (config.modules.towerA.enabled) {
 
-        if(player.isOnGround || !player.isJumping || player.isFlying || player.isInWater || block.typeId === "minecraft:scaffolding") return;
+        if (!player.isJumping || block.typeId === "minecraft:scaffolding") return;
 
         const rotation = player.getRotation();
 
-        if(lastBlock.has(player.name)) {
+        if (lastBlock.has(player.name)) {
 
             const last = lastBlock.get(player.name);
             
             const upwards = block.location.y > last.y;
             const sameXZblock = block.location.x === last.x && block.location.z === last.z;
-            const above = block.location.y > player.location.y;
+            const sameXZplayer = player.location.x === block.location.x && player.location.z === block.location.z;
 
-            if(upwards && sameXZblock && above && rotation.x > 50) {
+            if (upwards && sameXZblock && sameXZplayer && rotation.x < 65) {
                 flag(player, "Tower", "A", "xRot", rotation.x);
             }
         }

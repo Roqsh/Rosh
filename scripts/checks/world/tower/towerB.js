@@ -29,12 +29,13 @@ export function tower_b(player, block) {
             
             const delay = Date.now() - last.time;
             const upwards = block.location.y > last.y;
-            const sameXZ = block.location.x === last.x && block.location.z === last.z;
+            const sameXZblock = block.location.x === last.x && block.location.z === last.z;
+            const sameXZplayer = player.location.x === block.location.x && player.location.z === block.location.z;
             const below = block.location.y < player.location.y
 
             debug(player, "Delay", delay, "delay");
 
-            if(upwards && sameXZ && below && delay < min_delay) {
+            if(upwards && sameXZblock && sameXZplayer && below && delay < min_delay) {
                 flag(player, "Tower", "B", "delay", delay);
             }
         }

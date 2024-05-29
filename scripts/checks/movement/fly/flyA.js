@@ -25,14 +25,6 @@ export function fly_a(player) {
             if (player.fallDistance > 25) return;
 
             if (velocity.y > max_v_up) flag(player, "Fly", "A", "yVelocity", `${velocity.y},maxup=${max_v_up}`);
-            
-            let min_v_down = -6 - player.fallDistance;
-
-            if (player.hasTag("elytra")) min_v_down -= 20;
-            if (player.hasTag("damaged")) min_v_down -= 4;
-            if (player.hasTag("placing")) min_v_down -= 6;
-            if (velocity.y < min_v_down) flag(player, "Fly", "A", "yVelocity", `${velocity.y},mindown=${min_v_down}`);
-
         }  
     }
 }

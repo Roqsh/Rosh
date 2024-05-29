@@ -13,7 +13,7 @@ export function speed_a(player) {
 
     if(config.modules.speedA.enabled) {
 
-        if(player.hasTag("gmc")) return;
+        if(player.hasTag("gmc") || player.hasTag("attacking")) return;
 
         if(player.getEffect("speed")) {
 
