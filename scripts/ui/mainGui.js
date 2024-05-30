@@ -25,34 +25,41 @@ const punishments = {
     ban: 3
 };
 
-const punishmentSettings = ["punishment","punishmentLength","minVlbeforePunishment"];
+const punishmentSettings = [
+    "punishment",
+    "punishmentLength",
+    "minVlbeforePunishment"
+];
 
 
 // ===================== //
 //      Rosh Settings    //
 // ===================== //
 
-export function mainGui(player, error) {
+export function mainGui(player) {
     
     player.playSound("mob.chicken.plop");
+
     const menu = new MinecraftUI.ActionFormData()
+
 		.title("Rosh Settings")
 		.button("Punish Menu")
         .button("Settings")
         .button("Modules")
         .button(`Manage Players\n§8§o${[...world.getPlayers()].length} online`)
         .button("Server Options")
-        .button("Rosh Logs");
-        if(config.debug) menu.button("Debug Menu");
+        .button("Rosh Logs")
+        .button("Debug Menu");
     
     menu.show(player).then((response) => {
-        if(response.selection === 0) banMenu(player);
-        if(response.selection === 1) settingsMenu(player);
-        if(response.selection === 2) modulesMenu(player);
-        if(response.selection === 3) playerSettingsMenu(player);
-        if(response.selection === 4) worldSettingsMenu(player);
-        if(response.selection === 5) logsMenu(player);
-        if(config.debug && response.selection === 6) debugSettingsMenu(player);
+
+        if (response.selection === 0) banMenu(player);
+        if (response.selection === 1) settingsMenu(player);
+        if (response.selection === 2) modulesMenu(player);
+        if (response.selection === 3) playerSettingsMenu(player);
+        if (response.selection === 4) worldSettingsMenu(player);
+        if (response.selection === 5) logsMenu(player);
+        if (response.selection === 6) debugSettingsMenu(player);
         
     });
 }
@@ -62,32 +69,40 @@ export function mainGui(player, error) {
 //       Punish Menu      //
 // ====================== //
 
-function banMenu(player) {
+function punishMenu(player) {
     
     player.playSound("mob.chicken.plop");
+
     const menu = new MinecraftUI.ActionFormData()
+
         .title("Punish Menu")
         .button("Kick Player")
         .button("Ban Player")
         .button("Unban Player")
         .button("Back");
     
-        menu.show(player).then((response) => {
-        if(response.selection === 3 || response.canceled) return mainGui(player);
-        if(response.selection === 2) return unbanPlayerMenu(player);
-        
-        banMenuSelect(player, response.selection);
+    menu.show(player).then((response) => {
+
+        if (response.selection === 0) banMenuSelect(player, response.selection);
+        if (response.selection === 1) banMenuSelect(player, response.selection);
+        if (response.selection === 2) unbanPlayerMenu(player);
+        if (response.selection === 3) mainGui(player);
+
     });
 }
 
 function banMenuSelect(player, selection) {
+
     player.playSound("mob.chicken.plop");
+
     const allPlayers = world.getPlayers();
 
     const menu = new MinecraftUI.ActionFormData()
+
         .title("Punish Menu");
     
     for(const plr of allPlayers) {
+
         let playerName = `${plr.name}`;
         if(plr.id === player.id) playerName += " - You";
         if(plr.hasTag("op")) playerName += "\n§8[§uOp§8]";
@@ -97,30 +112,33 @@ function banMenuSelect(player, selection) {
     menu.button("Back");
 
     menu.show(player).then((response) => {
-        if(response.canceled) return banMenu(player);
 
-        // @ts-expect-error
-        if([...allPlayers].length > response.selection) {
-            // @ts-expect-error
-            if(selection === 0) kickPlayerMenu(player, [...allPlayers][response.selection]);
-            // @ts-expect-error
+        if(response.canceled) return punishMenu(player);
+       
+        if([...allPlayers].length > response.selection) {         
+            if(selection === 0) kickPlayerMenu(player, [...allPlayers][response.selection]);          
             if(selection === 1) banPlayerMenu(player, [...allPlayers][response.selection]);
-        } else banMenu(player);
+        } else punishMenu(player);
     });
 }
 
 function kickPlayerMenu(player, playerSelected, lastMenu = 0) {
-    if(!config.customcommands.kick.enabled) return player.sendMessage(`§r${themecolor}Rosh §j> §cKicking players is disabled in config.js.`);
+
+    if (!config.customcommands.kick.enabled) return player.sendMessage(`§r${themecolor}Rosh §j> §cKicking players is disabled in config.js.`);
+
     player.playSound("mob.chicken.plop");
 
     const menu = new MinecraftUI.ModalFormData()
+
         .title("Kick Player Menu - " + playerSelected.name)
         .textField("Kick Reason:", "§o§7No Reason Provided")
         .toggle("Silent", false);
+
     menu.show(player).then((response) => {
-        if(response.canceled) {
+
+        if (response.canceled) {
             switch (lastMenu) {
-                case 0: 
+                case 0:
                     banMenuSelect(player, lastMenu);
                     break;
                 case 1:
@@ -129,11 +147,11 @@ function kickPlayerMenu(player, playerSelected, lastMenu = 0) {
             return;
         }
 
-        const data = String(response.formValues).split(",");
-        const isSilent = data.pop();
-        const reason = data.join(",").replace(/"|\\/g, "") || "No Reason Provided"; 
+        const data = response.formValues;
+        const reason = data[0] || "No Reason Provided";
+        const isSilent = data[1];
 
-        if(!isSilent) {
+        if (!isSilent) {
             player.runCommandAsync(`tellraw @a[tag=op] {"rawtext":[{"text":"§r${themecolor}Rosh §j> §8${player.nameTag} §chas kicked §8${playerSelected.name} §cfor: §8${reason}"}]}`);
             player.runCommandAsync(`kick "${playerSelected.name}" ${reason}`);
         } else {
@@ -144,16 +162,20 @@ function kickPlayerMenu(player, playerSelected, lastMenu = 0) {
 }
 
 function banPlayerMenu(player, playerSelected, lastMenu = 0) {
+
     if(!config.customcommands.kick.enabled) return player.sendMessage(`§r${themecolor}Rosh §j> §cBanning players is disabled in config.js.`);
 
     player.playSound("mob.chicken.plop");
 
     const menu = new MinecraftUI.ModalFormData()
+
         .title("Ban Player Menu - " + playerSelected.name)
         .textField("Ban Reason:", "§o§7No Reason Provided")
         .slider("Ban Length (in days)", 0, 365, 1)
         .toggle("Permanant Ban", true);
+
     menu.show(player).then((response) => {
+
         if(response.canceled) {
             if(lastMenu === 0) banMenuSelect(player, lastMenu);
             if(lastMenu === 1) playerSettingsMenuSelected(player, playerSelected);
@@ -189,24 +211,25 @@ function banPlayerMenu(player, playerSelected, lastMenu = 0) {
 }
 
 function unbanPlayerMenu(player) {
+
     if(!config.customcommands.unban.enabled) return player.sendMessage(`§r${themecolor}Rosh §j> §cKicking players is disabled in config.js.`);
+
     player.playSound("mob.chicken.plop");
 
     const menu = new MinecraftUI.ModalFormData()
+
         .title("Unban Player Menu")
         .textField("Player to unban:", "§o§7Enter player name")
         .textField("Unban Reason:", "§o§7No Reason Provided");
+
     menu.show(player).then((response) => {
-        if(response.canceled) return banMenu(player);
+        
+        if(response.canceled) return punishMenu(player);
 
         const responseData = String(response.formValues).split(",");
-
-        // @ts-expect-error
         const playerToUnban = responseData.shift().split(" ")[0];
-
         const reason = responseData.join(",").replace(/"|\\/g, "") || "No Reason Provided";
 
-        // @ts-expect-error
         data.unbanQueue.push(playerToUnban.toLowerCase());
 
         player.runCommandAsync(`tellraw @a[tag=op] {"rawtext":[{"text":"§r${themecolor}Rosh §j> §8${player.nameTag} §ahas added §8${playerToUnban} §ainto the unban queue for §8${reason}"}]}`);
@@ -221,7 +244,9 @@ function unbanPlayerMenu(player) {
 function settingsMenu(player) {
     
     player.playSound("mob.chicken.plop");
+
     const menu = new MinecraftUI.ActionFormData()
+
         .title("Settings Menu")
         .button(`Notifications\n${player.hasTag("notify") ? "§8[§a+§8]" : "§8[§c-§8]"}`)
         .button(`AutoBan\n${player.hasTag("auto") ? "§8[§a+§8]" : "§8[§c-§8]"}`)
@@ -229,28 +254,28 @@ function settingsMenu(player) {
         .button("Back");
     
     menu.show(player).then((response) => {    
-        if(response.selection === 0) {
-            player.runCommandAsync("function notify")
-        } else if (response.selection === 1) {
-            player.runCommandAsync("function settings/autoban");
-        } else if (response.selection === 2) {
-            presetsMenu(player);
-        } else if (response.selection === 3 || response.canceled) {
-            mainGui(player);
-        }
+
+        if (response.selection === 0) player.runCommandAsync("function notify");
+        if (response.selection === 1) player.runCommandAsync("function settings/autoban");
+        if (response.selection === 2) presetsMenu(player);
+        if (response.selection === 3) mainGui(player);
+
     });    
 }
 
 function presetsMenu(player) {
+
     player.playSound("mob.chicken.plop");
 
     const currentPresetIndex = config.preset === "stable" ? 0 : 1;
 
     const menu = new MinecraftUI.ModalFormData()
+
        .title("Choose preset")
        .dropdown("Preset", ["Stable", "Beta"], currentPresetIndex);
 
     menu.show(player).then((response) => {
+
         if (response.canceled) {
             return settingsMenu(player);
         }
@@ -279,7 +304,7 @@ function presetsMenu(player) {
         console.error("Error showing presets menu:", error);
     });
 }
-
+ 
 
 // ====================== //
 //     Modules Menu       //
@@ -288,7 +313,9 @@ function presetsMenu(player) {
 function modulesMenu(player) {
 
     player.playSound("mob.chicken.plop");
+
     const settings_menu = new MinecraftUI.ActionFormData()
+
         .title("Modules")
 
     for(const subModule of modules) {
@@ -401,11 +428,15 @@ function editModulesMenu(player, check) {
 function playerSettingsMenu(player) {
     
     player.playSound("mob.chicken.plop");
+
     const allPlayers = world.getPlayers();
+
     const menu = new MinecraftUI.ActionFormData()
+
         .title("Manage Players")
     
     for(const plr of allPlayers) {
+
         let playerName = `${plr.name}`;
         if(plr.id === player.id) playerName += " - You";
         if(plr.hasTag("op")) playerName += "\n§8[§uOp§8]";
@@ -413,6 +444,7 @@ function playerSettingsMenu(player) {
     }
 
     menu.button("Back");
+
     menu.show(player).then((response) => {
         if([...allPlayers].length > response.selection) playerSettingsMenuSelected(player, [...allPlayers][response.selection]);
             else mainGui(player);
@@ -584,9 +616,9 @@ function playerSettingsMenuSelectedTeleport(player, playerSelected) {
     
     menu.show(player).then((response) => {
 
-        if(response.selection === 0) player.runCommandAsync(`tp @s "${playerSelected.name}"`);
-        if(response.selection === 1) player.runCommandAsync(`tp "${playerSelected.name}" @s`);
-        if(response.selection === 2) playerSettingsMenuSelected(player, playerSelected);
+        if (response.selection === 0) player.runCommandAsync(`tp @s "${playerSelected.name}"`);
+        if (response.selection === 1) player.runCommandAsync(`tp "${playerSelected.name}" @s`);
+        if (response.selection === 2) playerSettingsMenuSelected(player, playerSelected);
 
     });
 }
@@ -607,11 +639,11 @@ function playerSettingsMenuSelectedGamemode(player, playerSelected) {
     
     menu.show(player).then((response) => {
 
-        if(response.selection === 0) player.runCommandAsync(`gamemode c "${playerSelected.nameTag}"`);
-        if(response.selection === 1) player.runCommandAsync(`gamemode s "${playerSelected.nameTag}"`);
-        if(response.selection === 2) player.runCommandAsync(`gamemode a "${playerSelected.nameTag}"`);
-        if(response.selection === 3) player.runCommandAsync(`gamemode spectator "${playerSelected.nameTag}"`);
-        if(response.selection === 4) playerSettingsMenuSelected(player, playerSelected);
+        if (response.selection === 0) player.runCommandAsync(`gamemode c "${playerSelected.nameTag}"`);
+        if (response.selection === 1) player.runCommandAsync(`gamemode s "${playerSelected.nameTag}"`);
+        if (response.selection === 2) player.runCommandAsync(`gamemode a "${playerSelected.nameTag}"`);
+        if (response.selection === 3) player.runCommandAsync(`gamemode spectator "${playerSelected.nameTag}"`);
+        if (response.selection === 4) playerSettingsMenuSelected(player, playerSelected);
 
     });
 }
@@ -678,13 +710,13 @@ function logsMenu(player) {
 
         .title("Rosh Logs")
         .body(`${text}`)
-        .button(`Log Settings`) // TODO: Compact Mode,  Show errors,  Show Date...
+        .button(`Log Settings`) // TODO: Compact Mode, Show errors, Show Date ...
         .button("Back");
     
     menu.show(player).then((response) => {
 
-        if(response.selection === 0) logsSettingsMenu(player);
-        if(response.selection === 1) mainGui(player);
+        if (response.selection === 0) logsSettingsMenu(player);
+        if (response.selection === 1) mainGui(player);
 
     });
 }
@@ -692,7 +724,9 @@ function logsMenu(player) {
 function logsSettingsMenu(player) {
     
     player.playSound("mob.chicken.plop");
+
     const menu = new MinecraftUI.ModalFormData()
+
         .title("Log Settings")
         .toggle("Compact Mode", config.logSettings.compactMode)
         .toggle("Show Errors", config.logSettings.showErrors)
@@ -701,6 +735,7 @@ function logsSettingsMenu(player) {
         .toggle("Show Join/Leave Messages", config.logSettings.showJoinLeave);
     
     menu.show(player).then((response) => {
+
         if(response.canceled) return mainGui(player);
 
         // Set constants to the output the player gives
@@ -744,15 +779,15 @@ function debugSettingsMenu(player) {
     
     menu.show(player).then((response) => {
 
-        if(response.selection === 0) player.runCommandAsync("function ui/debug");
-        if(response.selection === 1) player.runCommandAsync("function ui/packets"); 
-        if(response.selection === 2) player.runCommandAsync("function ui/devspeed");
-        if(response.selection === 3) player.runCommandAsync("function ui/devfalldistance");
-        if(response.selection === 4) player.runCommandAsync("function ui/devtps");
-        if(response.selection === 5) player.runCommandAsync("function ui/devrotationx");
-        if(response.selection === 6) player.runCommandAsync("function ui/devrotationy");
-        if(response.selection === 7) player.runCommandAsync("function ui/devcps");
-        if(response.selection === 8) mainGui(player);
+        if (response.selection === 0) player.runCommandAsync("function ui/debug");
+        if (response.selection === 1) player.runCommandAsync("function ui/packets"); 
+        if (response.selection === 2) player.runCommandAsync("function ui/devspeed");
+        if (response.selection === 3) player.runCommandAsync("function ui/devfalldistance");
+        if (response.selection === 4) player.runCommandAsync("function ui/devtps");
+        if (response.selection === 5) player.runCommandAsync("function ui/devrotationx");
+        if (response.selection === 6) player.runCommandAsync("function ui/devrotationy");
+        if (response.selection === 7) player.runCommandAsync("function ui/devcps");
+        if (response.selection === 8) mainGui(player);
 
     });
 }
