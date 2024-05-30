@@ -81,7 +81,7 @@ export function commandHandler(message) {
             if(!commandData) {
 
                 if(config.customcommands.sendInvalidCommandMsg) {
-                    player.sendMessage(`§r${themecolor}Rosh §j> §cDid not find §8${command}`);
+                    player.sendMessage(`§r${themecolor}Rosh §j> §cDid not find the command §8${command}§c!`);
                     message.cancel = true;
                 }
 
