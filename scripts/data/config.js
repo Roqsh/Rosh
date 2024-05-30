@@ -27,7 +27,7 @@ export default
         "aim": true
     },
 
-    "logSettings": {
+    "logSettings": { // Adjust the settings of the log menu (can be done in game)
         "compactMode": false,
         "showErrors": false,
         "showDebug": false,
@@ -270,7 +270,7 @@ export default
         }
     },
 
-    "modules": {     
+    "modules": { // Be cautious if you dont know what you are doing!  
 
         "spammerA": {
             "enabled": false,
@@ -338,7 +338,7 @@ export default
         },
 
         "crasherA": {
-            "enabled": true,
+            "enabled": false,
             "description":"Checks for old horion crasher method, some clients may still use them",
             "punishment": "ban",
             "punishmentLength": "14d",
@@ -377,7 +377,7 @@ export default
         },
 
         "badpacketsF": {
-            "enabled": false,
+            "enabled": true,
             "description": "Checks if a players rotation is flat",
             "punishment": "kick",
             "minVlbeforePunishment": 7
@@ -478,7 +478,7 @@ export default
         },  
 
         "aimA": {
-            "enabled": true,
+            "enabled": false,
             "description":"Simple delta check",
             "punishment": "kick",
             "minVlbeforePunishment": 8
@@ -769,13 +769,13 @@ export default
             "description":"Checks for breaking more than the config amount per tick",
             "maxBlocks": 3,
             "punishment": "kick",
-            "minVlbeforePunishment": 3
+            "minVlbeforePunishment": 0
         },
 
         "nukerB": {
             "enabled": true,
             "description":"Checks for breaking with a too high angle",
-            "angle": 85,
+            "angle": 80,
             "punishment": "kick",
             "minVlbeforePunishment": 1
         },
@@ -785,12 +785,12 @@ export default
             "description":"Checks for breaking a covered block",
             "punishment": "kick",
             "score": -1,
-            "minVlbeforePunishment": 1
+            "minVlbeforePunishment": 0
         },
 
         "nukerD": {
             "enabled": true,
-            "description":"Checks for hive slyle regen",
+            "description":"Checks for not looking at the broken block",
             "punishment": "kick",
             "score": -1,
             "minVlbeforePunishment": 1
@@ -815,7 +815,7 @@ export default
         },
 
         "scaffoldA": {
-            "enabled": true,
+            "enabled": false,
             "description": "Checks for diagonal scaffolds",
             "punishment": "kick",
             "minVlbeforePunishment": 2
