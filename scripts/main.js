@@ -471,19 +471,20 @@ world.afterEvents.playerPlaceBlock.subscribe((placeBlock) => {
 });
 
 
-world.beforeEvents.playerBreakBlock.subscribe((blockBreak) => {
-
-	const player = blockBreak.player
-	const block = blockBreak.block
+world.beforeEvents.playerBreakBlock.subscribe(async (blockBreak) => {
 	
-	if(config.generalModules.nuker) {
-		nuker_c(player, block, blockBreak, Minecraft);
-	}
+    const player = blockBreak.player;
+    const block = blockBreak.block;
 
+    if(config.generalModules.nuker) {      
+        nuker_b(player, block, blockBreak, Minecraft);     
+        nuker_c(player, block, blockBreak, Minecraft);    
+        nuker_d(player, block, blockBreak, Minecraft);      
+    }
 });
 
 
-world.afterEvents.playerBreakBlock.subscribe((blockBreak) => {
+world.afterEvents.playerBreakBlock.subscribe(async (blockBreak) => {
 
 	const player = blockBreak.player
 	const block = blockBreak.block
@@ -499,13 +500,11 @@ world.afterEvents.playerBreakBlock.subscribe((blockBreak) => {
 	if(brokenBlockId === "minecraft:snow" || brokenBlockId === "minecraft:snow_layer") {
 		player.addTag("snow");
 	}
-
-	if(config.generalModules.nuker) {
-		nuker_a(player, block, revertBlock);
-	    nuker_b(player, block, revertBlock);
-		nuker_d(player, block, revertBlock);
-	}
 	
+    if(config.generalModules.nuker) {   
+        await nuker_a(player, revertBlock);      
+    }
+
 	if(config.modules.reachB.enabled) {
 
 		const distance = Math.sqrt(Math.pow(block.location.x - player.location.x, 2) + Math.pow(block.location.z - player.location.z, 2));
