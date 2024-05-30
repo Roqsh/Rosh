@@ -125,7 +125,9 @@ function banMenuSelect(player, selection) {
 
 function kickPlayerMenu(player, playerSelected, lastMenu = 0) {
 
-    if (!config.customcommands.kick.enabled) return player.sendMessage(`§r${themecolor}Rosh §j> §cKicking players is disabled in config.js.`);
+    if (!config.customcommands.kick.enabled) {
+        return player.sendMessage(`§r${themecolor}Rosh §j> §cKicking players is disabled in config.js.`);
+    }
 
     player.playSound("mob.chicken.plop");
 
@@ -163,48 +165,45 @@ function kickPlayerMenu(player, playerSelected, lastMenu = 0) {
     });
 }
 
-function banPlayerMenu(player, playerSelected, lastMenu = 0) { // FIXME: Properly show info to banned player and to chat, make ban length work properly, fix false time output
-
-    if(!config.customcommands.kick.enabled) return player.sendMessage(`§r${themecolor}Rosh §j> §cBanning players is disabled in config.js.`);
+function banPlayerMenu(player, playerSelected, lastMenu = 0) {// FIXME:
+    
+    if (!config.customcommands.ban.enabled) {
+        return player.sendMessage(`§r${themecolor}Rosh §j> §cBanning players is disabled in config.js.`);
+    }
 
     player.playSound("mob.chicken.plop");
 
     const menu = new MinecraftUI.ModalFormData()
-
         .title("Ban Player Menu - " + playerSelected.name)
         .textField("Ban Reason:", "§o§7No Reason Provided")
         .slider("Ban Length (in days)", 0, 365, 1)
-        .toggle("Permanant Ban", true);
+        .toggle("Permanent Ban", true);
 
     menu.show(player).then((response) => {
-
-        if(response.canceled) {
-            if(lastMenu === 0) banMenuSelect(player, lastMenu);
-            if(lastMenu === 1) playerSettingsMenuSelected(player, playerSelected);
+        if (response.canceled) {
+            if (lastMenu === 0) banMenuSelect(player, lastMenu);
+            if (lastMenu === 1) playerSettingsMenuSelected(player, playerSelected);
             return;
         }
 
-        const data = String(response.formValues).split(",");
-        const shouldPermBan = data.pop();
-
-        let banLength = data.pop();
-        
-        if(banLength != 0) banLength = parseTime(`${banLength}d`);
-
-        const reason = data.join(",").replace(/"|\\/g, "") || "No Reason Provided";
+        const data = response.formValues;
+        const reason = data[0] || "No Reason Provided";
+        const banLength = data[1] ? parseTime(`${data[1]}d`) : 0;
+        const shouldPermBan = data[2];
 
         // Remove old ban tags
         playerSelected.getTags().forEach(t => {
             t = t.replace(/"/g, "");
-            if(t.startsWith("Reason:") || t.startsWith("Length:")) playerSelected.removeTag(t);
+            if (t.startsWith("Reason:") || t.startsWith("Length:")) playerSelected.removeTag(t);
         });
-        if(playerSelected.hasTag("op")){ 
-            playerSelected.sendMessage(`§r${themecolor}Rosh §j> §8${playerSelected.name} §cis an Rosh-Op and cannot be banned!`)
+
+        if (playerSelected.hasTag("op")) {
+            playerSelected.sendMessage(`§r${themecolor}Rosh §j> §8${playerSelected.name} §cis an Rosh-Op and cannot be banned!`);
         } else {
-            playerSelected.addTag(`reason:${reason}`);
-            if(banLength && shouldPermBan === "false") playerSelected.addTag(`Length:${Date.now() + banLength}`);
+            playerSelected.addTag(`Reason:${reason}`);
+            if (banLength && !shouldPermBan) playerSelected.addTag(`Length:${Date.now() + banLength}`);
             playerSelected.addTag("isBanned");
-        
+
             player.runCommandAsync(`tellraw @a[tag=op] {"rawtext":[{"text":"§r${themecolor}Rosh §j> §8${player.nameTag} §chas banned §8${playerSelected.nameTag} §cfor: §8${reason}"}]}`);
         }
     });
@@ -212,7 +211,9 @@ function banPlayerMenu(player, playerSelected, lastMenu = 0) { // FIXME: Properl
 
 function unbanPlayerMenu(player) {
 
-    if(!config.customcommands.unban.enabled) return player.sendMessage(`§r${themecolor}Rosh §j> §cKicking players is disabled in config.js.`);
+    if (!config.customcommands.unban.enabled) {
+        return player.sendMessage(`§r${themecolor}Rosh §j> §cUnbanning players is disabled in config.js.`);
+    }
 
     player.playSound("mob.chicken.plop");
 
@@ -230,9 +231,14 @@ function unbanPlayerMenu(player) {
         const playerToUnban = responseData.shift().split(" ")[0];
         const reason = responseData.join(",").replace(/"|\\/g, "") || "No Reason Provided";
 
+        if (!playerToUnban) {
+            player.sendMessage(`§r${themecolor}Rosh §j> §cYou need to provide who to unban.`);
+            return unbanPlayerMenu(player);
+        }
+
         data.unbanQueue.push(playerToUnban.toLowerCase());
 
-        player.runCommandAsync(`tellraw @a[tag=op] {"rawtext":[{"text":"§r${themecolor}Rosh §j> §8${player.nameTag} §ahas added §8${playerToUnban} §ainto the unban queue for §8${reason}"}]}`);
+        player.runCommandAsync(`tellraw @a[tag=op] {"rawtext":[{"text":"§r${themecolor}Rosh §j> §8${player.nameTag} §ahas added §8${playerToUnban} §ainto the unban queue for: §8${reason}§a."}]}`);
     });
 }
 
@@ -455,30 +461,29 @@ function playerSettingsMenu(player) {
     });
 }
 
-export function playerSettingsMenuSelected(player, playerSelected) { // FIXME: Inconsistencies, inverted outputs and general bugs
-    
+export function playerSettingsMenuSelected(player, playerSelected) { // FIXME:
     player.playSound("mob.chicken.plop");
     const menu = new MinecraftUI.ActionFormData()
-        .title("Manage " + player.name)
+        .title("Manage " + playerSelected.name)
         .body(`§8Coordinates: ${Math.floor(playerSelected.location.x)}, ${Math.floor(playerSelected.location.y)}, ${Math.floor(playerSelected.location.z)}\nDimension: ${uppercaseFirstLetter((playerSelected.dimension.id).replace("minecraft:", ""))}\nRosh Op: ${playerSelected.hasTag("op") ? "§8[§a+§8]" : "§8[§c-§8]"}\nMuted: ${playerSelected.hasTag("isMuted") ? "§8[§a+§8]" : "§8[§c-§8]"}\nFrozen: ${playerSelected.hasTag("freeze") ? "§8[§a+§8]" : "§8[§c-§8]"}\nVanished: ${playerSelected.hasTag("vanish") ? "§8[§a+§8]" : "§8[§c-§8]"}\nFly Mode: ${playerSelected.hasTag("flying") ? "§8[§a+§8]" : "§8[§c-§8]"}`)
         .button("Clear EnderChest")
         .button("Kick Player")
         .button("Ban Player");
 
-    if(!playerSelected.hasTag("flying")) menu.button("Enable Fly Mode");
-        else menu.button("Disable Fly Mode");
-    
-    if(!playerSelected.hasTag("freeze")) menu.button("Freeze Player");
-        else menu.button("Unfreeze Player");
-    
-    if(!playerSelected.hasTag("isMuted")) menu.button("Mute Player");
-        else menu.button("Unmute Player");
-    
-    if(!playerSelected.hasTag("op")) menu.button("Set as Rosh Op");
-        else menu.button("Remove Player as Rosh Op");
-    
-    if(!playerSelected.hasTag("vanish")) menu.button("Vanish Player");
-        else menu.button("Unvanish Player");
+    if (!playerSelected.hasTag("flying")) menu.button("Enable Fly Mode");
+    else menu.button("Disable Fly Mode");
+
+    if (!playerSelected.hasTag("freeze")) menu.button("Freeze Player");
+    else menu.button("Unfreeze Player");
+
+    if (!playerSelected.hasTag("isMuted")) menu.button("Mute Player");
+    else menu.button("Unmute Player");
+
+    if (!playerSelected.hasTag("op")) menu.button("Set as Rosh Op");
+    else menu.button("Remove Player as Rosh Op");
+
+    if (!playerSelected.hasTag("vanish")) menu.button("Vanish Player");
+    else menu.button("Unvanish Player");
 
     menu
         .button("Teleport")
@@ -486,66 +491,53 @@ export function playerSettingsMenuSelected(player, playerSelected) { // FIXME: I
         .button("View Logs")
         .button('Killaura Check')
         .button("Back");
-    
+
     menu.show(player).then((response) => {
-
         switch (response.selection) {
-            case 0: {
-
-                if(!config.customcommands.ecwipe.enabled) {
+            case 0:
+                if (!config.customcommands.ecwipe.enabled) {
                     return player.sendMessage(`§r${themecolor}Rosh §j> §cEnderchest wiping is disabled in config.js.`);
                 }
-
                 playerSelected.runCommandAsync("function tools/ecwipe");
                 tellStaff(`§r${themecolor}Rosh §j> §8${player.name} §chas cleared §8${playerSelected}'s §cenderchest.`);
                 break;
-            }           
             case 1:
                 kickPlayerMenu(player, playerSelected, 1);
                 break;
             case 2:
-
                 banPlayerMenu(player, playerSelected, 1);
                 break;
-
             case 3:
-
-                if(!config.customcommands.fly.enabled) {
+                if (!config.customcommands.fly.enabled) {
                     return player.sendMessage(`§r${themecolor}Rosh §j> §cToggling Fly is disabled in config.js.`);
                 }
-                if(playerSelected.hasTag("flying")) {
+                if (playerSelected.hasTag("flying")) {
                     playerSelected.runCommandAsync("function tools/fly");
                     player.runCommandAsync(`tellraw @a[tag=op] {"rawtext":[{"text":"§r${themecolor}Rosh §j> §8${player.name} §chas disabled fly mode for §8${playerSelected.name}§c."}]}`);
-                    playerSettingsMenuSelected(player, playerSelected);
                 } else {
                     playerSelected.runCommandAsync("function tools/fly");
                     player.runCommandAsync(`tellraw @a[tag=op] {"rawtext":[{"text":"§r${themecolor}Rosh §j> §8${player.name} §ahas enabled fly mode for §8${playerSelected.name}§a."}]}`);
-                    playerSettingsMenuSelected(player, playerSelected);
                 }
+                playerSettingsMenuSelected(player, playerSelected);
                 break;
-
             case 4:
-
-                if(!config.customcommands.freeze.enabled) {
+                if (!config.customcommands.freeze.enabled) {
                     return player.sendMessage(`§r${themecolor}Rosh §j> §cToggling Freeze is disabled in config.js.`);
-                }              
-                if(playerSelected.hasTag("freeze")) {
+                }
+                if (playerSelected.hasTag("freeze")) {
+                    player.runCommandAsync(`tellraw @a[tag=op] {"rawtext":[{"text":"§r${themecolor}Rosh §j> §8${player.name} §chas unfrozen §8${playerSelected.name}§c."}]}`);
+                    playerSelected.runCommandAsync("inputpermission set @s[tag=freeze] movement enabled");
+                } else {
                     player.runCommandAsync(`tellraw @a[tag=op] {"rawtext":[{"text":"§r${themecolor}Rosh §j> §8${player.name} §chas frozen §8${playerSelected.name}§c."}]}`);
                     playerSelected.runCommandAsync("inputpermission set @s[tag=freeze] movement disabled");
-                    playerSettingsMenuSelected(player, playerSelected);
-                } else {
-                    player.runCommandAsync(`tellraw @a[tag=op] {"rawtext":[{"text":"§r${themecolor}Rosh §j> §8${player.name} §ahas unfrozen §8${playerSelected.name}§a."}]}`);
-                    playerSelected.runCommandAsync("inputpermission set @s[tag=nofreeze] movement enabled");
-                    playerSettingsMenuSelected(player, playerSelected);
                 }
+                playerSettingsMenuSelected(player, playerSelected);
                 break;
-
             case 5:
-
-                if(!config.customcommands.mute.enabled) {
+                if (!config.customcommands.mute.enabled) {
                     return player.sendMessage(`§r${themecolor}Rosh §j> §cMuting players is disabled in config.js.`);
                 }
-                if(playerSelected.hasTag("isMuted")) {
+                if (playerSelected.hasTag("isMuted")) {
                     playerSelected.removeTag("isMuted");
                     playerSelected.runCommandAsync(`tellraw @s {"rawtext":[{"text":"§r${themecolor}Rosh §j> §aYou are no longer muted."}]}`);
                 } else {
@@ -553,37 +545,31 @@ export function playerSettingsMenuSelected(player, playerSelected) { // FIXME: I
                     playerSelected.runCommandAsync(`tellraw @s {"rawtext":[{"text":"§r${themecolor}Rosh §j> §cYou are now muted."}]}`);
                 }
                 break;
-
             case 6:
-
-                if(!config.customcommands.op.enabled) {
+                if (!config.customcommands.op.enabled) {
                     return player.sendMessage(`§r${themecolor}Rosh §j> §cRosh-Opping players is disabled in config.js.`);
                 }
-                if(playerSelected.hasTag("op")) {
+                if (playerSelected.hasTag("op")) {
                     removeOp(playerSelected);
                     player.runCommandAsync(`tellraw @a[tag=op] {"rawtext":[{"text":"§r${themecolor}Rosh §j> §8${player.name} §chas removed Rosh-Op status from §8${playerSelected.name}§c."}]}`);
-                    if(player.hasTag("op")) playerSettingsMenuSelected(player, playerSelected);
                 } else {
-                    player.runCommandAsync(`tellraw @a[tag=op] {"rawtext":[{"text":"§r${themecolor}Rosh §j> §8${player.name} §ahas given §8${playerSelected.name} §aRosh-Op status."}]}`);
                     addOp(playerSelected);
-                    playerSettingsMenuSelected(player, playerSelected);
+                    player.runCommandAsync(`tellraw @a[tag=op] {"rawtext":[{"text":"§r${themecolor}Rosh §j> §8${player.name} §ahas given §8${playerSelected.name} §aRosh-Op status."}]}`);
                 }
+                playerSettingsMenuSelected(player, playerSelected);
                 break;
-                
             case 7:
-                if(!config.customcommands.vanish.enabled) {
+                if (!config.customcommands.vanish.enabled) {
                     return player.sendMessage(`§r${themecolor}Rosh §j> §cToggling Vanish is disabled in config.js.`);
                 }
-
-                if(playerSelected.hasTag("vanished")) {
-                    playerSelected.runCommandAsync("function tools/vanish");
-                    player.runCommandAsync(`tellraw @a[tag=op] {"rawtext":[{"text":"§r${themecolor}Rosh §j> §8${player.name} §ahas put §8${playerSelected.name} §ainto vanish."}]}`);
-                    playerSettingsMenuSelected(player, playerSelected);
-                } else {
+                if (playerSelected.hasTag("vanished")) {
                     playerSelected.runCommandAsync("function tools/vanish");
                     player.runCommandAsync(`tellraw @a[tag=op] {"rawtext":[{"text":"§r${themecolor}Rosh §j> §8${player.name} §chas unvanished §8${playerSelected.name}§c."}]}`);
-                    playerSettingsMenuSelected(player, playerSelected);
+                } else {
+                    playerSelected.runCommandAsync("function tools/vanish");
+                    player.runCommandAsync(`tellraw @a[tag=op] {"rawtext":[{"text":"§r${themecolor}Rosh §j> §8${player.name} §ahas put §8${playerSelected.name} §ainto vanish."}]}`);
                 }
+                playerSettingsMenuSelected(player, playerSelected);
                 break;
             case 8:
                 playerSettingsMenuSelectedTeleport(player, playerSelected);
@@ -596,13 +582,13 @@ export function playerSettingsMenuSelected(player, playerSelected) { // FIXME: I
                 break;
             case 11:
                 playerSelected.runCommandAsync("summon rosh:killaura ~ ~4 ~3");
-                break;    
+                break;
             case 12:
                 playerSettingsMenu(player);
                 break;
         }
 
-        if(response.canceled) playerSettingsMenu(player);
+        if (response.canceled) playerSettingsMenu(player);
     });
 }
 
