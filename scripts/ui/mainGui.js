@@ -130,16 +130,16 @@ function kickPlayerMenu(player, playerSelected, lastMenu = 0) {
         }
 
         const data = String(response.formValues).split(",");
-
         const isSilent = data.pop();
-        const reason = data.join(",").replace(/"|\\/g, "") || "No Reason Provided";
+        const reason = data.join(",").replace(/"|\\/g, "") || "No Reason Provided"; 
 
-        if(!isSilent) player.runCommandAsync(`kick "${playerSelected.name}" ${reason}`);
-        playerSelected.triggerEvent("scythe:kick");
-
-        if(isSilent) player.runCommandAsync(`tellraw @a[tag=op] {"rawtext":[{"text":"§r${themecolor}Rosh §j> §8${player.nameTag} §chas kicked §8${playerSelected.name} §c(Silent) for: §8${reason}"}]}`);
-        if(!isSilent) player.runCommandAsync(`tellraw @a[tag=op] {"rawtext":[{"text":"§r${themecolor}Rosh §j> §8${player.nameTag} §chas kicked §8${playerSelected.name} §cfor: §8${reason}"}]}`);
-
+        if(!isSilent) {
+            player.runCommandAsync(`tellraw @a[tag=op] {"rawtext":[{"text":"§r${themecolor}Rosh §j> §8${player.nameTag} §chas kicked §8${playerSelected.name} §cfor: §8${reason}"}]}`);
+            player.runCommandAsync(`kick "${playerSelected.name}" ${reason}`);
+        } else {
+            player.runCommandAsync(`tellraw @a[tag=op] {"rawtext":[{"text":"§r${themecolor}Rosh §j> §8${player.nameTag} §chas kicked §8${playerSelected.name} §c(Silent) for: §8${reason}"}]}`);
+            playerSelected.triggerEvent("scythe:kick");
+        }
     });
 }
 
@@ -243,24 +243,40 @@ function settingsMenu(player) {
 
 function presetsMenu(player) {
     player.playSound("mob.chicken.plop");
-    const menu = new MinecraftUI.ActionFormData()
-        .title("Choose preset")
-        .button("Stable")
-        .button("Beta")
-        .button("Back");
+
+    const currentPresetIndex = config.preset === "stable" ? 0 : 1;
+
+    const menu = new MinecraftUI.ModalFormData()
+       .title("Choose preset")
+       .dropdown("Preset", ["Stable", "Beta"], currentPresetIndex);
 
     menu.show(player).then((response) => {
-        if (response.selection === 0) {
-            config.preset = "stable";
-            world.setDynamicProperty("config", JSON.stringify(config));
-            player.sendMessage(`§r${themecolor}Rosh §j> §aSet the preset to §8Stable§a!`);
-        } else if (response.selection === 1) {
-            config.preset = "beta";
-            world.setDynamicProperty("config", JSON.stringify(config));
-            player.sendMessage(`§r${themecolor}Rosh §j> §aSet the preset to §8Beta§a!`);
-        } else if (response.selection === 2 || response.canceled) {
-            mainGui(player);
+        if (response.canceled) {
+            return settingsMenu(player);
         }
+
+        const selectedPreset = response.formValues[0];
+        if ((selectedPreset === 0 && config.preset === "stable") || (selectedPreset === 1 && config.preset === "beta")) {
+            player.sendMessage(`§r${themecolor}Rosh §j> §aPreset is already set to §8${selectedPreset === 0 ? "Stable" : "Beta"}§a!`);
+            return;
+        }
+
+        if (selectedPreset === 0) {
+            config.preset = "stable";
+        } else if (selectedPreset === 1) {
+            config.preset = "beta";
+        }
+
+        try {
+            world.setDynamicProperty("config", JSON.stringify(config));
+            player.sendMessage(`§r${themecolor}Rosh §j> §aSet the preset to §8${selectedPreset === 0 ? "Stable" : "Beta"}§a.`);
+        } catch (error) {
+            player.sendMessage(`§r${themecolor}Rosh §j> §cFailed to set the preset. Please try again.`);
+            console.error("Failed to set dynamic property 'config':", error);
+        }
+    }).catch((error) => {
+        player.sendMessage(`§r${themecolor}Rosh §j> §cAn error occurred. Please try again.`);
+        console.error("Error showing presets menu:", error);
     });
 }
 
