@@ -11,6 +11,7 @@ const modules = [];
 const themecolor = config.themecolor;
 
 for(const fullModule of moduleList) {
+    
     if(fullModule.startsWith("example")) continue;
     const module = fullModule[fullModule.length - 1].toUpperCase() === fullModule[fullModule.length - 1] ? fullModule.slice(0, fullModule.length - 1) : fullModule;
 
@@ -53,7 +54,7 @@ export function mainGui(player) {
     
     menu.show(player).then((response) => {
 
-        if (response.selection === 0) banMenu(player);
+        if (response.selection === 0) punishMenu(player);
         if (response.selection === 1) settingsMenu(player);
         if (response.selection === 2) modulesMenu(player);
         if (response.selection === 3) playerSettingsMenu(player);
@@ -148,20 +149,21 @@ function kickPlayerMenu(player, playerSelected, lastMenu = 0) {
         }
 
         const data = response.formValues;
-        const reason = data[0] || "No Reason Provided";
+        const reasonUI = data[0] || "No Reason Provided";
         const isSilent = data[1];
+        const reason = `§r${themecolor}Rosh §j> §cYou have been kicked for: §8${reasonUI} §c!`;
 
         if (!isSilent) {
-            player.runCommandAsync(`tellraw @a[tag=op] {"rawtext":[{"text":"§r${themecolor}Rosh §j> §8${player.nameTag} §chas kicked §8${playerSelected.name} §cfor: §8${reason}"}]}`);
+            player.runCommandAsync(`tellraw @a[tag=op] {"rawtext":[{"text":"§r${themecolor}Rosh §j> §8${player.nameTag} §chas kicked §8${playerSelected.name} §cfor: §8${reasonUI}"}]}`);
             player.runCommandAsync(`kick "${playerSelected.name}" ${reason}`);
         } else {
-            player.runCommandAsync(`tellraw @a[tag=op] {"rawtext":[{"text":"§r${themecolor}Rosh §j> §8${player.nameTag} §chas kicked §8${playerSelected.name} §c(Silent) for: §8${reason}"}]}`);
+            player.runCommandAsync(`tellraw @a[tag=op] {"rawtext":[{"text":"§r${themecolor}Rosh §j> §8${player.nameTag} §chas kicked §8${playerSelected.name} §c(Silent) for: §8${reasonUI}"}]}`);
             playerSelected.triggerEvent("scythe:kick");
         }
     });
 }
 
-function banPlayerMenu(player, playerSelected, lastMenu = 0) {
+function banPlayerMenu(player, playerSelected, lastMenu = 0) { // FIXME: Properly show info to banned player and to chat, make ban length work properly, fix false time output
 
     if(!config.customcommands.kick.enabled) return player.sendMessage(`§r${themecolor}Rosh §j> §cBanning players is disabled in config.js.`);
 
@@ -181,8 +183,6 @@ function banPlayerMenu(player, playerSelected, lastMenu = 0) {
             if(lastMenu === 1) playerSettingsMenuSelected(player, playerSelected);
             return;
         }
-
-        // FIXME: Properly show info to banned player and to chat, make ban length work properly, fix false time output
 
         const data = String(response.formValues).split(",");
         const shouldPermBan = data.pop();
@@ -334,8 +334,11 @@ function modulesMenu(player) {
 function modulesCheckSelectMenu(player, selection) {
 
     player.playSound("mob.chicken.plop");
+
     const subCheck = modules[selection];
+
     const menu = new MinecraftUI.ActionFormData()
+
         .title("Configure Modules")
 
     const checks = [];
@@ -363,11 +366,12 @@ function modulesCheckSelectMenu(player, selection) {
 function editModulesMenu(player, check) {
 
     player.playSound("mob.chicken.plop");
-    const checkData = config.modules[check] ?? config.misc_modules[check];
 
+    const checkData = config.modules[check] ?? config.misc_modules[check];
     let optionsMap = [];
 
     const menu = new MinecraftUI.ModalFormData()
+
         .title(`Editing ${uppercaseFirstLetter(check)}`);
 
     for(const key of Object.keys(checkData)) {
@@ -394,6 +398,7 @@ function editModulesMenu(player, check) {
 
     // Check if the module supports punishments
     if(checkData.punishment) {
+
         menu.dropdown("Punishment", Object.keys(punishments), punishments[checkData.punishment]);
         menu.textField("Length", "Ex: 1d, 30s, ...", checkData["punishmentLength"]);
         menu.slider("Minimum Violations", 0, 20, 1, checkData["minVlbeforePunishment"]);
@@ -402,21 +407,20 @@ function editModulesMenu(player, check) {
     }
 
     menu.show(player).then((response) => {
+
         if(response.canceled) return;
 
         const formValues = response.formValues ?? [];
 
         for(const optionid in optionsMap) {
-            const name = optionsMap[optionid];
-
-            // @ts-expect-error
+            const name = optionsMap[optionid];         
             checkData[name] = name === "punishment" ? Object.keys(punishments)[formValues[optionid]] : formValues[optionid];
         }
-
-        // Save config
+      
         world.setDynamicProperty("config", JSON.stringify(config));
 
         player.sendMessage(`§r${themecolor}Rosh §j> §aUpdated the settings for §8${check}§a:\n§8${JSON.stringify(checkData, null, 2)}`);
+
     });
 }
 
@@ -451,7 +455,7 @@ function playerSettingsMenu(player) {
     });
 }
 
-export function playerSettingsMenuSelected(player, playerSelected) {
+export function playerSettingsMenuSelected(player, playerSelected) { // FIXME: Inconsistencies, inverted outputs and general bugs
     
     player.playSound("mob.chicken.plop");
     const menu = new MinecraftUI.ActionFormData()
@@ -485,7 +489,7 @@ export function playerSettingsMenuSelected(player, playerSelected) {
     
     menu.show(player).then((response) => {
 
-        switch (response.selection) {  // FIXME: Inconsistencies, inverted outputs and general bugs
+        switch (response.selection) {
             case 0: {
 
                 if(!config.customcommands.ecwipe.enabled) {
