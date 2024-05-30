@@ -55,7 +55,7 @@ export default
     
     "customcommands": {
         "prefix": "!",
-        "sendInvalidCommandMsg": false,
+        "sendInvalidCommandMsg": true,
         "ban": {
             "enabled": true,
             "requiredTags": ["op"],
