@@ -2,7 +2,6 @@ import config from "./data/config.js";
 import data from "./data/data.js";
 import { world } from "@minecraft/server";
 
-
 /**
  * FIXME:
  * Alerts staff if a player fails a check.
@@ -243,7 +242,7 @@ export function banMessage(player) {
         time = `${remainingTime.weeks} weeks, ${remainingTime.days} days, ${remainingTime.hours} hours, ${remainingTime.minutes} minutes, ${remainingTime.seconds} seconds`;
     }
 
-    player.runCommandAsync(`kick "${player.name}" §r${config.themecolor}Rosh §j> §cYou have been banned for §u${reason || "Cheating"}§c!\n§r\n §9Length: §8${time}`);
+    player.runCommandAsync(`kick "${player.name}" §r${config.themecolor}Rosh §j> §cYou have been banned for §8${reason || "No Reason Provided"} §c!\n§r\n §9Length: §8${time}`);
 }
 
 
@@ -899,6 +898,7 @@ export function inAir(player) {
  *   .catch(error => console.error("Failed to play sound:", error));
  */
 export async function setSound(player, id) {
+    // Validate the input
     if (typeof player !== 'object' || typeof player.runCommandAsync !== 'function') {
         throw new TypeError("Invalid player object. It must have a runCommandAsync method.");
     }
@@ -907,6 +907,7 @@ export async function setSound(player, id) {
         throw new TypeError("Invalid id. It must be a non-empty string.");
     }
 
+    // Play the requested sound
     try {
         await player.runCommandAsync(`playsound ${id} @s`);
     } catch (error) {
