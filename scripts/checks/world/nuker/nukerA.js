@@ -2,20 +2,29 @@ import config from "../../../data/config.js";
 import { flag } from "../../../util.js";
 
 /**
+ * Checks for breaking more than the config amount per tick. (default set to 3)
  * @name nuker_a
  * @param {player} player - The player to check
- * @remarks Checks for breaking more than the config amount per tick (default set to 3)
-*/
-
-export function nuker_a(player, block, revertBlock) {
+ * @remarks Some Nuker cheats can lead to an error: command queue is full when they are extremely fast
+ * (Therefore the check stops when it exceeds 8 blocks to reduce performance losses)
+ */
+export async function nuker_a(player, revertBlock) {
 
     if(config.modules.nukerA.enabled) {
 
-		player.blocksBroken++;
+		if(player.hasTag("gmc")) return;
 
-		if(player.blocksBroken > config.modules.nukerA.maxBlocks) {
-			flag(player, "Nuker", "A", "amount", player.blocksBroken);
-			revertBlock = true;	
+	    player.blocksBroken++;
+
+		const blocks = player.blocksBroken;
+
+		if(blocks > 6) return;
+
+		if(blocks > config.modules.nukerA.maxBlocks) {
+
+			revertBlock = true;
+		        
+            flag(player, "Nuker", "A", "blocks", blocks);
 		}
 	}
 }
