@@ -106,7 +106,7 @@ function banMenuSelect(player, selection) {
 
         let playerName = `${plr.name}`;
         if(plr.id === player.id) playerName += " - You";
-        if(plr.hasTag("op")) playerName += "\n§8[§uOp§8]";
+        if(plr.hasTag("op")) playerName += `\n§8[${themecolor}Op§8]`;
         menu.button(playerName);
     }
 
@@ -257,6 +257,7 @@ function settingsMenu(player) {
         .button(`Notifications\n${player.hasTag("notify") ? "§8[§a+§8]" : "§8[§c-§8]"}`)
         .button(`AutoBan\n${player.hasTag("auto") ? "§8[§a+§8]" : "§8[§c-§8]"}`)
         .button(`Preset\n${config.preset === "stable" ? "§8Stable" : "§8Beta"}`)
+        .button(`Themecolor\n${config.themecolor}Color`)
         .button("Back");
     
     menu.show(player).then((response) => {    
@@ -264,7 +265,8 @@ function settingsMenu(player) {
         if (response.selection === 0) player.runCommandAsync("function notify");
         if (response.selection === 1) player.runCommandAsync("function settings/autoban");
         if (response.selection === 2) presetsMenu(player);
-        if (response.selection === 3) mainGui(player);
+        if (response.selection === 3) themecolorMenu(player);
+        if (response.selection === 4) mainGui(player);
 
     });    
 }
@@ -310,7 +312,41 @@ function presetsMenu(player) {
         console.error("Error showing presets menu:", error);
     });
 }
- 
+
+function themecolorMenu(player) {
+
+    player.playSound("mob.chicken.plop");
+
+    const colors = ["§1Color", "§2Color", "§3Color", "§4Color", "§5Color", "§6Color", "§7Color", "§8Color", "§9Color", "§0Color", "§qColor", "§eColor",
+     "§rColor", "§tColor", "§uColor", "§iColor", "§pColor", "§aColor", "§sColor", "§dColor", "§gColor", "§hColor", "§jColor", "§cColor", "§bColor", "§nColor", "§mColor"
+    ];
+
+    const currentColorIndex = colors.indexOf(config.themecolor + "Color");
+
+    const menu = new MinecraftUI.ModalFormData()
+        .title("Choose Themecolor")
+        .dropdown("Color", colors, currentColorIndex);
+
+    menu.show(player).then((response) => {
+        if (response.canceled) {
+            return settingsMenu(player);
+        }
+
+        const selectedColor = colors[response.formValues[0]];
+
+        if (selectedColor.substring(0, 2) === config.themecolor) {
+            player.sendMessage(`§r${selectedColor.substring(0, 2)}Rosh §j> §cThemecolor is already set to ${selectedColor.substring(0, 2)}Color §c!`);
+            return;
+        }
+
+        config.themecolor = selectedColor.substring(0, 2);
+        world.setDynamicProperty("config", JSON.stringify(config)); // Extracting the color code without "Color"
+        player.sendMessage(`§r${selectedColor.substring(0, 2)}Rosh §j> §aThemecolor set to ${config.themecolor}Color§a!`);
+
+    }).catch((error) => {
+        console.error("Error showing themecolor menu:", error);
+    });
+}
 
 // ====================== //
 //     Modules Menu       //
@@ -449,7 +485,7 @@ function playerSettingsMenu(player) {
 
         let playerName = `${plr.name}`;
         if(plr.id === player.id) playerName += " - You";
-        if(plr.hasTag("op")) playerName += "\n§8[§uOp§8]";
+        if(plr.hasTag("op")) playerName += `\n§8[${themecolor}Op§8]`;
         menu.button(playerName);
     }
 
