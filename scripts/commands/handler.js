@@ -2,6 +2,7 @@ import { world, system } from "@minecraft/server";
 import config from "../data/config.js";
 
 import { kick } from "./moderation/kick.js";
+import { spectate } from "./moderation/spectate.js";
 import { help } from "./other/help.js";
 import { notify } from "./moderation/notify.js";
 import { op } from "./moderation/op.js";
@@ -159,6 +160,7 @@ function runCommand(msg, commandName, args) {
                 else if(commandName === "about") about(message, args);
                 else if(commandName === "logs") logs(message);
                 else if(commandName === "module") module(message, args);
+                else if(commandName === "spectate") spectate(message, args);
                 else throw Error(`Command ${commandName} was found in config.js but no handler for it was found`);
         } catch (error) {
             console.error(`${new Date().toISOString()} | ${error} ${error.stack}`);
