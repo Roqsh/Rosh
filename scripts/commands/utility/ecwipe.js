@@ -1,4 +1,5 @@
 import * as Minecraft from "@minecraft/server";
+import config from "../../data/config.js";
 
 const world = Minecraft.world;
 
@@ -13,8 +14,9 @@ export function ecwipe(message, args) {
     if(typeof args !== "object") throw TypeError(`args is type of ${typeof args}. Expected "object".`);
 
     const player = message.sender;
+    const themecolor = config.themecolor;
     
-    if(!args.length) return player.sendMessage("§r§uRosh §j> §cYou need to provide who's ender chest inventory to wipe.");
+    if(!args.length) return player.sendMessage(`§r${themecolor}Rosh §j> §cYou need to provide who's ender chest inventory to wipe.`);
     
     // try to find the player requested
     let member;
@@ -24,11 +26,11 @@ export function ecwipe(message, args) {
         break;
     }
     
-    if(!member) return player.sendMessage("§r§uRosh §j> §cCouldn't find that player.");
+    if(!member) return player.sendMessage(`§r${themecolor}Rosh §j> §cCouldn't find that player.`);
 
     for(let i = 0; i < 27; i++) {
         member.runCommandAsync(`replaceitem entity @s slot.enderchest ${i} air`);
     }
 
-    player.runCommandAsync(`tellraw @a[tag=op] {"rawtext":[{"text":"§r§uRosh §j> §8${player.nameTag} §chas cleared §8${member.nameTag}'s §cenderchest."}]}`);
+    player.runCommandAsync(`tellraw @a[tag=op] {"rawtext":[{"text":"§r${themecolor}Rosh §j> §8${player.nameTag} §chas cleared §8${member.nameTag}'s §cenderchest."}]}`);
 }

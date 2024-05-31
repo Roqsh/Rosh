@@ -16,8 +16,9 @@ export function tag(message, args) {
     if(typeof args !== "object") throw TypeError(`args is type of ${typeof args}. Expected "object".`);
 
     const player = message.sender;
+    const themecolor = config.themecolor;
 
-    if(!args.length) return player.sendMessage("§r§uRosh §j> §cYou need to provide a tag to add.");
+    if(!args.length) return player.sendMessage(`§r${themecolor}Rosh §j> §cYou need to provide a tag to add.`);
 
     let member;
 
@@ -29,7 +30,7 @@ export function tag(message, args) {
 
     if(!member) member = player;
 
-    if(!args[0]) return player.sendMessage("§r§uRosh §j> §cYou need to provide a tag to add.");
+    if(!args[0]) return player.sendMessage(`§r${themecolor}Rosh §j> §cYou need to provide a tag to add.`);
 
     if(args[0].includes("reset")) {
         
@@ -38,7 +39,7 @@ export function tag(message, args) {
         });
 
         member.nameTag = member.name;
-        return player.runCommandAsync(`tellraw @a[tag=op] {"rawtext":[{"text":"§r§uRosh §j> §8${player.name} §chas reset §8${member.name}'s §cnametag."}]}`);
+        return player.runCommandAsync(`tellraw @a[tag=op] {"rawtext":[{"text":"§r${themecolor}Rosh §j> §8${player.name} §chas reset §8${member.name}'s §cnametag."}]}`);
     }
 
     const tag = args.join(" ").replace(/"|\\/g, "");
@@ -54,5 +55,5 @@ export function tag(message, args) {
 
     member.addTag(`tag:${tag}`);
 
-    player.runCommandAsync(`tellraw @a[tag=op] {"rawtext":[{"text":"§r§uRosh §j> §8${player.name} §ahas changed §8${member.name}'s §anametag to §8${nametag}§a."}]}`);
+    player.runCommandAsync(`tellraw @a[tag=op] {"rawtext":[{"text":"§r${themecolor}Rosh §j> §8${player.name} §ahas changed §8${member.name}'s §anametag to §8${nametag}§a."}]}`);
 }

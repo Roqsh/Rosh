@@ -14,8 +14,9 @@ export function invsee(message, args) {
     if(typeof message !== "object") throw TypeError(`message is type of ${typeof message}. Expected "object".`);
 
     const player = message.sender;
+    const themecolor = config.themecolor;
 
-    if(!args.length) return player.sendMessage("§r§uRosh §j> §cYou need to provide whos inventory to view.");
+    if(!args.length) return player.sendMessage(`§r${themecolor}Rosh §j> §cYou need to provide whos inventory to view.`);
     
     // try to find the player requested
     let member;
@@ -25,21 +26,21 @@ export function invsee(message, args) {
         break;
     }
     
-    if(!member) return player.sendMessage("§r§uRosh §j> §cCouldn't find that player.");
+    if(!member) return player.sendMessage(`§r${themecolor}Rosh §j> §cCouldn't find that player.`);
 
     const container = member.getComponent('inventory').container;
   
     if(container.emptySlotsCount === 36) {
-        return player.sendMessage(`§r§uRosh §j> §8${member.nameTag}'s §cinventory is empty.`);
+        return player.sendMessage(`§r${themecolor}Rosh §j> §8${member.nameTag}'s §cinventory is empty.`);
     }
 
-    let inventory = `§r§uRosh §j> §8${member.nameTag}'s §aInventory:\n`;
+    let inventory = `§r${themecolor}Rosh §j> §8${member.nameTag}'s §aInventory:\n`;
     
     for (let i = 0; i < 36; i++) {
         const item = container.getItem(i);
         if(!item) continue;
 
-        inventory += `§r§uRosh §j> §aSlot §8${i}§a: §8${item.typeId} x${item.amount}\n`;
+        inventory += `§r${themecolor}Rosh §j> §aSlot §8${i}§a: §8${item.typeId} x${item.amount}\n`;
 
         if(config.customcommands.invsee.show_enchantments) {
             const loopIterator = (iterator) => {

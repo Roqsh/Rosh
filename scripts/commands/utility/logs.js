@@ -1,4 +1,5 @@
 import data from "../../data/data";
+import config from "../../data/config.js";
 
 /**
  * @name logs
@@ -10,10 +11,11 @@ export function logs(message) {
     if(typeof message !== "object") throw TypeError(`message is type of ${typeof message}. Expected "object".`);
 
     const player = message.sender;
+    const themecolor = config.themecolor;
     
     let logs = data.recentLogs;   
 
-    player.sendMessage("§r§8- §uRosh Logs §8-");  
+    player.sendMessage(`§8- ${themecolor}Rosh Logs §8-`);  
 
     for (let i = 0; i < logs.length; i++) {
         player.sendMessage(logs[i]);

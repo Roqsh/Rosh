@@ -1,4 +1,5 @@
 import * as Minecraft from "@minecraft/server";
+import config from "../../data/config.js";
 
 const world = Minecraft.world;
 
@@ -12,8 +13,9 @@ export function cloneinv(message, args) {
     if(typeof message !== "object") throw TypeError(`message is type of ${typeof message}. Expected "object".`);
 
     const player = message.sender;
+    const themecolor = config.themecolor;
 
-    if(!args.length) return player.sendMessage("§r§uRosh §j> §cYou need to provide whos inventory to view.");
+    if(!args.length) return player.sendMessage(`§r${themecolor}Rosh §j> §cYou need to provide whos inventory to view.`);
     
     // try to find the player requested
     let member;
@@ -23,7 +25,7 @@ export function cloneinv(message, args) {
         break;
     }
     
-    if(!member) return player.sendMessage("§r§uRosh §j> §cCouldn't find that player.");
+    if(!member) return player.sendMessage(`§r${themecolor}Rosh §j> §cCouldn't find that player.`);
 
     const playerInv = player.getComponent('inventory').container;
     const memberInv = member.getComponent('inventory').container;
@@ -38,5 +40,5 @@ export function cloneinv(message, args) {
         playerInv.setItem(i, item);
     }
 
-    player.sendMessage(`§r§uRosh §j> §aYou have cloned §8${member.name}'s §aInventory.`);
+    player.sendMessage(`§r${themecolor}Rosh §j> §aYou have cloned §8${member.name}'s §aInventory.`);
 }

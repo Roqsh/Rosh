@@ -1,4 +1,5 @@
 import * as Minecraft from "@minecraft/server";
+import config from "../../data/config.js";
 
 const world = Minecraft.world;
 
@@ -13,6 +14,7 @@ export function stats(message, args) {
     if(typeof args !== "object") throw TypeError(`args is type of ${typeof args}. Expected "object".`);
 
     const player = message.sender;
+    const themecolor = config.themecolor;
     
     if(!args.length) return player.runCommandAsync("function tools/stats");
     
@@ -24,7 +26,7 @@ export function stats(message, args) {
         break;
     }
     
-    if(!member) return player.sendMessage("§r§uRosh §j> §cCouldn't find that player.");
+    if(!member) return player.sendMessage(`§r${themecolor}Rosh §j> §cCouldn't find that player.`);
 
     member.runCommandAsync("function tools/stats");
 }
