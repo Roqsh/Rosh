@@ -8,7 +8,9 @@ export default
 
     "console_debug": true, // Shows flags and punishments in the console
 
-    "themecolor": "§u",
+    "themecolor": "§u", // The color of the theme which is used for Rosh - ex: §a, §c, §9, etc.
+
+    "flagWhitelist": [], // Who is able to bypass flags and punishments - ex: ["Playername1", "Playername2"]
 
     "generalModules": { // Enable or disable a type of detection - Subchecks can be edited below.
         "fly": true,
@@ -27,7 +29,7 @@ export default
         "aim": true
     },
 
-    "logSettings": { // Adjust the settings of the log menu (can be done in game)
+    "logSettings": { // Adjust the settings of the log menu (can be done in game too)
         "compactMode": false,
         "showErrors": false,
         "showDebug": false,
@@ -43,7 +45,7 @@ export default
         "block": 3,
         "other": 2
     },
-    "flagWhitelist": [],
+    
     "clientSpam": {
         "punishment": "mute"
     },
@@ -798,6 +800,7 @@ export default
             "description":"Checks for not looking at the broken block",
             "punishment": "kick",
             "score": -1,
+            "punishmentLength": "1m",
             "minVlbeforePunishment": 1
         },
 
