@@ -56,6 +56,11 @@ export default
     "customcommands": {
         "prefix": "!",
         "sendInvalidCommandMsg": true,
+        "spectate": {
+            "enabled": true,
+            "requiredTags": ["op"],
+            "aliases": ["spec"]
+        },
         "ban": {
             "enabled": true,
             "requiredTags": ["op"],
