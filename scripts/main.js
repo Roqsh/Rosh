@@ -471,7 +471,7 @@ world.afterEvents.playerPlaceBlock.subscribe((placeBlock) => {
 });
 
 
-world.beforeEvents.playerBreakBlock.subscribe(async (blockBreak) => {
+world.beforeEvents.playerBreakBlock.subscribe((blockBreak) => {
 	
     const player = blockBreak.player;
     const block = blockBreak.block;

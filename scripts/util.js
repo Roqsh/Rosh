@@ -192,31 +192,31 @@ export function flag(player, check, checkType, debugName, debug, shouldTP = fals
 
 
 /**
- * FIXME:
+ * Bans the player from the game.
  * @name banMessage
  * @param {import("@minecraft/server").Player} player - The player object
  * @example banMessage(rqosh);
- * @remarks Bans the player from the game.
+ * @throws {TypeError} If player is not an object
  */
 export function banMessage(player) {
-    if (typeof player !== "object") throw TypeError(`Error: player is type of ${typeof player}. Expected "object"`);
+    if (typeof player !== "object" || player === null) {
+        throw new TypeError(`Error: player is type of ${typeof player}. Expected "object"`);
+    }
+
+    const unbanQueueMessage = `§r§uRosh §j> §8${player.name} §ahas been found in the unban queue and has been unbanned !`;
+    const expiredBanMessage = `§r§uRosh §j> §8${player.name}'s §aban has expired and has now been unbanned !`;
 
     if (config.flagWhitelist.includes(player.name) && player.hasTag("op")) return;
 
     if (data.unbanQueue.includes(player.name.toLowerCase().split(" ")[0])) {
         player.removeTag("isBanned");
-        player.runCommandAsync(`tellraw @a[tag=notify] {"rawtext":[{"text":"§r§uRosh §j> §8${player.name} §ahas been found in the unban queue and has been unbanned !"}]}`);
+        player.runCommandAsync(`tellraw @a[tag=notify] {"rawtext":[{"text":"${unbanQueueMessage}"}]}`);
 
         player.getTags().forEach(t => {
-            if (t.includes("Reason:") || t.includes("Length")) player.removeTag(t);
+            if (t.includes("Reason:") || t.includes("Length:")) player.removeTag(t);
         });
 
-        for (let i = 0; i < data.unbanQueue.length; i++) {
-            if (data.unbanQueue[i] !== player.name.toLowerCase().split(" ")[0]) continue;
-            data.unbanQueue.splice(i, 1);
-            break;
-        }
-
+        data.unbanQueue = data.unbanQueue.filter(name => name !== player.name.toLowerCase().split(" ")[0]);
         return;
     }
 
@@ -230,7 +230,7 @@ export function banMessage(player) {
 
     if (time) {
         if (Number(time) < Date.now()) {
-            player.runCommandAsync(`tellraw @a[tag=notify] {"rawtext":[{"text":"§r§uRosh §j> §8${player.name}'s §aban has expired and has now been unbanned !"}]}`);
+            player.runCommandAsync(`tellraw @a[tag=notify] {"rawtext":[{"text":"${expiredBanMessage}"}]}`);
             player.removeTag("isBanned");
             player.getTags().forEach(t => {
                 if (t.includes("Reason:") || t.includes("Length:")) player.removeTag(t);
@@ -364,18 +364,10 @@ export function msToTime(milliseconds = 0) {
 
     // Calculate the time components
     const weeks = Math.floor(milliseconds / msPerWeek);
-    const remainingAfterWeeks = milliseconds % msPerWeek;
-
-    const days = Math.floor(remainingAfterWeeks / msPerDay);
-    const remainingAfterDays = remainingAfterWeeks % msPerDay;
-
-    const hours = Math.floor(remainingAfterDays / msPerHour);
-    const remainingAfterHours = remainingAfterDays % msPerHour;
-
-    const minutes = Math.floor(remainingAfterHours / msPerMinute);
-    const remainingAfterMinutes = remainingAfterHours % msPerMinute;
-
-    const seconds = Math.floor(remainingAfterMinutes / msPerSecond);
+    const days = Math.floor((milliseconds % msPerWeek) / msPerDay);
+    const hours = Math.floor((milliseconds % msPerDay) / msPerHour);
+    const minutes = Math.floor((milliseconds % msPerHour) / msPerMinute);
+    const seconds = Math.floor((milliseconds % msPerMinute) / msPerSecond);
 
     // Return the converted time as an object
     return { weeks, days, hours, minutes, seconds };
@@ -588,11 +580,8 @@ export function angleCalculation(player, entity) {
     // Calculate the angle in radians
     const angleRadians = Math.atan2(deltaZ, deltaX);
 
-    // Convert the angle to degrees
-    let angleDegrees = angleRadians * (180 / Math.PI);
-
-    // Adjust angle to be within [0, 360) range
-    angleDegrees = (angleDegrees + 360) % 360;
+    // Convert the angle to degrees and adjust to be within [0, 360) range
+    const angleDegrees = (angleRadians * (180 / Math.PI) + 360) % 360;
 
     return angleDegrees;
 }
@@ -647,15 +636,26 @@ export function getClosestPlayer(entity) {
  * Finds a player object by a player name.
  * @name findPlayerByName
  * @param {string} name - The player to look for
- * @returns {import("@minecraft/server").Player | undefined} [player] - The player found
+ * @returns {import("@minecraft/server").Player | null} - The player object, or null if not found
+ * @throws {TypeError} If name is not a string
  */
 export function findPlayerByName(name) {
-    const searchName = name.toLowerCase();
+    // Validate the input
+    if (typeof name !== "string") {
+        throw new TypeError(`Error: name is type of ${typeof name}. Expected "string".`);
+    }
 
-    return world.getPlayers().find(player => {
-        const lowercaseName = player.name.toLowerCase();
-        return lowercaseName === searchName;
-    });
+    // Get all players in the world
+    const players = world.getPlayers();
+
+    // Find the player with the matching name
+    for (const player of players) {
+        if (player.name === name) {
+            return player;
+        }
+    }
+
+    return null;
 }
 
 
