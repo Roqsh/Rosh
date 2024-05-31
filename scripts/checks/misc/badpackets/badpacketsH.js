@@ -10,8 +10,13 @@ import { flag } from "../../../util";
 export function badpackets_h(player) {
 
     if(config.modules.badpacketsH.enabled) {
+
+        if(
+            player.hasTag("spec") || 
+            player.hasTag("gmc")
+        ) return;
         
-        if(player.isFlying && !player.hasTag("op") && !player.hasTag("gmc")) {
+        if(player.isFlying && !player.hasTag("op")) {
             flag(player, "BadPackets", "H", "isFlying", "true", true);
             player.runCommandAsync(`ability "${player.name}" mayfly false`);
         }
