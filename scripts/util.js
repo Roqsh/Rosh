@@ -25,8 +25,8 @@ export function flag(player, check, checkType, debugName, debug, shouldTP = fals
     if (typeof shouldTP !== "boolean") throw TypeError(`Error: shouldTP is type of ${typeof shouldTP}. Expected "boolean"`);
     if (typeof cancelObject !== "object" && typeof cancelObject !== "undefined") throw TypeError(`Error: cancelObject is type of ${typeof cancelObject}. Expected "object" or "undefined`);
 
-    // Excludes Staff from getting flagged if the setting is enabled via config
-    if (config.exclude_staff && player.hasTag("op")) return;
+    // Excludes Staff or whitelisted players from getting flagged if the setting is enabled via config
+    if ((config.exclude_staff && player.hasTag("op")) || config.flagWhitelist.includes(player.name)) return;
  
     // Remove characters that may break commands or newlines
     debug = String(debug).replace(/"|\\|\n/gm, "");
@@ -109,24 +109,21 @@ export function flag(player, check, checkType, debugName, debug, shouldTP = fals
 
                 setScore(player, "kickvl", kickvl + 1);
               
-                if(kickvl > config.kicksBeforeBan) {
+                if(kickvl > config.kicksBeforeBan) { // FIXME:
 
                     if(getScore(player, "autoban", 0) > 0) {
                         player.addTag("isBanned");
-                        player.addTag(`reason: Cheat Detection`);
+                        player.addTag(`Reason:Cheat Detection`);
                         banLength2 = parseTime("30d");
-                        player.addTag(`Time: ${Date.now() + banLength2}`);
+                        player.addTag(`Length:${Date.now() + banLength2}`);
                         if(config.console_debug) console.warn(`Rosh > ${player.name} has been banned for ${check}/${checkType}`);
 
                         const message = `§8${player.name} §chas been banned!`;   
-                        data.recentLogs.push(message)
+                        data.recentLogs.push(message);
                     }
-
                     setScore(player, "kickvl", 0);
 
-                }
-
-                else {
+                } else {
 
                     player.runCommandAsync("function tools/resetwarns");
                     player.addTag("strict");
@@ -146,9 +143,9 @@ export function flag(player, check, checkType, debugName, debug, shouldTP = fals
 
         };
 
-        if (punishment === "ban") {
+        if (punishment === "ban") { // FIXME:
 
-            if(getScore(player, "autoban", 0) > 0) {
+            if (getScore(player, "autoban", 0) > 0) {
 
                 player.addTag("isBanned");
                 const punishmentLength = checkData.punishmentLength?.toLowerCase();
@@ -160,29 +157,31 @@ export function flag(player, check, checkType, debugName, debug, shouldTP = fals
 
                 let banLength;
 
-                player.addTag(`§uReason: Cheat Detection`);
+                player.addTag(`Reason:Cheat Detection`);
                 try {
                     banLength = parseTime(punishmentLength);
-                    player.addTag(`Length: ${Date.now() + banLength}`);
-                } catch (error) {}
+                    player.addTag(`Length:${Date.now() + banLength}`);
+                } catch (error) {
+                    console.error(`Error parsing ban length: ${error.message}`);
+                }
               
                 const message = `§8${player.name} §chas been banned!`;   
-                data.recentLogs.push(message)
-                player.runCommandAsync(`tellraw @a[tag=notify,tag=op] {"rawtext":[{"text":"§r${themecolor}Rosh §j> §8${player.name} §chas been banned for ${themecolor}${check}§j/${themecolor}${checkType.toUpperCase()} §c!"}]}`);
-                                
+                data.recentLogs.push(message);
+                player.runCommandAsync(`tellraw @a[tag=notify,tag=op] {"rawtext":[{"text":"§r${themecolor}Rosh §j> §8${player.name} §chas been banned for ${themecolor}${check}§j/${themecolor}${checkType.toUpperCase()} §c!"}]}`);                        
             }
-
         }
 
         if (punishment === "mute") {
 
+            if (!player.hasTag("isMuted")) {
+                player.sendMessage(`§r${themecolor}Rosh §j> §cYou have been muted!`);
+            }
             player.addTag("isMuted");
-            player.sendMessage(`§r${themecolor}Rosh §j> §cYou have been muted!`);
             player.runCommandAsync("ability @s mute true");
             if(config.console_debug) console.warn(`Rosh > ${player.name} has been muted for ${check}/${checkType}`);
 
             const message = `§8${player.name} §chas been muted!`;    
-            data.recentLogs.push(message)
+            data.recentLogs.push(message);
             player.runCommandAsync(`tellraw @a[tag=notify,tag=op] {"rawtext":[{"text":"§r${themecolor}Rosh §j> §8${player.name} §chas been muted for ${themecolor}${check}§j/${themecolor}${checkType.toUpperCase()} §c!"}]}`);
 
         }
@@ -192,7 +191,7 @@ export function flag(player, check, checkType, debugName, debug, shouldTP = fals
 
 
 /**
- * Bans the player from the game.
+ * Bans a player from the game.
  * @name banMessage
  * @param {import("@minecraft/server").Player} player - The player object
  * @example banMessage(rqosh);
@@ -203,14 +202,14 @@ export function banMessage(player) {
         throw new TypeError(`Error: player is type of ${typeof player}. Expected "object"`);
     }
 
+    if (config.flagWhitelist.includes(player.name)) return;
+
     const unbanQueueMessage = `§r§uRosh §j> §8${player.name} §ahas been found in the unban queue and has been unbanned !`;
     const expiredBanMessage = `§r§uRosh §j> §8${player.name}'s §aban has expired and has now been unbanned !`;
 
-    if (config.flagWhitelist.includes(player.name) && player.hasTag("op")) return;
-
     if (data.unbanQueue.includes(player.name.toLowerCase().split(" ")[0])) {
         player.removeTag("isBanned");
-        player.runCommandAsync(`tellraw @a[tag=notify] {"rawtext":[{"text":"${unbanQueueMessage}"}]}`);
+        tellStaff(`${unbanQueueMessage}`);
 
         player.getTags().forEach(t => {
             if (t.includes("Reason:") || t.includes("Length:")) player.removeTag(t);
@@ -230,7 +229,7 @@ export function banMessage(player) {
 
     if (time) {
         if (Number(time) < Date.now()) {
-            player.runCommandAsync(`tellraw @a[tag=notify] {"rawtext":[{"text":"${expiredBanMessage}"}]}`);
+            tellStaff(`${expiredBanMessage}`);
             player.removeTag("isBanned");
             player.getTags().forEach(t => {
                 if (t.includes("Reason:") || t.includes("Length:")) player.removeTag(t);
@@ -239,10 +238,10 @@ export function banMessage(player) {
         }
 
         const remainingTime = msToTime(Number(time) - Date.now());
-        time = `${remainingTime.weeks} weeks, ${remainingTime.days} days, ${remainingTime.hours} hours, ${remainingTime.minutes} minutes, ${remainingTime.seconds} seconds`;
+        time = `${remainingTime.weeks} weeks, ${remainingTime.days} days, ${remainingTime.hours} hours, ${remainingTime.minutes} minutes, ${remainingTime.seconds} seconds left!`;
     }
 
-    player.runCommandAsync(`kick "${player.name}" §r${config.themecolor}Rosh §j> §cYou have been banned for §8${reason || "No Reason Provided"} §c!\n§r\n §9Length: §8${time}`);
+    player.runCommandAsync(`kick "${player.name}" §r${config.themecolor}Rosh §j> §cYou have been banned for §8${reason || "No Reason Provided"} §c!\n§r\n §9Length: §8${time || "Permanent"}`);
 }
 
 
