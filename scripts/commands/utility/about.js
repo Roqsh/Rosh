@@ -4,12 +4,11 @@ import config from "../../data/config.js";
  * @name about
  * @param {object} message - Message object
  * @param {array} args - Additional arguments provided.
-*/
-
+ */
 export function about(message, args) {
-  
-  if(typeof message !== "object") throw TypeError(`message is type of ${typeof message}. Expected "object".`);
-  if(typeof args !== "object") throw TypeError(`args is type of ${typeof args}. Expected "object".`);
+  // Validate the input
+  if (typeof message !== "object") throw TypeError(`message is type of ${typeof message}. Expected "object".`);
+  if (typeof args !== "object") throw TypeError(`args is type of ${typeof args}. Expected "object".`);
 
   const player = message.sender;
   const themecolor = config.themecolor;
@@ -20,12 +19,15 @@ export function about(message, args) {
     return player.sendMessage(`§r${themecolor}Rosh §j> §cCouldn't find that check.`);
   }
 
+  const module = config.modules[moduleName];
+
   // Check if the module has a description
-  if (!config.modules[moduleName].description) {
+  if (!module.description) {
     return player.sendMessage(`§r${themecolor}Rosh §j> §cThat check has no description.`);
   }
 
-  const description = config.modules[moduleName].description;
+  const description = module.description;
+  const check = args[0].replace(/([A-Z])/g, '/$1').replace(/^./, str => str.toUpperCase());
 
-  player.sendMessage(`§r${themecolor}Rosh §j> §aDescription of §8${moduleName}§a: §8${description}`);
+  player.sendMessage(`§r${themecolor}Rosh §j> §aDescription of §8${check}§a: §8${description}`);
 }
