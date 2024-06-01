@@ -1,7 +1,6 @@
 import config from "../../../data/config.js";
 import { flag, debug } from "../../../util";
 
-// Map to track the state of each player's block placement
 const playerBlockPlaceState = new Map();
 
 /**
@@ -13,20 +12,23 @@ const playerBlockPlaceState = new Map();
  */
 export function scaffold_g(player) {
 
-    // Check if this is the first block place for the player
+    if (!player.hasTag("itemUse")) {
+        debug(player, "itemUse", `§cfalse`, "item");
+    } else {
+        debug(player, "itemUse", `§atrue`, "item");
+    }
+
+    // Check if this is the first block place for the player (it doesnt only occur on the first block place, but with bds limitations i cant implement it further atm)
     if (!playerBlockPlaceState.has(player.name)) {
         playerBlockPlaceState.set(player.name, true);
 
         if (!player.hasTag("itemUse")) {
-            debug(player, "itemUse", `§cfalse`, "item");
 
             if (config.modules.scaffoldG.enabled) {
                 flag(player, "Scaffold", "G", "itemUse", `false`);
                 playerBlockPlaceState.delete(player.name);
             }
 
-        } else {
-            debug(player, "itemUse", `§atrue`, "item");
-        }
+        } 
     }
 }
