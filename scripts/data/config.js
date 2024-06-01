@@ -574,7 +574,7 @@ export default
 
         "killauraD": {
             "enabled": true,
-            "description": "Checks for looking down when attacking something out of range",
+            "description": "Checks for not looking at the attacked entity",
             "punishment": "kick",
             "punishmentLength": "3d",
             "minVlbeforePunishment": 4
@@ -604,7 +604,7 @@ export default
 
         "hitboxA": {
             "enabled": true,
-            "description": "Checks for not looking at the attacked entity",
+            "description": "Checks for attacking with a too high angle",
             "punishment": "kick",
             "angle": 55,
             "distance": 2.25,
@@ -773,7 +773,7 @@ export default
 
         "nukerA": {
             "enabled": true,
-            "description":"Checks for breaking more than the config amount per tick",
+            "description":"Checks for breaking too many blocks within a tick",
             "maxBlocks": 3,
             "punishment": "kick",
             "minVlbeforePunishment": 0
@@ -865,19 +865,10 @@ export default
         },
 
         "scaffoldG": {
-            "enabled": false,
+            "enabled": true,
             "description": "Checks for not triggering the 'itemUse' event",
             "punishment": "kick", 
-            "buffer": 18,
-            "reset": 2,
-            "minVlbeforePunishment": 3
-        },
-
-        "scaffoldH": {
-            "enabled": false,
-            "description":"Checks for distance-placement paterns",
-            "punishment": "kick",
-            "minVlbeforePunishment": 4
+            "minVlbeforePunishment": 0
         },
 
         "towerA": {
