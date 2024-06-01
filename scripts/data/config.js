@@ -247,6 +247,7 @@ export default
             "enabled": true,
             "ui_item_name": "§r§uRosh§r",
             "ui_item": "minecraft:stone_axe",
+            "rate_limit": 3000, // Rate limit (1000=1s)
             "requiredTags": ["op"],
             "aliases": ["gui"]
         },
