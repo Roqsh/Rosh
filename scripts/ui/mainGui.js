@@ -335,7 +335,7 @@ function themecolorMenu(player) {
         const selectedColor = colors[response.formValues[0]];
 
         if (selectedColor.substring(0, 2) === config.themecolor) {
-            player.sendMessage(`§r${selectedColor.substring(0, 2)}Rosh §j> §cThemecolor is already set to ${selectedColor.substring(0, 2)}Color §c!`);
+            player.sendMessage(`§r${selectedColor.substring(0, 2)}Rosh §j> §cThemecolor is already set to ${selectedColor.substring(0, 2)}Color§c!`);
             return;
         }
 
