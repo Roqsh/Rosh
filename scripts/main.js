@@ -51,7 +51,6 @@ import { scaffold_d } from "./checks/world/scaffold/scaffoldD.js";
 import { scaffold_e } from "./checks/world/scaffold/scaffoldE.js";
 import { scaffold_f, dependencies_f } from "./checks/world/scaffold/scaffoldF.js";
 import { scaffold_g } from "./checks/world/scaffold/scaffoldG.js";
-import { scaffold_h } from "./checks/world/scaffold/scaffoldH.js";
 import { tower_a } from "./checks/world/tower/towerA.js";
 import { tower_b } from "./checks/world/tower/towerB.js";
 
@@ -448,7 +447,6 @@ world.afterEvents.playerPlaceBlock.subscribe((placeBlock) => {
 	    scaffold_e(player);
 	    scaffold_f(player, block);
 		scaffold_g(player);
-		scaffold_h(player, block);
 	}
 
 	if(config.generalModules.tower) {
