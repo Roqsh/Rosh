@@ -2,7 +2,7 @@ import config from "../../../data/config.js";
 import { flag } from "../../../util";
 
 /**
- * Checks for attacking a entity too far away while looking down
+ * Checks for not looking at the attacked entity
  * @name killaura_d
  * @param {player} player - The player to check
  * @param {entity} entity - The attacked entity

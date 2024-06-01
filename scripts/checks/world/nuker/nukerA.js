@@ -2,7 +2,7 @@ import config from "../../../data/config.js";
 import { flag } from "../../../util.js";
 
 /**
- * Checks for breaking more than the config amount per tick. (default set to 3)
+ * Checks for breaking too many blocks within a tick. (default set to 3)
  * @name nuker_a
  * @param {player} player - The player to check
  * @remarks Some Nuker cheats can lead to an error: command queue is full when they are extremely fast

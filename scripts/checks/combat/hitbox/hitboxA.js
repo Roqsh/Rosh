@@ -2,7 +2,7 @@ import config from "../../../data/config.js";
 import { flag, angleCalc } from "../../../util";
 
 /**
- * Checks for not looking at the attacked entity.
+ * Checks for attacking with a too high angle.
  * @name hitbox_a
  * @param {player} player - The player to check
  * @param {entity} entity - The attacked entity
