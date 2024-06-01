@@ -732,7 +732,8 @@ function rateLimit(player) {
     const lastAttempt = accessAttempts.get(player.name) || 0;
     const timeDiff = now - lastAttempt;
 
-    // Allow access if more than 1s have passed since the last attempt
+    // Allow access if more than config time have passed since the last attempt
+	// Prevents cheaters from accessing the UI by spamming so fast that theres a chance that you can glitch in (but I havent seen this kind of method yet)
     if (timeDiff > config.customcommands.ui.rate_limit) {
         accessAttempts.set(player.name, now);
         return true;
@@ -740,9 +741,10 @@ function rateLimit(player) {
     return false;
 }
 
-world.afterEvents.itemUse.subscribe((itemUse) => { // TODO: Increase security
+world.afterEvents.itemUse.subscribe((itemUse) => {
 
     const { itemStack: item, source: player } = itemUse;
+	const themecolor = config.themecolor;
 
     if (player.typeId !== "minecraft:player" || !player.hasTag("itemUse")) return;
 
