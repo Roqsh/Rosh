@@ -726,18 +726,47 @@ world.beforeEvents.itemUse.subscribe((itemUse) => {
 });
 
 
-world.afterEvents.itemUse.subscribe((itemUse) => {
+const accessAttempts = new Map();
+function rateLimit(player) {
+    const now = Date.now();
+    const lastAttempt = accessAttempts.get(player.name) || 0;
+    const timeDiff = now - lastAttempt;
 
-	const { itemStack: item, source: player } = itemUse;
-	
-	if(player.typeId !== "minecraft:player") return;
+    // Allow access if more than 1s have passed since the last attempt
+    if (timeDiff > config.customcommands.ui.rate_limit) {
+        accessAttempts.set(player.name, now);
+        return true;
+    }
+    return false;
+}
 
-	if(config.customcommands.ui.enabled && player.hasTag("op") && item.typeId === config.customcommands.ui.ui_item && item.nameTag === config.customcommands.ui.ui_item_name) {
-		mainGui(player);
-	}
+world.afterEvents.itemUse.subscribe((itemUse) => { // TODO: Increase security
 
+    const { itemStack: item, source: player } = itemUse;
+
+    if (player.typeId !== "minecraft:player" || !player.hasTag("itemUse")) return;
+
+    const itemEnchants = item.getComponent("enchantable")?.getEnchantments() ?? [];
+
+    for(const enchantData of itemEnchants) {
+
+        const enchantTypeId = enchantData.type.id;
+
+        if (config.customcommands.ui.enabled && 
+            player.hasTag("op") && 
+            item.typeId === config.customcommands.ui.ui_item && 
+            item.nameTag === config.customcommands.ui.ui_item_name &&
+            enchantTypeId === "unbreaking" &&
+            enchantData.level === 3
+        ) {
+			if (rateLimit(player)) {
+				mainGui(player);
+			} else {
+				player.runCommandAsync(`tellraw @s[tag=op] {"rawtext":[{"text":"§r${themecolor}Rosh §j> §cYou are trying to access the UI too frequently! Please wait a moment."}]}`);
+			}
+        }
+    }
 });
-
 
 system.afterEvents.scriptEventReceive.subscribe(({id, sourceEntity }) => {
 
