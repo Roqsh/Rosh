@@ -2,14 +2,14 @@ import config from "../../../data/config.js";
 import { flag, getScore, setScore } from "../../../util";
 import { hVelocity_2 } from "../../../utils/mathUtil.js";
 
-/**
- * @name motion_c
- * @param {player} player - The player to check
- * @remarks Checks for not moving when having velocity
-*/
-
 const motion_c_map = new Map();
 
+/**
+ * Checks for not moving when having velocity
+ * @name motion_c
+ * @param {player} player - The player to check
+ * @remarks Not working atm
+ */
 export function motion_c(player) {
 
     if(!config.modules.motionC.enabled || player.isOnGround || getScore(player, "tick_counter2", 0) <= 5) return;

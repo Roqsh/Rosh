@@ -1,13 +1,17 @@
 import config from "../../../data/config.js";
 import { flag, getSpeed } from "../../../util";
 
-//pretty much useless... 4urxra ??
+
 
 export function motion_a(player) {
 
     if (config.modules.motionA.enabled) {
 
-        if (!player.hasTag("ground")) return;
+        if (
+            !player.isOnGround || 
+            player.hasTag("trident") || 
+            player.hasTag("elytra")
+        ) return;
 
         if (player.getEffect("speed")) {
 

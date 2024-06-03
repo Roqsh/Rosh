@@ -1,15 +1,14 @@
 import config from "../../../data/config.js";
 import { flag, getSpeed } from "../../../util.js";
 
-/**
- * @name motion_d
- * @param {player} player - The player to check
- * @remarks Checks for not going to the predicted direction
-*/
-
 const lastUpdateTime = new Map();
 const lastpos = new Map();
 
+/**
+ * Checks for not going to the predicted direction.
+ * @name motion_d
+ * @param {player} player - The player to check
+ */
 export function motion_d(player) {
 
     if(!config.modules.motionD.enabled) return;
@@ -20,9 +19,9 @@ export function motion_d(player) {
 
     if(lastUpdateTime.get(player.name) && !player.hasTag("stairs") && !player.isFlying) {
 
-        let max_value = 43
+        let max_value = 45;
 
-        const timeElapsed = now - lastUpdateTime.get(player.name)
+        const timeElapsed = now - lastUpdateTime.get(player.name);
         const lastPos = lastpos.get(player.name);
 
         const predictedX = lastPos.x + playerVelocity.x * timeElapsed / 1000.0;

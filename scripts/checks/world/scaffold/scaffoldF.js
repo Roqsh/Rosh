@@ -10,9 +10,9 @@ import { flag, getScore, setScore, debug } from "../../../util";
 
 export function scaffold_f(player, block) {
 
-    if(config.modules.scaffoldF.enabled) {
+    if (config.modules.scaffoldF.enabled) {
 
-        if(player.isFlying) return;
+        if (player.isFlying) return;
 
         const distance = Math.sqrt(
             Math.pow(block.location.x - player.location.x, 2) + 
@@ -20,7 +20,7 @@ export function scaffold_f(player, block) {
             Math.pow(block.location.z - player.location.z, 2)
         );
 
-        if(distance < 1.85) {
+        if (distance < 1.85) {
             const valueOfBlocks = getScore(player, "scaffoldAmount", 0);
             setScore(player, "scaffoldAmount", valueOfBlocks + 1);
         }
@@ -30,13 +30,17 @@ export function scaffold_f(player, block) {
 
 export function dependencies_f(player, tickValue, velocity) {
 
-    if(config.modules.scaffoldF.enabled) {
+    if (config.modules.scaffoldF.enabled) {
 
         const valueOfBlocks = getScore(player, "scaffoldAmount", 0);
 
-        if(tickValue > 20 - 2.67e-11 && velocity.y < 0.3) {
+        if (tickValue > 20 - 2.67e-11 && velocity.y < 0.3) {
 
-            if(valueOfBlocks > 7 && !player.getEffect("speed")) {
+            let maxBlocks = 7;
+
+            if (player.getEffect("speed")) maxBlocks += 2;
+
+            if (valueOfBlocks > maxBlocks) {
                 flag(player, "Scaffold", "F", "amount", valueOfBlocks);
             } 
 
@@ -44,7 +48,7 @@ export function dependencies_f(player, tickValue, velocity) {
             setScore(player, "tickValue", 0);
 
         } else {
-            if(valueOfBlocks > 0) {
+            if (valueOfBlocks > 0) {
                 debug(player, "Blocks", `${valueOfBlocks} per ${tickValue} tick's`, "block");
             }
         }
