@@ -25,6 +25,7 @@ import { motion_a } from "./checks/movement/motion/motionA.js";
 import { motion_b } from "./checks/movement/motion/motionB.js";
 import { motion_c } from "./checks/movement/motion/motionC.js";
 import { motion_d } from "./checks/movement/motion/motionD.js";
+import { motion_e } from "./checks/movement/motion/motionE.js";
 import { fly_a } from "./checks/movement/fly/flyA.js";
 import { fly_b } from "./checks/movement/fly/flyB.js";
 import { fly_c } from "./checks/movement/fly/flyC.js";
@@ -295,6 +296,7 @@ system.runInterval(() => {
 			motion_b(player);
 			motion_c(player);
 			motion_d(player);
+			motion_e(player);
 		}
 
 		if(config.generalModules.misc) {

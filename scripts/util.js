@@ -660,36 +660,64 @@ export function findPlayerByName(name) {
 
 
 /**
- * Add Rosh-Op status to a player
+ * Adds the "op" tag to a player, making them an operator.
  * @name addOp
- * @param {import("@minecraft/server").Player} initiator - The player that initiated the request
- * @param {import("@minecraft/server").Player} player - The player that will be given Rosh-Op status
-*/
+ * @param {import("@minecraft/server").Player} player - The player to add the "op" tag to.
+ * @param {import("@minecraft/server").Player} initiator - The player who initiated the action.
+ * @example addOp(player, initiator); // Adds the "op" tag to the player
+ * @throws {TypeError} If player or initiator is not an object.
+ */
+export function addOp(player, initiator) {
+    // Validate the inputs
+    if (typeof player !== 'object' || player === null) {
+        throw new TypeError(`Error: player is type of ${typeof player}. Expected "object".`);
+    }
+    if (typeof initiator !== 'object' || initiator === null) {
+        throw new TypeError(`Error: initiator is type of ${typeof initiator}. Expected "object".`);
+    }
 
-export function addOp(initiator, player) {
-    tellStaff(`§r§uRosh §j> §8${initiator.name} §ahas given §8${player.name} §aRosh-Op status.`);
-
-    player.addTag("op");
-
-    player.sendMessage("§r§uRosh §j> §aYou are now Rosh-Op.");
+    try {
+        // Add the "op" tag to the player
+        tellStaff(`§r§uRosh §j> §8${initiator.name} §ahas given §8${player.name} §aRosh-Op status.`);
+        player.addTag("op");
+        const message = `Rosh > Player ${player.name} has been given operator status by ${initiator.name}.`;
+        console.log(message);
+        player.sendMessage(`§r${config.themecolor}Rosh §j> §8You have been given operator status by ${initiator.name}.`);
+    } catch (error) {
+        console.error(`Error: Failed to add "op" tag to player. ${error.message}`);
+    }
 }
 
 
 
 /**
- * Remove Rosh-Op status from a player
+ * Removes the "op" tag from a player, revoking their operator status.
  * @name removeOp
- * @param {import("@minecraft/server").Player} initiator - The player that initiated the request
- * @param {import("@minecraft/server").Player} player - The player who will get his Rosh-Op status removed
-*/
+ * @param {import("@minecraft/server").Player} player - The player to remove the "op" tag from.
+ * @param {import("@minecraft/server").Player} initiator - The player who initiated the action.
+ * @example removeOp(player, initiator); // Removes the "op" tag from the player
+ * @throws {TypeError} If player or initiator is not an object.
+ */
+export function removeOp(player, initiator) {
+    // Validate the inputs
+    if (typeof player !== 'object' || player === null) {
+        throw new TypeError(`Error: player is type of ${typeof player}. Expected "object".`);
+    }
+    if (typeof initiator !== 'object' || initiator === null) {
+        throw new TypeError(`Error: initiator is type of ${typeof initiator}. Expected "object".`);
+    }
 
-export function removeOp(initiator, player) {
-    player.removeTag("op");
-
-    tellStaff(`§r§uRosh §j> §8${initiator.name} §chas removed §8${player.name}'s §cRosh-Op status.`);
-
-    player.sendMessage("§r§uRosh §j> §cYou are no longer Rosh-Op.");
-}
+    try {
+        // Remove the "op" tag from the player
+        player.removeTag("op");
+        const message = `Player ${player.name} has been revoked operator status by ${initiator.name}.`;
+        console.log(message);
+        player.sendMessage(`§r${config.themecolor}Rosh §j> §8Your operator status has been revoked by ${initiator.name}.`);
+        tellStaff(`§r§uRosh §j> §8${initiator.name} §chas removed §8${player.name}'s §cRosh-Op status.`);
+    } catch (error) {
+        console.error(`Error: Failed to remove "op" tag from player. ${error.message}`);
+    }
+} 
 
 
 
@@ -799,13 +827,34 @@ export function getTotalSpeed(player) {
 
 
 /**
- * Calculates a players horizontal velocity.
+ * Calculates a player's horizontal velocity.
  * @name hVelocity
- * @param {import("@minecraft/server").Player} player - The Player to get the velocity from
-*/
-
+ * @param {import("@minecraft/server").Player} player - The player to get the velocity from.
+ * @returns {number} The horizontal velocity of the player.
+ * @throws {TypeError} If player is not an object.
+ * @example
+ * const velocity = hVelocity(player);
+ * console.log(`Player's horizontal velocity: ${velocity}`);
+ */
 export function hVelocity(player) {
-    return (player.getVelocity().x + player.getVelocity().z) / 2
+    // Validate the input
+    if (typeof player !== 'object' || player === null) {
+        throw new TypeError(`Error: player is type of ${typeof player}. Expected "object".`);
+    }
+
+    try {
+        // Get the player's velocity
+        const velocity = player.getVelocity();
+
+        // Calculate the horizontal velocity using the Pythagorean theorem
+        const horizontalVelocity = Math.sqrt(velocity.x ** 2 + velocity.z ** 2);
+
+        // Return the horizontal velocity
+        return horizontalVelocity;
+    } catch (error) {
+        console.error(`Error: Failed to calculate horizontal velocity. ${error.message}`);
+        return 0; // Return 0 as a fallback value
+    }
 }
 
 
@@ -917,16 +966,41 @@ export async function setSound(player, id) {
 
 
 /**
- * Debugs a certain value.
+ * Sends debug information to players with a specific tag.
  * @name debug
- * @param {object} player - The player running the debug function
- * @param {string} name - What type of information is debugged
- * @param {string | number | object} debug - The debug information
- * @param {string} tag - What tag the player needs to have to receive the debug
- * @example debug(rqosh, "Speed", speed, debug); // Debugs a player's speed if he has the debug tag
- * @remarks Requires the player to have the specified tag to recieve the debug information
-*/
+ * @param {import("@minecraft/server").Player} player - The player running the debug function.
+ * @param {string} name - The type of information being debugged.
+ * @param {string | number | object} debugInfo - The debug information.
+ * @param {string} tag - The tag that players need to have to receive the debug information.
+ * @throws {TypeError} If player is not an object, name or tag is not a string, or debugInfo is not a string, number, or object.
+ * @example debug(player, "Speed", speed, "debug"); // Sends the player's speed to players with the "debug" tag.
+ * @remarks Requires the player to have the specified tag to receive the debug information.
+ */
+export function debug(player, name, debugInfo, tag) {
+    // Validate the input
+    if (typeof player !== 'object' || player === null) {
+        throw new TypeError(`Error: player is type of ${typeof player}. Expected "object".`);
+    }
 
-export function debug(player, name, debug, tag) {
-    player.runCommandAsync(`tellraw @s[tag=op, tag=${tag}] {"rawtext":[{"text":"§r§uDebug §j> ${name}: §8${debug}"}]}`);
+    if (typeof name !== 'string') {
+        throw new TypeError(`Error: name is type of ${typeof name}. Expected "string".`);
+    }
+
+    if (typeof tag !== 'string') {
+        throw new TypeError(`Error: tag is type of ${typeof tag}. Expected "string".`);
+    }
+
+    if (typeof debugInfo !== 'string' && typeof debugInfo !== 'number' && typeof debugInfo !== 'object') {
+        throw new TypeError(`Error: debugInfo is type of ${typeof debugInfo}. Expected "string", "number", or "object".`);
+    }
+
+    // Convert debugInfo to a string if it is an object
+    const debugInfoStr = typeof debugInfo === 'object' ? JSON.stringify(debugInfo) : debugInfo;
+
+    // Send the debug information to players with the specified tag
+    try {
+        player.runCommandAsync(`tellraw @s[tag=op, tag=${tag}] {"rawtext":[{"text":"§r§uDebug §j> ${name}: §8${debugInfoStr}"}]}`);
+    } catch (error) {
+        console.error(`Error: Failed to send debug information. ${error.message}`);
+    }
 }
