@@ -14,11 +14,11 @@ export function scaffold_e(player) {
 
         if (!player.isFlying) {
 
-            if (player.getEffect("speed") && speed > 0.68) {
+            if (player.getEffect("speed") && speed > 0.8) {
                 flag(player, "Scaffold", "E", "speed", speed);
             }
 
-            if (!player.getEffect("speed") && speed > 0.63) {
+            if (!player.getEffect("speed") && speed > 0.7) {
                 flag(player, "Scaffold", "E", "speed", speed);
             }
         }

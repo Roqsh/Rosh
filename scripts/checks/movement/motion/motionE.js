@@ -41,8 +41,8 @@ export function motion_e(player) {
                 const invalid = (
                     currentY < dY1 &&
                     dY2 < dY1 &&
-                    diff1 > 0.1 &&
-                    diff2 < 0.08
+                    diff1 > 0.2 &&
+                    diff2 < 0.05
                 );
 
                 if(invalid) {

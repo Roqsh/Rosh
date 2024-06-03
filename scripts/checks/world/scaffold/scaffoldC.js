@@ -1,4 +1,4 @@
-import config from "../../../data/config.js"
+import config from "../../../data/config.js";
 import { flag, setScore, getScore } from "../../../util";
 
 /**
@@ -12,7 +12,6 @@ export function scaffold_c(player, block) {
     if (config.modules.scaffoldC.enabled) {
 
         const rotation = player.getRotation();
-        const velocity = player.getVelocity();
         const blockUnder = player.dimension.getBlock({
             x: Math.floor(player.location.x), 
             y: Math.floor(player.location.y) - 1, 
@@ -22,11 +21,11 @@ export function scaffold_c(player, block) {
         if (blockUnder.location.x === block.location.x && 
             blockUnder.location.y === block.location.y && 
             blockUnder.location.z === block.location.z
-        ) { 
+         ) { 
                                 
-            if (!player.hasTag("right") && velocity.y < 0.1) {
+            if (!player.hasTag("right")) {
 
-                if (rotation.x < 44.0035) {
+                if (rotation.x < 44.035) {
                     flag(player, "Scaffold", "C", "xRot", rotation.x);
                     setScore(player, "c", 1);
                 }
@@ -44,7 +43,7 @@ export function scaffold_c(player, block) {
             Math.pow(block.location.z - player.location.z, 2)
         );
 
-        if (Math.abs(rotation.x) > 75 && distance > 2.25) {
+        if (Math.abs(rotation.x) > 75 && distance > 2.75) {
             flag(player, "Scaffold", "C", "distance", `${distance},xRot=${rotation.x}`);
         }
     }
