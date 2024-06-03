@@ -698,6 +698,7 @@ export default
             "enabled": true,
             "description": "Checks for a player not going into the predicted location (y)",
             "punishment": "kick",
+            "amount": 4,
             "punishmentLength": "5m",
             "minVlbeforePunishment": 5
         },
@@ -730,10 +731,10 @@ export default
 
         "motionB": {
             "enabled": true,
-            "description": "Checks for invalid jumping",
-            "height": -1.11,
+            "description": "Checks for high velocity changes",
             "punishment": "kick",
-            "minVlbeforePunishment": 8
+            "yVelocity": 30,
+            "minVlbeforePunishment": 1
         },
 
         "motionC": {
@@ -741,12 +742,19 @@ export default
             "description": "Checks for not moving when having velocity",
             "punishment": "kick",
             "min_velocity": 2.5,
-            "minVlbeforePunishment": 7
+            "minVlbeforePunishment": 4
         },
 
         "motionD": {
             "enabled": true,
-            "description": "Checks for invalid velocity",
+            "description": "Checks for not going to the predicted direction",
+            "punishment": "kick",
+            "minVlbeforePunishment": 3
+        },
+
+        "motionE": {
+            "enabled": true,
+            "description": "Checks for invalid speed changes",
             "punishment": "kick",
             "minVlbeforePunishment": 4
         },
@@ -827,6 +835,7 @@ export default
             "enabled": false,
             "description": "Checks for diagonal scaffolds",
             "punishment": "kick",
+            "nofalse": false,
             "minVlbeforePunishment": 2
         },
 
