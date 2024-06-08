@@ -45,7 +45,7 @@ export function motion_e(player) {
                     diff2 < 0.05
                 );
 
-                if(invalid) {
+                if (invalid) {
                     flag(player, "Motion", "E", "yVelocity", currentY, true);
                 }
             }

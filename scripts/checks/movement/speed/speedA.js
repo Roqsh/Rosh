@@ -13,7 +13,7 @@ export function speed_a(player) {
 
     if(config.modules.speedA.enabled) {
 
-        if(player.hasTag("gmc") || player.hasTag("attacking")) return;
+        if(player.isFlying || player.hasTag("attacking")) return;
 
         if(player.getEffect("speed")) {
 
@@ -26,19 +26,29 @@ export function speed_a(player) {
                 modifiedSpeed += 0.3; 
             }
     
-            if(playerSpeed > modifiedSpeed && !player.hasTag("damaged") && !player.isFlying && !player.hasTag("trident") && !player.hasTag("ice") && !player.hasTag("slime")) {
+            if(player.hasTag("riding")) {
+                modifiedSpeed += 0.9;
+            }
+
+            if(playerSpeed > modifiedSpeed && !player.hasTag("damaged") && !player.hasTag("trident") && !player.hasTag("ice") && !player.hasTag("slime")) {
                 flag(player, "Speed", "A", "speed", playerSpeed, true);
             }
     
         } else {
         
+            let maxSpeed2 = config.modules.speedA.speed;
+            
+            if(player.hasTag("riding")) {
+                maxSpeed2 += 0.9;
+            }
+    
             if(!player.hasTag("strict")) {
-                if(playerSpeed > config.modules.speedA.speed + 0.1 && !player.hasTag("strict") && !player.hasTag("damaged") && !player.isFlying && !player.hasTag("trident") && !player.hasTag("ice") && !player.hasTag("slime")) {
+                if(playerSpeed > maxSpeed2 + 0.1 && !player.hasTag("strict") && !player.hasTag("damaged") && !player.isFlying && !player.hasTag("trident") && !player.hasTag("ice") && !player.hasTag("slime")) {
                     flag(player, "Speed", "A", "speed", playerSpeed, true);
                 }
             
             } else {
-                if(playerSpeed > config.modules.speedA.speed && !player.hasTag("damaged") && !player.isFlying && !player.hasTag("trident") && !player.hasTag("ice") && !player.hasTag("slime")) {
+                if(playerSpeed > maxSpeed2 && !player.hasTag("damaged") && !player.isFlying && !player.hasTag("trident") && !player.hasTag("ice") && !player.hasTag("slime")) {
                     flag(player, "Speed", "A", "speed", playerSpeed, true);
                 }
             }

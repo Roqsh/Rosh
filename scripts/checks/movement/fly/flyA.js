@@ -2,16 +2,16 @@ import config from "../../../data/config.js";
 import { flag, aroundAir } from "../../../util";
 
 /**
+ * Checks for going up more than whats possible in vanilla.
  * @name fly_a
  * @param {player} player - The player to check
- * @remarks Checks for having an invalid yVelocity
-*/
-
+ * @remarks Some scenarios are not handled yet (crystals, tnt, etc.)
+ */
 export function fly_a(player) {
 
-    const velocity = player.getVelocity();
-
     if (config.modules.flyA.enabled) {
+
+        const velocity = player.getVelocity();
         
         if (aroundAir(player)) {
             
@@ -22,7 +22,6 @@ export function fly_a(player) {
             if (player.hasTag("placing")) max_v_up += 6;
             if (player.hasTag("damaged")) max_v_up += 4;
             if (player.hasTag("elytra")) max_v_up += 20;
-            if (player.fallDistance > 25) return;
 
             if (velocity.y > max_v_up) flag(player, "Fly", "A", "yVelocity", `${velocity.y},maxup=${max_v_up}`);
         }  

@@ -36,7 +36,10 @@ export function autoclicker_a(player) {
 			if(player.cps > 8 && (Number.isInteger(player.cps))) flag(player, "AutoClicker", "C", "flat-cps", player.cps);
 		}
 		
-		lastCPS.set(player.name, {b: player.cps});
+		lastCPS.set(player.name, {
+			b: player.cps
+		});
+		
 	    player.firstAttack = Date.now();
 	    player.cps = 0;
 	} 

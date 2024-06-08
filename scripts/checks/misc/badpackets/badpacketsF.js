@@ -11,12 +11,14 @@ export function badpackets_f(player) {
 
     if(config.modules.badpacketsF.enabled) {
 
+        if(player.hasTag("riding")) return;
+
         const preset = config.preset?.toLowerCase();
         if(preset === "stable") return;
         
         const rotation = player.getRotation();
 
-        if((Number.isInteger(rotation.x) || Number.isInteger(rotation.y)) && rotation.x !== 0 && rotation.y !== 0 && rotation.x !== 90 && rotation.x !== 60 && rotation.x !== -85 && !player.hasTag("riding")) {
+        if((Number.isInteger(rotation.x) || Number.isInteger(rotation.y)) && rotation.x !== 0 && rotation.y !== 0 && rotation.x !== 90 && rotation.x !== 60 && rotation.x !== -85) {
             flag(player, "BadPackets", "F", "xRot",`${rotation.x},yRot=${rotation.y}`);
         }   
     }

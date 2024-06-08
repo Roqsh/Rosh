@@ -12,7 +12,7 @@ export function scaffold_b(player) {
 
         if (!player.hasTag("riding")) {
 
-            const rotation = player.getRotation()
+            const rotation = player.getRotation();
 
             if (
                 (Number.isInteger(rotation.x)) && rotation.x !== 0 || 

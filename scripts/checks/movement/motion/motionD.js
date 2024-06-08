@@ -11,13 +11,13 @@ const lastpos = new Map();
  */
 export function motion_d(player) {
 
-    if(!config.modules.motionD.enabled) return;
+    if (!config.modules.motionD.enabled || player.hasTag("riding")) return;
 
     const playerVelocity = player.getVelocity();
     const playerSpeed = getSpeed(player);
     const now = Date.now();
 
-    if(lastUpdateTime.get(player.name) && !player.hasTag("stairs") && !player.isFlying) {
+    if (lastUpdateTime.get(player.name) && !player.hasTag("stairs") && !player.isFlying) {
 
         let max_value = 45;
 
@@ -32,11 +32,11 @@ export function motion_d(player) {
         const actualY = player.location.y;
         const actualZ = player.location.z;
 
-        if((player.hasTag("damaged") && !player.hasTag("fall_damage"))) {
+        if ((player.hasTag("damaged") && !player.hasTag("fall_damage"))) {
             max_value += 50;
         }
 
-        if(player.isJumping) {
+        if (player.isJumping) {
             max_value += 50;
         }
 
@@ -45,11 +45,15 @@ export function motion_d(player) {
         if(playerSpeed !== 0 && (Math.abs(lastPos.x - actualX) + Math.abs(lastPos.z - actualZ)) / 2 < 5 && !player.hasTag("placing") && !player.hasTag("slime") && player.fallDistance < 3 && !player.getEffect("speed")) {
         
             if (distance > max_value * timeElapsed / 1000.0) {
-                flag(player, "Motion", "D", "predicted", ` X:${predictedX}, Y:${predictedY}, Z:${predictedZ}, received= X:${actualX}, Y:${actualY}, Z:${actualZ},dist-diff=${distance}`, true);
+                flag(player, "Motion", "D", "prediction-Diff", distance, true);
             }
         }
     }
 
     lastUpdateTime.set(player.name, Date.now());
-    lastpos.set(player.name, {x: player.location.x, y: player.location.y, z: player.location.z});
+    lastpos.set(player.name, {
+        x: player.location.x, 
+        y: player.location.y, 
+        z: player.location.z
+    });
 }

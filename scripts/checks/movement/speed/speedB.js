@@ -7,7 +7,9 @@ const lastVelocity = new Map();
  * Checks for having rounded velocities.
  * @name speed_b
  * @param {player} player - The player to check
- * @remarks velocity.y is excluded in velocityDiff due to false flags
+ * @remarks velocity.y is excluded in velocityDiff due to false flags.
+ * velocityDiff["x"] === 1 and velocityDiff["z"] === 1 are excluded due
+ * to boats setting you 1 block to the side when leaving it while its driving.
  */
 export function speed_b(player) {
 
@@ -37,8 +39,10 @@ export function speed_b(player) {
                 };
 
                 if (
-                    velocityDiff["x"] === 0 ||  
-                    velocityDiff["z"] === 0
+                    velocityDiff["x"] === 0 ||
+                    velocityDiff["x"] === 1 ||
+                    velocityDiff["z"] === 0 ||
+                    velocityDiff["z"] === 1
                 ) return;
 
                 if (

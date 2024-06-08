@@ -13,7 +13,7 @@ export function badpackets_i(player) {
 
         const rotation = player.getRotation();
 
-        if(Math.abs(rotation.x) >= 90 || Math.abs(rotation.y) >= 180) {
+        if(Math.abs(rotation.x) >= 90 || Math.abs(rotation.y) > 180) {
             flag(player, "BadPackets", "I", "xRot", `${rotation.x},yRot=${rotation.y}`);
         }
     }

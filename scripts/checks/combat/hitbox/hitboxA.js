@@ -7,8 +7,8 @@ import { flag, angleCalc } from "../../../util";
  * @param {player} player - The player to check
  * @param {entity} entity - The attacked entity
  * @remarks To reduce false flags when flicking it is recommended 
- * to set the angle to 55+ , The distance check is rquired to not 
- * false flag when walking through the entity
+ * to set the angle to 55+ , The distance check is required to not 
+ * false flag when walking through the entity with high speed.
  */
 export function hitbox_a(player, entity) {
 

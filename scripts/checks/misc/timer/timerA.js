@@ -11,7 +11,7 @@ const timerData = new Map();
 
 export function timer_a(player, lastPosition, Value){
     
-    if(player.lastPosition && config.modules.timerA.enabled && !player.hasTag("placing") && !player.hasTag("right")) {
+    if(player.lastPosition && config.modules.timerA.enabled && !player.hasTag("placing") && !player.hasTag("right") && !player.hasTag("riding")) {
 
         const velocity = player.getVelocity();
         const calcVelocity = {

@@ -13,8 +13,16 @@ export function motion_b(player) {
 
         const velocity = player.getVelocity();
 
+        if (Math.abs(velocity.x) > config.modules.motionB.xVelocity) {
+            flag(player, "Motion", "B", "xVel", velocity.x);
+        }
+
         if (Math.abs(velocity.y) > config.modules.motionB.yVelocity) {
-            flag(player, "Motion", "B", "yVelocity", velocity.y);
+            flag(player, "Motion", "B", "yVel", velocity.y);
+        }
+
+        if (Math.abs(velocity.z) > config.modules.motionB.zVelocity) {
+            flag(player, "Motion", "B", "zVel", velocity.z);
         }
     }
 }

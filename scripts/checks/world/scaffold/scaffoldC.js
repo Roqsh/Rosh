@@ -19,24 +19,31 @@ export function scaffold_c(player, block) {
             z: Math.floor(player.location.z)
         });
 
-        if (blockUnder.location.x === block.location.x && 
+        if (
+            blockUnder.location.x === block.location.x && 
             blockUnder.location.y === block.location.y && 
             blockUnder.location.z === block.location.z
         ) { 
                                 
             if (!player.hasTag("right")) {
 
-                if (rotation.x < 44.035) {
+                if (rotation.x < 44.025) {
                     flag(player, "Scaffold", "C", "xRot", rotation.x);
-                    setScore(player, "c", 1);
+                    setScore(player, "break", 1);
                 }
             }   
         }
 
-        if (getScore(player, "c", 0) !== 1 && player.location.y > block.location.y && rotation.x < 16 && !player.hasTag("riding") && !player.isSwimming) {           
+        if (
+            getScore(player, "break", 0) !== 1 && 
+            player.location.y > block.location.y && 
+            rotation.x < 16 && 
+            !player.hasTag("riding") && 
+            !player.isSwimming
+        ) {           
             flag(player, "Scaffold", "C", "xRot", rotation.x);
         } else {
-            setScore(player, "c", 0);
+            setScore(player, "break", 0);
         }
 
         const distance = Math.sqrt(
