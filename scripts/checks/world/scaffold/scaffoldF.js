@@ -2,12 +2,11 @@ import config from "../../../data/config.js";
 import { flag, getScore, setScore, debug } from "../../../util";
 
 /**
+ * Checks for placing too many blocks scaffold-ish per 20 ticks
  * @name scaffold_f
  * @param {player} player - The player to check
  * @param {block} block - The placed block
- * @remarks Checks for placing too many blocks scaffold-ish per 20 ticks
-*/
-
+ */
 export function scaffold_f(player, block) {
 
     if (config.modules.scaffoldF.enabled) {

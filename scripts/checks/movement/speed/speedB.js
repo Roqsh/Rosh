@@ -7,7 +7,7 @@ const lastVelocity = new Map();
  * Checks for having rounded velocities.
  * @name speed_b
  * @param {player} player - The player to check
- * @remarks velocity.y is excluded due to false flags
+ * @remarks velocity.y is excluded in velocityDiff due to false flags
  */
 export function speed_b(player) {
 
@@ -17,6 +17,15 @@ export function speed_b(player) {
         const velocity = player.getVelocity();
  
         if (speed > 0.1) {
+
+            const velocityToFixed = Math.abs(velocity.y).toFixed(4);
+
+            if (
+                velocityToFixed !== "0.0000" && 
+                velocityToFixed % 0.1 === 0
+            ) {
+                flag(player, "Speed", "B", "velocityToFixed", velocityToFixed);
+            }
 
             if (lastVelocity.has(player.name)) {
 

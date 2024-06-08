@@ -9,8 +9,7 @@ const scaffold_a_map = new Map();
  * @param {player} player - The player to check
  * @param {block} block - The placed block
  * @remarks FIXME: Placing on ground false flags the no-rot and distance check (Add check if diag is in air)
-*/
-
+ */
 function diagonal(newBlock, player, oldBlock) {
 
     const newDistance = calculateDistance(player.location, newBlock);
@@ -48,11 +47,10 @@ function calculateDistance(origin, point) {
     return Math.hypot(dx, dz);
 }
 
-function shouldFlagForYaw(pitch_values, yaw_values, player) {
-    const isPitchChange = Math.abs(pitch_values.new - pitch_values.mid) > 0.05 &&
-                          Math.abs(pitch_values.mid - pitch_values.old) > 0.05;
-    const isYawSame = Math.abs(yaw_values.new - yaw_values.mid) === 0 &&
-                      Math.abs(yaw_values.mid - yaw_values.old) === 0;
+function shouldFlagForYaw(pitch_values, yaw_values) {
+
+    const isPitchChange = Math.abs(pitch_values.new - pitch_values.mid) > 0.05 && Math.abs(pitch_values.mid - pitch_values.old) > 0.05;
+    const isYawSame = Math.abs(yaw_values.new - yaw_values.mid) === 0 && Math.abs(yaw_values.mid - yaw_values.old) === 0;
 
     return isPitchChange && isYawSame;
 }
@@ -78,15 +76,20 @@ export function scaffold_a(player, block) {
     if (config.modules.scaffoldA.enabled && playerData) {
 
         const place_location = { x: block.location.x, y: block.location.y, z: block.location.z };
+
         const last_place_location = playerData.a;
         const old_place_location = playerData.b;
+
         const pitch_values = playerData.pitch;
         const yaw_values = playerData.yaw;
+        
         const distance = calculateDistance(player.location, block.location);
 
         if (last_place_location && old_place_location && pitch_values) {
+
             const xDist = Math.abs(place_location.x) - Math.abs(last_place_location.x);
             const zDist = Math.abs(place_location.z) - Math.abs(last_place_location.z);
+
             const isSameX = xDist === 0 && Math.abs(place_location.x) === Math.abs(old_place_location.x);
             const isSameZ = zDist === 0 && Math.abs(place_location.z) === Math.abs(old_place_location.z);
 

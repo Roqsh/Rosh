@@ -12,6 +12,7 @@ export function scaffold_c(player, block) {
     if (config.modules.scaffoldC.enabled) {
 
         const rotation = player.getRotation();
+
         const blockUnder = player.dimension.getBlock({
             x: Math.floor(player.location.x), 
             y: Math.floor(player.location.y) - 1, 
@@ -21,7 +22,7 @@ export function scaffold_c(player, block) {
         if (blockUnder.location.x === block.location.x && 
             blockUnder.location.y === block.location.y && 
             blockUnder.location.z === block.location.z
-         ) { 
+        ) { 
                                 
             if (!player.hasTag("right")) {
 
