@@ -734,7 +734,9 @@ export default
             "description": "Checks for high velocity changes",
             "punishment": "kick",
             "yVelocity": 30,
-            "minVlbeforePunishment": 1
+            "xVelocity": 25,
+            "zVelocity": 25,
+            "minVlbeforePunishment": 0
         },
 
         "motionC": {
