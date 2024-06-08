@@ -34,7 +34,8 @@ export default
         "showErrors": false,
         "showDebug": false,
         "showChat": false,
-        "showJoinLeave": true
+        "showJoinLeave": true,
+        "linesPerPage": 20
     },
 
     "debug": true,
@@ -348,7 +349,7 @@ export default
         "crasherA": {
             "enabled": false,
             "description":"Checks for old horion crasher method, some clients may still use them",
-            "punishment": "ban",
+            "punishment": "kick",
             "punishmentLength": "14d",
             "minVlbeforePunishment": 1
         },
@@ -619,8 +620,7 @@ export default
         "noslowA": {
             "enabled": true,
             "description": "Checks for moving to fast while using an item",
-            "speed": 0.22,
-            "maxSpeed": 0.36,
+            "speed": 0.21,
             "punishment": "kick",
             "minVlbeforePunishment": 5
         },
@@ -709,7 +709,7 @@ export default
             "fallDistance": -1,
             "punishment": "kick",
             "punishmentLength": "1m",
-            "minVlbeforePunishment": 6
+            "minVlbeforePunishment": 3
         },
 
         "flyD": {
@@ -724,7 +724,7 @@ export default
             "enabled": true,
             "speed": 7.3,
             "description": "Checks for really high speed",
-            "punishment": "ban",
+            "punishment": "kick",
             "punishmentLength": "1m",
             "minVlbeforePunishment": 1
         },
@@ -769,7 +769,7 @@ export default
         },
 
         "strafeB": {
-            "enabled": true,
+            "enabled": false,
             "description": "Checks for strafing mid-air",
             "punishment": "kick",
             "minVlbeforePunishment": 3
