@@ -745,11 +745,11 @@ function logsMenu(player, page = 0) {
 
     player.playSound("mob.chicken.plop");
 
-    let linesPerPage = config.logSettings.linesPerPage;
+    let LinesPerPage = config.logSettings.linesPerPage;
     let logs = data.recentLogs;
-    let totalPages = Math.ceil(logs.length / linesPerPage);
-    let start = page * linesPerPage;
-    let end = start + linesPerPage;
+    let totalPages = Math.ceil(logs.length / LinesPerPage);
+    let start = page * LinesPerPage;
+    let end = start + LinesPerPage;
     let text = logs.slice(start, end).join("\n");
 
     const menu = new MinecraftUI.ActionFormData()
