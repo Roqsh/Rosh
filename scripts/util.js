@@ -552,13 +552,13 @@ export function getBlocksBetween(pos1, pos2) {
 
 /**
  * Calculates the angle between a player and another entity.
- * @name angleCalculation
+ * @name getAngle
  * @param {import("@minecraft/server").Player} player - The player entity.
  * @param {import("@minecraft/server").Entity} entity - The entity to calculate the angle to.
  * @returns {number} The angle between the player and the entity in degrees.
  * @throws {TypeError} If player or entity is not an object.
  */
-export function angleCalculation(player, entity) {
+export function getAngle(player, entity) {
     // Validate the input
     if (typeof player !== 'object' || player === null) {
         throw new TypeError(`Error: player is type of ${typeof player}. Expected "object".`);
@@ -914,21 +914,29 @@ export function aroundAir(player) {
  * @param {object} player - The player that you are checking
  * @example if(inAir(player)) flag(player, "Movement', "A")
  * @remarks Flags for Movement/A if a player is in air
-*/
-
+ */
 export function inAir(player) {
-    let isInAir = true;
+    // Check if player is an object
+    if (typeof player !== 'object' || player === null) {
+        throw new TypeError(`Error: player is type of ${typeof player}. Expected "object".`);
+    }
 
-    for (let y = 0; y < 1.8; y += 0.1) {
+    // Get player's location and dimension
+    const { x, y, z } = player.location;
+    const dimension = player.dimension;
 
-        const block = player.dimension.getBlock({ x: player.location.x, y: player.location.y + y, z: player.location.z });
+    // Check for blocks below the player within a 1.8 block radius
+    for (let dy = -1.8; dy <= 0; dy += 0.1) {
+        const block = dimension.getBlock({ x, y: y + dy, z });
 
+        // If a non-air block is found, the player is not in air
         if (block.typeId !== "minecraft:air") {
-            isInAir = false;
-            break;
+            return false;
         }
     }
-    return isInAir;
+
+    // If no non-air blocks are found below the player, they are in air
+    return true;
 }
 
 
