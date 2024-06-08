@@ -461,7 +461,8 @@ function editModulesMenu(player, check) {
       
         world.setDynamicProperty("config", JSON.stringify(config));
 
-        player.sendMessage(`§r${themecolor}Rosh §j> §aUpdated the settings for §8${check}§a:\n§8${JSON.stringify(checkData, null, 2)}`);
+        const fancyCheck = check.replace(/([A-Z])/g, '/$1').replace(/^./, str => str.toUpperCase());
+        player.sendMessage(`§r${themecolor}Rosh §j> §aUpdated the settings for §8${fancyCheck}§a:\n§8${JSON.stringify(checkData, null, 2)}`);
 
     });
 }
@@ -740,29 +741,43 @@ function worldSettingsMenu(player) {
 //       Rosh Logs        //
 // ====================== //
 
-function logsMenu(player) {
-    
+function logsMenu(player, page = 0) {
+
     player.playSound("mob.chicken.plop");
 
+    let linesPerPage = config.logSettings.linesPerPage;
     let logs = data.recentLogs;
-    let text = "";
-        
-    for(let i = 0; i < logs.length; i++) {
-        text = text + logs[i] + "\n";
-    }
+    let totalPages = Math.ceil(logs.length / linesPerPage);
+    let start = page * linesPerPage;
+    let end = start + linesPerPage;
+    let text = logs.slice(start, end).join("\n");
 
     const menu = new MinecraftUI.ActionFormData()
+        .title(`Rosh Logs - ${page + 1}/${totalPages}`)
+        .body(`${text}`);
 
-        .title("Rosh Logs")
-        .body(`${text}`)
-        .button(`Log Settings`) // TODO: Compact Mode, Show errors, Show Date ... (log more messages such as menu kicks/bans/unbans etc.)
-        .button("Back");
-    
+    let buttonIndex = 0;
+    if (page > 0) {
+        menu.button("< Previous Page");
+        buttonIndex++;
+    }
+    if (page < totalPages - 1) {
+        menu.button("Next Page >");
+        buttonIndex++;
+    }
+    menu.button("Log Settings");
+    menu.button("Back");
+
     menu.show(player).then((response) => {
-
-        if (response.selection === 0) logsSettingsMenu(player);
-        if (response.selection === 1) mainGui(player);
-
+        if (response.selection === 0 && page > 0) {
+            logsMenu(player, page - 1);
+        } else if (response.selection === (page > 0 ? 1 : 0) && page < totalPages - 1) {
+            logsMenu(player, page + 1);
+        } else if (response.selection === buttonIndex) {
+            logsSettingsMenu(player);
+        } else if (response.selection === buttonIndex + 1) {
+            mainGui(player);
+        }
     });
 }
 
@@ -777,14 +792,15 @@ function logsSettingsMenu(player) {
         .toggle("Show Errors", config.logSettings.showErrors)
         .toggle("Show Debug", config.logSettings.showDebug)
         .toggle("Show Chat", config.logSettings.showChat)
-        .toggle("Show Join/Leave Messages", config.logSettings.showJoinLeave);
+        .toggle("Show Join/Leave Messages", config.logSettings.showJoinLeave)
+        .slider("Lines Per Page", 10, 100, 1, config.logSettings.linesPerPage);
     
     menu.show(player).then((response) => {
 
         if(response.canceled) return mainGui(player);
 
         // Set constants to the output the player gives
-        const [compactMode, showErrors, showDebug, showChat, showJoinLeave] = response.formValues;
+        const [compactMode, showErrors, showDebug, showChat, showJoinLeave, linesPerPage] = response.formValues;
 
         // Set config to the output the player gives by setting them as the constants
         config.logSettings.compactMode = compactMode;
@@ -792,11 +808,12 @@ function logsSettingsMenu(player) {
         config.logSettings.showDebug = showDebug;         // Done
         config.logSettings.showChat = showChat;           // Done
         config.logSettings.showJoinLeave = showJoinLeave; // Done
+        config.logSettings.linesPerPage = linesPerPage;   // Done
 
         // Save config
         world.setDynamicProperty("config", JSON.stringify(config));
 
-        player.sendMessage(`§r${themecolor}Rosh §j> §aUpdated the log settings:\n§8Compact Mode: ${compactMode}\nShow Errors: ${showErrors}\nShow Debug: ${showDebug}\nShow Chat: ${showChat}\nShow Join/Leave Messages: ${showJoinLeave}`);
+        player.sendMessage(`§r${themecolor}Rosh §j> §aUpdated the log settings:\n§8Compact Mode: ${compactMode}\nShow Errors: ${showErrors}\nShow Debug: ${showDebug}\nShow Chat: ${showChat}\nShow Join/Leave Messages: ${showJoinLeave}\nLines Per Page: ${linesPerPage}`);
     });
 }
 
