@@ -4,12 +4,15 @@ import { flag } from "../../../util";
 const lastBlock = new Map();
 
 /**
- * Checks for not looking at the place block.
+ * Checks for not looking at the placed block.
  * @name tower_a
  * @param {player} player - The player to check
  * @param {block} block - The placed block
  */
 export function tower_a(player, block) {
+
+    const preset = config.preset?.toLowerCase();
+    if(preset === "stable") return;
 
     if (config.modules.towerA.enabled) {
 
@@ -23,9 +26,8 @@ export function tower_a(player, block) {
             
             const upwards = block.location.y > last.y;
             const sameXZblock = block.location.x === last.x && block.location.z === last.z;
-            const sameXZplayer = player.location.x === block.location.x && player.location.z === block.location.z;
 
-            if (upwards && sameXZblock && sameXZplayer && rotation.x < 65) {
+            if (upwards && sameXZblock && rotation.x < 65) {
                 flag(player, "Tower", "A", "xRot", rotation.x);
             }
         }
