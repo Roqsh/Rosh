@@ -1,5 +1,6 @@
 import * as Minecraft from "@minecraft/server";
 import { parseTime } from "../../util.js";
+import data from "../../data/data.js";
 
 const world = Minecraft.world;
 
@@ -40,4 +41,5 @@ export function ban(message, args) {
     member.addTag("isBanned");
 
     player.runCommandAsync(`tellraw @a[tag=op] {"rawtext":[{"text":"§r§uRosh §j> §8${player.nameTag} §chas banned §8${member.nameTag} §cfor §8${reason}"}]}`);
+    data.recentLogs.push(`§8${member.nameTag} §chas been banned by §8${player.name}§c!`);
 }

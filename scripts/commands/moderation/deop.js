@@ -1,4 +1,5 @@
 import * as Minecraft from "@minecraft/server";
+import data from "../../data/data.js";
 
 const world = Minecraft.world;
 
@@ -23,6 +24,7 @@ export function deop(message, args) {
 
     removeOp(member);
     member.runCommandAsync(`tellraw @a[tag=op] {"rawtext":[{"text":"§r§uRosh §j> §8${player.name} §chas removed §8${member.name}'s §cRosh-Op status"}]}`);
+    data.recentLogs.push(`§8${member.name} §chas been de-opped by §8${player.name}§c!`);
 }
 
 export function removeOp(player) {

@@ -1,5 +1,6 @@
 import * as Minecraft from "@minecraft/server";
 import { animation  } from "../../util";
+import data from "../../data/data.js";
 
 const world = Minecraft.world;
 
@@ -32,4 +33,5 @@ export function mute(message, args) {
 
     animation(player, 5);
     player.runCommandAsync(`tellraw @a[tag=op] {"rawtext":[{"text":"§r§uRosh §j> §8${player.nameTag} §chas muted §8${member.nameTag} §cfor §8${reason}"}]}`);
+    data.recentLogs.push(`§8${member.nameTag} §chas been muted by §8${player.nameTag}§c!`);
 }

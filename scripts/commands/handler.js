@@ -33,15 +33,14 @@ import { about } from "./utility/about.js";
 import { logs } from "./utility/logs.js";
 import { module } from "./settings/module.js";
 
+const prefix = config.customcommands.prefix;
+let themecolor = config.themecolor;
+
 /**
  * @name commandHandler
  * @param {object} message - Message data
  * @param {object} message - Message data
-*/
-
-const prefix = config.customcommands.prefix;
-const themecolor = config.themecolor;
-
+ */
 export function commandHandler(message) {
 
     if(typeof message !== "object") throw TypeError(`message is type of ${typeof message}. Expected "object"`);

@@ -13,7 +13,7 @@ export function ui(message) {
     if(typeof message !== "object") throw TypeError(`message is type of ${typeof message}. Expected "object".`);
     
     const player = message.sender;
-    const themecolor = config.themecolor;
+    let themecolor = config.themecolor;
     
     // get the player's inventory component
     const container = player.getComponent("inventory").container;

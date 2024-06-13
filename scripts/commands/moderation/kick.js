@@ -1,4 +1,5 @@
 import * as Minecraft from "@minecraft/server"; 
+import data from "../../data/data.js";
 
 const world = Minecraft.world;
 
@@ -25,6 +26,7 @@ export function kick(message, args) {
 
     if(!member) return player.sendMessage("§r§uRosh §j> §cCouldn't find that player.");
     if(member.id === player.id) return player.sendMessage("§r§uRosh §j> §cYou cannot kick yourself.");
+    data.recentLogs.push(`§8${member.name} §chas been kicked by §8${player.nameTag}§c!`);
     if(!isSilent) player.runCommandAsync(`kick "${member.name}" ${reason}`);
     
     member.triggerEvent("scythe:kick");
