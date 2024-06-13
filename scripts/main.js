@@ -1,9 +1,9 @@
 import * as Minecraft from "@minecraft/server";
-import { world, system, ItemTypes, ItemStack } from "@minecraft/server";
+import { system, world, ItemTypes, ItemStack } from "@minecraft/server";
 import config from "./data/config.js";
 import data from "./data/data.js";
 import { tag_system, setTitle } from "./utils/gameUtil.js";
-import { flag, banMessage, getScore, setScore, getSpeed, aroundAir, tellStaff, debug } from "./util.js";
+import { flag, ban, getScore, setScore, getSpeed, aroundAir, tellStaff, debug } from "./util.js";
 import { commandHandler } from "./commands/handler.js";
 import { mainGui, playerSettingsMenuSelected } from "./ui/mainGui.js";
 
@@ -181,7 +181,7 @@ system.runInterval(() => {
 		
 		const selectedSlot = player.selectedSlot;
 
-		if(player.hasTag("isBanned")) banMessage(player);
+		if(player.hasTag("isBanned")) ban(player);
 		if(player.blocksBroken >= 1 && config.modules.nukerA.enabled) player.blocksBroken = 0;
 		if(player.entitiesHit?.length >= 1 && config.modules.killauraC.enabled) player.entitiesHit = [];
 
@@ -272,7 +272,6 @@ system.runInterval(() => {
         debug(player, "YVelocity", velocity.y, "devvelocity");
 		debug(player, "XRotation", rotation.x, "devrotationx");
 		debug(player, "YRotation", rotation.y, "devrotationy");
-
 
 		if(player.isOnGround) {			
 		    player.lastGoodPosition = player.location;			
@@ -766,7 +765,7 @@ world.afterEvents.itemUse.subscribe((itemUse) => {
 			if (rateLimit(player)) {
 				mainGui(player);
 			} else {
-				player.runCommandAsync(`tellraw @s[tag=op] {"rawtext":[{"text":"§r${themecolor}Rosh §j> §cYou are trying to access the UI too frequently! Please wait a moment."}]}`);
+				player.runCommandAsync(`tellraw @s[tag=op] {"rawtext":[{"text":"§r${themecolor}Rosh §j> §cYou are trying to access the UI too frequently!"}]}`);
 			}
         }
     }
