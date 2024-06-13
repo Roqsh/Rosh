@@ -115,9 +115,10 @@ export function commandHandler(message) {
  * @param {object} player - The player that has sent the message
  * @param {object} message - Message data
  */
-
 function runCommand(msg, commandName, args) {
+
     const message = {};
+
 	for(const item in msg) {
 		message[item] = msg[item];
 	}
@@ -128,6 +129,7 @@ function runCommand(msg, commandName, args) {
 
     
     system.run(() => {
+        
         try {
             if(commandName === "kick") kick(message, args);
                 else if(commandName === "tag") tag(message, args);
@@ -151,7 +153,7 @@ function runCommand(msg, commandName, args) {
                 else if(commandName === "autoban") autoban(message);
                 else if(commandName === "report") report(message, args);
                 else if(commandName === "unban") unban(message, args);
-                else if(commandName === "ui") ui(message);
+                else if(commandName === "ui") ui({ sender: message.sender });
                 else if(commandName === "resetwarns") resetwarns(message, args);
                 else if(commandName === "version") version(message);
                 else if(commandName === "kickall") kickall(message);
@@ -163,7 +165,7 @@ function runCommand(msg, commandName, args) {
                 else throw Error(`Command ${commandName} was found in config.js but no handler for it was found`);
         } catch (error) {
             console.error(`${new Date().toISOString()} | ${error} ${error.stack}`);
-            message.sender.sendMessage(`§r${themecolor}Rosh §j> §cThere was an error while trying to run this command`);
+            message.sender.sendMessage(`§r${themecolor}Rosh §j> §cThere was an error while trying to run this command: §8${error}${error.stack}`);
         }
     });
 }
