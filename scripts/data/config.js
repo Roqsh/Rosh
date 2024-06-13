@@ -35,7 +35,7 @@ export default
         "showDebug": false,
         "showChat": false,
         "showJoinLeave": true,
-        "linesPerPage": 20
+        "linesPerPage": 25
     },
 
     "debug": true,
@@ -764,9 +764,8 @@ export default
         "strafeA": {
             "enabled": true,
             "description": "Checks for drastically changing xz velocity whilst in air",
-            "pos_diff": 0.09,
-            "time_int": 0.5,
             "punishment": "kick",
+            "maxChange": 0.2,
             "minVlbeforePunishment": 3
         },
 
@@ -873,7 +872,7 @@ export default
             "enabled": true,
             "description":"Checks for placing too many blocks scaffold-ish per 20 ticks",
             "punishment": "kick",
-            "minVlbeforePunishment": 2
+            "minVlbeforePunishment": 1
         },
 
         "scaffoldG": {
