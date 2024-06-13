@@ -16,4 +16,5 @@ export function unban(message, args) {
 
     data.unbanQueue.push(member.toLowerCase());
     player.runCommandAsync(`tellraw @a[tag=op] {"rawtext":[{"text":"§r§uRosh §j> §8${player.nameTag} §ahas added §8${member} §ato the unban queue for: §8${reason}§a."}]}`);
+    data.recentLogs.push(`§8${member} §ahas been unbanned by §8${player.nameTag}§a!`);
 }

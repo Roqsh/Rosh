@@ -1,4 +1,5 @@
 import * as Minecraft from "@minecraft/server";
+import data from "../../data/data.js";
 
 const world = Minecraft.world;
 
@@ -25,4 +26,5 @@ export function unmute(message, args) {
     member.sendMessage("§r§uRosh §j> §aYou have been unmuted.");
     member.runCommandAsync("ability @s mute false");
     player.runCommandAsync(`tellraw @a[tag=op] {"rawtext":[{"text":"§r§uRosh §j> §8${player.nameTag} §ahas unmuted §8${member.nameTag} §afor §8${reason}"}]}`);
+    data.recentLogs.push(`§8${member.nameTag} §ahas been unmuted by §8${player.nameTag}§a!`);
 }
