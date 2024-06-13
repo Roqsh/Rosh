@@ -8,7 +8,7 @@ import { addOp, removeOp } from "../commands/moderation/op.js";
 const world = Minecraft.world;
 const moduleList = Object.keys(config.modules).concat(Object.keys(config.misc_modules));
 const modules = [];
-const themecolor = config.themecolor;
+let themecolor = config.themecolor;
 
 for(const fullModule of moduleList) {
     
@@ -325,7 +325,7 @@ function themecolorMenu(player) {
      "§rColor", "§tColor", "§uColor", "§iColor", "§pColor", "§aColor", "§sColor", "§dColor", "§gColor", "§hColor", "§jColor", "§cColor", "§bColor", "§nColor", "§mColor"
     ];
 
-    const currentColorIndex = colors.indexOf(config.themecolor + "Color");
+    const currentColorIndex = colors.indexOf(themecolor + "Color");
 
     const menu = new MinecraftUI.ModalFormData()
         .title("Choose Themecolor")
@@ -344,8 +344,9 @@ function themecolorMenu(player) {
         }
 
         config.themecolor = selectedColor.substring(0, 2);
+        themecolor = selectedColor.substring(0, 2);
         world.setDynamicProperty("config", JSON.stringify(config)); // Extracting the color code without "Color"
-        player.sendMessage(`§r${selectedColor.substring(0, 2)}Rosh §j> §aThemecolor set to ${config.themecolor}Color§a!`);
+        player.sendMessage(`§r${selectedColor.substring(0, 2)}Rosh §j> §aThemecolor set to ${selectedColor.substring(0, 2)}Color§a!`);
 
     }).catch((error) => {
         console.error("Error showing themecolor menu:", error);
@@ -792,8 +793,6 @@ function logsSettingsMenu(player) {
     const menu = new MinecraftUI.ModalFormData()
 
         .title("Log Settings")
-        .toggle("Compact Mode", config.logSettings.compactMode) // TODO: (not compact mode feature: but add pages to combat weird formatting when body becomes large, ex:Scythe/Matrix)
-        .toggle("Show Errors", config.logSettings.showErrors)
         .toggle("Show Debug", config.logSettings.showDebug)
         .toggle("Show Chat", config.logSettings.showChat)
         .toggle("Show Join/Leave Messages", config.logSettings.showJoinLeave)
@@ -804,20 +803,19 @@ function logsSettingsMenu(player) {
         if(response.canceled) return mainGui(player);
 
         // Set constants to the output the player gives
-        const [compactMode, showErrors, showDebug, showChat, showJoinLeave, linesPerPage] = response.formValues;
+        const [showDebug, showChat, showJoinLeave, linesPerPage] = response.formValues;
 
         // Set config to the output the player gives by setting them as the constants
-        config.logSettings.compactMode = compactMode;
-        config.logSettings.showErrors = showErrors;
-        config.logSettings.showDebug = showDebug;         // Done
-        config.logSettings.showChat = showChat;           // Done
-        config.logSettings.showJoinLeave = showJoinLeave; // Done
-        config.logSettings.linesPerPage = linesPerPage;   // Done
+        config.logSettings.showDebug = showDebug;         
+        config.logSettings.showChat = showChat;           
+        config.logSettings.showJoinLeave = showJoinLeave; 
+        config.logSettings.linesPerPage = linesPerPage;   
 
         // Save config
         world.setDynamicProperty("config", JSON.stringify(config));
-
-        player.sendMessage(`§r${themecolor}Rosh §j> §aUpdated the log settings:\n§8Compact Mode: ${compactMode}\nShow Errors: ${showErrors}\nShow Debug: ${showDebug}\nShow Chat: ${showChat}\nShow Join/Leave Messages: ${showJoinLeave}\nLines Per Page: ${linesPerPage}`);
+        
+        // Notify the player
+        player.sendMessage(`§r${themecolor}Rosh §j> §aUpdated the log settings:\n§8Show Debug: ${showDebug}\nShow Chat: ${showChat}\nShow Join/Leave Messages: ${showJoinLeave}\nLines Per Page: ${linesPerPage}`);
     });
 }
 
