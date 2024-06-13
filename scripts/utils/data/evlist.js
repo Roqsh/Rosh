@@ -1,5 +1,3 @@
-
-
 class EvictingList {
     
     constructor(maxSize) {
