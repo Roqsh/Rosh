@@ -8,7 +8,7 @@ const scaffold_a_map = new Map();
  * @name scaffold_a
  * @param {player} player - The player to check
  * @param {block} block - The placed block
- * @remarks FIXME: Placing on ground false flags the no-rot and distance check TODO: Add check if diag is in air (below done, sides need to be done, hard to implement
+ * @remarks FIXME: Placing on ground false flags the no-rot and distance check  TODO: Add check if diag is in air (below done, sides need to be done, hard to implement
  * as you need to figure out when x and z are covered by the diag block and when they are air)
 */
 
