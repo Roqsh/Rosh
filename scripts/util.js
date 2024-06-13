@@ -2,6 +2,8 @@ import config from "./data/config.js";
 import data from "./data/data.js";
 import { world } from "@minecraft/server";
 
+let themecolor = config.themecolor;
+
 /**
  * FIXME:
  * Alerts staff if a player fails a check.
@@ -207,8 +209,8 @@ export function ban(player) {
     if (config.flagWhitelist.includes(player.name)) return;
 
     // Define messages for unbanning scenarios
-    const unbanQueueMessage = `§r§uRosh §j> §8${player.name} §ahas been found in the unban queue and has been unbanned!`;
-    const expiredBanMessage = `§r§uRosh §j> §8${player.name}'s §aban has expired and has now been unbanned!`;
+    const unbanQueueMessage = `§r${themecolor}Rosh §j> §8${player.name} §ahas been found in the unban queue and has been unbanned!`;
+    const expiredBanMessage = `§r${themecolor}Rosh §j> §8${player.name}'s §aban has expired and has now been unbanned!`;
 
     // Extract the base player name for checking the unban queue
     const playerName = player.name.toLowerCase().split(" ")[0];
@@ -269,7 +271,7 @@ export function ban(player) {
     const banLength = time || "Permanent";
 
     // Kick the player with the ban message
-    player.runCommandAsync(`kick "${player.name}" §r${config.themecolor}Rosh §j> §cYou have been banned for §8${banReason} §c!\n§r\n §9Length: §8${banLength}`);
+    player.runCommandAsync(`kick "${player.name}" §r${themecolor}Rosh §j> §cYou have been banned for §8${banReason} §c!\n§r\n §9Length: §8${banLength}`);
 }
 
 
@@ -551,6 +553,15 @@ export function lowercaseFirstLetter(string) {
  * @returns {number} - The angle between the player and the entity in degrees
 */
 export function angleCalc(player, entity) {
+    // Validate the input
+    if (typeof player !== 'object' || player === null) {
+        throw new TypeError(`Error: player is type of ${typeof player}. Expected "object".`);
+    }
+
+    if (typeof entity !== "object") {
+        throw new TypeError(`Error: entity is of type ${typeof entity}. Expected "object".`);
+    }
+
     // Get positions of player and entity
     const playerPos = player.location;
     const entityPos = entity.location;
@@ -588,8 +599,17 @@ export function angleCalc(player, entity) {
  * @param {object} pos1 - First set of coordinates {x: number, y: number, z: number}
  * @param {object} pos2 - Second set of coordinates {x: number, y: number, z: number}
  * @returns {Array<object>} coordinates - Each possible coordinate within the given ranges [{x: number, y: number, z: number}]
+ * @remarks If the input is not a number it will return an empty array
  */
 export function getBlocksBetween({ x: x1, y: y1, z: z1 }, { x: x2, y: y2, z: z2 }) {
+    // Validate inputs
+    if (
+        typeof x1 !== 'number' || typeof y1 !== 'number' || typeof z1 !== 'number' ||
+        typeof x2 !== 'number' || typeof y2 !== 'number' || typeof z2 !== 'number'
+    ) {
+        return [];
+    }
+
     // Ensure min and max coordinates are correctly assigned
     const minX = Math.min(x1, x2);
     const maxX = Math.max(x1, x2);
@@ -704,12 +724,17 @@ export function addOp(player, initiator) {
     }
 
     try {
-        // Add the "op" tag to the player
-        tellStaff(`§r§uRosh §j> §8${initiator.name} §ahas given §8${player.name} §aRosh-Op status.`);
-        player.addTag("op");
-        const message = `Rosh > Player ${player.name} has been given operator status by ${initiator.name}.`;
-        console.log(message);
-        player.sendMessage(`§r${config.themecolor}Rosh §j> §8You have been given operator status by ${initiator.name}.`);
+        // Check if the player already has the "op" tag before adding it
+        if (!player.hasTag("op")) {
+            // Add the "op" tag to the player
+            player.addTag("op");
+            const message = `Player ${player.name} has been given operator status by ${initiator.name}.`;
+            console.log(message);
+            player.sendMessage(`§r${themecolor}Rosh §j> §8You have been given operator status by ${initiator.name}.`);
+            tellStaff(`§r§uRosh §j> §8${initiator.name} §ahas given §8${player.name} §aRosh-Op status.`);
+        } else {
+            initiator.sendMessage(`§r${themecolor}Rosh §j> §8${player.name} §calready has Rosh operator status!`);
+        }
     } catch (error) {
         console.error(`Error: Failed to add "op" tag to player. ${error.message}`);
     }
@@ -735,16 +760,21 @@ export function removeOp(player, initiator) {
     }
 
     try {
-        // Remove the "op" tag from the player
-        player.removeTag("op");
-        const message = `Player ${player.name} has been revoked operator status by ${initiator.name}.`;
-        console.log(message);
-        player.sendMessage(`§r${config.themecolor}Rosh §j> §8Your operator status has been revoked by ${initiator.name}.`);
-        tellStaff(`§r§uRosh §j> §8${initiator.name} §chas removed §8${player.name}'s §cRosh-Op status.`);
+        // Check if the player has the "op" tag before attempting to remove it
+        if (player.hasTag("op")) {
+            // Remove the "op" tag from the player
+            player.removeTag("op");
+            const message = `Player ${player.name} has been revoked operator status by ${initiator.name}.`;
+            console.log(message);
+            player.sendMessage(`§r${themecolor}Rosh §j> §8Your operator status has been revoked by ${initiator.name}.`);
+            tellStaff(`§r§uRosh §j> §8${initiator.name} §chas removed §8${player.name}'s §cRosh-Op status.`);
+        } else {
+            initiator.sendMessage(`§r${themecolor}Rosh §j> §8${player.name} §cdoesnt have Rosh operator status!`);
+        }
     } catch (error) {
         console.error(`Error: Failed to remove "op" tag from player. ${error.message}`);
     }
-} 
+}
 
 
 
@@ -893,6 +923,11 @@ export function hVelocity(player) {
  * @remarks Flags for Movement/A if a player is surrounded by air
  */
 export function aroundAir(player) {
+    // Validate the input
+    if (typeof player !== 'object' || player === null) {
+        throw new TypeError(`Error: player is type of ${typeof player}. Expected "object".`);
+    }
+
     const { x, y, z } = player.location;
     const dimension = player.dimension;
 
@@ -1015,7 +1050,7 @@ export function debug(player, name, debugInfo, tag) {
 
     // Send the debug information to players with the specified tag
     try {
-        player.runCommandAsync(`tellraw @s[tag=op, tag=${tag}] {"rawtext":[{"text":"§r§uDebug §j> ${name}: §8${debugInfoStr}"}]}`);
+        player.runCommandAsync(`tellraw @s[tag=op, tag=${tag}] {"rawtext":[{"text":"§r${themecolor}Debug §j> ${name}: §8${debugInfoStr}"}]}`);
     } catch (error) {
         console.error(`Error: Failed to send debug information. ${error.message}`);
     }

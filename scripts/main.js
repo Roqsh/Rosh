@@ -77,12 +77,12 @@ import { aim_c } from "./checks/combat/aim/aimC.js";
 let tps = 20;
 let lagValue = 1;
 let lastDate = Date.now();
+let themecolor = config.themecolor;
 
 
 world.beforeEvents.chatSend.subscribe((msg) => {
 
 	const { sender: player, message } = msg;
-	const themecolor = config.themecolor;
 
 	if(message.includes("horion") || message.includes("borion") || message.includes("packet") || message.includes("vector") || message.includes("prax") || message.includes("zephyr") || message.includes("nuvola")  || message.includes("aelous") || message.includes("disepi") || message.includes("ambrosial") || message.includes("utility mod") || message.includes("nigga") || message.includes("niger")) {	
 		msg.cancel = true;
@@ -562,7 +562,6 @@ world.beforeEvents.playerLeave.subscribe((playerLeave) => {
 world.afterEvents.playerSpawn.subscribe((playerJoin) => {
 
 	const { initialSpawn, player } = playerJoin;
-	const themecolor = config.themecolor;
 
 	if(!initialSpawn) return;
 
@@ -745,7 +744,6 @@ function rateLimit(player) {
 world.afterEvents.itemUse.subscribe((itemUse) => {
 
     const { itemStack: item, source: player } = itemUse;
-	const themecolor = config.themecolor;
 
     if (player.typeId !== "minecraft:player" || !player.hasTag("itemUse")) return;
 
@@ -785,8 +783,6 @@ system.afterEvents.scriptEventReceive.subscribe(({id, sourceEntity }) => {
 system.beforeEvents.watchdogTerminate.subscribe((watchdogTerminate) => {
 	
 	watchdogTerminate.cancel = true;
-
-	const themecolor = config.themecolor;
 
 	tellStaff(`§r${themecolor}Rosh§r §j> §cA Watchdog Exception has been detected, but it has been cancelled successfully.\nTermination-Reason: §8${watchdogTerminate.terminateReason}`);
 });
