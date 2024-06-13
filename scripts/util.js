@@ -192,56 +192,84 @@ export function flag(player, check, checkType, debugName, debug, shouldTP = fals
 
 /**
  * Bans a player from the game.
- * @name banMessage
+ * @name ban
  * @param {import("@minecraft/server").Player} player - The player object
- * @example banMessage(rqosh);
+ * @example ban(rqosh);
  * @throws {TypeError} If player is not an object
  */
-export function banMessage(player) {
+export function ban(player) {
+    // Validate that the input is an object
     if (typeof player !== "object" || player === null) {
         throw new TypeError(`Error: player is type of ${typeof player}. Expected "object"`);
     }
 
+    // If the player is in the whitelist, do nothing
     if (config.flagWhitelist.includes(player.name)) return;
 
-    const unbanQueueMessage = `§r§uRosh §j> §8${player.name} §ahas been found in the unban queue and has been unbanned !`;
-    const expiredBanMessage = `§r§uRosh §j> §8${player.name}'s §aban has expired and has now been unbanned !`;
+    // Define messages for unbanning scenarios
+    const unbanQueueMessage = `§r§uRosh §j> §8${player.name} §ahas been found in the unban queue and has been unbanned!`;
+    const expiredBanMessage = `§r§uRosh §j> §8${player.name}'s §aban has expired and has now been unbanned!`;
 
-    if (data.unbanQueue.includes(player.name.toLowerCase().split(" ")[0])) {
+    // Extract the base player name for checking the unban queue
+    const playerName = player.name.toLowerCase().split(" ")[0];
+
+    // Check if the player is in the unban queue
+    if (data.unbanQueue.includes(playerName)) {
+        // Remove the ban tag/unban and inform staff
         player.removeTag("isBanned");
-        tellStaff(`${unbanQueueMessage}`);
+        tellStaff(unbanQueueMessage);
 
-        player.getTags().forEach(t => {
-            if (t.includes("Reason:") || t.includes("Length:")) player.removeTag(t);
+        // Remove all tags related to ban reason and length
+        player.getTags().forEach(tag => {
+            if (tag.includes("Reason:") || tag.includes("Length:")) player.removeTag(tag);
         });
 
-        data.unbanQueue = data.unbanQueue.filter(name => name !== player.name.toLowerCase().split(" ")[0]);
+        // Remove the player from the unban queue
+        data.unbanQueue = data.unbanQueue.filter(name => name !== playerName);
         return;
     }
 
+    // Initialize variables for reason and time
     let reason;
     let time;
 
-    player.getTags().forEach(t => {
-        if (t.includes("Reason:")) reason = t.slice(7);
-        else if (t.includes("Length:")) time = t.slice(7);
+    // Extract the reason and length tags from the player's tags
+    player.getTags().forEach(tag => {
+        if (tag.startsWith("Reason:")) {
+            reason = tag.slice(7); // Extract reason text
+        } else if (tag.startsWith("Length:")) {
+            time = tag.slice(7); // Extract ban end time
+        }
     });
 
+    // If there is a length tag, check if the ban has expired
     if (time) {
-        if (Number(time) < Date.now()) {
-            tellStaff(`${expiredBanMessage}`);
+        const currentTime = Date.now();
+        const banEndTime = Number(time);
+
+        if (banEndTime < currentTime) {
+            // Inform staff about the expired ban and remove related tags
+            tellStaff(expiredBanMessage);
             player.removeTag("isBanned");
-            player.getTags().forEach(t => {
-                if (t.includes("Reason:") || t.includes("Length:")) player.removeTag(t);
+
+            player.getTags().forEach(tag => {
+                if (tag.includes("Reason:") || tag.includes("Length:")) player.removeTag(tag);
             });
+
             return;
         }
 
-        const remainingTime = msToTime(Number(time) - Date.now());
+        // Calculate the remaining ban time
+        const remainingTime = msToTime(banEndTime - currentTime);
         time = `${remainingTime.weeks} weeks, ${remainingTime.days} days, ${remainingTime.hours} hours, ${remainingTime.minutes} minutes, ${remainingTime.seconds} seconds left!`;
     }
 
-    player.runCommandAsync(`kick "${player.name}" §r${config.themecolor}Rosh §j> §cYou have been banned for §8${reason || "No Reason Provided"} §c!\n§r\n §9Length: §8${time || "Permanent"}`);
+    // Default values if reason or time is not provided
+    const banReason = reason || "No Reason Provided";
+    const banLength = time || "Permanent";
+
+    // Kick the player with the ban message
+    player.runCommandAsync(`kick "${player.name}" §r${config.themecolor}Rosh §j> §cYou have been banned for §8${banReason} §c!\n§r\n §9Length: §8${banLength}`);
 }
 
 
@@ -517,16 +545,51 @@ export function lowercaseFirstLetter(string) {
 
 
 /**
+ * @name angleCalc
+ * @param {import("@minecraft/server").Player} player - The Player to calculate the angle on
+ * @param {import("@minecraft/server").Entity} entity - The Entity to calculate the angle to
+ * @returns {number} - The angle between the player and the entity in degrees
+*/
+export function angleCalc(player, entity) {
+    // Get positions of player and entity
+    const playerPos = player.location;
+    const entityPos = entity.location;
+
+    // Calculate differences in x and z coordinates
+    const deltaX = entityPos.x - playerPos.x;
+    const deltaZ = entityPos.z - playerPos.z;
+
+    // Calculate the angle in radians between the player and entity
+    let angleRad = Math.atan2(deltaZ, deltaX);
+
+    // Convert the angle from radians to degrees
+    let angleDeg = angleRad * 180 / Math.PI;
+
+    // Adjust the angle based on the player's rotation
+    const playerYaw = player.getRotation().y;
+    angleDeg = angleDeg - playerYaw - 90;
+
+    // Normalize the angle to be between -180 and 180 degrees
+    if (angleDeg <= -180) {
+        angleDeg += 360;
+    } else if (angleDeg > 180) {
+        angleDeg -= 360;
+    }
+
+    // Return the absolute value of the angle
+    return Math.abs(angleDeg);
+}
+
+
+
+/**
  * Find every possible coordinate between two sets of Vector3.
  * @name getBlocksBetween
- * @param {object} pos1 - First set of coordinates
- * @param {object} pos2 - Second set of coordinates
- * @returns {Array} coordinates - Each possible coordinate
+ * @param {object} pos1 - First set of coordinates {x: number, y: number, z: number}
+ * @param {object} pos2 - Second set of coordinates {x: number, y: number, z: number}
+ * @returns {Array<object>} coordinates - Each possible coordinate within the given ranges [{x: number, y: number, z: number}]
  */
-export function getBlocksBetween(pos1, pos2) {
-    const { x: x1, y: y1, z: z1 } = pos1;
-    const { x: x2, y: y2, z: z2 } = pos2;
-
+export function getBlocksBetween({ x: x1, y: y1, z: z1 }, { x: x2, y: y2, z: z2 }) {
     // Ensure min and max coordinates are correctly assigned
     const minX = Math.min(x1, x2);
     const maxX = Math.max(x1, x2);
@@ -537,6 +600,7 @@ export function getBlocksBetween(pos1, pos2) {
 
     const coordinates = [];
 
+    // Iterating z innermost can be beneficial for cache locality
     for (let x = minX; x <= maxX; x++) {
         for (let y = minY; y <= maxY; y++) {
             for (let z = minZ; z <= maxZ; z++) {
@@ -546,43 +610,6 @@ export function getBlocksBetween(pos1, pos2) {
     }
 
     return coordinates;
-}
-
-
-
-/**
- * Calculates the angle between a player and another entity.
- * @name getAngle
- * @param {import("@minecraft/server").Player} player - The player entity.
- * @param {import("@minecraft/server").Entity} entity - The entity to calculate the angle to.
- * @returns {number} The angle between the player and the entity in degrees.
- * @throws {TypeError} If player or entity is not an object.
- */
-export function getAngle(player, entity) {
-    // Validate the input
-    if (typeof player !== 'object' || player === null) {
-        throw new TypeError(`Error: player is type of ${typeof player}. Expected "object".`);
-    }
-
-    if (typeof entity !== 'object' || entity === null) {
-        throw new TypeError(`Error: entity is type of ${typeof entity}. Expected "object".`);
-    }
-
-    // Get positions of player and entity
-    const playerPosition = { x: player.location.x, y: player.location.y, z: player.location.z };
-    const entityPosition = { x: entity.location.x, y: entity.location.y, z: entity.location.z };
-
-    // Calculate the difference in positions
-    const deltaX = entityPosition.x - playerPosition.x;
-    const deltaZ = entityPosition.z - playerPosition.z;
-
-    // Calculate the angle in radians
-    const angleRadians = Math.atan2(deltaZ, deltaX);
-
-    // Convert the angle to degrees and adjust to be within [0, 360) range
-    const angleDegrees = (angleRadians * (180 / Math.PI) + 360) % 360;
-
-    return angleDegrees;
 }
 
 
@@ -855,25 +882,6 @@ export function hVelocity(player) {
         console.error(`Error: Failed to calculate horizontal velocity. ${error.message}`);
         return 0; // Return 0 as a fallback value
     }
-}
-
-
-
-/**
- * @name angleCalc
- * @param {import("@minecraft/server").Player} player - The Player to calculate the angle on
-*/
-
-export function angleCalc(player, entity) {
-    const pos1 = { x: player.location.x, y: player.location.y, z: player.location.z };
-    const pos2 = { x: entity.location.x, y: entity.location.y, z: entity.location.z };
-
-    let angle = Math.atan2((pos2.z - pos1.z), (pos2.x - pos1.x)) * 180 / Math.PI - player.getRotation().y - 90;
-
-    if (angle <= -180) angle += 360;
-    angle = Math.abs(angle); 
-
-    return angle;
 }
 
 
