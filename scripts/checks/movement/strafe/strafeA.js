@@ -1,36 +1,44 @@
 import config from "../../../data/config.js";
 import { flag, hVelocity } from "../../../util";
 
+const lastXZ = new Map();
+
 /**
+ * Checks for drastically changing xz velocity whilst in air.
  * @name strafe_a
  * @param {player} player - The player to check
- * @remarks Checks for unlegit XZ differences
-*/
-
-const lastXZv = new Map();
-
+ * @remarks 
+ */
 export function strafe_a(player) {
-
-    const playerVelocity = player.getVelocity();
     
-    if(config.modules.strafeA.enabled) {
+    if (config.modules.strafeA.enabled) {
 
-        if(player.hasTag("damaged") || player.isFlying || player.hasTag("elytra")) return;
+        const velocity = player.getVelocity();
 
-        let value = 0.1;
+        if (
+            player.hasTag("damaged") || 
+            player.hasTag("elytra") ||
+            player.isOnGround ||
+            player.isFlying
+        ) return;
 
-        if(player.getEffect("speed")) value + 0.8;
+        let maxChange = config.modules.strafeA.maxChange;
 
-        if(lastXZv.has(player.name)) {
+        if (player.getEffect("speed")) value += 0.75;
+
+        if (lastXZ.has(player.name)) {
             
-            const x_diff = Math.abs(lastXZv.get(player.name).x - playerVelocity.x);
-            const z_diff = Math.abs(lastXZv.get(player.name).z - playerVelocity.z);
+            const x_diff = Math.abs(lastXZ.get(player.name)?.x - velocity.x);
+            const z_diff = Math.abs(lastXZ.get(player.name)?.z - velocity.z);
 
-            if(hVelocity(player) > 1 && (x_diff > value || z_diff > value)) {
-                flag(player, "Strafe", "A", "xDiff", `${x_diff},zDiff=${z_diff}`, true);
+            if (hVelocity(player) > 1 && (x_diff > maxChange || z_diff > maxChange)) {
+                flag(player, "Strafe", "A", "xDiff", `${x_diff},zDiff=${z_diff}`);
             }
         }
         
-        lastXZv.set(player, {x: playerVelocity.x, z: playerVelocity.z});
+        lastXZ.set(player, {
+            x: velocity.x, 
+            z: velocity.z
+        });
     }
 }

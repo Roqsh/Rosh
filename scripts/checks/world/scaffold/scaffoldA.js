@@ -8,8 +8,10 @@ const scaffold_a_map = new Map();
  * @name scaffold_a
  * @param {player} player - The player to check
  * @param {block} block - The placed block
- * @remarks FIXME: Placing on ground false flags the no-rot and distance check (Add check if diag is in air)
- */
+ * @remarks FIXME: Placing on ground false flags the no-rot and distance check TODO: Add check if diag is in air (below done, sides need to be done, hard to implement
+ * as you need to figure out when x and z are covered by the diag block and when they are air)
+*/
+
 function diagonal(newBlock, player, oldBlock) {
 
     const newDistance = calculateDistance(player.location, newBlock);
@@ -22,6 +24,45 @@ function diagonal(newBlock, player, oldBlock) {
         newBlock.y < player.location.y &&
         newDistance > oldDistance
     );
+}
+
+function air(player, one, two, three) {
+    
+    const sidesOne = [
+        { x: one.x - 1, y: one.y, z: one.z },    
+        { x: one.x + 1, y: one.y, z: one.z },    
+        { x: one.x, y: one.y, z: one.z - 1 },    
+        { x: one.x, y: one.y, z: one.z + 1 },     
+        { x: one.x, y: one.y - 1, z: one.z }      
+    ];
+    
+    const sidesTwo = [
+        { x: two.x - 1, y: two.y, z: two.z },     
+        { x: two.x + 1, y: two.y, z: two.z },    
+        { x: two.x, y: two.y, z: two.z - 1 },     
+        { x: two.x, y: two.y, z: two.z + 1 },     
+        { x: two.x, y: two.y - 1, z: two.z }      
+    ];
+    
+    const sidesThree = [
+        { x: three.x - 1, y: three.y, z: three.z }, 
+        { x: three.x + 1, y: three.y, z: three.z }, 
+        { x: three.x, y: three.y, z: three.z - 1 }, 
+        { x: three.x, y: three.y, z: three.z + 1 },
+        { x: three.x, y: three.y - 1, z: three.z }  
+    ];
+
+    // Filter out sides that must touch for the diagonal construction
+    const validSidesOne = sidesOne.filter(side => !(side.x === two.x && side.z === two.z) && !(side.x === three.x && side.z === three.z));
+    const validSidesTwo = sidesTwo.filter(side => !(side.x === one.x && side.z === one.z) && !(side.x === three.x && side.z === three.z));
+    const validSidesThree = sidesThree.filter(side => !(side.x === one.x && side.z === one.z) && !(side.x === two.x && side.z === two.z));
+
+    // Check if all the valid sides are air
+    const isAirOne = validSidesOne.every(side => !(player.dimension.getBlock(side).typeId === "minecraft:air"));
+    const isAirTwo = validSidesTwo.every(side => !(player.dimension.getBlock(side).typeId === "minecraft:air"));
+    const isAirThree = validSidesThree.every(side => !(player.dimension.getBlock(side).typeId === "minecraft:air"));
+
+    return isAirOne && isAirTwo && isAirThree;
 }
 
 function is_decrease(origin, point1, point2, point3) {
@@ -41,10 +82,10 @@ function is_decrease(origin, point1, point2, point3) {
 
 function calculateDistance(origin, point) {
 
-    const dx = point.x - origin.x;
-    const dz = point.z - origin.z;
+    const distanceX = point.x - origin.x;
+    const distanceZ = point.z - origin.z;
 
-    return Math.hypot(dx, dz);
+    return Math.hypot(distanceX, distanceZ);
 }
 
 function shouldFlagForYaw(pitch_values, yaw_values) {
@@ -55,14 +96,13 @@ function shouldFlagForYaw(pitch_values, yaw_values) {
     return isPitchChange && isYawSame;
 }
 
-function shouldFlagForDiagonal(pitch_values, yaw_values, distance) {
+function shouldFlagForDiagonal(pitch_values, yaw_values) {
 
     const isPitchEqual = Math.abs(pitch_values.new - pitch_values.mid) === 0 && Math.abs(pitch_values.new - pitch_values.old) === 0;
     const isYawEqual = Math.abs(yaw_values.new - yaw_values.mid) === 0 && Math.abs(yaw_values.new - yaw_values.old) === 0;
-    const arePitchAndYawDifferent = Math.abs(pitch_values.new - pitch_values.mid) !== 0 && Math.abs(yaw_values.new - yaw_values.mid) !== 0;
-    const isDiagonalConditionMet = isPitchEqual && isYawEqual || isYawEqual && isPitchEqual && arePitchAndYawDifferent;
+    const isDiagonalConditionMet = isPitchEqual && isYawEqual
 
-    return isDiagonalConditionMet && distance > 1.3;
+    return isDiagonalConditionMet;
 }
 
 export function scaffold_a(player, block) {
@@ -94,20 +134,25 @@ export function scaffold_a(player, block) {
             const isSameZ = zDist === 0 && Math.abs(place_location.z) === Math.abs(old_place_location.z);
 
             if (isSameX || isSameZ) {
+
                 if (shouldFlagForYaw(pitch_values, yaw_values, player)) {
                     flag(player, "Scaffold", "A", "yaw", rotation.y);
                 }
             }
 
-            if (diagonal(place_location, player, old_place_location)) {
-                if (shouldFlagForDiagonal(pitch_values, yaw_values, distance)) {
-                    flag(player, "Scaffold", "A", "no-rot", `true, distance=${distance}`);
+            if (
+                diagonal(place_location, player, old_place_location) && 
+                air(player, place_location, last_place_location, old_place_location)
+            ) {
+
+                if (shouldFlagForDiagonal(pitch_values, yaw_values)) {
+                    flag(player, "Scaffold", "A", "rotDiff", `0, distance=${distance}`);
                 }
 
                 const diff_1 = Math.abs(yaw_values.mid - yaw_values.new);
                 const diff_2 = Math.abs(yaw_values.new - rotation.y);
 
-                if (distance > 2.8 && !is_decrease(player, place_location, last_place_location, old_place_location)) {
+                if (distance > 2.5 && !is_decrease(player, place_location, last_place_location, old_place_location)) {
                     flag(player, "Scaffold", "A", "distance", distance);
                 }
 
@@ -119,15 +164,19 @@ export function scaffold_a(player, block) {
                     flag(player, "Scaffold", "A", "speed", getSpeed(player));
                 }
 
-                if (!player.hasTag("itemUse") && !is_decrease(player, place_location, last_place_location, old_place_location) && diff_1 > 2 && diff_2 > 2 && getSpeed(player) > 0.5) {
-                    flag(player, "Scaffold", "A", "itemUse", "false", true);
+                if (!player.hasTag("itemUse") && distance > 2 && getSpeed(player) > 0.15) {
+                    flag(player, "Scaffold", "A", "itemUse", "false");
                 }
             }
         }
     }
 
     scaffold_a_map.set(player.name, {
-        a: { x: block.location.x, y: block.location.y, z: block.location.z },
+        a: {
+            x: block.location.x, 
+            y: block.location.y, 
+            z: block.location.z 
+        },
         b: playerData?.a,
         pitch: {
             new: rotation.x,

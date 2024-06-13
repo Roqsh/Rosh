@@ -22,6 +22,7 @@ export function motion_d(player) {
         let max_value = 45;
 
         const timeElapsed = now - lastUpdateTime.get(player.name);
+        
         const lastPos = lastpos.get(player.name);
 
         const predictedX = lastPos.x + playerVelocity.x * timeElapsed / 1000.0;
@@ -42,7 +43,14 @@ export function motion_d(player) {
 
         const distance = Math.sqrt((predictedX - actualX) ** 2 + (predictedY - actualY) ** 2 + (predictedZ - actualZ) ** 2);
 
-        if(playerSpeed !== 0 && (Math.abs(lastPos.x - actualX) + Math.abs(lastPos.z - actualZ)) / 2 < 5 && !player.hasTag("placing") && !player.hasTag("slime") && player.fallDistance < 3 && !player.getEffect("speed")) {
+        if(
+            playerSpeed !== 0 && 
+            //(Math.abs(lastPos.x - actualX) + Math.abs(lastPos.z - actualZ)) / 2 < 5 && 
+            //player.fallDistance < 3 &&
+            !player.getEffect("speed") &&
+            !player.hasTag("placing") && 
+            !player.hasTag("slime") 
+        ) {
         
             if (distance > max_value * timeElapsed / 1000.0) {
                 flag(player, "Motion", "D", "prediction-Diff", distance, true);
@@ -51,6 +59,7 @@ export function motion_d(player) {
     }
 
     lastUpdateTime.set(player.name, Date.now());
+
     lastpos.set(player.name, {
         x: player.location.x, 
         y: player.location.y, 

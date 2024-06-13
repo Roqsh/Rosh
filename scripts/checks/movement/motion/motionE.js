@@ -12,9 +12,6 @@ export function motion_e(player) {
 
     if (config.modules.motionE.enabled) {
 
-        const preset = config.preset?.toLowerCase();
-        if(preset === "stable") return;
-
         if (
             player.hasTag("trident") ||  
             player.hasTag("placing") ||

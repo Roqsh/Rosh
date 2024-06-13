@@ -1,17 +1,17 @@
 import config from "../../../data/config.js";
 import { flag, debug } from "../../../util";
 import { getAverage, getStandardDeviation } from "../../../utils/mathUtil";
+import EvictingList from "../../../utils/data/evlist.js";
 
-/**
- * @name aim_d
- * @param {player} player - The player to check
- * @remarks Checks for extremly smooth rotation [Beta]
-*/
-
-const EvictingList = require("../../../utils/data/evlist");
 const data = new Map();
 const buffer = new Map();
 
+/**
+ * Checks for extremly smooth rotation. [Beta]
+ * @name aim_d
+ * @param {player} player - The player to check
+ * @remarks Checks for extremly smooth rotation [Beta]
+ */
 export function aim_d(player) {
 
     const preset = config.preset?.toLowerCase();
@@ -20,12 +20,12 @@ export function aim_d(player) {
     const yASamples = new EvictingList(20);
     const pASamples = new EvictingList(20);
 
-    if(config.modules.aimD.enabled && data.get(player.name)) {
+    if (config.modules.aimD.enabled && data.get(player.name)) {
 
         const data_yaw = data.get(player.name).yaw;
         const data_pitch = data.get(player.name).pitch;
 
-        if(data_yaw && data_pitch) {
+        if (data_yaw && data_pitch) {
 
             const deltaPitch = Math.abs(rot.x - data_pitch.one);
             const deltaYaw = Math.abs(rot.y - data_yaw.one);
@@ -39,7 +39,7 @@ export function aim_d(player) {
             yASamples.add(yawAccel);
             pASamples.add(pitchAccel);
 
-            if(yASamples.isFull() && pASamples.isFull()) {
+            if (yASamples.isFull() && pASamples.isFull()) {
 
                 const yawAccelAverage = getAverage(yASamples);
                 const pitchAccelAverage = getAverage(pASamples);
@@ -54,10 +54,10 @@ export function aim_d(player) {
                 const averageInvalid = yawAccelAverage < 1 || pitchAccelAverage && !exemptRotation;
                 const devationInvalid = yawAccelDeviation < 5 && pitchAccelDeviation > 5 && !exemptRotation;
 
-                if(averageInvalid || devationInvalid) {
+                if (averageInvalid || devationInvalid) {
 
-                    if(buffer.get(player.name)) {
-                        if(buffer.get(player.name) > config.modules.aimD.buffer) {
+                    if (buffer.get(player.name)) {
+                        if (buffer.get(player.name) > config.modules.aimD.buffer) {
                             flag(player, "Aim", "D", "yawAccelAvg", `${yawAccelAverage},yawAccelDevation=${yawAccelDeviation}`);
                             buffer.set(player.name, -1);
                         }

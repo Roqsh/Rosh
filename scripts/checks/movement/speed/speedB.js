@@ -23,7 +23,8 @@ export function speed_b(player) {
             const velocityToFixed = Math.abs(velocity.y).toFixed(4);
 
             if (
-                velocityToFixed !== "0.0000" && 
+                velocityToFixed !== "0.0000" &&
+                velocityToFixed !== "0.2000" &&
                 velocityToFixed % 0.1 === 0
             ) {
                 flag(player, "Speed", "B", "velocityToFixed", velocityToFixed);
