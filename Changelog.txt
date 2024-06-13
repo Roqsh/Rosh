@@ -24,13 +24,14 @@ Rosh v1.22
 (#) Set Tower/A to Beta
 (#) Set Fly/D to Beta
 (#) Fixed inconsistencies
-(#) Fixed some issues in the Punish Menu
+(#) Fixed some issues in the Punish Menu and Player Manage Menu
 (#) Fixed false flag when spectating
 (#) Fixed false flags with boats and other stuff
 (#) Fixed Nuker checks not setting the block back (A,B,D)
 
 (*) Recoded util.js functions
 (*) Renamed banAnimation to animation to better represent its purpose
+(*) Renamed banMessage to ban to better represent its purpose
 (*) Config tweaks
 (*) Improved tons of checks and Formatting (JSDoc, Comments, etc.)
 (*) UI Toggles will now display their state (enabled/disabled)
@@ -44,3 +45,5 @@ Rosh v1.22
 (*) Speed/A and Fly/D will now exclude players in gamemode creative
 (*) Improved Performance by removing uneccesary stuff/optimizing
 (*) Console warns whenever a player gets punished will now only be displayed if 'console_debug' is enabled via config
+(*) Future preparations (security such es encrypting/decrypting)
+(*) Started to display punishments by Rosh-Ops in logs

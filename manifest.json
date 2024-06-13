@@ -3,9 +3,9 @@
 	"header": {
 		"name": "§r§uRosh§r",
 		"description": "\n§r§8v1.22",
-		"uuid": "7e9fc716-14c4-4781-8624-204cf5b2f13f",
+		"uuid": "907d24fe-97c5-43ee-a2a8-b96e29d95940",
 		"version": [1, 2, 2],
-		"min_engine_version": [1, 20, 0]
+		"min_engine_version": [1, 21, 0]
 	},
 	"metadata": {
 		"authors": [
@@ -19,14 +19,14 @@
 	"modules": [
 		{
 			"type": "data",
-			"uuid": "38994706-2948-4c2d-9ef9-a4c118b66c1d",
+			"uuid": "423c2a39-9ef8-45ca-b67d-e6c27a926407",
 			"version": [1, 0, 0]
 		},
 		{
 			"description": "Beta API Features",
 			"language": "javascript",
 			"type": "script",
-			"uuid": "1ae6c883-aecb-487f-94f1-d27f2eeb8b6e",
+			"uuid": "334a6161-c175-4ce0-9e33-f3a18a903da4",
 			"version": [1, 0, 0],
 			"entry": "scripts/main.js"
 		}
@@ -34,7 +34,7 @@
 	"dependencies": [
         {
             "module_name": "@minecraft/server",
-            "version": "1.11.0-beta"
+            "version": "1.13.0-beta"
         },
         {
             "module_name": "@minecraft/server-ui",
