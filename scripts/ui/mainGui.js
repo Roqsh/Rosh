@@ -150,16 +150,18 @@ function kickPlayerMenu(player, playerSelected, lastMenu = 0) {
             return;
         }
 
-        const data = response.formValues;
-        const reasonUI = data[0] || "No Reason Provided";
-        const isSilent = data[1];
+        const input = response.formValues;
+        const reasonUI = input[0] || "No Reason Provided";
+        const isSilent = input[1];
         const reason = `§r${themecolor}Rosh §j> §cYou have been kicked for: §8${reasonUI} §c!`;
 
         if (!isSilent) {
             player.runCommandAsync(`tellraw @a[tag=op] {"rawtext":[{"text":"§r${themecolor}Rosh §j> §8${player.nameTag} §chas kicked §8${playerSelected.name} §cfor: §8${reasonUI}"}]}`);
+            data.recentLogs.push(`§8${playerSelected.nameTag} §chas been kicked by §8${player.nameTag}§c!`);
             player.runCommandAsync(`kick "${playerSelected.name}" ${reason}`);
         } else {
             player.runCommandAsync(`tellraw @a[tag=op] {"rawtext":[{"text":"§r${themecolor}Rosh §j> §8${player.nameTag} §chas kicked §8${playerSelected.name} §c(Silent) for: §8${reasonUI}"}]}`);
+            data.recentLogs.push(`§8${playerSelected.nameTag} §chas been kicked (Silent) by §8${player.nameTag}§c!`);
             playerSelected.triggerEvent("scythe:kick");
         }
     });
@@ -186,10 +188,10 @@ function banPlayerMenu(player, playerSelected, lastMenu = 0) {
             return;
         }
 
-        const data = response.formValues;
-        const reason = data[0] || "No Reason Provided";
-        const banLength = data[1] ? parseTime(`${data[1]}d`) : 0;
-        const shouldPermBan = data[2];
+        const input = response.formValues;
+        const reason = input[0] || "No Reason Provided";
+        const banLength = input[1] ? parseTime(`${input[1]}d`) : 0;
+        const shouldPermBan = input[2];
 
         // Remove old ban tags
         playerSelected.getTags().forEach(t => {
@@ -205,6 +207,7 @@ function banPlayerMenu(player, playerSelected, lastMenu = 0) {
             playerSelected.addTag("isBanned");
 
             player.runCommandAsync(`tellraw @a[tag=op] {"rawtext":[{"text":"§r${themecolor}Rosh §j> §8${player.nameTag} §chas banned §8${playerSelected.nameTag} §cfor: §8${reason}"}]}`);
+            data.recentLogs.push(`§8${playerSelected.nameTag} §chas been banned by §8${player.nameTag}§c!`);
         }
     });
 }
@@ -239,6 +242,7 @@ function unbanPlayerMenu(player) {
         data.unbanQueue.push(playerToUnban.toLowerCase());
 
         player.runCommandAsync(`tellraw @a[tag=op] {"rawtext":[{"text":"§r${themecolor}Rosh §j> §8${player.nameTag} §ahas added §8${playerToUnban} §ainto the unban queue for: §8${reason}§a."}]}`);
+        data.recentLogs.push(`§8${playerToUnban} §ahas been unbanned by §8${player.nameTag}§a!`);
     });
 }
 
