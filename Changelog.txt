@@ -11,6 +11,7 @@ Rosh v1.22
 (+) Added BadEnchants/D (duplicate enchantments)
 (+) Enabled invalid command debug
 (+) Added spectate command
+(+) Added support for 1.21.0x
 
 (-) Removed crash command and punishment
 (-) Removed mcserver.d.ts (unused/duplicate)
