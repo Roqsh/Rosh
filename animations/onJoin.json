@@ -73,7 +73,7 @@
 					"/scoreboard objectives add zPos dummy",
 					"/scoreboard objectives add badpacketsvl dummy",
 					"/scoreboard objectives add invalidsprintvl dummy",
-					"/scoreboard objectives add movementvl dummy",
+					"/scoreboard objectives add motionvl dummy",
 					"/scoreboard objectives add last_attack dummy",
 					"/scoreboard objectives add flyvl dummy",
 					"/scoreboard objectives add speedvl dummy",
