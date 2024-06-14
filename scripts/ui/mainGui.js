@@ -189,7 +189,7 @@ function banPlayerMenu(player, playerSelected, lastMenu = 0) {
         }
 
         const input = response.formValues;
-        const reason = input[0] || "No Reason Provided";
+        const reason = input[0];
         const banLength = input[1] ? parseTime(`${input[1]}d`) : 0;
         const shouldPermBan = input[2];
 

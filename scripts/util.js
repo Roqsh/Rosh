@@ -23,7 +23,7 @@ export function flag(player, check, checkType, debugName, debug, shouldTP = fals
     if (typeof check !== "string") throw TypeError(`Error: check is type of ${typeof check}. Expected "string"`);
     if (typeof checkType !== "string") throw TypeError(`Error: checkType is type of ${typeof checkType}. Expected "string"`);
     if (typeof debugName !== "string" && typeof debugName !== "undefined") throw TypeError(`Error: debugName is type of ${typeof debugName}. Expected "string" or "undefined"`);
-    if (typeof debug !== "string" && typeof debug !== "number" && typeof debug !== "object" && typeof debug !== "undefined") throw TypeError(`Error: debug is type of ${typeof debug}. Expected "string", "number" or "undefined"`);
+    if (typeof debug !== "string" && typeof debug !== "number" && typeof debug !== "object" && typeof debug !== "undefined") throw TypeError(`Error: debug is type of ${typeof debug}. Expected "string"`);
     if (typeof shouldTP !== "boolean") throw TypeError(`Error: shouldTP is type of ${typeof shouldTP}. Expected "boolean"`);
     if (typeof cancelObject !== "object" && typeof cancelObject !== "undefined") throw TypeError(`Error: cancelObject is type of ${typeof cancelObject}. Expected "object" or "undefined`);
 
@@ -263,15 +263,20 @@ export function ban(player) {
 
         // Calculate the remaining ban time
         const remainingTime = msToTime(banEndTime - currentTime);
-        time = `${remainingTime.weeks} weeks, ${remainingTime.days} days, ${remainingTime.hours} hours, ${remainingTime.minutes} minutes, ${remainingTime.seconds} seconds left!`;
+        time = `§nYou have §8${remainingTime.weeks} §nweeks, §8${remainingTime.days} §ndays, §8${remainingTime.hours} §nhours, §8${remainingTime.minutes} §nminutes and §8${remainingTime.seconds} §nseconds left!`;
     }
 
     // Default values if reason or time is not provided
-    const banReason = reason || "No Reason Provided";
-    const banLength = time || "Permanent";
-
+    let banReason;
+    if (reason) {
+        banReason = ` for §8${reason}§c!`;
+    } else {
+        banReason = "!";
+    }
+    const banLength = time || "§nYour punishment is §8Permanent§n!";    
+    
     // Kick the player with the ban message
-    player.runCommandAsync(`kick "${player.name}" §r${themecolor}Rosh §j> §cYou have been banned for §8${banReason} §c!\n§r\n §9Length: §8${banLength}`);
+    player.runCommandAsync(`kick "${player.name}" §r${themecolor}Rosh §j> §cYou have been banned${banReason}\n§r\n ${banLength}`);
 }
 
 
