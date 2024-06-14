@@ -1,20 +1,48 @@
 import data from "../../data/data.js";
+import config from "../../data/config.js";
 
+/**
+ * Adds a player to the unban queue with an optional reason.
+ * @param {object} message - The message object containing the sender property.
+ * @param {Minecraft.Player} message.sender - The player who initiated the unban command.
+ * @param {Array} args - The arguments provided for the unban command, where args[0] is the target player name and args[1] (optional) is the reason.
+ * @throws {TypeError} If the message or args are not of type "object".
+ */
 export function unban(message, args) {
-    
-    if(typeof message !== "object") throw TypeError(`message is type of ${typeof message}. Expected "object".`);
-    if(typeof args !== "object") throw TypeError(`args is type of ${typeof args}. Expected "object".`);
+    // Validate message and args
+    if (typeof message !== "object") throw new TypeError(`message is type of ${typeof message}. Expected "object".`);
+    if (!Array.isArray(args)) throw new TypeError(`args is type of ${typeof args}. Expected "object".`);
 
     const player = message.sender;
+    const themecolor = config.themecolor;
 
-    if(!args.length) return player.sendMessage("§r§uRosh §j> §cYou need to provide who to unban.");
+    // Check if target player name is provided
+    if (!args.length) {
+        player.sendMessage(`§r${themecolor}Rosh §j> §cYou need to provide who to unban.`);
+        return;
+    }
 
+    // Check if target player name is valid
+    if (args[0].length < 3) {
+        player.sendMessage(`§r${themecolor}Rosh §j> §cYou need to provide a valid player to unban.`);
+        return;
+    }
+
+    const member = args[0].replace(/"|\\/g, ""); // Extract member name
     const reason = args.slice(1).join(" ").replace(/"|\\/g, "") || "No Reason Provided";
-    const member = args[0].replace(/"|\\/g, "");
 
-    if(data.unbanQueue.includes(member)) return player.sendMessage(`§r§uRosh §j> §8${member} §cis already queued for an unban.`);
+    // Check if the member is already in the unban queue
+    if (data.unbanQueue.includes(member.toLowerCase())) {
+        player.sendMessage(`§r${themecolor}Rosh §j> §8${member} §cis already queued for an unban.`);
+        return;
+    }
 
+    // Add member to the unban queue
     data.unbanQueue.push(member.toLowerCase());
-    player.runCommandAsync(`tellraw @a[tag=op] {"rawtext":[{"text":"§r§uRosh §j> §8${player.nameTag} §ahas added §8${member} §ato the unban queue for: §8${reason}§a."}]}`);
+
+    // Notify staff members about the unban request
+    player.runCommandAsync(`tellraw @a[tag=op] {"rawtext":[{"text":"§r${themecolor}Rosh §j> §8${player.nameTag} §ahas added §8${member} §ato the unban queue for: §8${reason}§a."}]}`);
+
+    // Log the unban action
     data.recentLogs.push(`§8${member} §ahas been unbanned by §8${player.nameTag}§a!`);
 }

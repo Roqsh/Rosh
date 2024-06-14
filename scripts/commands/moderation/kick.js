@@ -1,34 +1,79 @@
+// FIXME:
 import * as Minecraft from "@minecraft/server"; 
 import data from "../../data/data.js";
+import config from "../../data/config.js";
 
-const world = Minecraft.world;
-
+/**
+ * Kicks a player from the world based on the provided message and arguments.
+ * @param {object} message - The message object containing the sender property.
+ * @param {Minecraft.Player} message.sender - The player who initiated the kick event.
+ * @param {Array} args - The arguments provided for the kick command, where args[0] is the target player name, and the rest is the reason.
+ * @throws {TypeError} If the message or args are not of type "object".
+ */
 export function kick(message, args) {
-    
-    if(typeof message !== "object") throw TypeError(`message is type of ${typeof message}. Expected "object".`);
-    if(typeof args !== "object") throw TypeError(`args is type of ${typeof args}. Expected "object".`);
+    // Validate message and args
+    if (typeof message !== "object") throw new TypeError(`message is type of ${typeof message}. Expected "object".`);
+    if (typeof args !== "object") throw new TypeError(`args is type of ${typeof args}. Expected "object".`);
 
     const player = message.sender;
+    const world = Minecraft.world;
+    const themecolor = config.themecolor;
 
-    if(!args.length) return player.sendMessage("§r§uRosh §j> §cYou need to provide who to kick.");
+    // Check if target player name is provided
+    if (!args.length) {
+        player.sendMessage(`§r${themecolor}Rosh §j> §cYou need to provide who to kick.`);
+        return;
+    }
+
+    // Check if target player name is valid
+    if (args[0].length < 3) {
+        player.sendMessage(`§r${themecolor}Rosh §j> §cYou need to provide a valid player to unban.`);
+        return;
+    }
 
     let isSilent = false;
 
-    if(args[1] === "-s" || args[1] === "-silent") isSilent = true;
-
-    const reason = args.slice(1).join(" ").replace(/-s|-silent/, "").replace(/"|\\/g, "") || "No reason specified";	
-    let member;
-
-    for (const pl of world.getPlayers()) if(pl.name.toLowerCase().includes(args[0].toLowerCase().replace(/"|\\|@/g, ""))) {
-        member = pl;
-        break;
+    // Check for silent kick option
+    if (args[1] === "-s" || args[1] === "-silent") {
+        isSilent = true;
+        args.splice(1, 1); // Remove silent flag from arguments
     }
 
-    if(!member) return player.sendMessage("§r§uRosh §j> §cCouldn't find that player.");
-    if(member.id === player.id) return player.sendMessage("§r§uRosh §j> §cYou cannot kick yourself.");
+    // Construct the reason from the remaining args
+    const reason = args.slice(1).join(" ").replace(/"|\\/g, "") || "No reason specified";
+    let member;
+
+    // Find the target player by name
+    for (const pl of world.getPlayers()) {
+        if (pl.name.toLowerCase().includes(args[0].toLowerCase().replace(/"|\\|@/g, ""))) {
+            member = pl;
+            break;
+        }
+    }
+
+    // Handle case where the target player is not found
+    if (!member) {
+        player.sendMessage(`§r${themecolor}Rosh §j> §cCouldn't find that player.`);
+        return;
+    }
+
+    // Prevent kicking oneself
+    if (member.id === player.id) {
+        player.sendMessage(`§r${themecolor}Rosh §j> §cYou cannot kick yourself.`);
+        return;
+    }
+
+    // Log the kick event
     data.recentLogs.push(`§8${member.name} §chas been kicked by §8${player.nameTag}§c!`);
-    if(!isSilent) player.runCommandAsync(`kick "${member.name}" ${reason}`);
-    
+
+    // Perform the kick command if not silent
+    if (!isSilent) {
+        player.runCommandAsync(`kick "${member.name}" ${reason}`);
+    }
+
+    // Trigger the kick event
     member.triggerEvent("scythe:kick");
-    player.runCommandAsync(`tellraw @a[tag=op] {"rawtext":[{"text":"§r§uRosh §j> §8${player.nameTag} §chas kicked §8${member.name} ${isSilent ? "§cSilent ": ""}for §8${reason}"}]}`);
+
+    // Notify other staff members about the kick
+    player.runCommandAsync(`tellraw @a[tag=op] {"rawtext":[{"text":"§r${themecolor}Rosh §j> §8${player.nameTag} §chas kicked §8${member.name} §c${isSilent ? "Silently " : ""}for §8${reason}"}]}`);
 }

@@ -1,30 +1,62 @@
 import * as Minecraft from "@minecraft/server";
 import data from "../../data/data.js";
+import config from "../../data/config.js";
 
-const world = Minecraft.world;
-
+/**
+ * Unmutes a specified player.
+ * @param {object} message - The message object containing the sender property.
+ * @param {Minecraft.Player} message.sender - The player who initiated the unmute command.
+ * @param {Array} args - The arguments provided for the unmute command, where args[0] is the target player name and args[1] (optional) is the reason.
+ * @throws {TypeError} If the message or args are not of type "object".
+ */
 export function unmute(message, args) {
-    
-    if(typeof message !== "object") throw TypeError(`message is type of ${typeof message}. Expected "object".`);
-    if(typeof args !== "object") throw TypeError(`args is type of ${typeof args}. Expected "object".`);
+    // Validate message and args
+    if (typeof message !== "object") throw new TypeError(`message is type of ${typeof message}. Expected "object".`);
+    if (!Array.isArray(args)) throw new TypeError(`args is type of ${typeof args}. Expected "object".`);
 
     const player = message.sender;
+    const world = Minecraft.world;
+    const themecolor = config.themecolor;
 
-    if(!args.length) return player.sendMessage("§r§uRosh §j> §cYou need to provide who to unmute.");
-
-    const reason = args.slice(1).join(" ").replace(/"|\\/g, "") || "No reason specified";
-    
-    let member;
-    for(const pl of world.getPlayers()) if(pl.name.toLowerCase().includes(args[0].toLowerCase().replace(/"|\\|@/g, ""))) {
-        member = pl;
-        break;
+    // Check if target player name is provided
+    if (!args.length) {
+        player.sendMessage(`§r${themecolor}Rosh §j> §cYou need to provide who to unmute.`);
+        return;
     }
-    
-    if(!member) return player.sendMessage("§r§uRosh §j> §cCouldn't find that player.");
 
+    // Check if target player name is valid
+    if (args[0].length < 3) {
+        player.sendMessage(`§r${themecolor}Rosh §j> §cYou need to provide a valid player to unmute.`);
+        return;
+    }
+
+    const memberName = args[0].replace(/"|\\/g, ""); // Extract member name
+    const reason = args.slice(1).join(" ").replace(/"|\\/g, "") || "No reason specified";
+
+    let member;
+
+    // Find the target player by name
+    for (const pl of world.getPlayers()) {
+        if (pl.name.toLowerCase().includes(memberName.toLowerCase())) {
+            member = pl;
+            break;
+        }
+    }
+
+    // Handle case where the target player is not found
+    if (!member) {
+        player.sendMessage(`§r${themecolor}Rosh §j> §cCouldn't find that player.`);
+        return;
+    }
+
+    // Remove the "isMuted" tag and unmute the player
     member.removeTag("isMuted");
-    member.sendMessage("§r§uRosh §j> §aYou have been unmuted.");
+    member.sendMessage(`§r${themecolor}Rosh §j> §aYou have been unmuted.`);
     member.runCommandAsync("ability @s mute false");
-    player.runCommandAsync(`tellraw @a[tag=op] {"rawtext":[{"text":"§r§uRosh §j> §8${player.nameTag} §ahas unmuted §8${member.nameTag} §afor §8${reason}"}]}`);
+
+    // Notify staff members about the unmute
+    player.runCommandAsync(`tellraw @a[tag=op] {"rawtext":[{"text":"§r${themecolor}Rosh §j> §8${player.nameTag} §ahas unmuted §8${member.nameTag} §afor §8${reason}"}]}`);
+
+    // Log the unmute action
     data.recentLogs.push(`§8${member.nameTag} §ahas been unmuted by §8${player.nameTag}§a!`);
 }
