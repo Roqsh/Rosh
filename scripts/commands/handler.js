@@ -164,8 +164,8 @@ function runCommand(msg, commandName, args) {
                 else if(commandName === "spectate") spectate(message, args);
                 else throw Error(`Command ${commandName} was found in config.js but no handler for it was found`);
         } catch (error) {
-            console.error(`${new Date().toISOString()} | ${error} ${error.stack}`);
-            message.sender.sendMessage(`§r${themecolor}Rosh §j> §cThere was an error while trying to run this command: §8${error}${error.stack}`);
+            console.error(`${new Date().toISOString()} | ${error}${error.stack}`);
+            message.sender.sendMessage(`§r${themecolor}Rosh §j> §cThere was an error while trying to run this command:\n§8${error}\n${error.stack}`);
         }
     });
 }
