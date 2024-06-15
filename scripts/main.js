@@ -179,7 +179,7 @@ system.runInterval(() => {
 			setScore(player, "autoban", 0);
 		}
 		
-		const selectedSlot = player.selectedSlot;
+		const selectedSlot = player.selectedSlotIndex;
 
 		if(player.hasTag("isBanned")) ban(player);
 		if(player.blocksBroken >= 1 && config.modules.nukerA.enabled) player.blocksBroken = 0;
@@ -517,7 +517,7 @@ world.afterEvents.playerBreakBlock.subscribe(async (blockBreak) => {
 	if(config.modules.autotoolA.enabled && player.flagAutotoolA) {
 
 		revertBlock = true;
-		flag(player, "AutoTool", "A", "selectedSlot", `${player.selectedSlot},lastSelectedSlot=${player.lastSelectedSlot},switchDelay=${player.autotoolSwitchDelay}`);
+		flag(player, "AutoTool", "A", "selectedSlot", `${player.selectedSlotIndex},lastSelectedSlot=${player.lastSelectedSlot},switchDelay=${player.autotoolSwitchDelay}`);
 		currentVL++;
 	}
 
@@ -685,7 +685,7 @@ world.afterEvents.entityHitEntity.subscribe(({ hitEntity: entity, damagingEntity
 	if(config.customcommands.ui.enabled && player.hasTag("op") && entity.typeId === "minecraft:player") {
 
 		const container = player.getComponent("inventory").container;
-		const item = container.getItem(player.selectedSlot);
+		const item = container.getItem(player.selectedSlotIndex);
 		
 		if(config.customcommands.ui.enabled && player.hasTag("op") && item?.typeId === config.customcommands.ui.ui_item && item?.nameTag === config.customcommands.ui.ui_item_name) {
 		    playerSettingsMenuSelected(player, entity);
@@ -704,7 +704,7 @@ world.afterEvents.entityHitBlock.subscribe((entityHit) => {
 	const { damagingEntity: player} = entityHit;
 
 	player.flagAutotoolA = false;
-	player.lastSelectedSlot = player.selectedSlot;
+	player.lastSelectedSlot = player.selectedSlotIndex;
 	player.startBreakTime = Date.now();
 	player.autotoolSwitchDelay = 0;
 

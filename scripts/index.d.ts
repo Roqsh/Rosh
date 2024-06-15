@@ -37,7 +37,7 @@ declare module "@minecraft/server" {
 		name: string,
 
 		cps: number,
-		selectedSlot: number,
+		selectedSlotIndex: number,
 		lastThrow: number,
 		startBreakTime: number,
 		lastSelectedSlot: number,

@@ -26,11 +26,11 @@ export function ui(message) {
     }
 
     // Make sure they dont have the UI item in their current slot
-    //FIXME:const currentItem = container?.getItem(player.selectedSlot);
+    const currentItem = container?.getItem(player.selectedSlotIndex);
 
-    //if (currentItem?.typeId === config.customcommands.ui.ui_item && currentItem?.nameTag === config.customcommands.ui.ui_item_name) {
-    //    return player.sendMessage(`§r${themecolor}Rosh §j> §cYou already have the UI item in your inventory!`);
-    //}
+    if (currentItem?.typeId === config.customcommands.ui.ui_item && currentItem?.nameTag === config.customcommands.ui.ui_item_name) {
+        return player.sendMessage(`§r${themecolor}Rosh §j> §cYou already have the UI item in your inventory!`);
+    }
 
     // Creating the item that opens the UI
     let itemType = Minecraft.ItemTypes.get(config.customcommands.ui.ui_item);
