@@ -1,4 +1,3 @@
-// FIXME:
 import * as Minecraft from "@minecraft/server"; 
 import data from "../../data/data.js";
 import config from "../../data/config.js";
@@ -63,17 +62,18 @@ export function kick(message, args) {
         return;
     }
 
+    // Notify other staff members about the kick
+    player.runCommandAsync(`tellraw @a[tag=op] {"rawtext":[{"text":"§r${themecolor}Rosh §j> §8${player.nameTag} §chas kicked §8${member.name} §c${isSilent ? "(Silent) " : ""}for: §8${reason}"}]}`);
+
     // Log the kick event
-    data.recentLogs.push(`§8${member.name} §chas been kicked by §8${player.nameTag}§c!`);
+    data.recentLogs.push(`§8${member.name} §chas been kicked ${isSilent ? "(Silent) " : ""}by §8${player.nameTag}§c!`);
 
     // Perform the kick command if not silent
     if (!isSilent) {
-        player.runCommandAsync(`kick "${member.name}" ${reason}`);
-    }
-
-    // Trigger the kick event
-    member.triggerEvent("scythe:kick");
-
-    // Notify other staff members about the kick
-    player.runCommandAsync(`tellraw @a[tag=op] {"rawtext":[{"text":"§r${themecolor}Rosh §j> §8${player.nameTag} §chas kicked §8${member.name} §c${isSilent ? "Silently " : ""}for §8${reason}"}]}`);
+        player.runCommandAsync(`kick "${member.name}" §r${themecolor}Rosh §j> §cYou have been kicked for §8${reason}§c!`);
+        return;
+    } else {
+        // Trigger the silent kick event without notifying the kicked user
+        member.triggerEvent("scythe:kick");
+    }  
 }
