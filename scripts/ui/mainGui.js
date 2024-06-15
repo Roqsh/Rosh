@@ -252,30 +252,57 @@ function unbanPlayerMenu(player) {
 // ====================== //
 
 function settingsMenu(player) {
-    
     player.playSound("mob.chicken.plop");
 
     const menu = new MinecraftUI.ActionFormData()
-
-        .title("Settings Menu")
+        .title("Settings")
         .button(`Notifications\n${player.hasTag("notify") ? "§8[§a+§8]" : "§8[§c-§8]"}`)
-        .button(`AutoBan\n${player.hasTag("auto") ? "§8[§a+§8]" : "§8[§c-§8]"}`)
-        .button(`Preset\n${config.preset === "stable" ? "§8Stable" : "§8Beta"}`)
+        .button(`Autoban\n${config.autoban ? "§8[§a+§8]" : "§8[§c-§8]"}`)
+        .button(`Preset\n${config.preset === "stable" ? "Stable" : "Beta"}`)
         .button(`Themecolor\n${config.themecolor}Color`)
         .button("Back");
-    
-    menu.show(player).then((response) => {    
 
-        if (response.selection === 0) player.runCommandAsync("function notify");
-        if (response.selection === 1) player.runCommandAsync("function settings/autoban");
-        if (response.selection === 2) presetsMenu(player);
-        if (response.selection === 3) themecolorMenu(player);
-        if (response.selection === 4) mainGui(player);
-
-    });    
+    menu.show(player).then((response) => {
+        switch (response.selection) {
+            case 0:
+                player.runCommandAsync("function notify");
+                break;
+            case 1:
+                autobanMenu(player);
+                break;
+            case 2:
+                presetMenu(player);
+                break;
+            case 3:
+                themecolorMenu(player);
+                break;
+            case 4:
+                mainGui(player);
+                break;
+        }
+    });
 }
 
-function presetsMenu(player) {
+function autobanMenu(player) {
+    player.playSound("mob.chicken.plop");
+
+    const menu = new MinecraftUI.ModalFormData()
+        .title("Autoban")
+        .toggle("Enable Autoban", config.autoban);
+
+    menu.show(player).then((response) => {
+        if (response.canceled) {
+            return settingsMenu(player);
+        }
+
+        config.autoban = response.formValues[0];
+        world.setDynamicProperty("config", JSON.stringify(config));
+
+        player.sendMessage(`§r${themecolor}Rosh §j> ${config.autoban ? "§a" : "§c"}Auto-baning is now ${config.autoban ? "enabled" : "disabled"}!`);
+    });
+}
+
+function presetMenu(player) {
 
     player.playSound("mob.chicken.plop");
 

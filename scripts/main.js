@@ -171,13 +171,6 @@ system.runInterval(() => {
 		const speed = getSpeed(player);
 
 		player.removeTag("noPitchDiff");
-
-		if(player.hasTag("auto")) {
-			setScore(player, "autoban", 1);
-		}
-		if(player.hasTag("noauto")) {
-			setScore(player, "autoban", 0);
-		}
 		
 		const selectedSlot = player.selectedSlotIndex;
 

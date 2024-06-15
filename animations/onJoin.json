@@ -34,8 +34,6 @@
 					"/scoreboard players add scythe:config autoclicker 0",
 					"/scoreboard objectives add gametestapi dummy",
 					"/scoreboard players add scythe:config gametestapi 0",
-					"/scoreboard objectives add autoban dummy",
-					"/scoreboard players add scythe:config autoban 0",
 					"/scoreboard objectives add invalidsprint dummy",
 					"/scoreboard players add scythe:config invalidsprint 0",
 					"/scoreboard objectives add fly dummy",
@@ -52,7 +50,6 @@
 					"/scoreboard players operation @a xray = scythe:config xray",
 					"/scoreboard players operation @a autoclicker = scythe:config autoclicker",
 					"/scoreboard players operation @a gametestapi = scythe:config gametestapi",
-					"/scoreboard players operation @a autoban = scythe:config autoban",
 					"/scoreboard players operation @a invalidsprint = scythe:config invalidsprint",
 					"/scoreboard players operation @a antishulker = scythe:config antishulker",
 					
@@ -95,7 +92,6 @@
 					"/scoreboard objectives add packets dummy",
 					"/scoreboard objectives add invmove_delay dummy",
 					"/scoreboard objectives add c dummy",
-					"/scoreboard objectives add autoban dummy",
 					"/scoreboard objectives add reach_a_reset dummy",
 					"/scoreboard objectives add reach_a_buffer dummy",
 		

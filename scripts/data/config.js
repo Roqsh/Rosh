@@ -12,6 +12,8 @@ export default
 
     "flagWhitelist": [], // Who is able to bypass flags and punishments - ex: ["Playername1", "Playername2"]
 
+    "autoban": false, // Automatically bans a player if he exceeds the maximum threshold
+
     "generalModules": { // Enable or disable a type of detection - Subchecks can be edited below.
         "fly": true,
         "speed": true,

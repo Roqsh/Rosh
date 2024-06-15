@@ -103,6 +103,8 @@ export function flag(player, check, checkType, debugName, debug, shouldTP = fals
 
     if (currentVl > checkData.minVlbeforePunishment) {
 
+        const autoban = config.autoban === true;
+
         if (punishment === "kick") {
 
             let banLength2;
@@ -111,9 +113,9 @@ export function flag(player, check, checkType, debugName, debug, shouldTP = fals
 
                 setScore(player, "kickvl", kickvl + 1);
               
-                if(kickvl > config.kicksBeforeBan) { // FIXME:
+                if (kickvl > config.kicksBeforeBan) { // FIXME:
 
-                    if(getScore(player, "autoban", 0) > 0) {
+                    if (autoban) {
                         player.addTag("isBanned");
                         player.addTag(`Reason:Cheat Detection`);
                         banLength2 = parseTime("30d");
@@ -147,7 +149,7 @@ export function flag(player, check, checkType, debugName, debug, shouldTP = fals
 
         if (punishment === "ban") { // FIXME:
 
-            if (getScore(player, "autoban", 0) > 0) {
+            if (autoban) {
 
                 player.addTag("isBanned");
                 const punishmentLength = checkData.punishmentLength?.toLowerCase();
