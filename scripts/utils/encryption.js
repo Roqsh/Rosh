@@ -2,7 +2,7 @@
  * Encrypts the given data using AES encryption with a derived key and an IV.
  * @param {Object} data - The data to encrypt.
  * @param {string} passphrase - The passphrase used to derive the encryption key.
- * @returns {string} - The encrypted data in Base64 format, including the IV.
+ * @returns {string} - The encrypted data in Base64 format, including the IV and salt.
  * @throws {Error} - Throws an error if input validation fails or encryption fails.
  */
 export function encrypt(data, passphrase) {
@@ -21,9 +21,9 @@ export function encrypt(data, passphrase) {
         // Convert data to a JSON string
         const jsonData = JSON.stringify(data);
 
-        // Derive a key using PBKDF2
+        // Derive a key using PBKDF2 with salt and iterations
         const salt = CryptoJS.lib.WordArray.random(128/8);
-        const key = CryptoJS.PBKDF2(passphrase, salt, { keySize: 256/32 });
+        const key = CryptoJS.PBKDF2(passphrase, salt, { keySize: 256/32, iterations: 1000 });
 
         // Generate an IV
         const iv = CryptoJS.lib.WordArray.random(128/8);
@@ -32,7 +32,9 @@ export function encrypt(data, passphrase) {
         const encrypted = CryptoJS.AES.encrypt(jsonData, key, { iv: iv });
 
         // Combine salt, iv, and encrypted data
-        const encryptedData = salt.toString() + iv.toString() + encrypted.toString();
+        const encryptedData = CryptoJS.enc.Base64.stringify(salt) + ':' +
+                              CryptoJS.enc.Base64.stringify(iv) + ':' +
+                              encrypted.toString();
 
         return encryptedData;
     } catch (error) {

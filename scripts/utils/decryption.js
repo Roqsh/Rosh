@@ -23,11 +23,18 @@ export function decrypt(encryptedData, passphrase) {
         const iv = CryptoJS.enc.Hex.parse(encryptedData.substr(32, 32));
         const ciphertext = encryptedData.substr(64);
 
-        // Derive the key using PBKDF2
-        const key = CryptoJS.PBKDF2(passphrase, salt, { keySize: 256/32 });
+        // Derive the key using PBKDF2 with 1000 iterations
+        const key = CryptoJS.PBKDF2(passphrase, salt, {
+            keySize: 256 / 32,
+            iterations: 1000
+        });
 
         // Decrypt the ciphertext using AES
-        const decrypted = CryptoJS.AES.decrypt(ciphertext, key, { iv: iv });
+        const decrypted = CryptoJS.AES.decrypt(ciphertext, key, {
+            iv: iv,
+            mode: CryptoJS.mode.CBC,
+            padding: CryptoJS.pad.Pkcs7
+        });
 
         // Convert the decrypted data from Base64
         const decryptedData = decrypted.toString(CryptoJS.enc.Utf8);
