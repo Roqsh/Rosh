@@ -6,13 +6,13 @@ import config from "../../data/config.js";
  * Kicks a player from the world based on the provided message and arguments.
  * @param {object} message - The message object containing the sender property.
  * @param {Minecraft.Player} message.sender - The player who initiated the kick event.
- * @param {Array} args - The arguments provided for the kick command, where args[0] is the target player name, and the rest is the reason.
- * @throws {TypeError} If the message or args are not of type "object".
+ * @param {Array<string>} args - The arguments provided for the kick command, where args[0] is the target player name, and the rest is the reason.
+ * @throws {TypeError} If the message is not an object or if args is not an array.
  */
 export function kick(message, args) {
     // Validate message and args
     if (typeof message !== "object") throw new TypeError(`message is type of ${typeof message}. Expected "object".`);
-    if (typeof args !== "object") throw new TypeError(`args is type of ${typeof args}. Expected "object".`);
+    if (!Array.isArray(args)) throw new TypeError(`args is type of ${typeof args}. Expected "array".`);
 
     const player = message.sender;
     const world = Minecraft.world;
@@ -26,7 +26,7 @@ export function kick(message, args) {
 
     // Check if target player name is valid
     if (args[0].length < 3) {
-        player.sendMessage(`§r${themecolor}Rosh §j> §cYou need to provide a valid player to unban.`);
+        player.sendMessage(`§r${themecolor}Rosh §j> §cYou need to provide a valid player to kick.`);
         return;
     }
 
@@ -40,11 +40,13 @@ export function kick(message, args) {
 
     // Construct the reason from the remaining args
     const reason = args.slice(1).join(" ").replace(/"|\\/g, "") || "No reason specified";
-    let member;
+
+    const targetName = args[0].toLowerCase().replace(/"|\\|@/g, "");
+    let member = null;
 
     // Find the target player by name
     for (const pl of world.getPlayers()) {
-        if (pl.name.toLowerCase().includes(args[0].toLowerCase().replace(/"|\\|@/g, ""))) {
+        if (pl.name.toLowerCase().includes(targetName)) {
             member = pl;
             break;
         }
@@ -59,6 +61,12 @@ export function kick(message, args) {
     // Prevent kicking oneself
     if (member.id === player.id) {
         player.sendMessage(`§r${themecolor}Rosh §j> §cYou cannot kick yourself.`);
+        return;
+    }
+
+    // Prevent kicking other staff members
+    if (member.hasTag("op")) {
+        player.sendMessage(`§r${themecolor}Rosh §j> §cYou cannot kick other staff members.`);
         return;
     }
 

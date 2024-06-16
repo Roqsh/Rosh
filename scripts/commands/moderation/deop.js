@@ -7,12 +7,12 @@ import config from "../../data/config.js";
  * @param {object} message - The message object containing the sender property.
  * @param {Minecraft.Player} message.sender - The player who initiated the deop event.
  * @param {Array} args - The arguments provided for the deop command, where args[0] is the target player name.
- * @throws {TypeError} If the message or args are not of type "object".
+ * @throws {TypeError} If the message is not an object or if args is not an array.
  */
 export function deop(message, args) {
     // Validate message and args
     if (typeof message !== "object") throw new TypeError(`message is type of ${typeof message}. Expected "object".`);
-    if (typeof args !== "object") throw new TypeError(`args is type of ${typeof args}. Expected "object".`);
+    if (!Array.isArray(args)) throw new TypeError(`args is type of ${typeof args}. Expected "array".`);
 
     const player = message.sender;
     const world = Minecraft.world;
@@ -26,15 +26,16 @@ export function deop(message, args) {
 
     // Check if target player name is valid
     if (args[0].length < 3) {
-        player.sendMessage(`§r${themecolor}Rosh §j> §cYou need to provide a valid player to unban.`);
+        player.sendMessage(`§r${themecolor}Rosh §j> §cYou need to provide a valid player to deop.`);
         return;
     }
 
-    let member;
+    const targetName = args[0].toLowerCase().replace(/"|\\|@/g, "");
+    let member = null;
 
     // Find the target player by name
     for (const pl of world.getPlayers()) {
-        if (pl.name.toLowerCase().includes(args[0]?.toLowerCase().replace(/"|\\|@/g, ""))) {
+        if (pl.name.toLowerCase().includes(targetName)) {
             member = pl;
             break;
         }
@@ -52,9 +53,9 @@ export function deop(message, args) {
         return;
     }
 
-    // Remove "op" status and notify
+    // Remove operator status and notify other staff member
     removeOp(member);
-    member.runCommandAsync(`tellraw @a[tag=op] {"rawtext":[{"text":"§r${themecolor}Rosh §j> §8${player.name} §chas removed §8${member.name}'s §cRosh-Op status"}]}`);
+    player.runCommandAsync(`tellraw @a[tag=op] {"rawtext":[{"text":"§r${themecolor}Rosh §j> §8${player.name} §chas removed §8${member.name}'s §cRosh-Op status"}]}`);
 
     // Log the de-op event
     data.recentLogs.push(`§8${member.name} §chas been de-oped by §8${player.name}§c!`);
@@ -65,7 +66,7 @@ export function deop(message, args) {
  * @param {Minecraft.Player} player - The player to de-op.
  */
 export function removeOp(player) {
-    let themecolor = config.themecolor;
+    const themecolor = config.themecolor;
     player.removeTag("op");
     player.sendMessage(`§r${themecolor}Rosh §j> §cYou have been de-opped! Warning: If this is wrong contact your server admin!`);
 }

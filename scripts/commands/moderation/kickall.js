@@ -34,7 +34,7 @@ export function kickall(message) {
         }
     });
 
-    // Notify staff members about the kickall event
+    // Notify other staff members about the kickall event
     player.runCommandAsync(`tellraw @a[tag=op] {"rawtext":[{"text":"§r${themecolor}Rosh §j> §8${player.name} §chas initiated a §8Mass Kick§c!"}]}`);
 
     // Log the kickall event

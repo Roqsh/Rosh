@@ -5,12 +5,12 @@ import config from "../../data/config.js";
  * @param {object} message - The message object containing the sender property.
  * @param {Minecraft.Player} message.sender - The player who initiated the spectate command.
  * @param {Array} args - The arguments provided for the spectate command, where args[0] is the target player name.
- * @throws {TypeError} If the message or args are not of type "object".
+ * @throws {TypeError} If the message is not an object or if args is not an array.
  */
 export function spectate(message, args) {
     // Validate message and args
     if (typeof message !== "object") throw new TypeError(`message is type of ${typeof message}. Expected "object".`);
-    if (!Array.isArray(args)) throw new TypeError(`args is type of ${typeof args}. Expected "object".`);
+    if (!Array.isArray(args)) throw new TypeError(`args is type of ${typeof args}. Expected "array".`);
 
     const player = message.sender;
     const themecolor = config.themecolor;
@@ -23,11 +23,26 @@ export function spectate(message, args) {
 
     // Check if target player name is valid
     if (args[0].length < 3) {
-        player.sendMessage(`§r${themecolor}Rosh §j> §cYou need to provide a valid player to unban.`);
+        player.sendMessage(`§r${themecolor}Rosh §j> §cYou need to provide a valid player to spectate.`);
         return;
     }
 
-    const member = args[0].replace(/"|\\/g, ""); // Extract member name
+    const targetName = args[0].toLowerCase().replace(/"|\\|@/g, "");
+    let member = null;
+
+    // Find the target player by name
+    for (const pl of world.getPlayers()) {
+        if (pl.name.toLowerCase().includes(targetName)) {
+            member = pl;
+            break;
+        }
+    }
+
+    // Handle case where the target player is not found
+    if (!member) {
+        player.sendMessage(`§r${themecolor}Rosh §j> §cCouldn't find that player.`);
+        return;
+    }
 
     // Set player's game mode to spectator and teleport them to the member
     player.runCommandAsync(`gamemode spectator @s`);

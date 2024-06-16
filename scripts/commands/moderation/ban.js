@@ -3,21 +3,20 @@ import { parseTime } from "../../util.js";
 import data from "../../data/data.js";
 import config from "../../data/config.js";
 
-const world = Minecraft.world;
-
 /**
  * Bans a player from the world based on the provided message and arguments.
  * @param {object} message - The message object containing the sender property.
  * @param {Minecraft.Player} message.sender - The player who initiated the ban event.
- * @param {Array} args - The arguments provided for the ban command, where args[0] is the target player name, args[1] (optional) is the duration, and the rest is the reason.
- * @throws {TypeError} If the message or args are not of type "object".
+ * @param {Array<string>} args - The arguments provided for the ban command, where args[0] is the target player name, args[1] (optional) is the duration, and the rest is the reason.
+ * @throws {TypeError} If the message is not an object or if args is not an array.
  */
 export function ban(message, args) {
     // Validate message and args
     if (typeof message !== "object") throw new TypeError(`message is type of ${typeof message}. Expected "object".`);
-    if (typeof args !== "object") throw new TypeError(`args is type of ${typeof args}. Expected "object".`);
+    if (!Array.isArray(args)) throw new TypeError(`args is type of ${typeof args}. Expected "array".`);
 
     const player = message.sender;
+    const world = Minecraft.world;
     const themecolor = config.themecolor;
 
     // Check if target player name is provided
@@ -28,7 +27,7 @@ export function ban(message, args) {
 
     // Check if target player name is valid
     if (args[0].length < 3) {
-        player.sendMessage(`§r${themecolor}Rosh §j> §cYou need to provide a valid player to unban.`);
+        player.sendMessage(`§r${themecolor}Rosh §j> §cYou need to provide a valid player to ban.`);
         return;
     }
 
@@ -37,13 +36,14 @@ export function ban(message, args) {
     if (!time) args.splice(1, 1); // Remove time argument if parsing fails
 
     // Construct the reason from the remaining args
-    const reason = args.slice(1).join(" ").replace(/"|\\/g, "");
+    const reason = args.slice(1).join(" ").replace(/"|\\/g, "") || "No reason specified";
 
-    let member;
+    const targetName = args[0].toLowerCase().replace(/"|\\|@/g, "");
+    let member = null;
 
     // Find the target player by name
     for (const pl of world.getPlayers()) {
-        if (pl.name.toLowerCase().includes(args[0].toLowerCase().replace(/"|\\|@/g, ""))) {
+        if (pl.name.toLowerCase().includes(targetName)) {
             member = pl;
             break;
         }
