@@ -46,7 +46,10 @@ export function spectate(message, args) {
 
     // Set player's game mode to spectator and teleport them to the member
     player.runCommandAsync(`gamemode spectator @s`);
-    player.runCommandAsync(`tp @s ${member}`);
+    player.teleport(member.location, {
+        checkForBlocks: false,
+        dimension: member.dimension
+    });
 
     // Send confirmation message to the player
     player.sendMessage(`§r${themecolor}Rosh §j> §aYou are now spectating §8${member}§a!`);
