@@ -694,9 +694,24 @@ function playerSettingsMenuSelectedTeleport(player, playerSelected) {
     
     menu.show(player).then((response) => {
 
-        if (response.selection === 0) player.runCommandAsync(`tp @s "${playerSelected.name}"`);
-        if (response.selection === 1) player.runCommandAsync(`tp "${playerSelected.name}" @s`);
-        if (response.selection === 2) playerSettingsMenuSelected(player, playerSelected);
+        switch(response.selection) {
+            case 0:
+                player.teleport(playerSelected.location, {
+                    checkForBlocks: false,
+                    dimension: playerSelected.dimension
+                });
+                break;
+
+            case 1:
+                playerSelected.teleport(player.location, {
+                    checkForBlocks: false,
+                    dimension: playerSelected.dimension
+                });
+                break;
+
+            default:
+                playerSettingsMenuSelected(player, playerSelected);
+        }
 
     });
 }
