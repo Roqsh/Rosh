@@ -258,7 +258,7 @@ function settingsMenu(player) {
         .title("Settings")
         .button(`Notifications\n${player.hasTag("notify") ? "§8[§a+§8]" : "§8[§c-§8]"}`)
         .button(`Autoban\n${config.autoban ? "§8[§a+§8]" : "§8[§c-§8]"}`)
-        .button(`Preset\n${config.preset === "stable" ? "Stable" : "Beta"}`)
+        .button(`Preset\n${config.preset === "stable" ? "§8Stable" : "§8Beta"}`)
         .button(`Themecolor\n${config.themecolor}Color`)
         .button("Back");
 

@@ -2,8 +2,6 @@ import config from "./data/config.js";
 import data from "./data/data.js";
 import { world } from "@minecraft/server";
 
-let themecolor = config.themecolor;
-
 /**
  * FIXME:
  * Alerts staff if a player fails a check.
@@ -107,24 +105,33 @@ export function flag(player, check, checkType, debugName, debug, shouldTP = fals
 
         if (punishment === "kick") {
 
-            let banLength2;
+            let banLength2 = 0;
 
             try {
 
                 setScore(player, "kickvl", kickvl + 1);
               
-                if (kickvl > config.kicksBeforeBan) { // FIXME:
+                if (kickvl > config.kicksBeforeBan) {
 
                     if (autoban) {
                         player.addTag("isBanned");
+
+                        player.getTags().forEach(tag => {
+                            if (tag.includes("Reason:") || tag.includes("Length:")) player.removeTag(tag);
+                        });
+
                         player.addTag(`Reason:Cheat Detection`);
+                        
                         banLength2 = parseTime("30d");
                         player.addTag(`Length:${Date.now() + banLength2}`);
+
                         if(config.console_debug) console.warn(`Rosh > ${player.name} has been banned for ${check}/${checkType}`);
+                        player.runCommandAsync(`tellraw @a[tag=notify,tag=op] {"rawtext":[{"text":"§r${themecolor}Rosh §j> §8${player.name} §chas been banned for ${themecolor}${check}§j/${themecolor}${checkType.toUpperCase()} §c!"}]}`);
 
                         const message = `§8${player.name} §chas been banned!`;   
                         data.recentLogs.push(message);
                     }
+
                     setScore(player, "kickvl", 0);
 
                 } else {
@@ -134,7 +141,8 @@ export function flag(player, check, checkType, debugName, debug, shouldTP = fals
                     if(config.console_debug) console.warn(`Rosh > ${player.name} has been kicked for ${check}/${checkType}`);
 
                     const message = `§8${player.name} §chas been kicked!`;    
-                    data.recentLogs.push(message)                              
+                    data.recentLogs.push(message)    
+
                     player.runCommandAsync(`tellraw @a[tag=notify,tag=op] {"rawtext":[{"text":"§r${themecolor}Rosh §j> §8${player.name} §chas been kicked for ${themecolor}${check}§j/${themecolor}${checkType.toUpperCase()} §c!"}]}`);
                     player.runCommandAsync(`kick "${player.name}" §r${themecolor}Rosh §j> §cKicked for ${themecolor}${check} §c!`);
 
@@ -159,7 +167,7 @@ export function flag(player, check, checkType, debugName, debug, shouldTP = fals
                     if(t.includes("Reason:") || t.includes("Length:")) player.removeTag(t);
                 });
 
-                let banLength;
+                let banLength = 0;
 
                 player.addTag(`Reason:Cheat Detection`);
                 try {
@@ -209,6 +217,8 @@ export function ban(player) {
 
     // If the player is in the whitelist, do nothing
     if (config.flagWhitelist.includes(player.name)) return;
+
+    const themecolor = config.themecolor;
 
     // Define messages for unbanning scenarios
     const unbanQueueMessage = `§r${themecolor}Rosh §j> §8${player.name} §ahas been found in the unban queue and has been unbanned!`;
