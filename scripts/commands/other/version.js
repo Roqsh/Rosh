@@ -1,7 +1,20 @@
+import config from '../../data/config.js';
+
+/**
+ * Displays the current Rosh version.
+ * @name version
+ * @param {object} message - Message object
+ * @throws {TypeError} If message is not an object
+ */
 export function version(message) { 
+    // Check if message is an object.
+    if (typeof message !== "object" || message === null) {
+        throw new TypeError(`message is type of ${typeof message}. Expected "object".`);
+    }
 
     const player = message.sender; 
+    const themecolor = config.themecolor;
 
-    player.runCommandAsync(`tellraw @s {"rawtext":[{"text":"§r§uRosh §j> §aRosh is currently at §81.23 [Dev] §a!"}]}`);
-
+    // Send the player the version message
+    player.sendMessage(`§r${themecolor}Rosh §j> §aRosh is currently at §81.23 [Dev] §a!`);
 }
