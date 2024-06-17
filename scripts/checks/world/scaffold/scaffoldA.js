@@ -9,6 +9,7 @@ const scaffold_a_map = new Map();
  * @param {player} player - The player to check
  * @param {block} block - The placed block
  * @remarks FIXME: Placing on ground false flags the no-rot and distance check  TODO: Add check if diag is in air (below done, sides need to be done, hard to implement
+ * backwards compatibility, etc.
  * as you need to figure out when x and z are covered by the diag block and when they are air)
 */
 
@@ -28,41 +29,15 @@ function diagonal(newBlock, player, oldBlock) {
 
 function air(player, one, two, three) {
     
-    const sidesOne = [
-        { x: one.x - 1, y: one.y, z: one.z },    
-        { x: one.x + 1, y: one.y, z: one.z },    
-        { x: one.x, y: one.y, z: one.z - 1 },    
-        { x: one.x, y: one.y, z: one.z + 1 },     
-        { x: one.x, y: one.y - 1, z: one.z }      
-    ];
+    const airone =  { x: one.x, y: one.y - 1, z: one.z };
+    const airtwo = { x: two.x, y: two.y - 1, z: two.z };
+    const airthree = { x: three.x, y: three.y - 1, z: three.z };
     
-    const sidesTwo = [
-        { x: two.x - 1, y: two.y, z: two.z },     
-        { x: two.x + 1, y: two.y, z: two.z },    
-        { x: two.x, y: two.y, z: two.z - 1 },     
-        { x: two.x, y: two.y, z: two.z + 1 },     
-        { x: two.x, y: two.y - 1, z: two.z }      
-    ];
-    
-    const sidesThree = [
-        { x: three.x - 1, y: three.y, z: three.z }, 
-        { x: three.x + 1, y: three.y, z: three.z }, 
-        { x: three.x, y: three.y, z: three.z - 1 }, 
-        { x: three.x, y: three.y, z: three.z + 1 },
-        { x: three.x, y: three.y - 1, z: three.z }  
-    ];
-
-    // Filter out sides that must touch for the diagonal construction
-    const validSidesOne = sidesOne.filter(side => !(side.x === two.x && side.z === two.z) && !(side.x === three.x && side.z === three.z));
-    const validSidesTwo = sidesTwo.filter(side => !(side.x === one.x && side.z === one.z) && !(side.x === three.x && side.z === three.z));
-    const validSidesThree = sidesThree.filter(side => !(side.x === one.x && side.z === one.z) && !(side.x === two.x && side.z === two.z));
-
-    // Check if all the valid sides are air
-    const isAirOne = validSidesOne.every(side => !(player.dimension.getBlock(side).typeId === "minecraft:air"));
-    const isAirTwo = validSidesTwo.every(side => !(player.dimension.getBlock(side).typeId === "minecraft:air"));
-    const isAirThree = validSidesThree.every(side => !(player.dimension.getBlock(side).typeId === "minecraft:air"));
-
-    return isAirOne && isAirTwo && isAirThree;
+    return (
+        player.dimension.getBlock(airone).typeId === "minecraft:air" &&
+        player.dimension.getBlock(airtwo).typeId === "minecraft:air" &&
+        player.dimension.getBlock(airthree).typeId === "minecraft:air"
+    );
 }
 
 function is_decrease(origin, point1, point2, point3) {
