@@ -47,7 +47,13 @@ export function noslow_b(player) {
 
             if(!(player.lastExplosionTime && Date.now() - player.lastExplosionTime < 1000)) {
                 flag(player, "NoSlow", "B", "speed", playerSpeed);
-                if(!config.silent) player.teleport(playerLastPos);
+                if(!config.silent) {
+                    player.teleport(playerLastPos, {
+                        checkForBlocks: false,
+                        dimension: player.dimension
+                    });
+
+                }
             }
         }
     }

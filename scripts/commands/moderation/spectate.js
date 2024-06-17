@@ -1,3 +1,4 @@
+import * as Minecraft from "@minecraft/server";
 import config from "../../data/config.js";
 
 /**
@@ -13,6 +14,7 @@ export function spectate(message, args) {
     if (!Array.isArray(args)) throw new TypeError(`args is type of ${typeof args}. Expected "array".`);
 
     const player = message.sender;
+    const world = Minecraft.world;
     const themecolor = config.themecolor;
 
     // Check if target player name is provided
@@ -52,5 +54,5 @@ export function spectate(message, args) {
     });
 
     // Send confirmation message to the player
-    player.sendMessage(`§r${themecolor}Rosh §j> §aYou are now spectating §8${member}§a!`);
+    player.sendMessage(`§r${themecolor}Rosh §j> §aYou are now spectating §8${member.name}§a!`);
 }
