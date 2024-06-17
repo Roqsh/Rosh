@@ -33,7 +33,7 @@ export function ban(message, args) {
 
     // Parse the ban duration if provided
     const time = args[1] ? parseTime(args[1]) : undefined;
-    if (!time) args.splice(1, 1); // Remove time argument if parsing fails
+    args.splice(1, 1); // Remove time argument
 
     // Construct the reason from the remaining args
     const reason = args.slice(1).join(" ").replace(/"|\\/g, "") || "No reason specified";

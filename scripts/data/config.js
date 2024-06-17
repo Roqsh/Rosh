@@ -64,7 +64,7 @@ export default
 
         "ban": {
             "enabled": true,
-            "description": "!ban <player> <reason> <length> - Ban a player",
+            "description": "!ban <player> <length> <reason> - Ban a player",
             "requiredTags": ["op"],
             "aliases": ["b"]
         },
@@ -132,7 +132,6 @@ export default
         "invsee": {
             "enabled": true,
             "description": "!invsee <player> - See the contents of a players inventory",
-            "show_enchantments": true,
             "requiredTags": ["op"],
             "aliases": ["inv"]
         },

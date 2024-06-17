@@ -1,63 +1,93 @@
 import * as Minecraft from "@minecraft/server";
 import config from "../../data/config.js";
 
-const world = Minecraft.world;
-
-// found the inventory viewing scipt in the bedrock addons discord, unsure of the original owner (not my code)
 /**
- * @name invsee
- * @param {object} message - Message object
- * @param {array} args - Additional arguments provided.
+ * Lets you view another player's inventory.
+ * @param {object} message - The message object containing the sender's information.
+ * @param {array} args - Additional arguments provided, with the first argument being the target player's name.
+ * @throws {TypeError} If the message is not an object or if args is not an array.
  */
 export function invsee(message, args) {
-    // validate that required params are defined
-    if(typeof message !== "object") throw TypeError(`message is type of ${typeof message}. Expected "object".`);
+    // Validate message and args
+    if (typeof message !== "object" || !message.sender) {
+        throw new TypeError(`message is type of ${typeof message}. Expected "object" with "sender" property.`);
+    }
+    if (!Array.isArray(args)) {
+        throw new TypeError(`args is type of ${typeof args}. Expected "array".`);
+    }
 
     const player = message.sender;
+    const world = Minecraft.world;
     const themecolor = config.themecolor;
 
-    if(!args.length) return player.sendMessage(`§r${themecolor}Rosh §j> §cYou need to provide whos inventory to view.`);
-    
-    // try to find the player requested
-    let member;
-
-    for (const pl of world.getPlayers()) if(pl.name.toLowerCase().includes(args[0].toLowerCase().replace(/"|\\|@/g, ""))) {
-        member = pl;
-        break;
-    }
-    
-    if(!member) return player.sendMessage(`§r${themecolor}Rosh §j> §cCouldn't find that player.`);
-
-    const container = member.getComponent('inventory').container;
-  
-    if(container.emptySlotsCount === 36) {
-        return player.sendMessage(`§r${themecolor}Rosh §j> §8${member.nameTag}'s §cinventory is empty.`);
+    // Check if target player name is provided
+    if (args.length === 0) {
+        player.sendMessage(`§r${themecolor}Rosh §j> §cYou need to provide whose inventory to view.`);
+        return;
     }
 
-    let inventory = `§r${themecolor}Rosh §j> §8${member.nameTag}'s §aInventory:\n`;
-    
-    for (let i = 0; i < 36; i++) {
-        const item = container.getItem(i);
-        if(!item) continue;
+    const targetName = args[0].toLowerCase().replace(/"|\\|@/g, "");
 
-        inventory += `§r${themecolor}Rosh §j> §aSlot §8${i}§a: §8${item.typeId} x${item.amount}\n`;
+    // Check if target player name is valid
+    if (targetName.length < 3) {
+        player.sendMessage(`§r${themecolor}Rosh §j> §cYou need to provide a valid player to view their inventory.`);
+        return;
+    }
 
-        if(config.customcommands.invsee.show_enchantments) {
-            const loopIterator = (iterator) => {
-                const iteratorResult = iterator.next();
-                if(iteratorResult.done) return;
-                const enchantData = iteratorResult.value;
-
-                let enchantmentName = enchantData.type.id;
-                enchantmentName = enchantmentName.charAt(0).toUpperCase() + enchantmentName.slice(1);
-
-                inventory += `    | ${enchantmentName} ${enchantData.level}\n`;
-
-                loopIterator(iterator);
-            };
-            loopIterator(item.getComponent("enchantments").enchantments[Symbol.iterator]());
+    // Find the target player by name
+    let member = null;
+    for (const pl of world.getPlayers()) {
+        if (pl.name.toLowerCase().includes(targetName)) {
+            member = pl;
+            break;
         }
     }
 
+    // Handle case where the target player is not found
+    if (!member) {
+        player.sendMessage(`§r${themecolor}Rosh §j> §cCouldn't find that player.`);
+        return;
+    }
+
+    // Get the player's inventory component
+    const container = member.getComponent('inventory')?.container;
+  
+    // Check if the player's inventory is empty
+    if (container.emptySlotsCount === 36) {
+        player.sendMessage(`§r${themecolor}Rosh §j> §8${member.name}'s §cinventory is empty.`);
+        return;
+    }
+
+    // Initialize the inventory message
+    let inventory = `§r${themecolor}Rosh §j> §8${member.name}'s §aInventory:\n`;
+    
+    // Loop through each slot in the player's inventory
+    for (let i = 0; i < 36; i++) {
+        const item = container.getItem(i);
+
+        // Skip empty slots
+        if (!item) continue;
+
+        // Add item details to the inventory message
+        inventory += `§r§aSlot §8${i}§a: §8${item.typeId} ${item.amount}x`;
+    
+        const enchantments = item.getComponent("enchantable")?.getEnchantments() ?? [];
+    
+        // Check if enchantments exist before accessing them
+        if (enchantments && Array.isArray(enchantments)) {
+            // Loop through each enchantment on the item
+            for (const enchantment of enchantments) {
+                let enchantmentName = enchantment.type.id;
+
+                // Add enchantment details to the inventory message
+                inventory += `§a, §8${enchantmentName} ${enchantment.level}`;
+            }
+        }
+           
+        // Jump to the next line
+        inventory += `\n`;      
+    }
+
+    // Send the inventory details to the player
     player.sendMessage(inventory);
 }

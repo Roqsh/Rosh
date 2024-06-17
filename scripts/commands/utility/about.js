@@ -1,33 +1,49 @@
 import config from "../../data/config.js";
 
 /**
- * @name about
- * @param {object} message - Message object
- * @param {array} args - Additional arguments provided.
+ * Sends a description of the specified module to the player.
+ * @param {object} message - The message object containing the sender's information.
+ * @param {array} args - Additional arguments provided, with the first argument being the module name.
+ * @throws {TypeError} If the message is not an object or if args is not an array.
  */
 export function about(message, args) {
-  // Validate the input
-  if (typeof message !== "object") throw TypeError(`message is type of ${typeof message}. Expected "object".`);
-  if (typeof args !== "object") throw TypeError(`args is type of ${typeof args}. Expected "object".`);
+    // Validate message and args
+    if (typeof message !== "object") {
+        throw new TypeError(`message is type of ${typeof message}. Expected "object".`);
+    }
+    if (!Array.isArray(args)) {
+        throw new TypeError(`args is type of ${typeof args}. Expected "array".`);
+    }
 
-  const player = message.sender;
-  const themecolor = config.themecolor;
-  const moduleName = args[0];
+    const player = message.sender;
+    const themecolor = config.themecolor;
+    const moduleName = args[0];
 
-  // Check if the module exists in the config file
-  if (!config.modules[moduleName]) {
-    return player.sendMessage(`§r${themecolor}Rosh §j> §cCouldn't find that check.`);
-  }
+    // Check if the module name is provided
+    if (!moduleName) {
+        player.sendMessage(`§r${themecolor}Rosh §j> §cYou need to provide a check.`);
+        return;
+    }
 
-  const module = config.modules[moduleName];
+    const module = config.modules[moduleName];
 
-  // Check if the module has a description
-  if (!module.description) {
-    return player.sendMessage(`§r${themecolor}Rosh §j> §cThat check has no description.`);
-  }
+    // Check if the module exists in the config
+    if (!module) {
+        player.sendMessage(`§r${themecolor}Rosh §j> §cCouldn't find that check.`);
+        return;
+    }
 
-  const description = module.description;
-  const check = args[0].replace(/([A-Z])/g, '/$1').replace(/^./, str => str.toUpperCase());
+    const description = module.description;
 
-  player.sendMessage(`§r${themecolor}Rosh §j> §aDescription of §8${check}§a: §8${description}`);
+    // Check if the module has a description
+    if (!description) {
+        player.sendMessage(`§r${themecolor}Rosh §j> §cThat check has no description.`);
+        return;
+    }
+
+    // Format the module name for better readability
+    const readableCheck = moduleName.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase()).trim();
+
+    // Send the description of the module to the player
+    player.sendMessage(`§r${themecolor}Rosh §j> §aDescription of §8${readableCheck}§a: §8${description}`);
 }
