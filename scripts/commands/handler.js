@@ -1,4 +1,4 @@
-//TODO: Remove fullreport (replaced with stats), recode rest of commands, improve this, add unfreeze
+//TODO: Remove fullreport (replaced with stats), recode rest of commands, improve this
 import { world, system } from "@minecraft/server";
 import config from "../data/config.js";
 
@@ -10,7 +10,7 @@ import { kickall } from "./moderation/kickall.js";
 import { mute } from "./moderation/mute.js";
 import { unmute } from "./moderation/unmute.js";
 import { freeze } from "./utility/freeze.js";
-//import { unfreeze } from "./utility/unfreeze.js";
+import { unfreeze } from "./utility/unfreeze.js";
 
 // Tools
 import { spectate } from "./moderation/spectate.js";
@@ -145,6 +145,7 @@ function runCommand(msg, commandName, args) {
                 else if(commandName === "mute") mute(message, args);
                 else if(commandName === "unmute") unmute(message, args);
                 else if(commandName === "freeze") freeze(message, args);
+                else if(commandName === "unfreeze") unfreeze(message, args);
 
                 else if(commandName === "spectate") spectate(message, args);
                 else if(commandName === "vanish") vanish(message);

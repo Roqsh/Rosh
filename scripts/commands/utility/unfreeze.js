@@ -2,13 +2,13 @@ import * as Minecraft from "@minecraft/server";
 import config from "../../data/config.js";
 
 /**
- * Freezes the players movement, camera and hud until he gets unfrozen.
- * @name freeze
+ * Unfreezes the players movement, camera and hud.
+ * @name unfreeze
  * @param {object} message - The message object containing the sender's information.
  * @param {array} args - Additional arguments provided, with the first argument being the target player's name.
  * @throws {TypeError} If the message is not an object or if args is not an array.
  */
-export function freeze(message, args) {
+export function unfreeze(message, args) {
     // Validate message and args
     if (typeof message !== "object" || !message.sender) {
         throw new TypeError(`message is type of ${typeof message}. Expected "object" with "sender" property.`);
@@ -23,7 +23,7 @@ export function freeze(message, args) {
     
     // Check if target player name is provided
     if (args.length === 0) {
-        player.sendMessage(`§r${themecolor}Rosh §j> §cYou need to provide who to freeze.`);
+        player.sendMessage(`§r${themecolor}Rosh §j> §cYou need to provide who to unfreeze.`);
         return;
     }
 
@@ -31,7 +31,7 @@ export function freeze(message, args) {
 
     // Check if target player name is valid
     if (targetName.length < 3) {
-        player.sendMessage(`§r${themecolor}Rosh §j> §cYou need to provide a valid player to freeze.`);
+        player.sendMessage(`§r${themecolor}Rosh §j> §cYou need to provide a valid player to unfreeze.`);
         return;
     }
 
@@ -50,35 +50,23 @@ export function freeze(message, args) {
         return;
     }
 
-    // Check if the target player is already frozen
-    if (member.hasTag("frozen")) {
-        player.sendMessage(`§r${themecolor}Rosh §j> §8${member.name} §cis already frozen.`);
+    // Check if the target player is already unfrozen
+    if (!member.hasTag("frozen")) {
+        player.sendMessage(`§r${themecolor}Rosh §j> §8${member.name} §cis not frozen.`);
         return;
     }
 
-    // Check if the target player is yourself
-    if (member.id === player.id) {
-        player.sendMessage(`§r${themecolor}Rosh §j> §cYou cannot freeze yourself.`);
-        return;
-    }
+    // Remove the frozen mark
+    member.removeTag("frozen");
 
-    // Check if the target player is Rosh-Op
-    if (member.hasTag("op")) {
-        player.sendMessage(`§r${themecolor}Rosh §j> §cYou cannot freeze other staff members.`);
-        return;
-    }
+    // Unfreeze the input actions of the target player
+    member.runCommandAsync(`inputpermission set @s movement enabled`);
+    member.runCommandAsync(`inputpermission set @s camera enabled`);
+    member.runCommandAsync(`hud @s reset`);
 
-    // Mark the player as frozen
-    member.addTag("frozen");
-
-    // Freeze the input actions of the target player
-    member.runCommandAsync(`inputpermission set @s movement disabled`);
-    member.runCommandAsync(`inputpermission set @s camera disabled`);
-    member.runCommandAsync(`hud @s hide`);
-
-    // Notify the player that he is frozen
-    member.sendMessage(`§r${themecolor}Rosh §j> §cYou are now frozen!`);
+    // Notify the player that he is unfrozen
+    member.sendMessage(`§r${themecolor}Rosh §j> §aYou are now unfrozen!`);
 
     // Notify other staff members about the freeze
-    player.runCommandAsync(`tellraw @a[tag=op] {"rawtext":[{"text":"§r${themecolor}Rosh §j> §8${player.name} §chas frozen §8${member.name}§c."}]}`);
+    player.runCommandAsync(`tellraw @a[tag=op] {"rawtext":[{"text":"§r${themecolor}Rosh §j> §8${player.name} §ahas unfrozen §8${member.name}§a."}]}`);
 }

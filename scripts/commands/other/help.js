@@ -30,7 +30,7 @@ export function help(message) {
             let categorie = ``;
 
             // If a new categorie starts, add a line between the commands
-            if (command === "freeze" || command === "testaura" || command === "tag") {
+            if (command === "unfreeze" || command === "testaura" || command === "tag") {
                 categorie = `\n`;
             } else categorie = ``;
 

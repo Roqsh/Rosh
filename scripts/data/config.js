@@ -105,7 +105,13 @@ export default
 
         "freeze": {
             "enabled": true,
-            "description": "!freeze <player> - Disables movement and camera for a player",
+            "description": "!freeze <player> - Disables movement, camera and hud for a player",
+            "requiredTags": ["op"]
+        },
+
+        "unfreeze": {
+            "enabled": true,
+            "description": "!unfreeze <player> - Reenables movement, camera and hud for a player",
             "requiredTags": ["op"]
         },
 
