@@ -1,4 +1,4 @@
-//TODO: Remove fullreport (replaced with stats), recode rest of commands, improve this
+//TODO: recode rest of commands, improve this
 import { world, system } from "@minecraft/server";
 import config from "../data/config.js";
 
@@ -29,7 +29,6 @@ import { notify } from "./moderation/notify.js";
 import { autoban } from "./settings/autoban.js";
 import { module } from "./settings/module.js";
 import { stats } from "./utility/stats.js";
-import { fullreport } from "./utility/fullreport.js";
 import { logs } from "./utility/logs.js";
 import { resetwarns } from "./moderation/resetwarns.js";
 import { report } from "./other/report.js";
@@ -162,7 +161,6 @@ function runCommand(msg, commandName, args) {
                 else if(commandName === "autoban") autoban(message);
                 else if(commandName === "module") module(message, args);
                 else if(commandName === "stats") stats(message, args);
-                else if(commandName === "fullreport") fullreport(message);
                 else if(commandName === "logs") logs(message);
                 else if(commandName === "resetwarns") resetwarns(message, args);
                 else if(commandName === "report") report(message, args);

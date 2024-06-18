@@ -215,13 +215,6 @@ export default
             "aliases": ["info"]
         },
 
-        "fullreport": {
-            "enabled": true,
-            "description": "!fullreport <player> - Will get removed!",
-            "requiredTags": ["op"],
-            "aliases": ["fr"]
-        },
-
         "logs": {
             "enabled": true,
             "description": "!logs <page> - View all logged information",
