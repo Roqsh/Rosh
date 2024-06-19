@@ -4,9 +4,10 @@ import { flag, aroundAir, hVelocity } from "../../../util";
 const fly_b_map = new Map();
 
 /**
+ * Checks not going in the predicted direction. (same y lvl)
  * @name fly_b
  * @param {player} player - The player to check
- * @remarks Checks not going in the predicted direction (same y lvl)
+ * @remarks FIXME: When having the fly ability it false flags (`ability <player> mayfly true`)
  */
 export function fly_b(player) {
 
@@ -16,12 +17,14 @@ export function fly_b(player) {
             player.hasTag("gmc") || 
             player.hasTag("elytra") || 
             player.hasTag("spec") ||
+            player.hasTag("flying") ||
             player.hasTag("placing")
         ) return;
 
         const velocityY = player.getVelocity().y;
 
         if(fly_b_map.has(player)) {
+
             const count = fly_b_map.get(player);
             
             if(count >= config.modules.flyB.amount && velocityY == 0 && !player.isOnGround && hVelocity(player) !== 0) {
