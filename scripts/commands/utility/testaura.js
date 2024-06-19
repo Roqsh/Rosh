@@ -2,6 +2,7 @@ import * as Minecraft from "@minecraft/server";
 import config from "../../data/config.js";
 
 /**
+ * Tests if a player uses Killaura. (Killaura/E needs to be enabled aswell as the Beta toggle)
  * @name testaura
  * @param {object} message - The message object containing the sender's information.
  * @param {array} args - Additional arguments provided, with the first argument being the target player's name.
@@ -58,5 +59,5 @@ export function testaura(message, args) {
     member.runCommandAsync(`summon rosh:killaura ~${x} ~${y} ~${z}`);
     
     // Notify the initiator
-    player.sendMessage(`§r${themecolor}Rosh §j> §aAura bot succesfully spawned.`);
+    player.sendMessage(`§r${themecolor}Rosh §j> §aKillaura bot succesfully spawned.`);
 }
