@@ -161,7 +161,7 @@ function runCommand(msg, commandName, args) {
                 else if(commandName === "autoban") autoban(message);
                 else if(commandName === "module") module(message, args);
                 else if(commandName === "stats") stats(message, args);
-                else if(commandName === "logs") logs(message);
+                else if(commandName === "logs") logs(message, args);
                 else if(commandName === "resetwarns") resetwarns(message, args);
                 else if(commandName === "report") report(message, args);
                 else if(commandName === "tag") tag(message, args);
