@@ -8,6 +8,9 @@ import { flag, getSpeed, getScore } from "../../../util";
  */
 export function noslow_a(player) {
 
+    const preset = config.preset?.toLowerCase();
+    if (preset === "stable") return;
+
     if (config.modules.noslowA.enabled) {
 
         const speed = getSpeed(player);
