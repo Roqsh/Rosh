@@ -5,6 +5,9 @@ import { flag } from "../../../util";
  * Checks for placing with an integer x/y rotation
  * @name scaffold_b
  * @param {player} player - The player to check
+ * @remarks While riding minecraft sets your rotation to 90, therefore
+ * it is getting excluded. After your initial spawn your rotation is 0,
+ * therefore it will be ignored too.
  */
 export function scaffold_b(player) {
     

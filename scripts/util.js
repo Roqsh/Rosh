@@ -1062,6 +1062,8 @@ export function debug(player, name, debugInfo, tag) {
         throw new TypeError(`Error: debugInfo is type of ${typeof debugInfo}. Expected "string", "number", or "object".`);
     }
 
+    const themecolor = config.themecolor;
+
     // Convert debugInfo to a string if it is an object
     const debugInfoStr = typeof debugInfo === 'object' ? JSON.stringify(debugInfo) : debugInfo;
 
