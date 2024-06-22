@@ -32,10 +32,9 @@ export function op(message, args) {
         player.sendMessage(`§r${themecolor}Rosh §j> §cYou need to provide a valid player to op.`);
         return;
     }
-    
-    let member = null;
 
     // Find the target player by name
+    let member = null;
     for (const pl of world.getPlayers()) {
         if (pl.name.toLowerCase().includes(targetName)) {
             member = pl;

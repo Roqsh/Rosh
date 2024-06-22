@@ -33,9 +33,8 @@ export function deop(message, args) {
         return;
     }
 
-    let member = null;
-
     // Find the target player by name
+    let member = null;
     for (const pl of world.getPlayers()) {
         if (pl.name.toLowerCase().includes(targetName)) {
             member = pl;

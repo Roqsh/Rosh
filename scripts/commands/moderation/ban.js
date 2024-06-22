@@ -41,9 +41,8 @@ export function ban(message, args) {
     // Construct the reason from the remaining args
     const reason = args.slice(1).join(" ").replace(/"|\\/g, "") || "No reason specified";
 
-    let member = null;
-
     // Find the target player by name
+    let member = null;
     for (const pl of world.getPlayers()) {
         if (pl.name.toLowerCase().includes(targetName)) {
             member = pl;

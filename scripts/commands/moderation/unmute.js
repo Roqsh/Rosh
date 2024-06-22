@@ -35,10 +35,9 @@ export function unmute(message, args) {
 
     // Construct the reason from the remaining args
     const reason = args.slice(1).join(" ").replace(/"|\\/g, "") || "No reason specified";
-    
-    let member = null;
 
     // Find the target player by name
+    let member = null;
     for (const pl of world.getPlayers()) {
         if (pl.name.toLowerCase().includes(targetName)) {
             member = pl;
@@ -49,12 +48,6 @@ export function unmute(message, args) {
     // Handle case where the target player is not found
     if (!member) {
         player.sendMessage(`§r${themecolor}Rosh §j> §cCouldn't find that player.`);
-        return;
-    }
-
-    // Prevent unmuting oneself
-    if (member.id === player.id) {
-        player.sendMessage(`§r${themecolor}Rosh §j> §cYou cannot unmute yourself.`);
         return;
     }
 
