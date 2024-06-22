@@ -3,7 +3,7 @@ import * as MinecraftUI from "@minecraft/server-ui";
 import config from "../data/config.js";
 import data from "../data/data.js";
 import { parseTime, uppercaseFirstLetter, tellStaff } from "../util.js";
-import { addOp, removeOp } from "../commands/moderation/op.js";
+import { addOp, removeOp } from "../commands/staff/op.js";
 
 const world = Minecraft.world;
 const moduleList = Object.keys(config.modules).concat(Object.keys(config.misc_modules));
