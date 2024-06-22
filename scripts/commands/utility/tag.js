@@ -2,58 +2,103 @@ import * as Minecraft from "@minecraft/server";
 import config from "../../data/config.js";
 
 /**
- * @name tag
- * @param {object} message - Message object
- * @param {array} args - Additional arguments provided.
- * @remarks Changes the tag infront of the player nametag
-*/
-
-const world = Minecraft.world;
-
+ * Adds a tag in front of the player's nametag or resets it.
+ * @param {object} message - The message object containing the sender's information.
+ * @param {array} args - Additional arguments provided, with the first argument being the target player's name.
+ * @throws {TypeError} If the message is not an object or if args is not an array.
+ */
 export function tag(message, args) {
-
-    if(typeof message !== "object") throw TypeError(`message is type of ${typeof message}. Expected "object".`);
-    if(typeof args !== "object") throw TypeError(`args is type of ${typeof args}. Expected "object".`);
+    // Validate message and args
+    if (typeof message !== "object" || !message.sender) {
+        throw new TypeError(`message is type of ${typeof message}. Expected "object" with "sender" property.`);
+    }
+    if (!Array.isArray(args)) {
+        throw new TypeError(`args is type of ${typeof args}. Expected "array".`);
+    }
 
     const player = message.sender;
+    const world = Minecraft.world;
     const themecolor = config.themecolor;
 
-    if(!args.length) return player.sendMessage(`§r${themecolor}Rosh §j> §cYou need to provide a tag to add.`);
-
-    let member;
-
-    for(const pl of world.getPlayers()) if(pl.name.toLowerCase().includes(args[0].toLowerCase().replace(/"|\\|@/g, ""))) {
-        member = pl;
-        args.shift();
-        break;
+    // Check if target player name is provided
+    if (args.length === 0) {
+        player.sendMessage(`§r${themecolor}Rosh §j> §cYou need to provide who to add a tag to.`);
+        return;
     }
 
-    if(!member) member = player;
+    // Replace @s with the sender's name
+    const targetName = args[0].toLowerCase().replace(/"|\\|@s/g, player.name.toLowerCase());
 
-    if(!args[0]) return player.sendMessage(`§r${themecolor}Rosh §j> §cYou need to provide a tag to add.`);
+    // Check if target player name is valid
+    if (targetName.length < 3) {
+        player.sendMessage(`§r${themecolor}Rosh §j> §cYou need to provide a valid player to add a tag to.`);
+        return;
+    }
 
-    if(args[0].includes("reset")) {
-        
-        member.getTags().forEach(t => {
-            if(t.replace(/"|\\/g, "").startsWith("tag:")) member.removeTag(t);
+    // Handle case where no tag is provided
+    if (!args[1]) {
+        player.sendMessage(`§r${themecolor}Rosh §j> §cYou need to provide a tag to add.`);
+        return;
+    }
+
+    // Join the remaining args to form the tag
+    const tag = args.slice(1).join(" ").replace(/"|\\/g, "");
+
+    // Check if tag length exceeds 16 characters
+    if (tag.length > 16) {
+        player.sendMessage(`§r${themecolor}Rosh §j> §cTags can only be up to 16 characters long.`);
+        return;
+    }
+
+    // Find the target player by name
+    let targetPlayer = null;
+    for (const pl of world.getPlayers()) {
+        if (pl.name.toLowerCase().includes(targetName)) {
+            targetPlayer = pl;
+            break;
+        }
+    }
+
+    // Handle case where the target player is not found
+    if (!targetPlayer) {
+        player.sendMessage(`§r${themecolor}Rosh §j> §cCouldn't find that player.`);
+        return;
+    }
+
+    // Check if the new tag is the same as the current tag
+    const currentTag = targetPlayer.getTags().find(t => t.startsWith("tag:"));
+    if (currentTag && currentTag.slice(4) === tag) {
+        player.sendMessage(`§r${themecolor}Rosh §j> §cThis player already has that tag.`);
+        return;
+    }
+
+    // Handle resetting the nametag
+    if (args[1].includes("reset")) {
+        targetPlayer.getTags().forEach(t => {
+            if (t.replace(/"|\\/g, "").startsWith("tag:")) targetPlayer.removeTag(t);
         });
-
-        member.nameTag = member.name;
-        return player.runCommandAsync(`tellraw @a[tag=op] {"rawtext":[{"text":"§r${themecolor}Rosh §j> §8${player.name} §chas reset §8${member.name}'s §cnametag."}]}`);
+        targetPlayer.nameTag = targetPlayer.name;
+        player.sendMessage(`§r${themecolor}Rosh §j> §aReset §8${targetPlayer.name}'s §anametag.`);
+        return;
     }
 
-    const tag = args.join(" ").replace(/"|\\/g, "");
+    // Get the colors from the config
     const { mainColor, borderColor, playerNameColor } = config.customcommands.tag;
 
-    const nametag = `${borderColor}[§r${mainColor}${tag}§r${borderColor}]§r ${playerNameColor}${member.name}§r`.replace(/"|\\/g, "");
+    // Build the nametag
+    const nametag = `${borderColor}[§r${mainColor}${tag}§r${borderColor}]§r ${playerNameColor}${targetPlayer.name}§r`.replace(/"|\\/g, "");
 
-    member.nameTag = nametag;
+    // Update the target player's nametag
+    targetPlayer.nameTag = nametag;
 
-    member.getTags().forEach(t => {
-        if(t.replace(/"|\\/g, "").startsWith("tag:")) member.removeTag(t);
+    // Remove existing tags starting with "tag:"
+    targetPlayer.getTags().forEach(t => {
+        if (t.replace(/"|\\/g, "").startsWith("tag:")) targetPlayer.removeTag(t);
     });
 
-    member.addTag(`tag:${tag}`);
+    // Add the new tag
+    targetPlayer.addTag(`tag:${tag}`);
 
-    player.runCommandAsync(`tellraw @a[tag=op] {"rawtext":[{"text":"§r${themecolor}Rosh §j> §8${player.name} §ahas changed §8${member.name}'s §anametag to §8${nametag}§a."}]}`);
+    // Inform the initiator about the tag change
+    player.sendMessage(`§r${themecolor}Rosh §j> §aChanged §8${targetPlayer.name}'s §anametag to §8${nametag}§a.`);
 }
