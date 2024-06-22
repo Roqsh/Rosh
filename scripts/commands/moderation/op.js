@@ -24,14 +24,14 @@ export function op(message, args) {
         return;
     }
 
-    // Check if target player name is valid
-    if (args[0].length < 3) {
-        player.sendMessage(`§r${themecolor}Rosh §j> §cYou need to provide a valid player to op.`);
-        return;
-    }
-   
     // Replace @s with the sender's name
     const targetName = args[0].toLowerCase().replace(/"|\\|@s/g, player.name.toLowerCase());
+
+    // Check if target player name is valid
+    if (targetName.length < 3) {
+        player.sendMessage(`§r${themecolor}Rosh §j> §cYou need to provide a valid player to get their stats from.`);
+        return;
+    }
     
     let member = null;
 

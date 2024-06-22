@@ -238,7 +238,7 @@ export default
 
         "tag": {
             "enabled": true,
-            "description": "!tag <player> <tag> - Adds a custom tag to a player",
+            "description": "!tag <player> <tag> - Adds a custom tag to a player\nOr: !tag <player> reset - Removes a custom tag from a player",
             "mainColor": "§u",
             "borderColor": "§8",
             "playerNameColor": "§r",
