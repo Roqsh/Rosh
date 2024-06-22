@@ -41,7 +41,9 @@ export function kick(message, args) {
     // Construct the reason from the remaining args
     const reason = args.slice(1).join(" ").replace(/"|\\/g, "") || "No reason specified";
 
-    const targetName = args[0].toLowerCase().replace(/"|\\|@/g, "");
+    // Replace @s with the sender's name
+    const targetName = args[0].toLowerCase().replace(/"|\\|@s/g, player.name.toLowerCase());
+    
     let member = null;
 
     // Find the target player by name

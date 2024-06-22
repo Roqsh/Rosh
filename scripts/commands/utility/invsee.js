@@ -26,7 +26,8 @@ export function invsee(message, args) {
         return;
     }
 
-    const targetName = args[0].toLowerCase().replace(/"|\\|@/g, "");
+    // Replace @s with the sender's name
+    const targetName = args[0].toLowerCase().replace(/"|\\|@s/g, player.name.toLowerCase());
 
     // Check if target player name is valid
     if (targetName.length < 3) {

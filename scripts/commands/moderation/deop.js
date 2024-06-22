@@ -30,7 +30,9 @@ export function deop(message, args) {
         return;
     }
 
-    const targetName = args[0].toLowerCase().replace(/"|\\|@/g, "");
+    // Replace @s with the sender's name
+    const targetName = args[0].toLowerCase().replace(/"|\\|@s/g, player.name.toLowerCase());
+    
     let member = null;
 
     // Find the target player by name
