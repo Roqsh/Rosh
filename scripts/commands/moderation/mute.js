@@ -30,7 +30,7 @@ export function mute(message, args) {
 
     // Check if target player name is valid
     if (targetName.length < 3) {
-        player.sendMessage(`§r${themecolor}Rosh §j> §cYou need to provide a valid player to get their stats from.`);
+        player.sendMessage(`§r${themecolor}Rosh §j> §cYou need to provide a valid player to mute.`);
         return;
     }    
 
