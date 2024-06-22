@@ -8,7 +8,7 @@ const lastTime = new Map();
  * @name tower_b
  * @param {player} player - The player to check
  * @param {block} block - The placed block
- * @remarks False flags if a player is dragging/butterflying/jittering etc two blocks beneath him while in air
+ * @remarks False flags if a player is dragging/butterflying/jittering etc two blocks beneath him while hes jumping upwards
  */
 export function tower_b(player, block) {
 
@@ -18,8 +18,7 @@ export function tower_b(player, block) {
         if(preset === "stable") return;
 
         if (player.isFlying || 
-            player.isInWater ||
-            !player.isJumping
+            player.isInWater
         ) return;
 
         let min_delay = config.modules.towerB.delay;
@@ -29,7 +28,7 @@ export function tower_b(player, block) {
         if (lastTime.has(player.name)) {
             
             const delay = Date.now() - lastTime.get(player.name)?.time;
-            const upwards = block.location.y > lastTime.get(player.name)?.y;
+            const upwards = block.location.y > lastTime.get(player.name)?.y && player.location.y > lastTime.get(player.name)?.height;
             const sameXZblock = block.location.x === lastTime.get(player.name)?.x && block.location.z === lastTime.get(player.name)?.z;
             const below = block.location.y < player.location.y
 
@@ -42,6 +41,7 @@ export function tower_b(player, block) {
 
         lastTime.set(player.name, {
             time: Date.now(),
+            height: player.location.y,        
             x: block.location.x,  
             y: block.location.y,
             z: block.location.z 
