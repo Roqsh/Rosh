@@ -1,44 +1,44 @@
-//TODO: recode rest of commands, improve this
+//TODO: Improve this (recode)
 import { world, system } from "@minecraft/server";
 import config from "../data/config.js";
 
 // Punishments
-import { ban } from "./moderation/ban.js";
-import { unban } from "./moderation/unban.js";
-import { kick } from "./moderation/kick.js";
-import { kickall } from "./moderation/kickall.js";
-import { mute } from "./moderation/mute.js";
-import { unmute } from "./moderation/unmute.js";
-import { freeze } from "./utility/freeze.js";
-import { unfreeze } from "./utility/unfreeze.js";
+import { ban } from "./punishments/ban.js";
+import { unban } from "./punishments/unban.js";
+import { kick } from "./punishments/kick.js";
+import { kickall } from "./punishments/kickall.js";
+import { mute } from "./punishments/mute.js";
+import { unmute } from "./punishments/unmute.js";
+import { freeze } from "./punishments/freeze.js";
+import { unfreeze } from "./punishments/unfreeze.js";
 
 // Tools
-import { spectate } from "./moderation/spectate.js";
-import { vanish } from "./utility/vanish.js";
-import { fly } from "./utility/fly.js";
-import { invsee } from "./utility/invsee.js";
-import { cloneinv } from "./utility/cloneinv.js";
-import { ecwipe } from "./utility/ecwipe.js";
-import { testaura } from "./utility/testaura.js";
+import { spectate } from "./tools/spectate.js";
+import { vanish } from "./tools/vanish.js";
+import { fly } from "./tools/fly.js";
+import { invsee } from "./tools/invsee.js";
+import { cloneinv } from "./tools/cloneinv.js";
+import { ecwipe } from "./tools/ecwipe.js";
+import { testaura } from "./tools/testaura.js";
 
 // Staff
-import { ui } from "./utility/ui.js";
-import { op } from "./moderation/op.js";
-import { deop } from "./moderation/deop.js";
-import { notify } from "./moderation/notify.js";
-import { autoban } from "./settings/autoban.js";
-import { module } from "./settings/module.js";
-import { stats } from "./utility/stats.js";
-import { logs } from "./utility/logs.js";
-import { resetwarns } from "./moderation/resetwarns.js";
-import { report } from "./other/report.js";
-import { tag } from "./utility/tag.js";
+import { ui } from "./staff/ui.js";
+import { op } from "./staff/op.js";
+import { deop } from "./staff/deop.js";
+import { notify } from "./staff/notify.js";
+import { autoban } from "./staff/autoban.js";
+import { module } from "./staff/module.js";
+import { stats } from "./staff/stats.js";
+import { logs } from "./staff/logs.js";
+import { resetwarns } from "./staff/resetwarns.js";
+import { report } from "./staff/report.js";
+import { tag } from "./staff/tag.js";
 
 // Information
-import { help } from "./other/help.js";
-import { about } from "./utility/about.js";
-import { version } from "./other/version.js";
-import { credits } from "./other/credits.js";
+import { help } from "./info/help.js";
+import { about } from "./info/about.js";
+import { version } from "./info/version.js";
+import { credits } from "./info/credits.js";
 
 const prefix = config.customcommands.prefix;
 
