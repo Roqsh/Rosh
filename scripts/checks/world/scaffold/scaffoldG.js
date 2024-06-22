@@ -12,6 +12,9 @@ const playerBlockPlaceState = new Map();
  */
 export function scaffold_g(player) {
 
+    const preset = config.preset?.toLowerCase();
+    if (preset === "stable") return;
+
     if (!player.hasTag("itemUse")) {
         debug(player, "itemUse", `§cfalse`, "item");
     } else {
