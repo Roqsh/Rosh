@@ -98,7 +98,7 @@ export function commandHandler(message) {
 
         // Check if command is enabled
         if (!commandData.enabled) {
-            player.sendMessage(`§r${themecolor}Rosh §j> §cThis command is disabled`);
+            player.sendMessage(`§r${themecolor}Rosh §j> §cThis command is disabled.`);
             return;
         }
 

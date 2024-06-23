@@ -325,68 +325,75 @@ system.runInterval(() => {
 			autoclicker_a(player);
 		}
 
-
+		
 		const container = player.getComponent("inventory")?.container;
 
-		for(let i = 0; i < 36; i++) {
+        for (let i = 0; i < 36; i++) {
+            const item = container.getItem(i);
+            if (!item) continue;
 
-			const item = container.getItem(i);
-			if(!item) continue;
+            const itemType = item.type ?? ItemTypes.get("minecraft:book");
+            const item2 = new ItemStack(itemType, item.amount);
+            const itemEnchants = item.getComponent("enchantable")?.getEnchantments() ?? [];
+            const item2Enchants = item2.getComponent("enchantable");
+            const enchantments = [];
 
-			const itemType = item.type ?? ItemTypes.get("minecraft:book");
-			const item2 = new ItemStack(itemType, item.amount);
-			const itemEnchants = item.getComponent("enchantable")?.getEnchantments() ?? [];
-			const item2Enchants = item2.getComponent("enchantable");
-			const enchantments = [];
+            let hasBadEnchantments = false;
 
-			for(const enchantData of itemEnchants) {
+            for (const enchantData of itemEnchants) {
+                const enchantTypeId = enchantData.type.id;
 
-				const enchantTypeId = enchantData.type.id;
+                // Checks for enchantments that are higher than what is vanilla possible
+                if (config.modules.badenchantsA.enabled) {
+                    const maxLevel = config.modules.badenchantsA.levelExclusions[enchantData.type] ?? enchantData.type.maxLevel;
+                    if (enchantData.level > maxLevel) {
+                        flag(player, "BadEnchants", "A", "enchantment", `${enchantTypeId},level=${enchantData.level},slot=${i}`);
+                        hasBadEnchantments = true;
+                        continue;
+                    }
+                }
 
-				// TODO: Only remove unallowed enchantments and not the entire item
-				if (config.modules.badenchantsA.enabled) {
+                // Checks for negative/null enchantments
+                if (config.modules.badenchantsB.enabled && enchantData.level <= 0) {
+                    flag(player, "BadEnchants", "B", "enchantment", `${enchantTypeId},level=${enchantData.level},slot=${i}`);
+                    hasBadEnchantments = true;
+                    continue;
+                }
 
-					const maxLevel = config.modules.badenchantsA.levelExclusions[enchantData.type] ?? enchantData.type.maxLevel;
+                // Checks for enchantments that should not be allowed on specific items
+                if (config.modules.badenchantsC.enabled && item2Enchants) {
+                    if (!item2Enchants.canAddEnchantment({ type: enchantData.type, level: 1 })) {
+                        flag(player, "BadEnchants", "C", "item", `${item.typeId},enchantment=${enchantTypeId},level=${enchantData.level},slot=${i}`);
+                        hasBadEnchantments = true;
+                        continue;
+                    }
 
-					if (enchantData.level > maxLevel) {
-						flag(player, "BadEnchants", "A", "enchantment", `${enchantTypeId},level=${enchantData.level},slot=${i}`);
-						container.setItem(i, undefined);
-					}
-				}
+                    if (config.modules.badenchantsC.multi_protection) {
+                        item2Enchants.addEnchantment({ type: enchantData.type, level: 1 });
+                    }
+                }
 
-				
-				if (config.modules.badenchantsB.enabled && enchantData.level <= 0) {
+                // Checks for duplicate enchantments
+                if (config.modules.badenchantsD.enabled) {
+                    if (enchantments.includes(enchantTypeId)) {
+                        flag(player, "BadEnchants", "D", "enchantments", `${enchantments.join(", ")},slot=${i}`);
+                        hasBadEnchantments = true;
+                        continue;
+                    }
 
-					flag(player, "BadEnchants", "B", "enchantment", `${enchantTypeId},level=${enchantData.level},slot=${i}`);
-					container.setItem(i, undefined);
-				}
+                    enchantments.push(enchantTypeId);
+                }
 
-				
-				if (config.modules.badenchantsC.enabled && item2Enchants) {
+                // Add valid enchantment to the item2Enchants
+                item2Enchants.addEnchantment(enchantData);
+            }
 
-					if (!item2Enchants.canAddEnchantment({type: enchantData.type, level: 1})) {
-						flag(player, "BadEnchants", "C", "item", `${item.typeId},enchantment=${enchantTypeId},level=${enchantData.level},slot=${i}`);
-						container.setItem(i, undefined);
-					}
+            // If the item had any bad enchantments, replace it with the modified item
+            if (hasBadEnchantments) {
+                container.setItem(i, item2);
+            }
+        }
 
-					if (config.modules.badenchantsC.multi_protection) {
-						item2Enchants.addEnchantment({type: enchantData.type, level: 1});
-					}
-				}
-
-				
-				if (config.modules.badenchantsD.enabled) {
-
-					if (enchantments.includes(enchantTypeId)) {
-						flag(player, "BadEnchants", "D", "enchantments", `${enchantments.join(", ")},slot=${i}`);
-						container.setItem(i, undefined);
-					}
-
-					enchantments.push(enchantTypeId);
-				}
-			}
-		}
-		
 
         dependencies_e(player);
 		dependencies_f(player, tickValue, velocity);
