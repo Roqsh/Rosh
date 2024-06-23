@@ -42,8 +42,21 @@ export function about(message, args) {
     }
 
     // Format the module name for better readability
-    const readableCheck = moduleName.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase()).trim();
+    const readableCheck = convertString(moduleName);
 
     // Send the description of the module to the player
     player.sendMessage(`§r${themecolor}Rosh §j> §aDescription of §8${readableCheck}§a: §8${description}`);
+}
+
+/**
+ * Converts a string from exampleA to Example/A
+ * @name convertString
+ * @example testB = Test/B
+*/ 
+function convertString(input) {
+    return input.replace(/([a-z])([A-Z])/g, function(match, p1, p2) {
+        return p1 + '/' + p2;
+    }).replace(/^./, function(match) {
+        return match.toUpperCase();
+    });
 }
