@@ -573,7 +573,7 @@ export function playerSettingsMenuSelected(player, playerSelected) { // FIXME: (
                 if (!config.customcommands.ecwipe.enabled) {
                     return player.sendMessage(`§r${themecolor}Rosh §j> §cEnderchest wiping is disabled in config.js.`);
                 }
-                playerSelected.runCommandAsync("function tools/ecwipe");
+                //Note: Make ecwipe command a function to import here. playerSelected.runCommandAsync("function tools/ecwipe");
                 player.sendMessage(`§r${themecolor}Rosh §j> §cYou have cleared §8${playerSelected.name}'s §cenderchest.`);
                 break;
             case 1:
