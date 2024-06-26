@@ -530,6 +530,7 @@ function playerSettingsMenu(player) {
     });
 }
 
+//TODO: Implement the new command features (Other: Comments, JSDocs, etc)
 export function playerSettingsMenuSelected(player, playerSelected) { // FIXME: (badpackets/h in vanish (#staff messages), etc. ...)
     if (!playerSelected) {
         return player.sendMessage(`§r${themecolor}Rosh §j> §cPlayer §8${playerSelected} was not found.`);
@@ -651,10 +652,8 @@ export function playerSettingsMenuSelected(player, playerSelected) { // FIXME: (
                     return player.sendMessage(`§r${themecolor}Rosh §j> §cToggling Vanish is disabled in config.js.`);
                 }
                 if (playerSelected.hasTag("vanished")) {
-                    playerSelected.runCommandAsync("function tools/vanish");
                     tellStaff(`§r${themecolor}Rosh §j> §8${player.name} §chas unvanished §8${playerSelected.name}§c.`);
                 } else {
-                    playerSelected.runCommandAsync("function tools/vanish");
                     tellStaff(`§r${themecolor}Rosh §j> §8${player.name} §ahas put §8${playerSelected.name} §ainto vanish.`);
                 }
                 playerSettingsMenuSelected(player, playerSelected);
