@@ -4,6 +4,7 @@ import config from "../data/config.js";
 import data from "../data/data.js";
 import { parseTime, uppercaseFirstLetter, tellStaff } from "../util.js";
 import { addOp, removeOp } from "../commands/staff/op.js";
+import { addVanish, removeVanish } from "../commands/tools/vanish.js";
 import { clearEnderchest } from "../commands/tools/ecwipe.js";
 
 const world = Minecraft.world;
@@ -96,6 +97,7 @@ function punishMenu(player) {
 function banMenuSelect(player, selection) {
 
     player.playSound("mob.chicken.plop");
+    const themecolor = config.themecolor;
 
     const allPlayers = world.getPlayers();
 
@@ -125,6 +127,8 @@ function banMenuSelect(player, selection) {
 }
 
 function kickPlayerMenu(player, playerSelected, lastMenu = 0) {
+
+    const themecolor = config.themecolor;
 
     if (!config.customcommands.kick.enabled) {
         return player.sendMessage(`§r${themecolor}Rosh §j> §cKicking players is disabled in config.js.`);
@@ -169,6 +173,8 @@ function kickPlayerMenu(player, playerSelected, lastMenu = 0) {
 }
 
 function banPlayerMenu(player, playerSelected, lastMenu = 0) {
+
+    const themecolor = config.themecolor;
     
     if (!config.customcommands.ban.enabled) {
         return player.sendMessage(`§r${themecolor}Rosh §j> §cBanning players is disabled in config.js.`);
@@ -214,6 +220,8 @@ function banPlayerMenu(player, playerSelected, lastMenu = 0) {
 }
 
 function unbanPlayerMenu(player) {
+
+    const themecolor = config.themecolor;
 
     if (!config.customcommands.unban.enabled) {
         return player.sendMessage(`§r${themecolor}Rosh §j> §cUnbanning players is disabled in config.js.`);
@@ -285,6 +293,9 @@ function settingsMenu(player) {
 }
 
 function autobanMenu(player) {
+
+    const themecolor = config.themecolor;
+
     player.playSound("mob.chicken.plop");
 
     const menu = new MinecraftUI.ModalFormData()
@@ -304,6 +315,8 @@ function autobanMenu(player) {
 }
 
 function presetMenu(player) {
+
+    const themecolor = config.themecolor;
 
     player.playSound("mob.chicken.plop");
 
@@ -347,6 +360,8 @@ function presetMenu(player) {
 
 function themecolorMenu(player) {
 
+    const themecolor = config.themecolor;
+
     player.playSound("mob.chicken.plop");
 
     const colors = ["§1Color", "§2Color", "§3Color", "§4Color", "§5Color", "§6Color", "§7Color", "§8Color", "§9Color", "§0Color", "§qColor", "§eColor",
@@ -372,7 +387,6 @@ function themecolorMenu(player) {
         }
 
         config.themecolor = selectedColor.substring(0, 2);
-        themecolor = selectedColor.substring(0, 2);
         world.setDynamicProperty("config", JSON.stringify(config)); // Extracting the color code without "Color"
         player.sendMessage(`§r${selectedColor.substring(0, 2)}Rosh §j> §aThemecolor set to ${selectedColor.substring(0, 2)}Color§a!`);
 
@@ -408,6 +422,8 @@ function modulesMenu(player) {
 
 function modulesCheckSelectMenu(player, selection) {
 
+    const themecolor = config.themecolor;
+
     player.playSound("mob.chicken.plop");
 
     const subCheck = modules[selection];
@@ -439,6 +455,8 @@ function modulesCheckSelectMenu(player, selection) {
 }
 
 function editModulesMenu(player, check) {
+
+    const themecolor = config.themecolor;
 
     player.playSound("mob.chicken.plop");
 
@@ -506,6 +524,8 @@ function editModulesMenu(player, check) {
 // ====================== //
 
 function playerSettingsMenu(player) {
+
+    const themecolor = config.themecolor;
     
     player.playSound("mob.chicken.plop");
 
@@ -533,6 +553,9 @@ function playerSettingsMenu(player) {
 
 //TODO: Implement the new command features (Other: Comments, JSDocs, etc)
 export function playerSettingsMenuSelected(player, playerSelected) { // FIXME: (badpackets/h in vanish (#staff messages), etc. ...)
+
+    const themecolor = config.themecolor;
+
     if (!playerSelected) {
         return player.sendMessage(`§r${themecolor}Rosh §j> §cPlayer §8${playerSelected} was not found.`);
     }
@@ -830,6 +853,8 @@ function logsMenu(player, page = 0) {
 }
 
 function logsSettingsMenu(player) {
+
+    const themecolor = config.themecolor;
     
     player.playSound("mob.chicken.plop");
 
