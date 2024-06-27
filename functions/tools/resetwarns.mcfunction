@@ -1,13 +1,14 @@
 scoreboard players set @s[type=player,scores={autoclickervl=1..}] autoclickervl 0
 scoreboard players set @s[type=player,scores={autoshieldvl=1..}] autoshieldvl 0
 scoreboard players set @s[type=player,scores={autototemvl=1..}] autototemvl 0
-scoreboard players set @s[type=player,scores={badenchants=1..}] badenchants 0
+scoreboard players set @s[type=player,scores={badenchantsvl=1..}] badenchantsvl 0
 scoreboard players set @s[type=player,scores={badpacketsvl=1..}] badpacketsvl 0
 scoreboard players set @s[type=player,scores={crashervl=1..}] crashervl 0
 scoreboard players set @s[type=player,scores={fastusevl=1..}] fastusevl 0
 scoreboard players set @s[type=player,scores={flyvl=1..}] flyvl 0
 scoreboard players set @s[type=player,scores={illegalitemsvl=1..}] illegalitemsvl 0
 scoreboard players set @s[type=player,scores={invalidsprintvl=1..}] invalidsprintvl 0
+scoreboard players set @s[type=player,scores={invalidjumpvl=1..}] invalidjumpvl 0
 scoreboard players set @s[type=player,scores={invmovevl=1..}] invmovevl 0
 scoreboard players set @s[type=player,scores={killauravl=1..}] killauravl 0
 scoreboard players set @s[type=player,scores={namespoofvl=1..}] namespoofvl 0
