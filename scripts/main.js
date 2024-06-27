@@ -77,10 +77,12 @@ import { aim_c } from "./checks/combat/aim/aimC.js";
 let tps = 20;
 let lagValue = 1;
 let lastDate = Date.now();
-let themecolor = config.themecolor;
+const themecolor = config.themecolor;
 
 
 world.beforeEvents.chatSend.subscribe((msg) => {
+
+    const themecolor = config.themecolor;
 
 	const { sender: player, message } = msg;
 
@@ -561,6 +563,8 @@ world.beforeEvents.playerLeave.subscribe((playerLeave) => {
 
 world.afterEvents.playerSpawn.subscribe((playerJoin) => {
 
+    const themecolor = config.themecolor;
+
 	const { initialSpawn, player } = playerJoin;
 
 	if(!initialSpawn) return;
@@ -743,6 +747,8 @@ function rateLimit(player) {
 
 world.afterEvents.itemUse.subscribe((itemUse) => {
 
+    const themecolor = config.themecolor;
+
     const { itemStack: item, source: player } = itemUse;
 
     if (player.typeId !== "minecraft:player" || !player.hasTag("itemUse")) return;
@@ -781,6 +787,8 @@ system.afterEvents.scriptEventReceive.subscribe(({id, sourceEntity }) => {
 });
 
 system.beforeEvents.watchdogTerminate.subscribe((watchdogTerminate) => {
+
+    const themecolor = config.themecolor;
 	
 	watchdogTerminate.cancel = true;
 
