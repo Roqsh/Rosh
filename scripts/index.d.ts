@@ -10,16 +10,17 @@ declare module "@minecraft/server" {
 		flagNamespoofA: boolean,
 		flagNamespoofB: boolean,
 
-		pitch: number,
-		blocksBroken: number,
-		startBreakTime: number,
-		lastSelectedSlot: number,
-		autotoolSwitchDelay: number,
-		cps: number,
-		firstAttack: number,
+        autotoolSwitchDelay: number,
+        blocksBroken: number,
+        cps: number,
+        firstAttack: number,
+		lastSelectedSlot: number,	
 		lastThrow: number,
 		lastMessageSent: number,
 		lastLeftClick: number,
+        pitch: number,
+        selectedSlotIndex: number,
+        startBreakTime: number,
 
 		entitiesHit: Array<String>,
 		reports: Array<String>,
@@ -36,14 +37,14 @@ declare module "@minecraft/server" {
 
 		name: string,
 
+        autotoolSwitchDelay: number,
 		cps: number,
-		selectedSlotIndex: number,
 		lastThrow: number,
-		startBreakTime: number,
 		lastSelectedSlot: number,
-		autotoolSwitchDelay: number,
 		lastMessageSent: number,
 		lastLeftClick: number,
+        selectedSlotIndex: number,
+        startBreakTime: number,
 
 		entitiesHit: Array<String>
 

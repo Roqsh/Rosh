@@ -4,11 +4,12 @@ import config from "../data/config.js";
 import data from "../data/data.js";
 import { parseTime, uppercaseFirstLetter, tellStaff } from "../util.js";
 import { addOp, removeOp } from "../commands/staff/op.js";
+import { clearEnderchest } from "../commands/tools/ecwipe.js";
 
 const world = Minecraft.world;
 const moduleList = Object.keys(config.modules).concat(Object.keys(config.misc_modules));
 const modules = [];
-let themecolor = config.themecolor;
+const themecolor = config.themecolor;
 
 for(const fullModule of moduleList) {
     
@@ -571,10 +572,11 @@ export function playerSettingsMenuSelected(player, playerSelected) { // FIXME: (
         switch (response.selection) {
             case 0:
                 if (!config.customcommands.ecwipe.enabled) {
-                    return player.sendMessage(`§r${themecolor}Rosh §j> §cEnderchest wiping is disabled in config.js.`);
+                    return player.sendMessage(`§r${themecolor}Rosh §j> §cEnderchest wiping is disabled in config.`);
                 }
-                //Note: Make ecwipe command a function to import here. playerSelected.runCommandAsync("function tools/ecwipe");
+                clearEnderchest(playerSelected);
                 player.sendMessage(`§r${themecolor}Rosh §j> §cYou have cleared §8${playerSelected.name}'s §cenderchest.`);
+                playerSettingsMenuSelected(player, playerSelected);
                 break;
             case 1:
                 kickPlayerMenu(player, playerSelected, 1);
@@ -585,7 +587,7 @@ export function playerSettingsMenuSelected(player, playerSelected) { // FIXME: (
 
             case 3:
                 if (!config.customcommands.fly.enabled) {
-                    return player.sendMessage(`§r${themecolor}Rosh §j> §cToggling Fly is disabled in config.js.`);
+                    return player.sendMessage(`§r${themecolor}Rosh §j> §cToggling Fly is disabled in config.`);
                 }
                 if (playerSelected.hasTag("flying")) {
                     playerSelected.runCommandAsync("function tools/fly");
@@ -599,7 +601,7 @@ export function playerSettingsMenuSelected(player, playerSelected) { // FIXME: (
 
             case 4:
                 if (!config.customcommands.freeze.enabled) {
-                    return player.sendMessage(`§r${themecolor}Rosh §j> §cToggling Freeze is disabled in config.js.`);
+                    return player.sendMessage(`§r${themecolor}Rosh §j> §cToggling Freeze is disabled in config.`);
                 }
                 if (playerSelected.hasTag("freeze")) {
                     playerSelected.removeTag("freeze");
@@ -620,7 +622,7 @@ export function playerSettingsMenuSelected(player, playerSelected) { // FIXME: (
             case 5:
 
                 if (!config.customcommands.mute.enabled) {
-                    return player.sendMessage(`§r${themecolor}Rosh §j> §cMuting players is disabled in config.js.`);
+                    return player.sendMessage(`§r${themecolor}Rosh §j> §cMuting players is disabled in config.`);
                 }
                 if (playerSelected.hasTag("isMuted")) {
                     playerSelected.removeTag("isMuted");
@@ -635,7 +637,7 @@ export function playerSettingsMenuSelected(player, playerSelected) { // FIXME: (
 
             case 6:
                 if (!config.customcommands.op.enabled) {
-                    return player.sendMessage(`§r${themecolor}Rosh §j> §cRosh-Opping players is disabled in config.js.`);
+                    return player.sendMessage(`§r${themecolor}Rosh §j> §cRosh-Opping players is disabled in config.`);
                 }
                 if (playerSelected.hasTag("op")) {
                     removeOp(playerSelected);
@@ -649,12 +651,12 @@ export function playerSettingsMenuSelected(player, playerSelected) { // FIXME: (
 
             case 7:
                 if (!config.customcommands.vanish.enabled) {
-                    return player.sendMessage(`§r${themecolor}Rosh §j> §cToggling Vanish is disabled in config.js.`);
+                    return player.sendMessage(`§r${themecolor}Rosh §j> §cToggling Vanish is disabled in config.`);
                 }
-                if (playerSelected.hasTag("vanished")) {
-                    tellStaff(`§r${themecolor}Rosh §j> §8${player.name} §chas unvanished §8${playerSelected.name}§c.`);
+                if (playerSelected.hasTag("vanish")) {
+                    removeVanish(playerSelected, themecolor);
                 } else {
-                    tellStaff(`§r${themecolor}Rosh §j> §8${player.name} §ahas put §8${playerSelected.name} §ainto vanish.`);
+                    addVanish(playerSelected, themecolor);
                 }
                 playerSettingsMenuSelected(player, playerSelected);
                 break;

@@ -62,11 +62,19 @@ export function ecwipe(message, args) {
         return;
     }
 
-    // Clear the ender chest inventory of the target player
-    for (let i = 0; i < 27; i++) {
-        member.runCommandAsync(`replaceitem entity @s slot.enderchest ${i} air`);
-    }
+    clearEnderchest(member);
 
     // Notify other staff members about the ender chest wipe
     player.runCommandAsync(`tellraw @a[tag=op] {"rawtext":[{"text":"§r${themecolor}Rosh §j> §8${player.name} §chas cleared §8${member.name}'s §cender chest."}]}`);
+}
+
+/**
+ * Clears all 26 slots of somebody's ender chest.
+ * @param {object} player - The player object.
+ */
+export function clearEnderchest(player) {
+    // Clear the ender chest inventory of the target player
+    for (let i = 0; i <= 26; i++) {
+        player.runCommandAsync(`replaceitem entity @s slot.enderchest ${i} air`);
+    }
 }
