@@ -41,12 +41,13 @@ export default
     },
 
     "debug": true,
+    
     "fancy_kick_calculation": {
         "on": false,
         "movement": 4,
         "combat": 3,
-        "block": 3,
-        "other": 2
+        "world": 3,
+        "misc": 2
     },
     
     "clientSpam": {

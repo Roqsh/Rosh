@@ -78,7 +78,6 @@ import { aim_c } from "./checks/combat/aim/aimC.js";
 let tps = 20;
 let lagValue = 1;
 let lastDate = Date.now();
-const themecolor = config.themecolor;
 
 
 world.beforeEvents.chatSend.subscribe((msg) => {
@@ -101,6 +100,7 @@ world.beforeEvents.chatSend.subscribe((msg) => {
 	}
 
 	commandHandler(msg);
+
 	if(config.logSettings.showChat) {
 		data.recentLogs.push(`§r<${player.nameTag}> ${msg.message}`);
 	}
@@ -157,7 +157,7 @@ system.runInterval(() => {
 
     let currentVL;
 
-    if(system.currentTick % 20 == 0) {
+    if (system.currentTick % 20 == 0) {
 
 	   const deltaDate = Date.now() - lastDate;
 	   const lag = deltaDate / 1000;
@@ -167,7 +167,7 @@ system.runInterval(() => {
 	   lastDate = Date.now();
     }
 
-	for(const player of world.getPlayers()) {
+	for (const player of world.getPlayers()) {
 
 		const rotation = player.getRotation();
 		const velocity = player.getVelocity();
@@ -177,7 +177,10 @@ system.runInterval(() => {
 		
 		const selectedSlot = player.selectedSlotIndex;
 
-		if(player.hasTag("isBanned")) ban(player);
+		if (player.hasTag("isBanned")) {
+            ban(player);
+        }
+        
 		if(player.blocksBroken >= 1 && config.modules.nukerA.enabled) player.blocksBroken = 0;
 		if(player.entitiesHit?.length >= 1 && config.modules.killauraC.enabled) player.entitiesHit = [];
 

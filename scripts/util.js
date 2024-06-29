@@ -4,205 +4,252 @@ import { world } from "@minecraft/server";
 import { resetWarns } from "./commands/staff/resetwarns.js";
 
 /**
- * FIXME:
  * Alerts staff if a player fails a check.
- * @name flag
- * @param {object} player - The player object
- * @param {string} check - What check ran the function.
- * @param {string} checkType - What sub-check ran the function (ex. a, b ,c).
- * @param {string | undefined} [debugName] - Name for the debug value.
- * @param {string | number | object | undefined} [debug] - Debug info.
- * @param {boolean} [shouldTP] - Whether to tp the player to itself.
- * @param {object | undefined} [cancelObject] - object with property "cancel" to cancel.
- * @example flag(player, "Spammer", "B", "Combat", undefined, undefined, undefined, msg, undefined);
+ * @param {object} player - The player object.
+ * @param {string} check - The name of the check that was failed.
+ * @param {string} checkType - The type of sub-check that was failed.
+ * @param {string | undefined} [debugName] - The name of the debug value.
+ * @param {string | number | object | undefined} [debug] - Debug information.
+ * @param {boolean} [shouldTP=false] - Whether to teleport the player to their last good position.
+ * @param {object | undefined} [cancelObject] - Object with property "cancel" to cancel the event.
+ * @remarks Dependend on handler functions such as resetWarns, handlePunishment etc.
+ * @example 
+ * flag(player, "Spammer", "B", "Combat", undefined, undefined, undefined, msg, undefined);
  */
 export function flag(player, check, checkType, debugName, debug, shouldTP = false, cancelObject) {
-    // Validate the inputs
-    if (typeof player !== "object") throw TypeError(`Error: player is type of ${typeof player}. Expected "object"`);
-    if (typeof check !== "string") throw TypeError(`Error: check is type of ${typeof check}. Expected "string"`);
-    if (typeof checkType !== "string") throw TypeError(`Error: checkType is type of ${typeof checkType}. Expected "string"`);
-    if (typeof debugName !== "string" && typeof debugName !== "undefined") throw TypeError(`Error: debugName is type of ${typeof debugName}. Expected "string" or "undefined"`);
-    if (typeof debug !== "string" && typeof debug !== "number" && typeof debug !== "object" && typeof debug !== "undefined") throw TypeError(`Error: debug is type of ${typeof debug}. Expected "string"`);
-    if (typeof shouldTP !== "boolean") throw TypeError(`Error: shouldTP is type of ${typeof shouldTP}. Expected "boolean"`);
-    if (typeof cancelObject !== "object" && typeof cancelObject !== "undefined") throw TypeError(`Error: cancelObject is type of ${typeof cancelObject}. Expected "object" or "undefined`);
+    // Input validation
+    if (typeof player !== "object") throw new TypeError(`Error: player is type of ${typeof player}. Expected "object"`);
+    if (typeof check !== "string") throw new TypeError(`Error: check is type of ${typeof check}. Expected "string"`);
+    if (typeof checkType !== "string") throw new TypeError(`Error: checkType is type of ${typeof checkType}. Expected "string"`);
+    if (typeof debugName !== "string" && typeof debugName !== "undefined") throw new TypeError(`Error: debugName is type of ${typeof debugName}. Expected "string" or "undefined"`);
+    if (typeof debug !== "string" && typeof debug !== "number" && typeof debug !== "object" && typeof debug !== "undefined") throw new TypeError(`Error: debug is type of ${typeof debug}. Expected "string", "number", "object", or "undefined"`);
+    if (typeof shouldTP !== "boolean") throw new TypeError(`Error: shouldTP is type of ${typeof shouldTP}. Expected "boolean"`);
+    if (typeof cancelObject !== "object" && typeof cancelObject !== "undefined") throw new TypeError(`Error: cancelObject is type of ${typeof cancelObject}. Expected "object" or "undefined"`);
 
-    // Excludes Staff or whitelisted players from getting flagged if the setting is enabled via config
+    // Exclude staff or whitelisted players if configured
     if ((config.exclude_staff && player.hasTag("op")) || config.flagWhitelist.includes(player.name)) return;
- 
-    // Remove characters that may break commands or newlines
-    debug = String(debug).replace(/"|\\|\n/gm, "");
 
-    // Limit the debug length to prevent malicous users abusing it to lag anybody trying to view the alert
+    // Sanitize and limit debug information
+    debug = String(debug).replace(/"|\\|\n/gm, "");
     if (debug.length > 256) {
         const extraLength = debug.length - 256;
-        debug = debug.slice(0, -extraLength) + `(+${extraLength} additional characters)`;
+        debug = debug.slice(0, 256) + `(+${extraLength} additional characters)`;
     }
-    
-    // Set the player back if set to true in flag and enabled via config (config.silent === false)
+
+    // Teleport player if needed
     const rotation = player.getRotation();
-    if (shouldTP && config.silent === false) player.teleport(check === "Crasher" ? {x: 30000000, y: 30000000, z: 30000000} : player.lastGoodPosition, {dimension: player.dimension, rotation: {x: rotation.x, y: rotation.y}, keepVelocity: true});
+    if (shouldTP && config.silent === false) {
+        player.teleport(check === "Crasher" ? {x: 30000000, y: 30000000, z: 30000000} : player.lastGoodPosition, {
+            dimension: player.dimension,
+            rotation: {x: rotation.x, y: rotation.y},
+            keepVelocity: true
+        });
+    }
 
-    // Cancels the event if set to true in flag
+    // Cancel the event if requested
     if (cancelObject) cancelObject.cancel = true;
-  
 
+    // Handle scoreboard for the check
     const scoreboardObjective = check === "CommandBlockExploit" ? "cbevl" : `${check.toLowerCase()}vl`;
-    if(!world.scoreboard.getObjective(scoreboardObjective)) {
+    if (!world.scoreboard.getObjective(scoreboardObjective)) {
         world.scoreboard.addObjective(scoreboardObjective, scoreboardObjective);
     }
+
     let currentVl = getScore(player, scoreboardObjective, 0);
+
+    // Increment the violation level
     setScore(player, scoreboardObjective, currentVl + 1);
     currentVl++;
 
-    if(config.console_debug) console.warn(`Rosh > ${player.nameTag} failed ${check}/${checkType.toUpperCase()} - {${debugName}=${debug}, V=${currentVl}}`);
-    
-    // Displays the flag to the staff
+    // Log to console if enabled
+    if (config.console_debug) {
+        console.warn(`Rosh > ${player.nameTag} failed ${check}/${checkType.toUpperCase()} - {${debugName}=${debug}, V=${currentVl}}`);
+    }
+
+    // Notify staff in-game
     const themecolor = config.themecolor;
     player.runCommandAsync(`tellraw @a[tag=notify,tag=debug] {"rawtext":[{"text":"§r${themecolor}Rosh §j> §8${player.nameTag} §jfailed ${themecolor}${check}§j/${themecolor}${checkType.toUpperCase()}§j - {${debugName}=${debug}, §8${currentVl}x§j}"}]}`);
     player.runCommandAsync(`tellraw @a[tag=notify,tag=!debug] {"rawtext":[{"text":"§r${themecolor}Rosh §j> §8${player.nameTag} §jfailed ${themecolor}${check}§j/${themecolor}${checkType.toUpperCase()}§j - {§8${currentVl}x§j}"}]}`);
-	
-    // Log the flag to the ui log section
-    if(config.logSettings.showDebug) {
-        data.recentLogs.push(`§8${player.name} §jfailed ${themecolor}${check}§j/${themecolor}${checkType} §j- {${debugName}=${debug}, §8${currentVl}x§j}`);
 
-    } else {
-        data.recentLogs.push(`§8${player.name} §jfailed ${themecolor}${check}§j/${themecolor}${checkType} §j- {§8${currentVl}x§j}`);
-    }
+    // Log the flag to the UI log section
+    const logMessage = config.logSettings.showDebug 
+        ? `§8${player.name} §jfailed ${themecolor}${check}§j/${themecolor}${checkType} §j- {${debugName}=${debug}, §8${currentVl}x§j}`
+        : `§8${player.name} §jfailed ${themecolor}${check}§j/${themecolor}${checkType} §j- {§8${currentVl}x§j}`;
+    data.recentLogs.push(logMessage);
 
-    // Checks for the config data of the check and if the check is disabled (throws error if so, but shouldnt happen as every check checks if its enabled or not before flagging)
-    const checkData = config.modules[check.toLowerCase() + checkType.toUpperCase()];
-    if (!checkData) throw Error(`No valid check data found for ${check}/${checkType}.`);   
+    // Get check data
+    const checkData = config.modules[`${check.toLowerCase()}${checkType.toUpperCase()}`];
+    if (!checkData) throw new Error(`No valid check data found for ${check}/${checkType}.`);
 
-    const kickvl = getScore(player, "kickvl", 0);
+    // Ensure the check is enabled
+    if (!checkData.enabled) throw new Error(`${check}/${checkType} was flagged but the module was disabled.`);
 
-    if (!checkData.enabled) throw Error(`${check}/${checkType} was flagged but the module was disabled.`);
-    
-    // Checks for the punishment of the failed check
+    // Handle punishment based on the check's configuration
     const punishment = checkData.punishment?.toLowerCase();
-    if (typeof punishment !== "string") throw TypeError(`Error: punishment is type of ${typeof punishment}. Expected "string"`);
+    if (typeof punishment !== "string") throw new TypeError(`Error: punishment is type of ${typeof punishment}. Expected "string"`);
     if (punishment === "none" || currentVl < checkData.minVlbeforePunishment) return;
 
+    // Calculate scores for fancy kick logic
+    const kickvl = getScore(player, "kickvl", 0);
     if (config.fancy_kick_calculation.on) {
-
-        const movement_vl = getScore(player, "motionvl", 0) + getScore(player, "flyvl", 0) + getScore(player, "speedvl", 0) + getScore(player, "strafevl", 0) + getScore(player, "noslowvl", 0) + getScore(player, "invalidsprintvl", 0);
+        const movement_vl = getScore(player, "motionvl", 0) + getScore(player, "flyvl", 0) + getScore(player, "speedvl", 0) + getScore(player, "strafevl", 0) + getScore(player, "noslowvl", 0) + getScore(player, "invalidjumpvl", 0) + getScore(player, "invalidsprintvl", 0);
         const combat_vl = getScore(player, "reachvl", 0) + getScore(player, "killauravl", 0) + getScore(player, "autoclickervl", 0) + getScore(player, "hitboxvl", 0);
         const world_vl = getScore(player, "scaffoldvl", 0) + getScore(player, "nukervl", 0) + getScore(player, "towervl", 0);
-        const misc_vl = getScore(player, "badpacketsvl", 0) + getScore(player, "crashervl", 0) + getScore(player, "spammervl", 0) + getScore(player, "autototemvl", 0) + getScore(player, "autoshieldvl", 0) + getScore(player, "illegalitemsvl", 0);
+        const misc_vl = getScore(player, "badpacketsvl", 0) + getScore(player, "badenchantsvl", 0) + getScore(player, "crashervl", 0) + getScore(player, "spammervl", 0) + getScore(player, "timervl", 0) + getScore(player, "autototemvl", 0) + getScore(player, "autoshieldvl", 0) + getScore(player, "illegalitemsvl", 0);
 
-        if(movement_vl > config.fancy_kick_calculation.movement && combat_vl > config.fancy_kick_calculation.combat && world_vl > config.fancy_kick_calculation.block && misc_vl > config.fancy_kick_calculation.other) {
-            player.addTag("strict");
-            console.warn(`§r${themecolor}Rosh §j> §8${player.name} §chas been kicked for ${themecolor}${check}§j/${themecolor}${checkType} §c!`);
-            const message = `§8${player.name} §chas been kicked!`;
-            data.recentLogs.push(message)           
-            
-            player.runCommandAsync(`tellraw @a[tag=notify] {"rawtext":[{"text":"§r${themecolor}Rosh §j> §8${player.name} §chas been kicked for ${themecolor}${check}§j/${themecolor}${checkType} §c!"}]}`);
-            player.runCommandAsync(`kick "${player.name}" §r${themecolor}Rosh §j> §cKicked for ${themecolor}${check} §c!`);
+        if (
+            movement_vl > config.fancy_kick_calculation.movement &&
+            combat_vl > config.fancy_kick_calculation.combat &&
+            world_vl > config.fancy_kick_calculation.world &&
+            misc_vl > config.fancy_kick_calculation.misc
+        ) {
+            handlePunishment("kick", player, check, checkType, themecolor);
+            return;
         }
     }
 
-    if (currentVl > checkData.minVlbeforePunishment) {
+    // Handle punishments using a switch statement
+    handlePunishment(punishment, player, check, checkType, themecolor, kickvl, "30d");
+}
 
-        const autoban = config.autoban === true;
+/**
+ * Handles various types of punishments.
+ * @param {string} punishment - The type of punishment (e.g., "kick", "ban", "mute").
+ * @param {object} player - The player to be punished.
+ * @param {string} check - The name of the check.
+ * @param {string} checkType - The type of sub-check.
+ * @param {string} themecolor - The theme color for messages.
+ * @param {number} [kickvl] - The current kick violation level.
+ * @param {string} [punishmentLength="30d"] - The length of the punishment for bans.
+ */
+function handlePunishment(punishment, player, check, checkType, themecolor, kickvl, punishmentLength = "30d") {
+    switch (punishment) {
+        case "kick":
+            handleKickPunishment(player, kickvl, check, checkType, themecolor);
+            break;
+        case "ban":
+            handleBanPunishment(player, check, checkType, themecolor, punishmentLength);
+            break;
+        case "mute":
+            handleMutePunishment(player, check, checkType, themecolor);
+            break;
+        default:
+            console.warn(`Unhandled punishment type: ${punishment}`);
+            break;
+    }
+}
 
-        if (punishment === "kick") {
+/**
+ * Handles kick punishment logic.
+ * @param {object} player - The player to be kicked.
+ * @param {number} kickvl - The current kick violation level.
+ * @param {string} check - The name of the check.
+ * @param {string} checkType - The type of sub-check.
+ * @param {string} themecolor - The theme color for messages.
+ */
+function handleKickPunishment(player, kickvl, check, checkType, themecolor) {
+    try {
+        // Increment the kick violation level
+        setScore(player, "kickvl", kickvl + 1);
 
-            let banLength2 = 0;
-
-            try {
-
-                setScore(player, "kickvl", kickvl + 1);
-              
-                if (kickvl > config.kicksBeforeBan) {
-
-                    if (autoban) {
-
-                        resetWarns(player);
-                        player.addTag("isBanned");
-
-                        player.getTags().forEach(tag => {
-                            if (tag.includes("Reason:") || tag.includes("Length:")) player.removeTag(tag);
-                        });
-
-                        player.addTag(`Reason:Cheat Detection`);
-                        
-                        banLength2 = parseTime("30d");
-                        player.addTag(`Length:${Date.now() + banLength2}`);
-
-                        if(config.console_debug) console.warn(`Rosh > ${player.name} has been banned for ${check}/${checkType}`);
-                        player.runCommandAsync(`tellraw @a[tag=notify,tag=op] {"rawtext":[{"text":"§r${themecolor}Rosh §j> §8${player.name} §chas been banned for ${themecolor}${check}§j/${themecolor}${checkType.toUpperCase()} §c!"}]}`);
-
-                        const message = `§8${player.name} §chas been banned!`;   
-                        data.recentLogs.push(message);
-                    }
-
-                    setScore(player, "kickvl", 0);
-
-                } else {
-
-                    resetWarns(player);
-                    player.addTag("strict");
-                    if(config.console_debug) console.warn(`Rosh > ${player.name} has been kicked for ${check}/${checkType}`);
-
-                    const message = `§8${player.name} §chas been kicked!`;    
-                    data.recentLogs.push(message)    
-
-                    player.runCommandAsync(`tellraw @a[tag=notify,tag=op] {"rawtext":[{"text":"§r${themecolor}Rosh §j> §8${player.name} §chas been kicked for ${themecolor}${check}§j/${themecolor}${checkType.toUpperCase()} §c!"}]}`);
-                    player.runCommandAsync(`kick "${player.name}" §r${themecolor}Rosh §j> §cKicked for ${themecolor}${check} §c!`);
-
-                }
-
-            } catch (error) {
-                player.triggerEvent("scythe:kick");
-                console.error(error, error.stack);
-            }    
-
-        };
-
-        if (punishment === "ban") { // FIXME:
-
-            if (autoban) {
-
-                resetWarns(player);
-                player.addTag("isBanned");
-                const punishmentLength = checkData.punishmentLength?.toLowerCase();
-                if(config.console_debug) console.warn(`Rosh > ${player.name} has been banned for ${check}/${checkType}`);
-
-                player.getTags().forEach(t => {
-                    if(t.includes("Reason:") || t.includes("Length:")) player.removeTag(t);
-                });
-
-                let banLength = 0;
-
-                player.addTag(`Reason:Cheat Detection`);
-                try {
-                    banLength = parseTime(punishmentLength);
-                    player.addTag(`Length:${Date.now() + banLength}`);
-                } catch (error) {
-                    console.error(`Error parsing ban length: ${error.message}`);
-                }
-              
-                const message = `§8${player.name} §chas been banned!`;   
-                data.recentLogs.push(message);
-                player.runCommandAsync(`tellraw @a[tag=notify,tag=op] {"rawtext":[{"text":"§r${themecolor}Rosh §j> §8${player.name} §chas been banned for ${themecolor}${check}§j/${themecolor}${checkType.toUpperCase()} §c!"}]}`);                        
+        // Check if the player should be banned instead of kicked
+        if (kickvl > config.kicksBeforeBan) {
+            if (config.autoban) {
+                handleBanPunishment(player, check, checkType, themecolor, "30d");
             }
-        }
+            // Reset the kick violation level
+            setScore(player, "kickvl", 0);
 
-        if (punishment === "mute") {
+        } else {
+            // Notify about the kick and reset warnings
+            const message = `§8${player.name} §chas been kicked!`;
+            data.recentLogs.push(message);
+
+            player.runCommandAsync(`tellraw @a[tag=notify,tag=op] {"rawtext":[{"text":"§r${themecolor}Rosh §j> §8${player.name} §chas been kicked for ${themecolor}${check}§j/${themecolor}${checkType.toUpperCase()} §c!"}]}`);
+            if (config.console_debug) console.warn(`Rosh > ${player.name} has been kicked for ${check}/${checkType}`);
 
             resetWarns(player);
-            if (!player.hasTag("isMuted")) {
-                player.sendMessage(`§r${themecolor}Rosh §j> §cYou have been muted!`);
-            }
-            player.addTag("isMuted");
-            player.runCommandAsync("ability @s mute true");
-            if(config.console_debug) console.warn(`Rosh > ${player.name} has been muted for ${check}/${checkType}`);
 
-            const message = `§8${player.name} §chas been muted!`;    
-            data.recentLogs.push(message);
-            player.runCommandAsync(`tellraw @a[tag=notify,tag=op] {"rawtext":[{"text":"§r${themecolor}Rosh §j> §8${player.name} §chas been muted for ${themecolor}${check}§j/${themecolor}${checkType.toUpperCase()} §c!"}]}`);
-
+            player.runCommandAsync(`kick "${player.name}" §r${themecolor}Rosh §j> §cKicked for ${themecolor}${check} §c!`);
         }
+    } catch (error) {
+        // Fallback in case of an error
+        player.triggerEvent("scythe:kick");
+        console.error(error, error.stack);
     }
+}
+
+/**
+ * Handles ban punishment logic.
+ * @param {object} player - The player to be banned.
+ * @param {string} check - The name of the check.
+ * @param {string} checkType - The type of sub-check.
+ * @param {string} themecolor - The theme color for messages.
+ * @param {string} [punishmentLength="30d"] - The length of the ban.
+ */
+function handleBanPunishment(player, check, checkType, themecolor, punishmentLength = "30d") {
+    try {
+        if (config.autoban) {
+            // Tag the player as banned and remove existing ban related tags
+            player.addTag("isBanned");
+            player.getTags().forEach(tag => {
+                if (tag.includes("Reason:") || tag.includes("Length:")) player.removeTag(tag);
+            });
+
+            // Add the default reason message
+            player.addTag(`Reason:Cheat Detection`);
+
+            // Calculate the ban length based on the provided punishment length
+            let banLength;
+            try {
+                banLength = parseTime(punishmentLength);
+                player.addTag(`Length:${Date.now() + banLength}`);
+            } catch (error) {
+                console.error(`Error parsing ban length: ${error.message}`);
+            }
+
+            // Notify about the ban
+            const message = `§8${player.name} §chas been banned!`;
+            data.recentLogs.push(message);
+
+            player.runCommandAsync(`tellraw @a[tag=notify,tag=op] {"rawtext":[{"text":"§r${themecolor}Rosh §j> §8${player.name} §chas been banned for ${themecolor}${check}§j/${themecolor}${checkType.toUpperCase()} §c!"}]}`);
+            if (config.console_debug) console.warn(`Rosh > ${player.name} has been banned for ${check}/${checkType}`);
+
+            resetWarns(player);
+        }
+    } catch (error) {
+        // Fallback in case of an error
+        player.triggerEvent("scythe:kick");
+        console.error(`${new Date().toISOString()} | ${error}${error.stack}`);
+    }
+}
+
+/**
+ * Handles mute punishment logic.
+ * @param {object} player - The player to be muted.
+ * @param {string} check - The name of the check.
+ * @param {string} checkType - The type of sub-check.
+ * @param {string} themecolor - The theme color for messages.
+ */
+function handleMutePunishment(player, check, checkType, themecolor) {
+    // If the player is already muted, dont send the mute message again
+    if (!player.hasTag("isMuted")) {
+        // Notify the muted player about the mute
+        player.sendMessage(`§r${themecolor}Rosh §j> §cYou have been muted!`);
+    }
+
+    // Tag the player as muted and enable mute ability
+    player.addTag("isMuted");
+    player.runCommandAsync("ability @s mute true");
+
+    // Notify about the mute
+    const message = `§8${player.name} §chas been muted!`;
+    data.recentLogs.push(message);
+
+    player.runCommandAsync(`tellraw @a[tag=notify,tag=op] {"rawtext":[{"text":"§r${themecolor}Rosh §j> §8${player.name} §chas been muted for ${themecolor}${check}§j/${themecolor}${checkType.toUpperCase()} §c!"}]}`);
+    if (config.console_debug) console.warn(`Rosh > ${player.name} has been muted for ${check}/${checkType}`);
+    
+    resetWarns(player);
 }
 
 
