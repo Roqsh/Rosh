@@ -1,6 +1,7 @@
 import config from "./data/config.js";
 import data from "./data/data.js";
 import { world } from "@minecraft/server";
+import { resetWarns } from "./commands/staff/resetwarns.js";
 
 /**
  * FIXME:
@@ -53,7 +54,7 @@ export function flag(player, check, checkType, debugName, debug, shouldTP = fals
     setScore(player, scoreboardObjective, currentVl + 1);
     currentVl++;
 
-    if(config.console_debug) console.warn(`Rosh > ${player.nameTag} failed ${check}/${checkType.toUpperCase()} - {${debugName}=${debug}, V=${currentVl}}`);    
+    if(config.console_debug) console.warn(`Rosh > ${player.nameTag} failed ${check}/${checkType.toUpperCase()} - {${debugName}=${debug}, V=${currentVl}}`);
     
     // Displays the flag to the staff
     const themecolor = config.themecolor;
@@ -86,7 +87,7 @@ export function flag(player, check, checkType, debugName, debug, shouldTP = fals
         const movement_vl = getScore(player, "motionvl", 0) + getScore(player, "flyvl", 0) + getScore(player, "speedvl", 0) + getScore(player, "strafevl", 0) + getScore(player, "noslowvl", 0) + getScore(player, "invalidsprintvl", 0);
         const combat_vl = getScore(player, "reachvl", 0) + getScore(player, "killauravl", 0) + getScore(player, "autoclickervl", 0) + getScore(player, "hitboxvl", 0);
         const world_vl = getScore(player, "scaffoldvl", 0) + getScore(player, "nukervl", 0) + getScore(player, "towervl", 0);
-        const misc_vl = getScore(player, "badpacketsvl", 0) + getScore(player, "crashervl", 0) + getScore(player, "spammervl", 0) + getScore(player, "autototemvl", 0) + getScore(player, "autoshieldvl", 0) + getScore(player, "illegalitemvl", 0);
+        const misc_vl = getScore(player, "badpacketsvl", 0) + getScore(player, "crashervl", 0) + getScore(player, "spammervl", 0) + getScore(player, "autototemvl", 0) + getScore(player, "autoshieldvl", 0) + getScore(player, "illegalitemsvl", 0);
 
         if(movement_vl > config.fancy_kick_calculation.movement && combat_vl > config.fancy_kick_calculation.combat && world_vl > config.fancy_kick_calculation.block && misc_vl > config.fancy_kick_calculation.other) {
             player.addTag("strict");
@@ -114,6 +115,8 @@ export function flag(player, check, checkType, debugName, debug, shouldTP = fals
                 if (kickvl > config.kicksBeforeBan) {
 
                     if (autoban) {
+
+                        resetWarns(player);
                         player.addTag("isBanned");
 
                         player.getTags().forEach(tag => {
@@ -136,7 +139,7 @@ export function flag(player, check, checkType, debugName, debug, shouldTP = fals
 
                 } else {
 
-                    player.runCommandAsync("function tools/resetwarns");
+                    resetWarns(player);
                     player.addTag("strict");
                     if(config.console_debug) console.warn(`Rosh > ${player.name} has been kicked for ${check}/${checkType}`);
 
@@ -159,6 +162,7 @@ export function flag(player, check, checkType, debugName, debug, shouldTP = fals
 
             if (autoban) {
 
+                resetWarns(player);
                 player.addTag("isBanned");
                 const punishmentLength = checkData.punishmentLength?.toLowerCase();
                 if(config.console_debug) console.warn(`Rosh > ${player.name} has been banned for ${check}/${checkType}`);
@@ -185,6 +189,7 @@ export function flag(player, check, checkType, debugName, debug, shouldTP = fals
 
         if (punishment === "mute") {
 
+            resetWarns(player);
             if (!player.hasTag("isMuted")) {
                 player.sendMessage(`§r${themecolor}Rosh §j> §cYou have been muted!`);
             }

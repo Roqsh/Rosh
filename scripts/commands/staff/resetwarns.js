@@ -1,6 +1,7 @@
 import * as Minecraft from "@minecraft/server";
 import data from "../../data/data.js";
 import config from "../../data/config.js";
+import { setScore } from "../../util";
 
 /**
  * Resets the warning count for a specified player.
@@ -56,8 +57,29 @@ export function resetwarns(message, args) {
 
     // Notify staff members and reset the players warns
     player.runCommandAsync(`tellraw @a[tag=op] {"rawtext":[{"text":"§r${themecolor}Rosh §j> §8${player.name} §ahas reset §8${member.name}'s §awarns!"}]}`);
-    member.runCommandAsync("function tools/resetwarns");
+
+    resetWarns(member);
 
     // Log the reset warns event
     data.recentLogs.push(`§8${member.name}'s §awarns have been reset by §8${player.name}§a!`);
+}
+
+/**
+ * Sets all violation volumes of a specific player back to zero.
+ * @param {object} player - The player object.
+ */
+export function resetWarns(player) {
+    // Declare all violations
+    const violations = [
+        "killauravl", "reachvl", "hitboxvl", "aimvl", "autoclickervl", "autoshieldvl", 
+        "autototemvl", "badpacketsvl", "badenchantsvl", "crashervl", "cbevl", "exploitvl", "illegalitemsvl", 
+        "spammervl", "fastusevl", "autotoolvl", "namespoofvl", "timervl", 
+        "motionvl", "strafevl", "flyvl", "speedvl", "noslowvl", "invalidsprintvl", "invalidjumpvl", 
+        "invmovevl", "scaffoldvl", "nukervl", "towervl"
+    ];
+
+    for (const violation of violations) {
+        // Reset the score for each violation
+        setScore(player, violation, 0);
+    }
 }

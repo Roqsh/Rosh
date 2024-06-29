@@ -10,7 +10,6 @@ import { clearEnderchest } from "../commands/tools/ecwipe.js";
 const world = Minecraft.world;
 const moduleList = Object.keys(config.modules).concat(Object.keys(config.misc_modules));
 const modules = [];
-const themecolor = config.themecolor;
 
 for(const fullModule of moduleList) {
     

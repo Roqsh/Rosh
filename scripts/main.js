@@ -5,6 +5,7 @@ import data from "./data/data.js";
 import { tag_system, setTitle } from "./utils/gameUtil.js";
 import { flag, ban, getScore, setScore, getSpeed, aroundAir, tellStaff, debug } from "./util.js";
 import { commandHandler } from "./commands/handler.js";
+import { resetWarns } from "./commands/staff/resetwarns.js";
 import { mainGui, playerSettingsMenuSelected } from "./ui/mainGui.js";
 
 // Misc
@@ -213,7 +214,7 @@ system.runInterval(() => {
 				if(!player.hasTag("reported") && player.hasTag("strict")) {
 					player.removeTag("strict");
 				}
-				player.runCommandAsync("function tools/resetwarns");
+                resetWarns(player);
 				setScore(player, "tick_counter2", 0);
 			}
 		}

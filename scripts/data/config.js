@@ -430,14 +430,14 @@ export default
             "description": "Checks for levels that are higher than what the item supports",
 			"levelExclusions": {}, // Example:  "sharpness": 69,
 			"punishment": "kick",
-			"minVlbeforePunishment": 1
+			"minVlbeforePunishment": 0
 		},
 
         "badenchantsB": {
             "enabled": true,
             "description": "Checks for negative enchantments",           
             "punishment": "kick",
-            "minVlbeforePunishment": 1
+            "minVlbeforePunishment": 0
         },
 
         "badenchantsC": {
@@ -445,14 +445,14 @@ export default
             "description": "Checks for unsupported enchantments",           
             "punishment": "kick",
             "multi_protection": true,
-            "minVlbeforePunishment": 1
+            "minVlbeforePunishment": 0
         },
 
         "badenchantsD": {
             "enabled": true,
             "description": "Checks for duplicate enchantments",           
             "punishment": "kick",
-            "minVlbeforePunishment": 1
+            "minVlbeforePunishment": 0
         },
 
         /*
