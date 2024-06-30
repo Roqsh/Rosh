@@ -81,7 +81,7 @@ export function flag(player, check, checkType, debugName, debug, shouldTP = fals
     const checkData = config.modules[`${check.toLowerCase()}${checkType.toUpperCase()}`];
     if (!checkData) throw new Error(`No valid check data found for ${check}/${checkType}.`);
 
-    // Ensure the check is enabled
+    // Ensure the check is enabled (However, all checks already check wheter the they are enabled, kinda making this useless)
     if (!checkData.enabled) throw new Error(`${check}/${checkType} was flagged but the module was disabled.`);
 
     // Handle punishment based on the check's configuration
@@ -91,7 +91,7 @@ export function flag(player, check, checkType, debugName, debug, shouldTP = fals
 
     // Calculate scores for fancy kick logic
     const kickvl = getScore(player, "kickvl", 0);
-    if (config.fancy_kick_calculation.on) {
+    if (config.fancy_kick_calculation.enabled) {
         const movement_vl = getScore(player, "motionvl", 0) + getScore(player, "flyvl", 0) + getScore(player, "speedvl", 0) + getScore(player, "strafevl", 0) + getScore(player, "noslowvl", 0) + getScore(player, "invalidjumpvl", 0) + getScore(player, "invalidsprintvl", 0);
         const combat_vl = getScore(player, "reachvl", 0) + getScore(player, "killauravl", 0) + getScore(player, "autoclickervl", 0) + getScore(player, "hitboxvl", 0);
         const world_vl = getScore(player, "scaffoldvl", 0) + getScore(player, "nukervl", 0) + getScore(player, "towervl", 0);
@@ -134,7 +134,7 @@ function handlePunishment(punishment, player, check, checkType, themecolor, kick
             handleMutePunishment(player, check, checkType, themecolor);
             break;
         default:
-            console.warn(`Unhandled punishment type: ${punishment}`);
+            console.warn(`Unhandled punishment type: ${punishment}. Only "kick", "ban" and "mute" are supported.`);
             break;
     }
 }
@@ -175,7 +175,7 @@ function handleKickPunishment(player, kickvl, check, checkType, themecolor) {
     } catch (error) {
         // Fallback in case of an error
         player.triggerEvent("scythe:kick");
-        console.error(error, error.stack);
+        console.error(`${new Date().toISOString()} | ${error}${error.stack}`);
     }
 }
 
@@ -327,7 +327,7 @@ export function ban(player) {
 
         // Calculate the remaining ban time
         const remainingTime = msToTime(banEndTime - currentTime);
-        time = `§nYou have §8${remainingTime.weeks} §nweeks, §8${remainingTime.days} §ndays, §8${remainingTime.hours} §nhours, §8${remainingTime.minutes} §nminutes and §8${remainingTime.seconds} §nseconds left!`;
+        time = `§nYou have §8${remainingTime.weeks} §nweek${remainingTime.weeks > 1 ? "s" : ""}, §8${remainingTime.days} §nday${remainingTime.days > 1 ? "s" : ""}, §8${remainingTime.hours} §nhour${remainingTime.hours > 1 ? "s" : ""}, §8${remainingTime.minutes} §nminute${remainingTime.minutes > 1 ? "s" : ""} and §8${remainingTime.seconds} §nsecond${remainingTime.seconds > 1 ? "s" : ""} left!`;
     }
 
     // Default values if reason or time is not provided
@@ -792,15 +792,22 @@ export function addOp(player, initiator) {
         throw new TypeError(`Error: initiator is type of ${typeof initiator}. Expected "object".`);
     }
 
+    const themecolor = config.themecolor;
+
     try {
-        // Check if the player already has the "op" tag before adding it
+        // Check if the player already has the "op" tag before attempting to add it
         if (!player.hasTag("op")) {
             // Add the "op" tag to the player
             player.addTag("op");
-            const message = `Player ${player.name} has been given operator status by ${initiator.name}.`;
+
+            // Log the event to the UI and console
+            const message = `§8${player.name} §ahas been oped by §8${initiator.name}§a!`;
+            data.recentLogs.push(message);
+
             console.log(message);
-            player.sendMessage(`§r${themecolor}Rosh §j> §8You have been given operator status by ${initiator.name}.`);
-            tellStaff(`§r§uRosh §j> §8${initiator.name} §ahas given §8${player.name} §aRosh-Op status.`);
+
+            player.sendMessage(`§r${themecolor}Rosh §j> §aYou have been given operator status by §8${initiator.name}§a.`);
+            tellStaff(`§r${themecolor}Rosh §j> §8${initiator.name} §ahas given §8${player.name} §aRosh-Op status.`);
         } else {
             initiator.sendMessage(`§r${themecolor}Rosh §j> §8${player.name} §calready has Rosh operator status!`);
         }
@@ -828,15 +835,22 @@ export function removeOp(player, initiator) {
         throw new TypeError(`Error: initiator is type of ${typeof initiator}. Expected "object".`);
     }
 
+    const themecolor = config.themecolor;
+
     try {
         // Check if the player has the "op" tag before attempting to remove it
         if (player.hasTag("op")) {
             // Remove the "op" tag from the player
             player.removeTag("op");
-            const message = `Player ${player.name} has been revoked operator status by ${initiator.name}.`;
+
+            // Log the event to the UI and console
+            const message = `§8${player.name} §chas been de-oped by §8${initiator.name}§c!`;
+            data.recentLogs.push(message);
+
             console.log(message);
-            player.sendMessage(`§r${themecolor}Rosh §j> §8Your operator status has been revoked by ${initiator.name}.`);
-            tellStaff(`§r§uRosh §j> §8${initiator.name} §chas removed §8${player.name}'s §cRosh-Op status.`);
+
+            player.sendMessage(`§r${themecolor}Rosh §j> §cYour operator status has been revoked by §8${initiator.name}§c.`);
+            tellStaff(`§r${themecolor}Rosh §j> §8${initiator.name} §chas removed §8${player.name}'s §cRosh-Op status.`);
         } else {
             initiator.sendMessage(`§r${themecolor}Rosh §j> §8${player.name} §cdoesnt have Rosh operator status!`);
         }

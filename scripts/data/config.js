@@ -2,7 +2,9 @@ export default
 {
     "preset": "stable", // Choose between 'stable' and 'beta' - Beta contains checks which are still under development/not finished, so false flags or bugs can occur.
 
-    "kicksBeforeBan": 2, // The Amount of kicks a player is allowed to recieve before getting banned.
+    "kicksBeforeBan": 2, // The Amount of kicks a player is allowed to recieve before getting banned. - Dependend on "autoban" set to true
+
+    "autoban": false, // Automatically bans a player if he exceeds the maximum threshold "kicksBeforeBan"
 
     "exclude_staff": false, // Ignores staff when enabled - Enable with caution!
 
@@ -11,8 +13,6 @@ export default
     "themecolor": "§u", // The color of the theme which is used for Rosh - ex: §a, §c, §9, etc.
 
     "flagWhitelist": [], // Who is able to bypass flags and punishments - ex: ["Playername1", "Playername2"]
-
-    "autoban": false, // Automatically bans a player if he exceeds the maximum threshold
 
     "generalModules": { // Enable or disable a type of detection - Subchecks can be edited below.
         "fly": true,
@@ -43,7 +43,7 @@ export default
     "debug": true,
     
     "fancy_kick_calculation": {
-        "on": false,
+        "enabled": false,
         "movement": 4,
         "combat": 3,
         "world": 3,
