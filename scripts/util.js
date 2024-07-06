@@ -89,9 +89,11 @@ export function flag(player, check, checkType, debugName, debug, shouldTP = fals
     if (typeof punishment !== "string") throw new TypeError(`Error: punishment is type of ${typeof punishment}. Expected "string"`);
     if (punishment === "none" || currentVl < checkData.minVlbeforePunishment) return;
 
-    // Calculate scores for fancy kick logic
     const kickvl = getScore(player, "kickvl", 0);
+
+    // Calculate scores for fancy kick logic
     if (config.fancy_kick_calculation.enabled) {
+
         const movement_vl = getScore(player, "motionvl", 0) + getScore(player, "flyvl", 0) + getScore(player, "speedvl", 0) + getScore(player, "strafevl", 0) + getScore(player, "noslowvl", 0) + getScore(player, "invalidjumpvl", 0) + getScore(player, "invalidsprintvl", 0);
         const combat_vl = getScore(player, "reachvl", 0) + getScore(player, "killauravl", 0) + getScore(player, "autoclickervl", 0) + getScore(player, "hitboxvl", 0);
         const world_vl = getScore(player, "scaffoldvl", 0) + getScore(player, "nukervl", 0) + getScore(player, "towervl", 0);
@@ -208,7 +210,7 @@ function handleBanPunishment(player, check, checkType, themecolor, punishmentLen
                 console.error(`Error parsing ban length: ${error.message}`);
             }
 
-            // Notify about the ban
+            // Notify about the ban and reset warnings
             const message = `§8${player.name} §chas been banned!`;
             data.recentLogs.push(message);
 
@@ -242,7 +244,7 @@ function handleMutePunishment(player, check, checkType, themecolor) {
     player.addTag("isMuted");
     player.runCommandAsync("ability @s mute true");
 
-    // Notify about the mute
+    // Notify about the mute and reset warnings
     const message = `§8${player.name} §chas been muted!`;
     data.recentLogs.push(message);
 

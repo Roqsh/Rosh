@@ -878,6 +878,13 @@ export default
             "minVlbeforePunishment": 0
         },
 
+        "scaffoldH": {
+            "enabled": true,
+            "description": "Checks for invalid held blocks",
+            "punishment": "kick", 
+            "minVlbeforePunishment": 2
+        },
+
         "towerA": {
             "enabled": true,
             "description": "Checks for funny velocity while towering up",

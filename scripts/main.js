@@ -53,6 +53,7 @@ import { scaffold_d } from "./checks/world/scaffold/scaffoldD.js";
 import { scaffold_e } from "./checks/world/scaffold/scaffoldE.js";
 import { scaffold_f, dependencies_f } from "./checks/world/scaffold/scaffoldF.js";
 import { scaffold_g } from "./checks/world/scaffold/scaffoldG.js";
+import { scaffold_h, dependencies_h } from "./checks/world/scaffold/scaffoldH.js";
 import { tower_a } from "./checks/world/tower/towerA.js";
 import { tower_b } from "./checks/world/tower/towerB.js";
 
@@ -436,14 +437,28 @@ system.runInterval(() => {
 });
 
 
+world.beforeEvents.playerPlaceBlock.subscribe((placeBlock) => {
+
+    const player = placeBlock.player;
+    const block = placeBlock.block;
+
+    if(config.generalModules.scaffold) {
+        scaffold_h(player, block);
+	}
+});
+
+
 world.afterEvents.playerPlaceBlock.subscribe((placeBlock) => {
 
-	const { block, player } = placeBlock;
+	const { player, block } = placeBlock;
+
+    // Issue with stored Ids in array
+    //dependencies_h(player, block);
 
 	if(!player.hasTag("placing")) {
 		player.addTag("placing");
 	}
-	
+
 	let undoPlace = false;
 
     if(config.generalModules.scaffold) {

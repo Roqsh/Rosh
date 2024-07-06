@@ -4,24 +4,26 @@ import { EntityEquippableComponent, EquipmentSlot, ItemDurabilityComponent } fro
 import { MinecraftItemTypes } from "../../../data/index.js";
 
 /**
+ * Checks for sending invalid glide "packets".
  * @name badpackets_j
  * @param {player} player - The player to check
- * @remarks Checks for sending invalid glide "packets"
+ * @remarks Cheats used to send glide packets without having the needed permissions (Wearing an elytra),
+ * resulting in a full movement disabler for BDS predictions making nearly all Rosh movement checks not functional.
 */
-
 export function badpackets_j(player) {
 
-    if(config.modules.badpacketsJ.enabled) {
+    if (!config.modules.badpacketsJ.enabled) return;
 
-        if(player.isGliding) {
+    if (player.isGliding) {
 
-            const elytra = player.getComponent(EntityEquippableComponent.componentId)?.getEquipment(EquipmentSlot.Chest);
-			const durability = elytra?.getComponent(ItemDurabilityComponent.componentId);
+        const elytra = player.getComponent(EntityEquippableComponent.componentId)?.getEquipment(EquipmentSlot.Chest);
+		const durability = elytra?.getComponent(ItemDurabilityComponent.componentId);
 
-            if(elytra?.typeId != MinecraftItemTypes.Elytra || (elytra?.typeId == MinecraftItemTypes.Elytra && durability.maxDurability - durability.damage <= 1)) {
-				flag(player, "BadPackets", "J", "invalid", "glide");
-			}
-
-        }
+        if (
+            elytra?.typeId != MinecraftItemTypes.Elytra || 
+            (elytra?.typeId == MinecraftItemTypes.Elytra && durability.maxDurability - durability.damage <= 1)
+        ) {
+			flag(player, "BadPackets", "J", "invalid", "glide");
+		}
     }
 }
