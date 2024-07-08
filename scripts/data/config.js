@@ -350,35 +350,44 @@ export default
             "minVlbeforePunishment": 1
         },
 
-        "badpacketsB": {
-            "enabled": false,
-            "description": "Checks for moving to far in a tick",
-            "speed": 7.3,
+        "badpacketsA": {
+            "enabled": true,
+            "description": "Checks if a players rotation exceeds the vanilla rotation limit.",
             "punishment": "kick",
-            "punishmentLength": "1m",
-            "minVlbeforePunishment": 1
+            "punishmentLength": "7d",
+            "minVlbeforePunishment": 2
+        },
+
+        "badpacketsB": {
+            "enabled": true,
+            "description": "Checks if a player's selected slot is vanilla reachable.",
+            "punishment": "kick",
+            "punishmentLength": "7d",
+            "minVlbeforePunishment": 4
         },
 
         "badpacketsC": {
-            "enabled": false,
-            "description":"Checks for self-hit",
+            "enabled": true,
+            "description":"Checks for hitting yourself.",
             "punishment": "kick",
-            "punishmentLength": "1m",
-            "minVlbeforePunishment": 2
+            "punishmentLength": "7d",
+            "minVlbeforePunishment": 1
         },
 
         "badpacketsD": {
             "enabled": true,
             "description": "Checks for derp hacks",
             "punishment": "kick",
+            "punishmentLength": "1h",
             "minVlbeforePunishment": 12
         },
 
         "badpacketsE": {
-            "enabled": false,
-            "description": "Patches a disabler on Vector Client (Changing location without velocity)",
+            "enabled": true,
+            "description": "Checks if the length of a message is valid.",
             "punishment": "kick",
-            "minVlbeforePunishment": 10
+            "punishmentLength": "7d",
+            "minVlbeforePunishment": 4
         },
 
         "badpacketsF": {
@@ -392,28 +401,29 @@ export default
             "enabled": false,
             "description": "",
             "punishment": "kick",
-            "minVlbeforePunishment": 15
+            "minVlbeforePunishment": 0
         },
 
         "badpacketsH": {
             "enabled": true,
-            "description": "Checks for flying without permissions",
+            "description": "Checks for flying without permission",
             "punishment": "kick",
             "minVlbeforePunishment": 8
         },
 
+        // TODO
         "badpacketsI": {
-            "enabled": true,
-            "description": "Checks for head rotation over 90 ",
+            "enabled": false,
+            "description": "Patches a disabler on Vector Client (Changing location without velocity)",
             "punishment": "kick",
-            "minVlbeforePunishment": 6
+            "minVlbeforePunishment": 0
         },
 
         "badpacketsJ": {
             "enabled": true,
-            "description": "Patches a disabler on Prax Client (Sending glide packets without elytra)",
+            "description": "Patches a disabler on Prax Client (Sending glide packets without an elytra)",
             "punishment": "kick",
-            "minVlbeforePunishment": 10
+            "minVlbeforePunishment": 8
         },
 
         "timerA": {

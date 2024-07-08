@@ -2,7 +2,7 @@ import config from "../../../data/config.js";
 import { flag, setScore, getScore } from "../../../util";
 
 /**
- * Checks for not looking at the placed block
+ * Checks for not looking at the placed block.
  * @name scaffold_c
  * @param {player} player - The player to check
  * @param {block} block - The placed block
@@ -24,14 +24,10 @@ export function scaffold_c(player, block) {
             blockUnder.location.y === block.location.y && 
             blockUnder.location.z === block.location.z
         ) { 
-                                
-            if (!player.hasTag("right")) {
-
-                if (rotation.x < 44.025) {
-                    flag(player, "Scaffold", "C", "xRot", rotation.x);
-                    setScore(player, "break", 1);
-                }
-            }   
+            if (rotation.x < 44.025) {
+                flag(player, "Scaffold", "C", "xRot", rotation.x);
+                setScore(player, "break", 1);
+            }  
         }
 
         if (

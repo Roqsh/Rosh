@@ -3,16 +3,6 @@ import { flag, getSpeed } from "../../../util";
 
 const scaffold_a_map = new Map();
 
-/**
- * Checks for diagonal scaffolds. [Beta]
- * @name scaffold_a
- * @param {player} player - The player to check
- * @param {block} block - The placed block
- * @remarks FIXME: Placing on ground false flags the no-rot and distance check  TODO: Add check if diag is in air (below done, sides need to be done, hard to implement
- * backwards compatibility, etc.
- * as you need to figure out when x and z are covered by the diag block and when they are air)
-*/
-
 function diagonal(newBlock, player, oldBlock) {
 
     const newDistance = calculateDistance(player.location, newBlock);
@@ -80,6 +70,14 @@ function shouldFlagForDiagonal(pitch_values, yaw_values) {
     return isDiagonalConditionMet;
 }
 
+/**
+ * Checks for diagonal scaffolds. [Beta]
+ * @name scaffold_a
+ * @param {player} player - The player to check
+ * @param {block} block - The placed block
+ * @remarks FIXME: Placing on ground false flags the no-rot and distance check  TODO: Add check if diag is in air (below done, sides need to be done, hard to implement
+ * as you need to figure out when x and z are covered by the diag block and when they are air), add backwards compatibility, etc...
+*/
 export function scaffold_a(player, block) {
 
     const preset = config.preset?.toLowerCase();

@@ -9,11 +9,14 @@ import { resetWarns } from "./commands/staff/resetwarns.js";
 import { mainGui, playerSettingsMenuSelected } from "./ui/mainGui.js";
 
 // Misc
+import { badpackets_a } from "./checks/misc/badpackets/badpacketsA.js";
+import { badpackets_b } from "./checks/misc/badpackets/badpacketsB.js";
 import { badpackets_c } from "./checks/misc/badpackets/badpacketsC.js";
 import { badpackets_d } from "./checks/misc/badpackets/badpacketsD.js";
+import { badpackets_e } from "./checks/misc/badpackets/badpacketsE.js";
 import { badpackets_f } from "./checks/misc/badpackets/badpacketsF.js";
 import { badpackets_h } from "./checks/misc/badpackets/badpacketsH.js";
-import { badpackets_i } from "./checks/misc/badpackets/badpacketsI.js";
+//import { badpackets_i } from "./checks/misc/badpackets/badpacketsI.js";
 import { badpackets_j } from "./checks/misc/badpackets/badpacketsJ.js";
 import { exploit_a } from "./checks/misc/exploit/exploitA.js";
 import { exploit_b } from "./checks/misc/exploit/exploitB.js";
@@ -87,6 +90,8 @@ world.beforeEvents.chatSend.subscribe((msg) => {
 
 	const { sender: player, message } = msg;
 
+    badpackets_e(player, message, msg)
+
 	if(message.includes("horion") || message.includes("borion") || message.includes("packet") || message.includes("vector") || message.includes("prax") || message.includes("zephyr") || message.includes("nuvola")  || message.includes("aelous") || message.includes("disepi") || message.includes("ambrosial") || message.includes("utility mod") || message.includes("nigga") || message.includes("niger")) {	
 		msg.cancel = true;
 	}
@@ -102,7 +107,7 @@ world.beforeEvents.chatSend.subscribe((msg) => {
 
 	commandHandler(msg);
 
-	if(config.logSettings.showChat) {
+	if (config.logSettings.showChat) {
 		data.recentLogs.push(`§r<${player.nameTag}> ${msg.message}`);
 	}
 
@@ -273,24 +278,24 @@ system.runInterval(() => {
 		debug(player, "XRotation", rotation.x, "devrotationx");
 		debug(player, "YRotation", rotation.y, "devrotationy");
 
-		if(player.isOnGround) {			
+		if (player.isOnGround) {			
 		    player.lastGoodPosition = player.location;			
 		}
 
 		
-		if(config.generalModules.fly) {
+		if (config.generalModules.fly) {
 			fly_a(player);
 			fly_b(player);
 			fly_c(player);
 			fly_d(player);
 		}
 
-		if(config.generalModules.speed) {
+		if (config.generalModules.speed) {
 			speed_a(player);
 			speed_b(player);
 		}
 
-		if(config.generalModules.motion) {
+		if (config.generalModules.motion) {
 			motion_a(player);
 			motion_b(player);
 			motion_c(player);
@@ -298,18 +303,19 @@ system.runInterval(() => {
 			motion_e(player);
 		}
 
-		if(config.generalModules.misc) {
+		if (config.generalModules.misc) {
+            badpackets_a(player);
+            badpackets_b(player);
 			badpackets_d(player);			
 			badpackets_f(player);
 			badpackets_h(player);
-			badpackets_i(player);
 			badpackets_j(player);
 			exploit_a(player);
 			exploit_b(player);
 			timer_a(player, player.lastPosition, lagValue);
 		}
 
-		if(config.generalModules.movement) {
+		if (config.generalModules.movement) {
 			strafe_a(player);
 			strafe_b(player);
 			noslow_a(player);
@@ -320,7 +326,7 @@ system.runInterval(() => {
 			jump_b(player);
 		}
 
-		if(config.generalModules.aim) {
+		if (config.generalModules.aim) {
 			//aim_a(player);
 			aim_b(player);
 			aim_c(player);
@@ -328,7 +334,7 @@ system.runInterval(() => {
 			//aim_e(player);
 		}
 
-		if(config.generalModules.autoclicker) {
+		if (config.generalModules.autoclicker) {
 			autoclicker_a(player);
 		}
 

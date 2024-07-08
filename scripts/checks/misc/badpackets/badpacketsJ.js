@@ -21,7 +21,8 @@ export function badpackets_j(player) {
 
         if (
             elytra?.typeId != MinecraftItemTypes.Elytra || 
-            (elytra?.typeId == MinecraftItemTypes.Elytra && durability.maxDurability - durability.damage <= 1)
+            elytra?.typeId == MinecraftItemTypes.Elytra && 
+            durability.maxDurability - durability.damage <= 0
         ) {
 			flag(player, "BadPackets", "J", "invalid", "glide");
 		}
