@@ -302,17 +302,18 @@ export default
         },
 
         "namespoofA": {
-            "enabled": false,
-            "minNameLength": 3,
-            "maxNameLength": 16,
+            "description": "Checks if a player's nametag length is invalid.",
+            "enabled": true,
             "punishment": "kick",
+            "punishmentLength": "7d",
             "minVlbeforePunishment": 1
         },
 
         "namespoofB": {
-            "enabled": false,
-            "regex": /[^A-Za-z0-9_\-() ]/,
+            "description": "Checks if a player's nametag contains invalid characters.",
+            "enabled": true,
             "punishment": "kick",
+            "punishmentLength": "7d",
             "minVlbeforePunishment": 1
         },
 

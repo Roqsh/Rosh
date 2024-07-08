@@ -20,6 +20,8 @@ import { badpackets_h } from "./checks/misc/badpackets/badpacketsH.js";
 import { badpackets_j } from "./checks/misc/badpackets/badpacketsJ.js";
 import { exploit_a } from "./checks/misc/exploit/exploitA.js";
 import { exploit_b } from "./checks/misc/exploit/exploitB.js";
+import { namespoof_a } from "./checks/misc/namespoof/namespoofA.js";
+import { namespoof_b } from "./checks/misc/namespoof/namespoofB.js";
 import { timer_a } from "./checks/misc/timer/timerA.js";
 
 // Movement
@@ -616,6 +618,9 @@ world.afterEvents.playerSpawn.subscribe((playerJoin) => {
 	setScore(player, "tick_counter2", 0);
 
 	exploit_a(player);
+
+    namespoof_a(player);
+    namespoof_b(player);
 	
 	player.nameTag = player.nameTag.replace(/[^A-Za-z0-9_\-() ]/gm, "").trim();
 
@@ -641,25 +646,6 @@ world.afterEvents.playerSpawn.subscribe((playerJoin) => {
 			player.nameTag = `${borderColor}[§r${mainColor}${t.slice(4)}${borderColor}]§r ${playerNameColor}${player.name}`;
 		}
 	});
-	
-	if(config.modules.namespoofA.enabled) {
-
-		// checks if 2 players are logged in with the same name
-		// minecraft adds a sufix to the end of the name which we detect
-		if(player.name.endsWith(')') && (player.name.length > config.modules.namespoofA.maxNameLength + 3 || player.name.length < config.modules.namespoofA.minNameLength))
-			player.flagNamespoofA = true;
-
-		if(!player.name.endsWith(')') && (player.name.length < config.modules.namespoofA.minNameLength || player.name.length > config.modules.namespoofA.maxNameLength))
-			player.flagNamespoofA = true;
-
-		if(player.flagNamespoofA) {
-			const extraLength = player.name.length - config.modules.namespoofA.maxNameLength;
-			player.nameTag = player.name.slice(0, -extraLength) + "...";
-		}
-	}
-
-	if(config.modules.namespoofB.enabled && config.modules.namespoofB.regex.test(player.name)) player.flagNamespoofB = true;
-
 });
 
 
