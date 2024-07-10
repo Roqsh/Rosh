@@ -5,7 +5,7 @@ const lastYRot = new Map();
 const lastXRot = new Map();
 
 /**
- * Checks for smooth x/y rotations.
+ * Checks for smooth yaw and pitch movements.
  * @name badpackets_d
  * @param {player} player - The player to check
  */

@@ -621,7 +621,8 @@ export function lowercaseFirstLetter(string) {
  * @name angleCalc
  * @param {import("@minecraft/server").Player} player - The Player to calculate the angle on
  * @param {import("@minecraft/server").Entity} entity - The Entity to calculate the angle to
- * @returns {number} - The angle between the player and the entity in degrees
+ * @returns {number} - The angle between the player and the entity in degrees.
+ * @remarks The `entity` input is just a placeholder, a block works just as fine.
 */
 export function angleCalc(player, entity) {
     // Validate the input

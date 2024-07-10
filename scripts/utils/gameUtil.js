@@ -4,7 +4,7 @@
  */
 export async function tag_system(player) {
     try {
-        // Remove existing tags
+        // Remove existing gamemode tags
         await Promise.all([
             player.runCommandAsync(`tag @a[m=!c] remove gmc`),
             player.runCommandAsync(`tag @a[m=!s] remove gms`),
@@ -19,7 +19,7 @@ export async function tag_system(player) {
             player.runCommandAsync(`tag @a[hasitem={item=bow,location=slot.weapon.mainhand}] add bow`)
         ]);
 
-        // Add tags based on player mode
+        // Add tags based on the player's gamemode
         await Promise.all([
             player.runCommandAsync(`tag @a[m=c] add gmc`),
             player.runCommandAsync(`tag @a[m=s] add gms`),

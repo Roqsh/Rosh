@@ -302,16 +302,16 @@ export default
         },
 
         "namespoofA": {
-            "description": "Checks if a player's nametag length is invalid.",
             "enabled": true,
+            "description": "Checks if a player's nametag length is invalid.",
             "punishment": "kick",
             "punishmentLength": "7d",
             "minVlbeforePunishment": 1
         },
 
         "namespoofB": {
-            "description": "Checks if a player's nametag contains invalid characters.",
             "enabled": true,
+            "description": "Checks if a player's nametag contains invalid characters.",
             "punishment": "kick",
             "punishmentLength": "7d",
             "minVlbeforePunishment": 1
@@ -377,7 +377,7 @@ export default
 
         "badpacketsD": {
             "enabled": true,
-            "description": "Checks for derp hacks",
+            "description": "Checks for smooth yaw and pitch movements",
             "punishment": "kick",
             "punishmentLength": "1h",
             "minVlbeforePunishment": 12
