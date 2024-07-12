@@ -399,10 +399,11 @@ export default
         },
 
         "badpacketsG": {
-            "enabled": false,
-            "description": "",
+            "enabled": true,
+            "description": "Checks for movements without valid velocities.",
             "punishment": "kick",
-            "minVlbeforePunishment": 0
+            "punishmentLength": "7d",
+            "minVlbeforePunishment": 5
         },
 
         "badpacketsH": {
@@ -412,12 +413,13 @@ export default
             "minVlbeforePunishment": 8
         },
 
-        // TODO
         "badpacketsI": {
-            "enabled": false,
-            "description": "Patches a disabler on Vector Client (Changing location without velocity)",
+            "enabled": true,
+            "description": "Checks for sending too many packets at once.",
+            "packets": 30,
             "punishment": "kick",
-            "minVlbeforePunishment": 0
+            "punishmentLength": "7d",
+            "minVlbeforePunishment": 2
         },
 
         "badpacketsJ": {

@@ -15,8 +15,9 @@ import { badpackets_c } from "./checks/misc/badpackets/badpacketsC.js";
 import { badpackets_d } from "./checks/misc/badpackets/badpacketsD.js";
 import { badpackets_e } from "./checks/misc/badpackets/badpacketsE.js";
 import { badpackets_f } from "./checks/misc/badpackets/badpacketsF.js";
+import { badpackets_g } from "./checks/misc/badpackets/badpacketsG.js";
 import { badpackets_h } from "./checks/misc/badpackets/badpacketsH.js";
-//import { badpackets_i } from "./checks/misc/badpackets/badpacketsI.js";
+import { badpackets_i } from "./checks/misc/badpackets/badpacketsI.js";
 import { badpackets_j } from "./checks/misc/badpackets/badpacketsJ.js";
 import { exploit_a } from "./checks/misc/exploit/exploitA.js";
 import { exploit_b } from "./checks/misc/exploit/exploitB.js";
@@ -310,7 +311,9 @@ system.runInterval(() => {
             badpackets_b(player);
 			badpackets_d(player);			
 			badpackets_f(player);
+            badpackets_g(player);
 			badpackets_h(player);
+            badpackets_i(player);
 			badpackets_j(player);
 			exploit_a(player);
 			exploit_b(player);
@@ -424,6 +427,7 @@ system.runInterval(() => {
 			setScore(player, "tick_counter2", getScore(player, "tick_counter2", 0) + 1);
 			setScore(player, "tag_reset", getScore(player, "tag_reset", 0) + 1);
 			setScore(player, "scaffold_g_reset", getScore(player, "scaffold_g_reset", 0) + 1);
+            setScore(player, "packets", 0);
 			player.removeTag("snow");
 		}
 

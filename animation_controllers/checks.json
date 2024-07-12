@@ -1,6 +1,8 @@
 {
 	"format_version": "1.10.0",
+
 	"animation_controllers": {
+
 		"controller.animation.autototem": {
 			"states": {
 				"autototem": {
@@ -23,6 +25,7 @@
 				}
 			}
 		},
+
 		"controller.animation.autoshield": {
 			"states": {
 				"autoshield": {
@@ -45,6 +48,7 @@
 				}
 			}
 		},
+
 		"controller.animation.invmove": {
 			"states": {
 				"default": {
@@ -53,7 +57,8 @@
 					}],
 					"on_entry": [
 						"/tag @s remove hasGUIopen",
-						"/tellraw @a[tag=packetlogger] {\"rawtext\":[{\"text\":\"§r§uRosh §j> Received §uOpenChest§j-§uPacket §jfrom §8\"},{\"selector\":\"@s\"},{\"text\":\" §j- {stop}\"}]}"
+						"/tellraw @a[tag=packetlogger] {\"rawtext\":[{\"text\":\"§r§uRosh §j> Received §uOpenChest§j-§uPacket §jfrom §8\"},{\"selector\":\"@s\"},{\"text\":\" §j- {stop}\"}]}",
+                        "/scoreboard players add @s packets 1"
 					]
 				},
 				"invmove": {
@@ -61,35 +66,14 @@
 						"default": "query.variant != 1"
 					}],
 					"on_entry": [
+                        "/tag @s add hasGUIopen",
 						"/tellraw @a[tag=packetlogger] {\"rawtext\":[{\"text\":\"§r§uRosh §j> Received §uOpenChest§j-§uPacket §jfrom §8\"},{\"selector\":\"@s\"},{\"text\":\" §j- {start}\"}]}",
-						"/tag @s add hasGUIopen"
+                        "/scoreboard players add @s packets 1"
 					]
 				}
 			}
 		},
-		"controller.animation.sprint": {
-			"states": {
-				"default": {
-					"transitions": [{
-						"sprint": "query.is_sprinting"
-					}],
-					"on_entry": [
-						"/tag @s remove sprint",
-						"/tellraw @a[tag=packetlogger] {\"rawtext\":[{\"text\":\"§r§uRosh §j> Received §uSprint§j-§uPacket §jfrom §8\"},{\"selector\":\"@s\"},{\"text\":\" §j- {stop}\"}]}"
-					]
-				},
-				"sprint": {
-					"transitions": [{
-						"default": "!query.is_sprinting"
-					}],
-					"on_entry": [
-						"/tag @s add sprint",
-						"/tellraw @a[tag=packetlogger] {\"rawtext\":[{\"text\":\"§r§uRosh §j> Received §uSprint§j-§uPacket §jfrom §8\"},{\"selector\":\"@s\"},{\"text\":\" §j- {start}\"}]}",
-						"/execute @s[scores={invalidsprint=1..}] ~~~ function checks/invalidsprint"
-					]
-				}
-			}
-		},
+
 		"controller.animation.noswing": {
 			"states": {
 				"default": {
@@ -117,6 +101,7 @@
 				}
 			}
 		},
+
 		"controller.animation.invalid_offhand": {
 			"states": {
 				"default": {
