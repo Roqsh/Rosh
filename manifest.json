@@ -2,9 +2,9 @@
 	"format_version": 2,
 	"header": {
 		"name": "§r§uRosh§r",
-		"description": "\n§r§8v1.23",
+		"description": "\n§r§8v1.24 [Dev]",
 		"uuid": "2d5cff7f-cd1a-4b18-87f7-4f73b8198404",
-		"version": [1, 2, 3],
+		"version": [1, 2, 4],
 		"min_engine_version": [1, 21, 2]
 	},
 	"metadata": {
