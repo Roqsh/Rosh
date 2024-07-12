@@ -3,9 +3,9 @@
 	"header": {
 		"name": "§r§uRosh§r",
 		"description": "\n§r§8v1.23",
-		"uuid": "5c584268-1c1e-4b28-8ef4-ff0b03ee80f5",
+		"uuid": "2d5cff7f-cd1a-4b18-87f7-4f73b8198404",
 		"version": [1, 2, 3],
-		"min_engine_version": [1, 21, 1]
+		"min_engine_version": [1, 21, 2]
 	},
 	"metadata": {
 		"authors": [
@@ -19,14 +19,14 @@
 	"modules": [
 		{
 			"type": "data",
-			"uuid": "0b1922ad-8ab0-4e35-8577-0a96e8b6452b",
+			"uuid": "aed29500-e9a9-4388-acdc-cf759bad76f1",
 			"version": [1, 0, 0]
 		},
 		{
 			"description": "Beta API Features",
 			"language": "javascript",
 			"type": "script",
-			"uuid": "b9a8a504-e535-4dfc-b6d2-0ac6095ca2bb",
+			"uuid": "63f5ce57-ff70-431b-ac36-b31b9aad86dc",
 			"version": [1, 0, 0],
 			"entry": "scripts/main.js"
 		}
