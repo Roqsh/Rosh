@@ -14,6 +14,6 @@ export function badpackets_i(player) {
     const packets = getScore(player, "packets", 0);
 
     if (packets > config.modules.badpacketsI.packets) {
-        flag(player, "Bad Packets", "I", "packets", packets, true);
+        flag(player, "BadPackets", "I", "packets", packets, true);
     }
 }

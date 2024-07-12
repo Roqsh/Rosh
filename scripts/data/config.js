@@ -416,10 +416,10 @@ export default
         "badpacketsI": {
             "enabled": true,
             "description": "Checks for sending too many packets at once.",
-            "packets": 30,
+            "packets": 50,
             "punishment": "kick",
             "punishmentLength": "7d",
-            "minVlbeforePunishment": 2
+            "minVlbeforePunishment": 4
         },
 
         "badpacketsJ": {
