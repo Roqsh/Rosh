@@ -1,9 +1,38 @@
 Rosh v1.23
 
-(+)
+(+) Added BadPackets/G (Checks for movements with invalid velocities)
+(+) Added BadPackets/I (Checks for too many packets, renamed old BadPacketsI to BadPacketsA)
+(+) Added BadPackets/B (Checks for invalid selected slots)
+(+) Added BadPackets/E (Checks for invalid message lengths)
+(+) Scaffold/H attempt [Unfinished] (Checks for invalid items)
+(+) Added @s command support
+(+) Added unfreeze command
+(+) Added kickall command
 
-(-)
+(-) Removed hasTag("right") from Scaffold/C
+(-) Deleted vanish, ecwipe, stats and freeze function
+(-) Removed fullreport command (replaced by stats)
+(-) Deleted testban
+(-) Removed 'check for enchantment' option in invsee (will now be enabled by default)
 
-(#) 
+(#) Set Scaffold/G to [Beta]
+(#) Set NoSlow/A to [Beta]
+(#) Fixed BadEnchants vl not being reset
+(#) Rosh Ops should now be able to unmute themselves
+(#) Fixed the teleport dimension bug
+(#) Fixed selectedSlot > selectedSlotIndex
+(#) Fixed ban message not appearing on autoban-mode
+(#) Fixed an issue with Tower/B
 
-(*)
+(*) Rewrote all commands !! ( HUGE IMPROVEMENTS )
+(*) Impproved commenting (readability)
+(*) Minor random formatting changes
+(*) Updated Namespoof/A and B
+(*) Recoded flag function + improved warns reseting, visuals
+(*) Enlargened themecolor support
+(*) Improved BadEnchants removal handling (Now only removes the disallowed enchantment instead of the whole item)
+(*) Recoded commandHandler
+(*) Rearranged commands for better structur
+(*) Small adjustments to encrypt + decrypt
+(*) Improved tons of visuals
+(*) Improved autoban
