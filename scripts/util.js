@@ -119,7 +119,7 @@ export function flag(player, check, checkType, debugName, debug, shouldTP = fals
  * @param {number} [kickvl] - The current kick violation level.
  * @param {string} [punishmentLength="30d"] - The length of the punishment for bans.
  */
-function handlePunishment(punishment, player, check, checkType, themecolor, kickvl, punishmentLength = "30d") {
+function handlePunishment(punishment, player, check, checkType, themecolor, kickvl, punishmentLength) {
     switch (punishment) {
         case "kick":
             handleKickPunishment(player, kickvl, check, checkType, themecolor);
@@ -187,7 +187,7 @@ function handleKickPunishment(player, kickvl, check, checkType, themecolor) {
 function handleBanPunishment(player, check, checkType, themecolor, punishmentLength = "30d") {
     try {
         if (config.autoban) {
-            // Tag the player as banned and remove existing ban related tags
+            // Tag the player as banned and remove existing ban-related tags
             player.addTag("isBanned");
             player.getTags().forEach(tag => {
                 if (tag.includes("Reason:") || tag.includes("Length:")) player.removeTag(tag);
@@ -198,12 +198,27 @@ function handleBanPunishment(player, check, checkType, themecolor, punishmentLen
 
             // Calculate the ban length based on the provided punishment length
             let banLength;
-            try {
-                banLength = parseTime(punishmentLength);
-                player.addTag(`Length:${Date.now() + banLength}`);
-            } catch (error) {
-                console.error(`Error parsing ban length: ${error.message}`);
+            let untilDate = null;
+            let duration = "Permanent";
+
+            if (punishmentLength !== "Permanent") {
+                try {
+                    banLength = parseTime(punishmentLength);
+                    player.addTag(`Length:${Date.now() + banLength}`);
+                    untilDate = new Date(Date.now() + banLength);
+                    duration = `${punishmentLength} (Until ${untilDate.toLocaleString()})`;
+                } catch (error) {
+                    console.error(`Error parsing ban length: ${error.message}`);
+                }
             }
+
+            // Save all ban-related information
+            data.banList[player.name] = {
+                bannedBy: "Rosh Anticheat",
+                date: new Date().toLocaleString(),
+                reason: `${check}/${checkType.toUpperCase()}`,
+                duration: duration
+            };
 
             // Notify about the ban and reset warnings
             const message = `§8${player.name} §chas been banned!`;
@@ -375,6 +390,10 @@ export function ban(player) {
         if (banEndTime < currentTime) {
             // Inform staff about the expired ban and remove related tags
             tellStaff(expiredBanMessage);
+
+            // Remove the ban information from data.banList
+            delete data.banList[player.name];
+
             player.removeTag("isBanned");
 
             player.getTags().forEach(tag => {

@@ -34,8 +34,8 @@ export default
     },
 
     "logSettings": { // Adjust the settings of the log menu (can be done in game too)
-        "compactMode": false,
-        "showErrors": false,
+        "compactMode": false, // Not yet implemented
+        "showErrors": false,  // Not yet implemented
         "showDebug": false,
         "showChat": false,
         "showJoinLeave": true,
@@ -223,6 +223,13 @@ export default
             "description": "!logs <page> - View all logged information",
             "requiredTags": ["op"],
             "aliases": ["log", "data", "recent", "rl", "recentlogs"]
+        },
+
+        "banlist": {
+            "enabled": true,
+            "description": "!banlist - Displays information of all banned players\nOr: !banlist <player> - View ban-related information of a specific player",
+            "requiredTags": ["op"],
+            "aliases": ["bl"]
         },
 
         "resetwarns": {

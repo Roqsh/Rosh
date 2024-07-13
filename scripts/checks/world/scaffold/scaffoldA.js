@@ -17,6 +17,9 @@ function diagonal(newBlock, player, oldBlock) {
     );
 }
 
+// Sides of the blocks still need to be checked for air, as some checks can
+// be falsed by placing into an diagonal pattern, which has air below but the sides
+// covered by blocks to allow for further diagonal distances.
 function air(player, one, two, three) {
     
     const airone =  { x: one.x, y: one.y - 1, z: one.z };
@@ -75,13 +78,10 @@ function shouldFlagForDiagonal(pitch_values, yaw_values) {
  * @name scaffold_a
  * @param {player} player - The player to check
  * @param {block} block - The placed block
- * @remarks FIXME: Placing on ground false flags the no-rot and distance check  TODO: Add check if diag is in air (below done, sides need to be done, hard to implement
+ * @remarks TODO: Add check if diag is in air (below done, sides need to be done, hard to implement
  * as you need to figure out when x and z are covered by the diag block and when they are air), add backwards compatibility, etc...
 */
 export function scaffold_a(player, block) {
-
-    const preset = config.preset?.toLowerCase();
-    if (preset === "stable") return;
 
     const rotation = player.getRotation();
     const playerData = scaffold_a_map.get(player.name);
@@ -96,7 +96,10 @@ export function scaffold_a(player, block) {
         const pitch_values = playerData.pitch;
         const yaw_values = playerData.yaw;
         
-        const distance = calculateDistance(player.location, block.location);
+        const distance = Math.sqrt(
+            Math.pow(block.location.x - player.location.x, 2) + 
+            Math.pow(block.location.z - player.location.z, 2)
+        );
 
         if (last_place_location && old_place_location && pitch_values) {
 
@@ -118,6 +121,7 @@ export function scaffold_a(player, block) {
                 air(player, place_location, last_place_location, old_place_location)
             ) {
 
+                // >>
                 if (shouldFlagForDiagonal(pitch_values, yaw_values)) {
                     flag(player, "Scaffold", "A", "rotDiff", `0, distance=${distance}`);
                 }
@@ -125,6 +129,7 @@ export function scaffold_a(player, block) {
                 const diff_1 = Math.abs(yaw_values.mid - yaw_values.new);
                 const diff_2 = Math.abs(yaw_values.new - rotation.y);
 
+                // >>
                 if (distance > 2.5 && !is_decrease(player, place_location, last_place_location, old_place_location)) {
                     flag(player, "Scaffold", "A", "distance", distance);
                 }
@@ -133,11 +138,11 @@ export function scaffold_a(player, block) {
                     flag(player, "Scaffold", "A", "yaw-diff", (diff_1 + diff_2) / 2);
                 }
 
-                if (getSpeed(player) > 1) {
+                if (getSpeed(player) > 0.7) {
                     flag(player, "Scaffold", "A", "speed", getSpeed(player));
                 }
 
-                if (!player.hasTag("itemUse") && distance > 2 && getSpeed(player) > 0.15) {
+                if (!player.hasTag("itemUse") && distance > 2 && getSpeed(player) > 0.05) {
                     flag(player, "Scaffold", "A", "itemUse", "false");
                 }
             }

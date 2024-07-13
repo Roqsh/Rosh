@@ -198,6 +198,10 @@ function banPlayerMenu(player, playerSelected, lastMenu = 0) {
         const reason = input[0];
         const banLength = input[1] ? parseTime(`${input[1]}d`) : 0;
         const shouldPermBan = input[2];
+        
+        // Adjust untilDate and duration based on shouldPermBan
+        const untilDate = shouldPermBan ? null : new Date(Date.now() + banLength);
+        const duration = shouldPermBan ? "Permanent" : `${input[1]} days (Until ${untilDate.toLocaleString()})`;
 
         // Remove old ban tags
         playerSelected.getTags().forEach(t => {
@@ -212,8 +216,16 @@ function banPlayerMenu(player, playerSelected, lastMenu = 0) {
             if (banLength && !shouldPermBan) playerSelected.addTag(`Length:${Date.now() + banLength}`);
             playerSelected.addTag("isBanned");
 
-            player.runCommandAsync(`tellraw @a[tag=op] {"rawtext":[{"text":"§r${themecolor}Rosh §j> §8${player.nameTag} §chas banned §8${playerSelected.nameTag} §cfor: §8${reason}"}]}`);
-            data.recentLogs.push(`§8${playerSelected.nameTag} §chas been banned by §8${player.nameTag}§c!`);
+            player.runCommandAsync(`tellraw @a[tag=op] {"rawtext":[{"text":"§r${themecolor}Rosh §j> §8${player.name} §chas banned §8${playerSelected.name} §cfor: §8${reason}"}]}`);
+            data.recentLogs.push(`§8${playerSelected.name} §chas been banned by §8${player.name}§c!`);
+
+            // Save all ban-related information
+            data.banList[playerSelected.name] = {
+                bannedBy: player.name,
+                date: new Date().toLocaleString(),
+                reason: reason,
+                duration: duration
+            };
         }
     });
 }
@@ -248,6 +260,9 @@ function unbanPlayerMenu(player) {
         }
 
         data.unbanQueue.push(playerToUnban.toLowerCase());
+
+        // Remove the ban information from data.banList
+        delete data.banList[playerToUnban];
 
         player.runCommandAsync(`tellraw @a[tag=op] {"rawtext":[{"text":"§r${themecolor}Rosh §j> §8${player.nameTag} §ahas added §8${playerToUnban} §ainto the unban queue for: §8${reason}§a."}]}`);
         data.recentLogs.push(`§8${playerToUnban} §ahas been unbanned by §8${player.nameTag}§a!`);

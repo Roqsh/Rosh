@@ -36,6 +36,8 @@ export function ban(message, args) {
 
     // Parse the ban duration if provided
     const time = args[1] ? parseTime(args[1]) : undefined;
+    const untilDate = time ? new Date(Date.now() + time) : null;
+    const duration = untilDate ? `${args[1]} (Until ${untilDate.toLocaleString()})` : "Permanent";
     args.splice(1, 1); // Remove time argument
 
     // Construct the reason from the remaining args
@@ -85,4 +87,12 @@ export function ban(message, args) {
 
     // Log the ban event
     data.recentLogs.push(`§8${member.nameTag} §chas been banned by §8${player.name}§c!`);
+
+    // Save all ban-related information
+    data.banList[member.name] = {
+        bannedBy: player.name,
+        date: new Date().toLocaleString(),
+        reason: reason,
+        duration: duration
+    };
 }

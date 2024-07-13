@@ -29,6 +29,7 @@ import { autoban } from "./staff/autoban.js";
 import { module } from "./staff/module.js";
 import { stats } from "./staff/stats.js";
 import { logs } from "./staff/logs.js";
+import { banlist } from "./staff/banlist.js";
 import { resetwarns } from "./staff/resetwarns.js";
 import { report } from "./staff/report.js";
 import { tag } from "./staff/tag.js";
@@ -147,6 +148,7 @@ function runCommand(msg, commandName, args) {
                 case "module": module(message, args); break;
                 case "stats": stats(message, args); break;
                 case "logs": logs(message, args); break;
+                case "banlist": banlist(message, args); break;
                 case "resetwarns": resetwarns(message, args); break;
                 case "report": report(message, args); break;
                 case "tag": tag(message, args); break;

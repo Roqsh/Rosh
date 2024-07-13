@@ -46,6 +46,9 @@ export function unban(message, args) {
     // Add member to the unban queue
     data.unbanQueue.push(member.toLowerCase());
 
+    // Remove the ban information from data.banList
+    delete data.banList[member];
+
     // Notify other staff members about the unban request
     player.runCommandAsync(`tellraw @a[tag=op] {"rawtext":[{"text":"§r${themecolor}Rosh §j> §8${player.nameTag} §ahas added §8${member} §ato the unban queue for: §8${reason}§a."}]}`);
 
