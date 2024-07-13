@@ -268,6 +268,7 @@ function settingsMenu(player) {
         .button(`Autoban\n${config.autoban ? "§8[§a+§8]" : "§8[§c-§8]"}`)
         .button(`Preset\n${config.preset === "stable" ? "§8Stable" : "§8Beta"}`)
         .button(`Themecolor\n${config.themecolor}Color`)
+        .button(`Thememode\n§8${config.thememode}`)
         .button("Back");
 
     menu.show(player).then((response) => {
@@ -285,6 +286,9 @@ function settingsMenu(player) {
                 themecolorMenu(player);
                 break;
             case 4:
+                thememodeMenu(player);
+                break;
+            case 5:
                 mainGui(player);
                 break;
         }
@@ -360,25 +364,25 @@ function presetMenu(player) {
 function themecolorMenu(player) {
 
     const themecolor = config.themecolor;
+    const themecolors = [
+        "§1Color", "§2Color", "§3Color", "§4Color", "§5Color", "§6Color", "§7Color", "§8Color", "§9Color", "§0Color", "§qColor", "§eColor", "§rColor", 
+        "§tColor", "§uColor", "§iColor", "§pColor", "§aColor", "§sColor", "§dColor", "§gColor", "§hColor", "§jColor", "§cColor", "§bColor", "§nColor", "§mColor"
+    ];
 
     player.playSound("mob.chicken.plop");
 
-    const colors = ["§1Color", "§2Color", "§3Color", "§4Color", "§5Color", "§6Color", "§7Color", "§8Color", "§9Color", "§0Color", "§qColor", "§eColor",
-     "§rColor", "§tColor", "§uColor", "§iColor", "§pColor", "§aColor", "§sColor", "§dColor", "§gColor", "§hColor", "§jColor", "§cColor", "§bColor", "§nColor", "§mColor"
-    ];
-
-    const currentColorIndex = colors.indexOf(themecolor + "Color");
+    const currentColorIndex = themecolors.indexOf(themecolor + "Color");
 
     const menu = new MinecraftUI.ModalFormData()
         .title("Choose Themecolor")
-        .dropdown("Color", colors, currentColorIndex);
+        .dropdown("Color", themecolors, currentColorIndex);
 
     menu.show(player).then((response) => {
         if (response.canceled) {
             return settingsMenu(player);
         }
 
-        const selectedColor = colors[response.formValues[0]];
+        const selectedColor = themecolors[response.formValues[0]];
 
         if (selectedColor.substring(0, 2) === config.themecolor) {
             player.sendMessage(`§r${selectedColor.substring(0, 2)}Rosh §j> §cThemecolor is already set to ${selectedColor.substring(0, 2)}Color§c!`);
@@ -393,6 +397,42 @@ function themecolorMenu(player) {
         console.error("Error showing themecolor menu:", error);
     });
 }
+
+function thememodeMenu(player) {
+
+    const themecolor = config.themecolor;
+    const thememode = config.thememode;
+    const thememodes = ["Rosh", "Alice"];
+
+    player.playSound("mob.chicken.plop");
+
+    const currentModeIndex = thememodes.indexOf(thememode);
+
+    const menu = new MinecraftUI.ModalFormData()
+        .title("Choose Thememode")
+        .dropdown("Mode", thememodes, currentModeIndex);
+
+    menu.show(player).then((response) => {
+        if (response.canceled) {
+            return settingsMenu(player);
+        }
+
+        const selectedMode = thememodes[response.formValues[0]];
+
+        if (selectedMode === config.thememode) {
+            player.sendMessage(`§r${themecolor}Rosh §j> §cThememode is already set to §8${selectedMode}§c!`);
+            return;
+        }
+
+        config.thememode = selectedMode;
+        world.setDynamicProperty("config", JSON.stringify(config));
+        player.sendMessage(`§r${themecolor}Rosh §j> §aThememode set to §8${selectedMode}§a!`);
+
+    }).catch((error) => {
+        player.sendMessage("Error showing thememode menu:", error);
+    });
+}
+
 
 // ====================== //
 //     Modules Menu       //

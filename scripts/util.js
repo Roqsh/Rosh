@@ -66,16 +66,11 @@ export function flag(player, check, checkType, debugName, debug, shouldTP = fals
         console.warn(`Rosh > ${player.nameTag} failed ${check}/${checkType.toUpperCase()} - {${debugName}=${debug}, V=${currentVl}}`);
     }
 
-    // Notify staff in-game
     const themecolor = config.themecolor;
-    player.runCommandAsync(`tellraw @a[tag=notify,tag=debug] {"rawtext":[{"text":"§r${themecolor}Rosh §j> §8${player.nameTag} §jfailed ${themecolor}${check}§j/${themecolor}${checkType.toUpperCase()}§j - {${debugName}=${debug}, §8${currentVl}x§j}"}]}`);
-    player.runCommandAsync(`tellraw @a[tag=notify,tag=!debug] {"rawtext":[{"text":"§r${themecolor}Rosh §j> §8${player.nameTag} §jfailed ${themecolor}${check}§j/${themecolor}${checkType.toUpperCase()}§j - {§8${currentVl}x§j}"}]}`);
+    const thememode = config.thememode;
 
-    // Log the flag to the UI log section
-    const logMessage = config.logSettings.showDebug 
-        ? `§8${player.name} §jfailed ${themecolor}${check}§j/${themecolor}${checkType} §j- {${debugName}=${debug}, §8${currentVl}x§j}`
-        : `§8${player.name} §jfailed ${themecolor}${check}§j/${themecolor}${checkType} §j- {§8${currentVl}x§j}`;
-    data.recentLogs.push(logMessage);
+    // Notify staff in-game and log the flag to the UI log section
+    handleAlert(player, check, checkType, currentVl, debugName, debug, themecolor, thememode);
 
     // Get check data
     const checkData = config.modules[`${check.toLowerCase()}${checkType.toUpperCase()}`];
@@ -95,9 +90,9 @@ export function flag(player, check, checkType, debugName, debug, shouldTP = fals
     if (config.fancy_kick_calculation.enabled) {
 
         const movement_vl = getScore(player, "motionvl", 0) + getScore(player, "flyvl", 0) + getScore(player, "speedvl", 0) + getScore(player, "strafevl", 0) + getScore(player, "noslowvl", 0) + getScore(player, "invalidjumpvl", 0) + getScore(player, "invalidsprintvl", 0);
-        const combat_vl = getScore(player, "reachvl", 0) + getScore(player, "killauravl", 0) + getScore(player, "autoclickervl", 0) + getScore(player, "hitboxvl", 0);
+        const combat_vl = getScore(player, "reachvl", 0) + getScore(player, "killauravl", 0) + getScore(player, "autoclickervl", 0) + getScore(player, "hitboxvl", 0) + getScore(player, "aimvl", 0);
         const world_vl = getScore(player, "scaffoldvl", 0) + getScore(player, "nukervl", 0) + getScore(player, "towervl", 0);
-        const misc_vl = getScore(player, "badpacketsvl", 0) + getScore(player, "badenchantsvl", 0) + getScore(player, "crashervl", 0) + getScore(player, "spammervl", 0) + getScore(player, "timervl", 0) + getScore(player, "autototemvl", 0) + getScore(player, "autoshieldvl", 0) + getScore(player, "illegalitemsvl", 0);
+        const misc_vl = getScore(player, "badpacketsvl", 0) + getScore(player, "badenchantsvl", 0) + getScore(player, "crashervl", 0) + getScore(player, "spammervl", 0) + getScore(player, "timervl", 0) + getScore(player, "autototemvl", 0) + getScore(player, "autoshieldvl", 0) + getScore(player, "illegalitemsvl", 0) + getScore(player, "namespoofvl", 0) + getScore(player, "exploitvl", 0);
 
         if (
             movement_vl > config.fancy_kick_calculation.movement &&
@@ -105,7 +100,7 @@ export function flag(player, check, checkType, debugName, debug, shouldTP = fals
             world_vl > config.fancy_kick_calculation.world &&
             misc_vl > config.fancy_kick_calculation.misc
         ) {
-            handlePunishment("kick", player, check, checkType, themecolor);
+            handlePunishment("kick", player, check, checkType, themecolor, kickvl);
             return;
         }
     }
@@ -252,6 +247,68 @@ function handleMutePunishment(player, check, checkType, themecolor) {
     if (config.console_debug) console.warn(`Rosh > ${player.name} has been muted for ${check}/${checkType}`);
     
     resetWarns(player);
+}
+
+/**
+ * Handles alerting staff and logging information when a player fails a check.
+ * @param {object} player - The player who failed the check.
+ * @param {string} check - The name of the check that was failed.
+ * @param {string} checkType - The type of sub-check that was failed.
+ * @param {number} currentVl - The current violation level.
+ * @param {string} debugName - The name of the debug value.
+ * @param {string | number | object} debug - Debug information.
+ * @param {string} themecolor - The theme color for messages.
+ * @param {string} thememode - The theme mode for alert messages.
+ */
+function handleAlert(player, check, checkType, currentVl, debugName, debug, themecolor, thememode) {
+
+    // Validate thememode and set it to default if incorrect.
+    if (typeof thememode !== "string" || (thememode !== "Rosh" && thememode !== "Alice")) {
+        thememode = "Rosh";
+    }
+
+    // Handling alert based on the theme mode
+    if (thememode === "Rosh") {
+
+        // Notify staff in-game
+        player.runCommandAsync(`tellraw @a[tag=notify,tag=debug] {"rawtext":[{"text":"§r${themecolor}Rosh §j> §8${player.nameTag} §jfailed ${themecolor}${check}§j/${themecolor}${checkType.toUpperCase()}§j - {${debugName}=${debug}, §8${currentVl}x§j}"}]}`);
+        player.runCommandAsync(`tellraw @a[tag=notify,tag=!debug] {"rawtext":[{"text":"§r${themecolor}Rosh §j> §8${player.nameTag} §jfailed ${themecolor}${check}§j/${themecolor}${checkType.toUpperCase()}§j - {§8${currentVl}x§j}"}]}`);
+
+        // Log the flag to the UI log section
+        const logMessage = config.logSettings.showDebug 
+            ? `§8${player.name} §jfailed ${themecolor}${check}§j/${themecolor}${checkType} §j- {${debugName}=${debug}, §8${currentVl}x§j}`
+            : `§8${player.name} §jfailed ${themecolor}${check}§j/${themecolor}${checkType} §j- {§8${currentVl}x§j}`;
+        data.recentLogs.push(logMessage);
+
+    } else if (thememode === "Alice") {
+
+        // Determine the maximum violation level that a player is allowed to have before a punishment
+        const maxVl = config.modules[check.toLowerCase() + checkType.toUpperCase()].minVlbeforePunishment;
+
+        // Generate a visual representation of the violation level
+        let volume = ``;
+        const filled = currentVl;
+        const unfilled = maxVl - currentVl;
+
+        // Fill the volume bar with filled and unfilled sections
+        for (let i = 0; i < filled; i++) {
+            volume += `${themecolor}|`;
+        }
+
+        for (let i = 0; i < unfilled; i++) {
+            volume += `§8|`;
+        }     
+
+        // Notify staff in-game
+        player.runCommandAsync(`tellraw @a[tag=notify,tag=debug] {"rawtext":[{"text":"§r${themecolor}Rosh §j> §8${player.nameTag} §jfailed ${themecolor}${check}§j/${themecolor}${checkType.toUpperCase()}§j - {${debugName}=${debug}§j} [${volume}§j]"}]}`);
+        player.runCommandAsync(`tellraw @a[tag=notify,tag=!debug] {"rawtext":[{"text":"§r${themecolor}Rosh §j> §8${player.nameTag} §jfailed ${themecolor}${check}§j/${themecolor}${checkType.toUpperCase()}§j - [${volume}§j]"}]}`);
+
+        // Log the flag to the UI log section
+        const logMessage = config.logSettings.showDebug 
+            ? `§8${player.name} §jfailed ${themecolor}${check}§j/${themecolor}${checkType} §j- {${debugName}=${debug}§j} [${volume}§j]`
+            : `§8${player.name} §jfailed ${themecolor}${check}§j/${themecolor}${checkType} §j- [${volume}§j]`;
+        data.recentLogs.push(logMessage);
+    }
 }
 
 

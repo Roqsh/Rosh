@@ -12,6 +12,8 @@ export default
 
     "themecolor": "§u", // The color of the theme which is used for Rosh - ex: §a, §c, §9, etc.
 
+    "thememode": "Rosh", // Switch between the default style of 'Rosh' or use others, such as 'Alice'
+
     "flagWhitelist": [], // Who is able to bypass flags and punishments - ex: ["Playername1", "Playername2"]
 
     "generalModules": { // Enable or disable a type of detection - Subchecks can be edited below.
