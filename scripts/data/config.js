@@ -327,11 +327,12 @@ export default
         },
 
         "autotoolA": {
-            "enabled": false,
-            "description": "Checks for instant slot change after breaking a block",
+            "enabled": true,
+            "description": "Checks for suspiciously fast slot changes after starting to break a block.",
             "startBreakDelay": 53,
             "punishment": "kick",
-            "minVlbeforePunishment": 4
+            "punishmentLength": "7d",
+            "minVlbeforePunishment": 8
         },
 
         /*

@@ -22,8 +22,14 @@ export function unban(message, args) {
         return;
     }
 
+    // Replace @s with the sender's name
+    const targetName = args[0].replace(/"|\\|@s/g, player.name);
+
+    const minNameLength = 3;
+    const maxNameLength = player.name.endsWith(')') ? 15 : 12;
+
     // Check if target player name is valid
-    if (args[0].length < 3) {
+    if (targetName.length < minNameLength || targetName.length > maxNameLength) {
         player.sendMessage(`§r${themecolor}Rosh §j> §cYou need to provide a valid player to unban.`);
         return;
     }

@@ -193,10 +193,11 @@ system.runInterval(() => {
 		if(player.blocksBroken >= 1 && config.modules.nukerA.enabled) player.blocksBroken = 0;
 		if(player.entitiesHit?.length >= 1 && config.modules.killauraC.enabled) player.entitiesHit = [];
 
-		if(Date.now() - player.startBreakTime < config.modules.autotoolA.startBreakDelay && player.lastSelectedSlot !== selectedSlot) {
+		if (Date.now() - player.startBreakTime < config.modules.autotoolA.startBreakDelay && player.lastSelectedSlot !== selectedSlot) {
 			player.flagAutotoolA = true;
 			player.autotoolSwitchDelay = Date.now() - player.startBreakTime;
 		}
+
 		if(player.flagNamespoofA) {
 			flag(player, "Namespoof", "A", "nameLength", player.name.length, false);
 			player.flagNamespoofA = true;
@@ -547,11 +548,9 @@ world.afterEvents.playerBreakBlock.subscribe(async (blockBreak) => {
 		}
 	}
 	
-	if(config.modules.autotoolA.enabled && player.flagAutotoolA) {
-
+	if (config.modules.autotoolA.enabled && player.flagAutotoolA) {
 		revertBlock = true;
 		flag(player, "AutoTool", "A", "selectedSlot", `${player.selectedSlotIndex},lastSelectedSlot=${player.lastSelectedSlot},switchDelay=${player.autotoolSwitchDelay}`);
-		currentVL++;
 	}
 
 	if(config.modules.instabreakA.enabled && config.modules.instabreakA.unbreakable_blocks.includes(blockBreak.brokenBlockPermutation.type.id)) {

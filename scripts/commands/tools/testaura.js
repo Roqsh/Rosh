@@ -22,7 +22,7 @@ export function testaura(message, args) {
     const themecolor = config.themecolor;
     
     // Check if target player name is provided
-    if (args.length === 0) {
+    if (!args.length) {
         player.sendMessage(`§r${themecolor}Rosh §j> §cYou need to provide who to test for Killaura.`);
         return;
     }    
@@ -30,8 +30,11 @@ export function testaura(message, args) {
     // Replace @s with the sender's name
     const targetName = args[0].toLowerCase().replace(/"|\\|@s/g, player.name.toLowerCase());
 
+    const minNameLength = 3;
+    const maxNameLength = player.name.endsWith(')') ? 15 : 12;
+
     // Check if target player name is valid
-    if (targetName.length < 3) {
+    if (targetName.length < minNameLength || targetName.length > maxNameLength) {
         player.sendMessage(`§r${themecolor}Rosh §j> §cYou need to provide a valid player to test for Killaura.`);
         return;
     }

@@ -21,7 +21,7 @@ export function tag(message, args) {
     const themecolor = config.themecolor;
 
     // Check if target player name is provided
-    if (args.length === 0) {
+    if (!args.length) {
         player.sendMessage(`§r${themecolor}Rosh §j> §cYou need to provide who to add a tag to.`);
         return;
     }
@@ -29,8 +29,11 @@ export function tag(message, args) {
     // Replace @s with the sender's name
     const targetName = args[0].toLowerCase().replace(/"|\\|@s/g, player.name.toLowerCase());
 
+    const minNameLength = 3;
+    const maxNameLength = player.name.endsWith(')') ? 15 : 12;
+
     // Check if target player name is valid
-    if (targetName.length < 3) {
+    if (targetName.length < minNameLength || targetName.length > maxNameLength) {
         player.sendMessage(`§r${themecolor}Rosh §j> §cYou need to provide a valid player to add a tag to.`);
         return;
     }
