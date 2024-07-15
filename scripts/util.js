@@ -61,11 +61,6 @@ export function flag(player, check, checkType, debugName, debug, shouldTP = fals
     setScore(player, scoreboardObjective, currentVl + 1);
     currentVl++;
 
-    // Log to console if enabled
-    if (config.console_debug) {
-        console.warn(`Rosh > ${player.nameTag} failed ${check}/${checkType.toUpperCase()} - {${debugName}=${debug}, V=${currentVl}}`);
-    }
-
     const themecolor = config.themecolor;
     const thememode = config.thememode;
 
@@ -86,7 +81,7 @@ export function flag(player, check, checkType, debugName, debug, shouldTP = fals
 
     const kickvl = getScore(player, "kickvl", 0);
 
-    // Calculate scores for fancy kick logic
+    // Calculate scores for fancy kick logic if enabled
     if (config.fancy_kick_calculation.enabled) {
 
         const movement_vl = getScore(player, "motionvl", 0) + getScore(player, "flyvl", 0) + getScore(player, "speedvl", 0) + getScore(player, "strafevl", 0) + getScore(player, "noslowvl", 0) + getScore(player, "invalidjumpvl", 0) + getScore(player, "invalidsprintvl", 0);
@@ -163,7 +158,7 @@ function handleKickPunishment(player, kickvl, check, checkType, themecolor) {
             data.recentLogs.push(message);
 
             player.runCommandAsync(`tellraw @a[tag=notify,tag=op] {"rawtext":[{"text":"§r${themecolor}Rosh §j> §8${player.name} §chas been kicked for ${themecolor}${check}§j/${themecolor}${checkType.toUpperCase()} §c!"}]}`);
-            if (config.console_debug) console.warn(`Rosh > ${player.name} has been kicked for ${check}/${checkType}`);
+            if (config.console_debug) console.warn(`§r${themecolor}Rosh §j> §8${player.name} §chas been kicked for ${themecolor}${check}§j/${themecolor}${checkType.toUpperCase()} §c!`);
 
             resetWarns(player);
 
@@ -225,7 +220,7 @@ function handleBanPunishment(player, check, checkType, themecolor, punishmentLen
             data.recentLogs.push(message);
 
             player.runCommandAsync(`tellraw @a[tag=notify,tag=op] {"rawtext":[{"text":"§r${themecolor}Rosh §j> §8${player.name} §chas been banned for ${themecolor}${check}§j/${themecolor}${checkType.toUpperCase()} §c!"}]}`);
-            if (config.console_debug) console.warn(`Rosh > ${player.name} has been banned for ${check}/${checkType}`);
+            if (config.console_debug) console.warn(`§r${themecolor}Rosh §j> §8${player.name} §chas been banned for ${themecolor}${check}§j/${themecolor}${checkType.toUpperCase()} §c!`);
 
             resetWarns(player);
         }
@@ -259,7 +254,7 @@ function handleMutePunishment(player, check, checkType, themecolor) {
     data.recentLogs.push(message);
 
     player.runCommandAsync(`tellraw @a[tag=notify,tag=op] {"rawtext":[{"text":"§r${themecolor}Rosh §j> §8${player.name} §chas been muted for ${themecolor}${check}§j/${themecolor}${checkType.toUpperCase()} §c!"}]}`);
-    if (config.console_debug) console.warn(`Rosh > ${player.name} has been muted for ${check}/${checkType}`);
+    if (config.console_debug) console.warn(`§r${themecolor}Rosh §j> §8${player.name} §chas been muted for ${themecolor}${check}§j/${themecolor}${checkType.toUpperCase()} §c!`);
     
     resetWarns(player);
 }
@@ -286,14 +281,19 @@ function handleAlert(player, check, checkType, currentVl, debugName, debug, them
     if (thememode === "Rosh") {
 
         // Notify staff in-game
-        player.runCommandAsync(`tellraw @a[tag=notify,tag=debug] {"rawtext":[{"text":"§r${themecolor}Rosh §j> §8${player.nameTag} §jfailed ${themecolor}${check}§j/${themecolor}${checkType.toUpperCase()}§j - {${debugName}=${debug}, §8${currentVl}x§j}"}]}`);
-        player.runCommandAsync(`tellraw @a[tag=notify,tag=!debug] {"rawtext":[{"text":"§r${themecolor}Rosh §j> §8${player.nameTag} §jfailed ${themecolor}${check}§j/${themecolor}${checkType.toUpperCase()}§j - {§8${currentVl}x§j}"}]}`);
+        player.runCommandAsync(`tellraw @a[tag=notify,tag=debug] {"rawtext":[{"text":"§r${themecolor}Rosh §j> §8${player.name} §jfailed ${themecolor}${check}§j/${themecolor}${checkType.toUpperCase()}§j - {${debugName}=${debug}, §8${currentVl}x§j}"}]}`);
+        player.runCommandAsync(`tellraw @a[tag=notify,tag=!debug] {"rawtext":[{"text":"§r${themecolor}Rosh §j> §8${player.name} §jfailed ${themecolor}${check}§j/${themecolor}${checkType.toUpperCase()}§j - {§8${currentVl}x§j}"}]}`);
 
         // Log the flag to the UI log section
         const logMessage = config.logSettings.showDebug 
             ? `§8${player.name} §jfailed ${themecolor}${check}§j/${themecolor}${checkType} §j- {${debugName}=${debug}, §8${currentVl}x§j}`
             : `§8${player.name} §jfailed ${themecolor}${check}§j/${themecolor}${checkType} §j- {§8${currentVl}x§j}`;
         data.recentLogs.push(logMessage);
+
+        // Log to console if enabled
+        if (config.console_debug) {
+            console.warn(`§r${themecolor}Rosh §j> §8${player.name} §jfailed ${themecolor}${check}§j/${themecolor}${checkType.toUpperCase()}§j - {${debugName}=${debug}, §8${currentVl}x§j}`);
+        }
 
     } else if (thememode === "Alice") {
 
@@ -315,14 +315,19 @@ function handleAlert(player, check, checkType, currentVl, debugName, debug, them
         }     
 
         // Notify staff in-game
-        player.runCommandAsync(`tellraw @a[tag=notify,tag=debug] {"rawtext":[{"text":"§r${themecolor}Rosh §j> §8${player.nameTag} §jfailed ${themecolor}${check}§j/${themecolor}${checkType.toUpperCase()}§j - {${debugName}=${debug}§j} [${volume}§j]"}]}`);
-        player.runCommandAsync(`tellraw @a[tag=notify,tag=!debug] {"rawtext":[{"text":"§r${themecolor}Rosh §j> §8${player.nameTag} §jfailed ${themecolor}${check}§j/${themecolor}${checkType.toUpperCase()}§j - [${volume}§j]"}]}`);
+        player.runCommandAsync(`tellraw @a[tag=notify,tag=debug] {"rawtext":[{"text":"§r${themecolor}Rosh §j> §8${player.name} §jfailed ${themecolor}${check}§j/${themecolor}${checkType.toUpperCase()}§j - {${debugName}=${debug}§j} [${volume}§j]"}]}`);
+        player.runCommandAsync(`tellraw @a[tag=notify,tag=!debug] {"rawtext":[{"text":"§r${themecolor}Rosh §j> §8${player.name} §jfailed ${themecolor}${check}§j/${themecolor}${checkType.toUpperCase()}§j - [${volume}§j]"}]}`);
 
         // Log the flag to the UI log section
         const logMessage = config.logSettings.showDebug 
             ? `§8${player.name} §jfailed ${themecolor}${check}§j/${themecolor}${checkType} §j- {${debugName}=${debug}§j} [${volume}§j]`
             : `§8${player.name} §jfailed ${themecolor}${check}§j/${themecolor}${checkType} §j- [${volume}§j]`;
         data.recentLogs.push(logMessage);
+        
+        // Log to console if enabled
+        if (config.console_debug) {
+            console.warn(`§r${themecolor}Rosh §j> §8${player.name} §jfailed ${themecolor}${check}§j/${themecolor}${checkType.toUpperCase()}§j - {${debugName}=${debug}§j} [${volume}§j]`);
+        }
     }
 }
 

@@ -77,7 +77,7 @@ export function ecwipe(message, args) {
  */
 export function clearEnderchest(player) {
     // Clear the ender chest inventory of the target player
-    for (let i = 0; i <= 26; i++) {
-        player.runCommandAsync(`replaceitem entity @s slot.enderchest ${i} air`);
+    for (let slot = 0; slot <= 26; slot++) {
+        player.runCommandAsync(`replaceitem entity @s slot.enderchest ${slot} air`);
     }
 }

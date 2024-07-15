@@ -1,6 +1,7 @@
 import * as Minecraft from "@minecraft/server"; 
 import data from "../../data/data.js";
 import config from "../../data/config.js";
+import { kickall } from "./kickall.js";
 
 /**
  * Kicks a player from the world based on the provided message and arguments.
@@ -26,6 +27,12 @@ export function kick(message, args) {
 
     // Replace @s with the sender's name
     const targetName = args[0].toLowerCase().replace(/"|\\|@s/g, player.name.toLowerCase());
+
+    // Switch to kickall if @a is selected
+    if (targetName === "@a") {
+        kickall(message);
+        return;
+    }
 
     const minNameLength = 3;
     const maxNameLength = player.name.endsWith(')') ? 15 : 12;

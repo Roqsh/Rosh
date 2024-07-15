@@ -180,11 +180,18 @@ system.runInterval(() => {
 
 		const rotation = player.getRotation();
 		const velocity = player.getVelocity();
+        const xp = player.getTotalXp();
+
+        const xpForNextLevel = player.totalXpNeededForNextLevel;
+        const xpAtCurrentLevel = player.xpEarnedAtCurrentLevel;
+        const selectedSlot = player.selectedSlotIndex;
+        const level = player.level;
+
 		const speed = getSpeed(player);
 
+        const themecolor = config.themecolor;
+
 		player.removeTag("noPitchDiff");
-		
-		const selectedSlot = player.selectedSlotIndex;
 
 		if (player.hasTag("isBanned")) {
             ban(player);
@@ -285,7 +292,6 @@ system.runInterval(() => {
 		if (player.isOnGround) {			
 		    player.lastGoodPosition = player.location;			
 		}
-
 		
 		if (config.generalModules.fly) {
 			fly_a(player);
