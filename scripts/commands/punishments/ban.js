@@ -1,5 +1,5 @@
 import * as Minecraft from "@minecraft/server";
-import { parseTime } from "../../util.js";
+import { parseTime, findPlayerByName } from "../../util.js";
 import data from "../../data/data.js";
 import config from "../../data/config.js";
 
@@ -16,7 +16,6 @@ export function ban(message, args) {
     if (!Array.isArray(args)) throw new TypeError(`args is type of ${typeof args}. Expected "array".`);
 
     const player = message.sender;
-    const world = Minecraft.world;
     const themecolor = config.themecolor;
 
     // Check if target player name is provided
@@ -47,13 +46,7 @@ export function ban(message, args) {
     const reason = args.slice(1).join(" ").replace(/"|\\/g, "") || "No reason specified";
 
     // Find the target player by name
-    let member = null;
-    for (const pl of world.getPlayers()) {
-        if (pl.name.toLowerCase().includes(targetName)) {
-            member = pl;
-            break;
-        }
-    }
+    const member = findPlayerByName(targetName);
 
     // Handle case where the target player is not found
     if (!member) {
@@ -86,10 +79,10 @@ export function ban(message, args) {
     member.addTag("isBanned");
 
     // Notify other staff members about the ban
-    player.runCommandAsync(`tellraw @a[tag=op] {"rawtext":[{"text":"§r${themecolor}Rosh §j> §8${player.nameTag} §chas banned §8${member.nameTag} §cfor §8${reason}"}]}`);
+    player.runCommandAsync(`tellraw @a[tag=op] {"rawtext":[{"text":"§r${themecolor}Rosh §j> §8${player.name} §chas banned §8${member.name} §cfor §8${reason}"}]}`);
 
     // Log the ban event
-    data.recentLogs.push(`§8${member.nameTag} §chas been banned by §8${player.name}§c!`);
+    data.recentLogs.push(`§8${member.name} §chas been banned by §8${player.name}§c!`);
 
     // Save all ban-related information
     data.banList[member.name] = {

@@ -1,5 +1,5 @@
-import * as Minecraft from "@minecraft/server";
 import config from "../../data/config.js";
+import { findPlayerByName } from "../../util.js";
 
 /**
  * Adds a tag in front of the player's nametag or resets it.
@@ -17,7 +17,6 @@ export function tag(message, args) {
     }
 
     const player = message.sender;
-    const world = Minecraft.world;
     const themecolor = config.themecolor;
 
     // Check if target player name is provided
@@ -54,22 +53,16 @@ export function tag(message, args) {
     }
 
     // Find the target player by name
-    let targetPlayer = null;
-    for (const pl of world.getPlayers()) {
-        if (pl.name.toLowerCase().includes(targetName)) {
-            targetPlayer = pl;
-            break;
-        }
-    }
+    const member = findPlayerByName(targetName);
 
     // Handle case where the target player is not found
-    if (!targetPlayer) {
+    if (!member) {
         player.sendMessage(`§r${themecolor}Rosh §j> §cCouldn't find that player.`);
         return;
     }
 
     // Check if the new tag is the same as the current tag
-    const currentTag = targetPlayer.getTags().find(t => t.startsWith("tag:"));
+    const currentTag = member.getTags().find(t => t.startsWith("tag:"));
     if (currentTag && currentTag.slice(4) === tag) {
         player.sendMessage(`§r${themecolor}Rosh §j> §cThis player already has that tag.`);
         return;
@@ -77,11 +70,11 @@ export function tag(message, args) {
 
     // Handle resetting the nametag
     if (args[1].includes("reset")) {
-        targetPlayer.getTags().forEach(t => {
-            if (t.replace(/"|\\/g, "").startsWith("tag:")) targetPlayer.removeTag(t);
+        member.getTags().forEach(t => {
+            if (t.replace(/"|\\/g, "").startsWith("tag:")) member.removeTag(t);
         });
-        targetPlayer.nameTag = targetPlayer.name;
-        player.sendMessage(`§r${themecolor}Rosh §j> §aReset §8${targetPlayer.name}'s §anametag.`);
+        member.nameTag = member.name;
+        player.sendMessage(`§r${themecolor}Rosh §j> §aReset §8${member.name}'s §anametag.`);
         return;
     }
 
@@ -89,19 +82,19 @@ export function tag(message, args) {
     const { mainColor, borderColor, playerNameColor } = config.customcommands.tag;
 
     // Build the nametag
-    const nametag = `${borderColor}[§r${mainColor}${tag}§r${borderColor}]§r ${playerNameColor}${targetPlayer.name}§r`.replace(/"|\\/g, "");
+    const nametag = `${borderColor}[§r${mainColor}${tag}§r${borderColor}]§r ${playerNameColor}${member.name}§r`.replace(/"|\\/g, "");
 
     // Update the target player's nametag
-    targetPlayer.nameTag = nametag;
+    member.nameTag = nametag;
 
     // Remove existing tags starting with "tag:"
-    targetPlayer.getTags().forEach(t => {
-        if (t.replace(/"|\\/g, "").startsWith("tag:")) targetPlayer.removeTag(t);
+    member.getTags().forEach(t => {
+        if (t.replace(/"|\\/g, "").startsWith("tag:")) member.removeTag(t);
     });
 
     // Add the new tag
-    targetPlayer.addTag(`tag:${tag}`);
+    member.addTag(`tag:${tag}`);
 
     // Inform the initiator about the tag change
-    player.sendMessage(`§r${themecolor}Rosh §j> §aChanged §8${targetPlayer.name}'s §anametag to §8${nametag}§a.`);
+    player.sendMessage(`§r${themecolor}Rosh §j> §aChanged §8${member.name}'s §anametag to §8${nametag}§a.`);
 }

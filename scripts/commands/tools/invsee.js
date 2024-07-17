@@ -1,5 +1,5 @@
-import * as Minecraft from "@minecraft/server";
 import config from "../../data/config.js";
+import { findPlayerByName } from "../../util.js";
 
 /**
  * Lets you view another player's inventory.
@@ -17,7 +17,6 @@ export function invsee(message, args) {
     }
 
     const player = message.sender;
-    const world = Minecraft.world;
     const themecolor = config.themecolor;
 
     // Check if target player name is provided
@@ -39,13 +38,7 @@ export function invsee(message, args) {
     }
 
     // Find the target player by name
-    let member = null;
-    for (const pl of world.getPlayers()) {
-        if (pl.name.toLowerCase().includes(targetName)) {
-            member = pl;
-            break;
-        }
-    }
+    const member = findPlayerByName(targetName);
 
     // Handle case where the target player is not found
     if (!member) {

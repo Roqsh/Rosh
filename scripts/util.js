@@ -261,6 +261,7 @@ function handleMutePunishment(player, check, checkType, themecolor) {
 
 /**
  * Handles alerting staff and logging information when a player fails a check.
+ * 
  * @param {object} player - The player who failed the check.
  * @param {string} check - The name of the check that was failed.
  * @param {string} checkType - The type of sub-check that was failed.
@@ -834,9 +835,10 @@ export function getClosestPlayer(entity) {
 /**
  * Finds a player object by a player name.
  * @name findPlayerByName
- * @param {string} name - The player to look for
- * @returns {import("@minecraft/server").Player | null} - The player object, or null if not found
- * @throws {TypeError} If name is not a string
+ * @param {string} name - The player to look for.
+ * @remarks Uses the lowercased name to search for the player object.
+ * @returns {import("@minecraft/server").Player | null} - The player object, or null if not found.
+ * @throws {TypeError} If name is not a string.
  */
 export function findPlayerByName(name) {
     // Validate the input
@@ -849,7 +851,7 @@ export function findPlayerByName(name) {
 
     // Find the player with the matching name
     for (const player of players) {
-        if (player.name === name) {
+        if (player.name.toLowerCase().includes(name)) {
             return player;
         }
     }

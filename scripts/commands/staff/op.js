@@ -1,6 +1,7 @@
 import * as Minecraft from "@minecraft/server";
 import data from "../../data/data.js";
 import config from "../../data/config.js";
+import { findPlayerByName } from "../../util.js";
 
 /**
  * Grants operator status (Rosh-Op) to a specified player.
@@ -15,7 +16,6 @@ export function op(message, args) {
     if (!Array.isArray(args)) throw new TypeError(`args is type of ${typeof args}. Expected "array".`);
 
     const player = message.sender;
-    const world = Minecraft.world;
     const themecolor = config.themecolor;
     
     // Check if target player name is provided
@@ -37,13 +37,7 @@ export function op(message, args) {
     }
 
     // Find the target player by name
-    let member = null;
-    for (const pl of world.getPlayers()) {
-        if (pl.name.toLowerCase().includes(targetName)) {
-            member = pl;
-            break;
-        }
-    }
+    const member = findPlayerByName(targetName);
 
     // Handle case where the target player is not found
     if (!member) {

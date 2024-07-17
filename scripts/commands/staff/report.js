@@ -1,6 +1,6 @@
-import * as Minecraft from "@minecraft/server";
 import data from "../../data/data.js";
 import config from "../../data/config.js";
+import { findPlayerByName } from "../../util.js";
 
 /**
  * Reports a player for a given reason.
@@ -14,7 +14,6 @@ export function report(message, args) {
     if (!Array.isArray(args)) throw new TypeError(`args is type of ${typeof args}. Expected "array".`);
 
     const player = message.sender;
-    const world = Minecraft.world;
     const themecolor = config.themecolor;
     const reason = args.slice(1).join(" ") || "No reason provided";
 
@@ -37,13 +36,7 @@ export function report(message, args) {
     }
 
     // Find the target player by name
-    let member = null;
-    for (const pl of world.getPlayers()) {
-        if (pl.name.toLowerCase().includes(targetName)) {
-            member = pl;
-            break;
-        }
-    }
+    const member = findPlayerByName(targetName);
 
     // Handle case where the target player is not found
     if (!member) {
