@@ -22,5 +22,6 @@ export function namespoof_b(player) {
     // Check if the base name contains only allowed characters
     if (!allowedCharsRegex.test(baseName)) {
         flag(player, "Namespoof", "B", "invalid-characters", player.name);
+        player.nameTag = player.nameTag.replace(/[^A-Za-z0-9_\-() ]/g, '').trim();
     }
 }

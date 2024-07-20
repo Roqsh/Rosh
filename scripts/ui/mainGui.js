@@ -6,6 +6,7 @@ import { parseTime, uppercaseFirstLetter, tellStaff } from "../util.js";
 import { addOp, removeOp } from "../commands/staff/op.js";
 import { addVanish, removeVanish } from "../commands/tools/vanish.js";
 import { clearEnderchest } from "../commands/tools/ecwipe.js";
+import { handleNotification } from "../commands/staff/notify.js";   
 
 const world = Minecraft.world;
 const moduleList = Object.keys(config.modules).concat(Object.keys(config.misc_modules));
@@ -275,6 +276,9 @@ function unbanPlayerMenu(player) {
 // ====================== //
 
 function settingsMenu(player) {
+
+    const themecolor = config.themecolor;
+
     player.playSound("mob.chicken.plop");
 
     const menu = new MinecraftUI.ActionFormData()
@@ -289,7 +293,7 @@ function settingsMenu(player) {
     menu.show(player).then((response) => {
         switch (response.selection) {
             case 0:
-                player.runCommandAsync("function notify");
+                handleNotification(player, themecolor);
                 break;
             case 1:
                 autobanMenu(player);

@@ -13,7 +13,10 @@ export function speed_a(player) {
 
     if(config.modules.speedA.enabled) {
 
-        if(player.isFlying || player.hasTag("attacking")) return;
+        if (player.isFlying || 
+            player.isGliding ||
+            player.hasTag("attacking")
+        ) return;
 
         if(player.getEffect("speed")) {
 

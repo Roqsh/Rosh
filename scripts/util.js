@@ -336,10 +336,11 @@ function handleAlert(player, check, checkType, currentVl, debugName, debug, them
 
 /**
  * Bans a player from the game.
+ * 
  * @name ban
- * @param {import("@minecraft/server").Player} player - The player object
+ * @param {import("@minecraft/server").Player} player - The player object.
  * @example ban(rqosh);
- * @throws {TypeError} If player is not an object
+ * @throws {TypeError} If player is not an object.
  */
 export function ban(player) {
     // Validate that the input is an object

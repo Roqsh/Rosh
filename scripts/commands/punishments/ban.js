@@ -48,9 +48,29 @@ export function ban(message, args) {
     // Find the target player by name
     const member = findPlayerByName(targetName);
 
-    // Handle case where the target player is not found
+    // Queue the player for a ban if he is not online
     if (!member) {
-        player.sendMessage(`§r${themecolor}Rosh §j> §cCouldn't find that player.`);
+
+        // Check if the member is already in the ban queue
+        if (targetName in data.banList) {
+            player.sendMessage(`§r${themecolor}Rosh §j> §8${targetName} §cis already banned.`);
+            return;
+        }
+
+        // Notify other staff members about the ban request
+        player.runCommandAsync(`tellraw @a[tag=op] {"rawtext":[{"text":"§r${themecolor}Rosh §j> §8${player.name} §chas added §8${targetName} §cto the ban queue for: §8${reason}§c, §8${duration}§c."}]}`);
+
+        // Log the ban event
+        data.recentLogs.push(`§8${targetName} §chas been banned by §8${player.name}§c!`);
+
+        // Save all ban-related information
+        data.banList[targetName] = {
+            bannedBy: player.name,
+            date: new Date().toLocaleString(),
+            reason: reason,
+            duration: duration
+        };
+
         return;
     }
 
@@ -79,7 +99,7 @@ export function ban(message, args) {
     member.addTag("isBanned");
 
     // Notify other staff members about the ban
-    player.runCommandAsync(`tellraw @a[tag=op] {"rawtext":[{"text":"§r${themecolor}Rosh §j> §8${player.name} §chas banned §8${member.name} §cfor §8${reason}"}]}`);
+    player.runCommandAsync(`tellraw @a[tag=op] {"rawtext":[{"text":"§r${themecolor}Rosh §j> §8${player.name} §chas banned §8${member.name} §cfor: §8${reason}§c, §8${duration}§c."}]}`);
 
     // Log the ban event
     data.recentLogs.push(`§8${member.name} §chas been banned by §8${player.name}§c!`);

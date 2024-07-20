@@ -10,6 +10,8 @@ export default
 
     "console_debug": true, // Shows flags and punishments in the console
 
+    "banjoin_debug": false, // Shows you a message whenever a banned player tries to join.
+
     "themecolor": "§u", // The color of the theme which is used for Rosh - ex: §a, §c, §9, etc.
 
     "thememode": "Rosh", // Switch between the default style of 'Rosh' or use others, such as 'Alice'
@@ -629,6 +631,17 @@ export default
             "punishment": "kick",
             "angle": 55,
             "distance": 2.25,
+            "minVlbeforePunishment": 5
+        },
+
+        "hitboxB": {
+            "enabled": true,
+            "description": "Checks for not looking at the attacked Player.",
+            "threshold": 25, // Minimum angle threshold to consider "looking at" the entity
+            "height": 1.8, // Approximate height of the entity, adjust as needed (Player only, as the height differs between entities)
+            "distance": 2, // Minimum distance the player and the entity needs to have before failing the check
+            "punishment": "kick",
+            "punishmentLength": "7d",
             "minVlbeforePunishment": 5
         },
 

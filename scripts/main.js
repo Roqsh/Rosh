@@ -3,7 +3,7 @@ import { system, world, ItemTypes, ItemStack } from "@minecraft/server";
 import config from "./data/config.js";
 import data from "./data/data.js";
 import { tag_system, setTitle } from "./utils/gameUtil.js";
-import { flag, ban, getScore, setScore, getSpeed, aroundAir, tellStaff, debug } from "./util.js";
+import { flag, ban, parseTime, getScore, setScore, getSpeed, aroundAir, tellStaff, debug } from "./util.js";
 import { commandHandler } from "./commands/handler.js";
 import { resetWarns } from "./commands/staff/resetwarns.js";
 import { mainGui, playerSettingsMenuSelected } from "./ui/mainGui.js";
@@ -72,6 +72,7 @@ import { killaura_e, dependencies_e } from "./checks/combat/killaura/killauraE.j
 import { killaura_f } from "./checks/combat/killaura/killauraF.js";
 import { killaura_g } from "./checks/combat/killaura/killauraG.js";
 import { hitbox_a } from "./checks/combat/hitbox/hitboxA.js";
+import { hitbox_b } from "./checks/combat/hitbox/hitboxB.js";
 import { reach_a } from "./checks/combat/reach/reachA.js";
 import { autoclicker_a } from "./checks/combat/autoclicker/autoclickerA.js";
 //import { aim_a } from "./checks/combat/aim/aimA.js";
@@ -189,8 +190,6 @@ system.runInterval(() => {
 
 		const speed = getSpeed(player);
 
-        const themecolor = config.themecolor;
-
 		player.removeTag("noPitchDiff");
 
 		if (player.hasTag("isBanned")) {
@@ -205,16 +204,6 @@ system.runInterval(() => {
 			player.autotoolSwitchDelay = Date.now() - player.startBreakTime;
 		}
 
-		if(player.flagNamespoofA) {
-			flag(player, "Namespoof", "A", "nameLength", player.name.length, false);
-			player.flagNamespoofA = true;
-			currentVL++;
-		}
-		if(player.flagNamespoofB) {
-			flag(player, "Namespoof", "B", undefined, false);
-			player.flagNamespoofB = true;
-			currentVL++;
-		}
 		if(player.hasTag("moving")) {
 			player.runCommandAsync(`scoreboard players set @s xPos ${Math.floor(player.location.x)}`);
 			player.runCommandAsync(`scoreboard players set @s yPos ${Math.floor(player.location.y)}`);
@@ -456,23 +445,39 @@ system.runInterval(() => {
 });
 
 
-world.beforeEvents.playerPlaceBlock.subscribe((placeBlock) => {
+world.beforeEvents.itemUse.subscribe((itemUse) => {
 
-    const player = placeBlock.player;
-    const block = placeBlock.block;
+	const { source: player } = itemUse;
 
-    if(config.generalModules.scaffold) {
-        scaffold_h(player, block);
+	if (player.typeId !== "minecraft:player") return;
+
+	if (!player.hasTag("itemUse")) {
+		Minecraft.system.run(() => player.addTag("itemUse"));
+	}
+
+	if (player.hasTag("frozen")) itemUse.cancel = true;
+
+});
+
+
+world.beforeEvents.playerPlaceBlock.subscribe(async (placeBlock) => {
+
+    const { player, block } = placeBlock;
+
+    if (config.generalModules.scaffold) {
+        await scaffold_h(player, block);
 	}
 });
 
 
-world.afterEvents.playerPlaceBlock.subscribe((placeBlock) => {
+world.afterEvents.playerPlaceBlock.subscribe(async (placeBlock) => {
 
 	const { player, block } = placeBlock;
 
-    // Issue with stored Ids in array
-    //dependencies_h(player, block);
+    const isLiquid = block.isLiquid;
+    const isAir = block.isAir;
+
+    await dependencies_h(player, block);
 
 	if(!player.hasTag("placing")) {
 		player.addTag("placing");
@@ -480,7 +485,7 @@ world.afterEvents.playerPlaceBlock.subscribe((placeBlock) => {
 
 	let undoPlace = false;
 
-    if(config.generalModules.scaffold) {
+    if (config.generalModules.scaffold) {
 		scaffold_a(player, block);
 	    scaffold_b(player);
 	    scaffold_c(player, block);
@@ -490,32 +495,30 @@ world.afterEvents.playerPlaceBlock.subscribe((placeBlock) => {
 		scaffold_g(player);
 	}
 
-	if(config.generalModules.tower) {
+	if (config.generalModules.tower) {
 		tower_a(player, block);
 	    tower_b(player, block);	
 	}
 
-    if(config.generalModules.reach) {
+    if (config.generalModules.reach) {
 		reach_b(player, block, undoPlace);
 	}
 
-	if(undoPlace === "true") {
+	if (undoPlace) {
 		try {
 			block.setType(Minecraft.MinecraftBlockTypes.air);
 		} catch (error) {
 			player.runCommandAsync(`fill ${block.location.x} ${block.location.y} ${block.location.z} ${block.location.x} ${block.location.y} ${block.location.z} air`);
 		}
 	}
-
 });
 
 
 world.beforeEvents.playerBreakBlock.subscribe((blockBreak) => {
 	
-    const player = blockBreak.player;
-    const block = blockBreak.block;
+    const { player, block } = blockBreak;
 
-    if(config.generalModules.nuker) {      
+    if (config.generalModules.nuker) {      
         nuker_b(player, block, blockBreak, Minecraft);     
         nuker_c(player, block, blockBreak, Minecraft);    
         nuker_d(player, block, blockBreak, Minecraft);      
@@ -525,9 +528,8 @@ world.beforeEvents.playerBreakBlock.subscribe((blockBreak) => {
 
 world.afterEvents.playerBreakBlock.subscribe(async (blockBreak) => {
 
-	const player = blockBreak.player
-	const block = blockBreak.block
-	const dimension = blockBreak.dimension;
+    const { player, block, dimension } = blockBreak;
+	
 	const brokenBlockId = blockBreak.brokenBlockPermutation.type.id;
 
 	if(!player.hasTag("breaking")) {
@@ -536,43 +538,47 @@ world.afterEvents.playerBreakBlock.subscribe(async (blockBreak) => {
 
 	let revertBlock = false;
 
-	if(brokenBlockId === "minecraft:snow" || brokenBlockId === "minecraft:snow_layer") {
+	if (
+        brokenBlockId === "minecraft:snow" || 
+        brokenBlockId === "minecraft:snow_layer"
+    ) {
 		player.addTag("snow");
 	}
 	
-    if(config.generalModules.nuker) {   
+    if (config.generalModules.nuker) {   
         await nuker_a(player, revertBlock);      
     }
 
-	if(config.modules.reachB.enabled) {
+	if (config.modules.reachB.enabled) {
 
 		const distance = Math.sqrt(Math.pow(block.location.x - player.location.x, 2) + Math.pow(block.location.z - player.location.z, 2));
 
-		if(distance > config.modules.reachB.reach) {
+		if (distance > config.modules.reachB.reach) {
 			flag(player, "Reach", "B", "distance", distance);
 			revertBlock = true;
 		}
 	}
 	
 	if (config.modules.autotoolA.enabled && player.flagAutotoolA) {
-		revertBlock = true;
 		flag(player, "AutoTool", "A", "selectedSlot", `${player.selectedSlotIndex},lastSelectedSlot=${player.lastSelectedSlot},switchDelay=${player.autotoolSwitchDelay}`);
+        revertBlock = true;
 	}
 
-	if(config.modules.instabreakA.enabled && config.modules.instabreakA.unbreakable_blocks.includes(blockBreak.brokenBlockPermutation.type.id)) {
+	if (config.modules.instabreakA.enabled && config.modules.instabreakA.unbreakable_blocks.includes(blockBreak.brokenBlockPermutation.type.id)) {
 
 		const checkGmc = world.getPlayers({
 			excludeGameModes: [Minecraft.GameMode.creative],
 			name: player.name
 		});
-		if([...checkGmc].length !== 0) {
+
+		if ([...checkGmc].length !== 0) {
 			revertBlock = true;
 			flag(player, "InstaBreak", "A", "block", blockBreak.brokenBlockPermutation.type.id, true);
 			currentVL++;
 		}
 	}
 
-	if(revertBlock) {
+	if (revertBlock) {
 		const droppedItems = dimension.getEntities({
 			location: block.location,
 			minDistance: 0,
@@ -580,53 +586,78 @@ world.afterEvents.playerBreakBlock.subscribe(async (blockBreak) => {
 			type: "item"
 		});
 		block.setPermutation(blockBreak.brokenBlockPermutation);
-		for(const item of droppedItems) item.kill();
+		for (const item of droppedItems) item.kill();
 	}
-
 });
 
 
 world.beforeEvents.playerLeave.subscribe((playerLeave) => {
 
-    const player = playerLeave.player
+    const { player } = playerLeave;
 
-	if(config.logSettings.showJoinLeave) {
+	if (config.logSettings.showJoinLeave) {
 		data.recentLogs.push(`§8${player.name} §jleft the server`);
 	}	
-
 });
 
 
 world.afterEvents.playerSpawn.subscribe((playerJoin) => {
 
+    const { player, initialSpawn } = playerJoin;
+
     const themecolor = config.themecolor;
     const thememode = config.thememode;
 
-	const { initialSpawn, player } = playerJoin;
+	if (!initialSpawn) return;
 
-	if(!initialSpawn) return;
-
-	if(player.hasTag("op") || player.name === "rqosh") {
+	if (
+        player.hasTag("op") || 
+        player.name === "rqosh"
+    ) {
 		player.runCommandAsync(`tellraw @s {"rawtext":[{"text":"§r${themecolor}Rosh §j> §aWelcome §8${player.name}§a!"}]}`);
 	}
 
-	if(config.logSettings.showJoinLeave) {
+	if (config.logSettings.showJoinLeave) {
 		data.recentLogs.push(`§8${player.name} §jjoined the server`)
 	}
 
-    if (thememode !== "Rosh" && thememode !== "Alice") {
+    if (
+        thememode !== "Rosh" && 
+        thememode !== "Alice"
+    ) {
         player.runCommandAsync(`tellraw @a[tag=op] {"rawtext":[{"text":"§r${themecolor}Rosh §j> §cNo valid thememode entered in config! The thememode has been set back to default."}]}`);
     }
 
-	if(config.modules.spammerA.enabled) player.lastMessageSent = 0;
-	if(config.modules.nukerA.enabled) player.blocksBroken = 0;
-	if(config.modules.autoclickerA.enabled) player.firstAttack = Date.now();
-	if(config.modules.autoclickerA.enabled) player.cps = 0;
-	if(config.modules.killauraB.enabled) player.lastLeftClick = NaN;
-	if(config.modules.killauraC.enabled) player.entitiesHit = [];
-	if(config.customcommands.report.enabled) player.reports = [];
+    if (player.name in data.banList) {
 
-	if(player.isOnGround) player.lastGoodPosition = player.location;
+        if (!player.hasTag("isBanned")) {
+            player.addTag("isBanned");
+        }
+
+        player.addTag(`Reason:${data.banList[player.name].reason}`);
+        
+        // Add the Length tag based on the ban duration
+        const banDuration = data.banList[player.name].duration;
+        
+        if (banDuration !== "Permanent") {
+            const time = parseTime(banDuration.split(' ')[0]);
+            player.addTag(`Length:${Date.now() + time}`);
+        }
+
+        if (config.banjoin_debug) {
+            player.runCommandAsync(`tellraw @a[tag=op] {"rawtext":[{"text":"§r${themecolor}Rosh §j> §8${player.name} §ctried to join but was blocked due to his ban."}]}`);
+        }
+    }
+
+	if (config.modules.spammerA.enabled) player.lastMessageSent = 0;
+	if (config.modules.nukerA.enabled) player.blocksBroken = 0;
+	if (config.modules.autoclickerA.enabled) player.firstAttack = Date.now();
+	if (config.modules.autoclickerA.enabled) player.cps = 0;
+	if (config.modules.killauraB.enabled) player.lastLeftClick = NaN;
+	if (config.modules.killauraC.enabled) player.entitiesHit = [];
+	if (config.customcommands.report.enabled) player.reports = [];
+
+	if (player.isOnGround) player.lastGoodPosition = player.location;
 	player.gamemode = player.getGameMode();
 
 	setScore(player, "tick_counter2", 0);
@@ -635,12 +666,11 @@ world.afterEvents.playerSpawn.subscribe((playerJoin) => {
 
     namespoof_a(player);
     namespoof_b(player);
-	
-	player.nameTag = player.nameTag.replace(/[^A-Za-z0-9_\-() ]/gm, "").trim();
 
-	if(player.hasTag("notify")) {
-		player.runCommandAsync('execute at @a[tag=reported] run tellraw @a[tag=notify] {"rawtext":[{"text":"§r§uRosh §j> §8"},{"selector":"@s"},{"text":" §chas been reported while your were offline."}]}');
-	}
+    // TODO: Update this code
+	//if (player.hasTag("notify")) {
+		//player.runCommandAsync('execute at @a[tag=reported] run tellraw @a[tag=notify] {"rawtext":[{"text":"§r§uRosh §j> §8"},{"selector":"@s"},{"text":" §chas been reported while your were offline."}]}');
+	//}
 
 	player.removeTag("attack");
 	player.removeTag("hasGUIopen");
@@ -655,41 +685,31 @@ world.afterEvents.playerSpawn.subscribe((playerJoin) => {
 	const { mainColor, borderColor, playerNameColor } = config.customcommands.tag;
 
 	player.getTags().forEach(t => {
-		if(t.includes("tag:")) {
-			t = t.replace(/"|\\/g, "");
-			player.nameTag = `${borderColor}[§r${mainColor}${t.slice(4)}${borderColor}]§r ${playerNameColor}${player.name}`;
+		if (tag.includes("tag:")) {
+			tag = tag.replace(/"|\\/g, "");
+			player.nameTag = `${borderColor}[§r${mainColor}${tag.slice(4)}§r${borderColor}]§r ${playerNameColor}${player.name}§r`;
 		}
 	});
 });
 
 
-world.afterEvents.entitySpawn.subscribe(({entity}) => {
+//world.afterEvents.entitySpawn.subscribe(({entity}) => {
 
-	if(!entity.isValid()) return;
+	//if (!entity.isValid()) return;
 
-});
+//});
 
 
 world.afterEvents.entityHitEntity.subscribe(({ hitEntity: entity, damagingEntity: player}) => {
 	
-	if(player.typeId !== "minecraft:player" || !entity.isValid()) return;
+	if (player.typeId !== "minecraft:player" || !entity.isValid()) return;
 
 	if(!player.hasTag("attacking")) {
 		player.addTag("attacking");
 	}
 
-	if(config.modules.killauraB.enabled && !player.hasTag("trident") && !player.getEffect("haste")) {
-
-		system.runTimeout(() => {
-
-			const swingDelay = Date.now() - player.lastLeftClick;
-
-			if(swingDelay > config.modules.killauraB.max_swing_delay) {
-				flag(player, "Killaura", "B", "Combat", `swingDelay=${swingDelay}`);
-			}
-
-		}, config.modules.killauraB.wait_ticks);
-	}
+    hitbox_a(player, entity);
+    hitbox_b(player, entity);
 
 	if(config.generalModules.killaura) {
 		killaura_a(player);
@@ -700,8 +720,6 @@ world.afterEvents.entityHitEntity.subscribe(({ hitEntity: entity, damagingEntity
 	    //killaura_f(player, entity);
 		//killaura_g(player, entity);
 	}
-
-	hitbox_a(player, entity);
 
 	reach_a(player, entity);
 
@@ -740,22 +758,8 @@ world.afterEvents.entityHitBlock.subscribe((entityHit) => {
 });
 
 
-world.beforeEvents.itemUse.subscribe((itemUse) => {
-
-	const { source: player } = itemUse;
-
-	if(player.typeId !== "minecraft:player") return;
-
-	if(!player.hasTag("itemUse")) {
-		Minecraft.system.run(() => player.addTag("itemUse"));
-	}
-
-	if(player.hasTag("freeze")) itemUse.cancel = true;
-
-});
-
-
 const accessAttempts = new Map();
+
 function rateLimit(player) {
     const now = Date.now();
     const lastAttempt = accessAttempts.get(player.name) || 0;

@@ -7,8 +7,6 @@ declare module "@minecraft/server" {
 		Player: any,
 
 		flagAutotoolA: boolean,
-		flagNamespoofA: boolean,
-		flagNamespoofB: boolean,
 
         autotoolSwitchDelay: number,
         blocksBroken: number,

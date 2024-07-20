@@ -13,6 +13,16 @@ export function notify(message) {
     const player = message.sender;
     const themecolor = config.themecolor;
 
+    handleNotification(player, themecolor);
+}
+
+/**
+ * Toggles the notification status for the player who initiated the notify
+ * @param {Minecraft.Player} player - The player whose notification status should be toggled.
+ * @param {string} themecolor - The theme color to be used in the messages.
+ */
+export function handleNotification(player, themecolor) {
+
     // Toggle notifications for the player (or remove it if he already has the notify tag)
     if (player.hasTag("notify")) {
         player.removeTag("notify");
