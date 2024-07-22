@@ -2,21 +2,27 @@ export default
 {
     "preset": "stable", // Choose between 'stable' and 'beta' - Beta contains checks which are still under development/not finished, so false flags or bugs can occur.
 
-    "kicksBeforeBan": 2, // The Amount of kicks a player is allowed to recieve before getting banned. - Dependend on "autoban" set to true
-
-    "autoban": false, // Automatically bans a player if he exceeds the maximum threshold "kicksBeforeBan"
-
-    "exclude_staff": false, // Ignores staff when enabled - Enable with caution!
-
-    "console_debug": true, // Shows flags and punishments in the console
-
-    "banjoin_debug": false, // Shows you a message whenever a banned player tries to join.
-
     "themecolor": "§u", // The color of the theme which is used for Rosh - ex: §a, §c, §9, etc.
 
     "thememode": "Rosh", // Switch between the default style of 'Rosh' or use others, such as 'Alice'
 
-    "flagWhitelist": [], // Who is able to bypass flags and punishments - ex: ["Playername1", "Playername2"]
+    "silent": true, // Wether to set the player back or not if he fails a check. - (Recommended: true, reduces the chance of false positives)
+
+    "customBanMessage": "", // Allows you to add a custom message to the default message (Does not let you change the default message!)
+
+    "kicksBeforeBan": 2, // The Amount of kicks a player is allowed to recieve before getting banned. - Dependend on "autoban" set to true
+
+    "autoban": false, // Automatically bans a player if he exceeds the maximum threshold "kicksBeforeBan"
+
+    "banJoin_debug": false, // Shows you a message whenever a banned player tries to join.
+
+    "console_debug": true, // Shows flags and punishments in the console
+
+    "debug": true,
+
+    "exclude_staff": false, // Ignores staff when enabled - Enable with caution!
+
+    "excluded_players": [], // Who is able to bypass flags and punishments - ex: ["Playername1", "Playername2"]
 
     "generalModules": { // Enable or disable a type of detection - Subchecks can be edited below.
         "fly": true,
@@ -43,8 +49,6 @@ export default
         "showJoinLeave": true,
         "linesPerPage": 25
     },
-
-    "debug": true,
     
     "fancy_kick_calculation": {
         "enabled": false,
@@ -54,18 +58,9 @@ export default
         "misc": 2
     },
     
-    "clientSpam": {
-        "punishment": "mute"
-    },
-    "ViolationsBeforeBan": 30,
-    "autoReset": false,
-    "silent": true,
-
-    'ViolationsForKick': 15,
-    
     "customcommands": {
-        "prefix": "!",
-        "sendInvalidCommandMsg": true,
+        "prefix": "!", // The prefix that is used before the command to execute it - (Only a single digit is allowed)
+        "sendInvalidCommandMsg": true, // Notifies the user if the typed command is invalid.
 
         "ban": {
             "enabled": true,

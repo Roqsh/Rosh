@@ -96,15 +96,15 @@ world.beforeEvents.chatSend.subscribe((msg) => {
 
     badpackets_e(player, message, msg)
 
-	if(message.includes("horion") || message.includes("borion") || message.includes("packet") || message.includes("vector") || message.includes("prax") || message.includes("zephyr") || message.includes("nuvola")  || message.includes("aelous") || message.includes("disepi") || message.includes("ambrosial") || message.includes("utility mod") || message.includes("nigga") || message.includes("niger")) {	
+	if (message.includes("horion") || message.includes("borion") || message.includes("packet") || message.includes("vector") || message.includes("prax") || message.includes("zephyr") || message.includes("nuvola")  || message.includes("aelous") || message.includes("disepi") || message.includes("ambrosial") || message.includes("utility mod") || message.includes("nigga") || message.includes("niger")) {	
 		msg.cancel = true;
 	}
 
-	if(message.includes("Horion") || message.includes("Borion") || message.includes("Packet") || message.includes("Vector") || message.includes("Prax") || message.includes("Zephyr") || message.includes("Nuvola") || message.includes("Aelous") || message.includes("Disepi") || message.includes("Ambrosial") || message.includes("Lunaris") || message.includes("Nigga") || message.includes("Niger")) {
+	if (message.includes("Horion") || message.includes("Borion") || message.includes("Packet") || message.includes("Vector") || message.includes("Prax") || message.includes("Zephyr") || message.includes("Nuvola") || message.includes("Aelous") || message.includes("Disepi") || message.includes("Ambrosial") || message.includes("Lunaris") || message.includes("Nigga") || message.includes("Niger")) {
 		msg.cancel = true;
 	}
 
-	if(player.hasTag("isMuted")) {
+	if (player.hasTag("isMuted")) {
 		msg.cancel = true;
 		player.sendMessage(`§r${themecolor}Rosh §j> §cUnable to send that message - You are muted!`);
 	}
@@ -112,15 +112,15 @@ world.beforeEvents.chatSend.subscribe((msg) => {
 	commandHandler(msg);
 
 	if (config.logSettings.showChat) {
-		data.recentLogs.push(`§r<${player.nameTag}> ${msg.message}`);
+		data.recentLogs.push(`§r<${player.nameTag}> ${message}`);
 	}
 
-	if(!msg.cancel) {
-		if(player.name !== player.nameTag) {
-			world.sendMessage(`§r<${player.nameTag}> ${msg.message}`);
+	if (!msg.cancel) {
+		if (player.name !== player.nameTag) {
+			world.sendMessage(`§r<${player.nameTag}> ${message}`);
 			msg.cancel = true;
-		} else if(player.name === player.nameTag) {
-			world.sendMessage(`<${player.nameTag}> ${msg.message.replace(/[^\x00-\xFF]/g, "")}`);
+		} else if (player.name === player.nameTag) {
+			world.sendMessage(`<${player.nameTag}> ${message.replace(/[^\x00-\xFF]/g, "")}`);
 			msg.cancel = true;
 		}
 	}
@@ -129,6 +129,7 @@ world.beforeEvents.chatSend.subscribe((msg) => {
 
 world.afterEvents.chatSend.subscribe(({ sender: player }) => {
 
+    //TODO: Recode them (Move them into their own category and add Spammer/E)
 	if(config.modules.spammerA.enabled && player.isSprinting && player.hasTag("ground") && !player.isJumping) {
 		flag(player, "Spammer", "A", "moving", "true");
 	}
@@ -144,7 +145,6 @@ world.afterEvents.chatSend.subscribe(({ sender: player }) => {
 	if(config.modules.spammerD.enabled && player.hasTag("hasGUIopen")) {
 		flag(player, "Spammer", "D", "inGUI", "true");
 	}
-
 });
 
 
@@ -164,8 +164,6 @@ world.afterEvents.entityHurt.subscribe((data) => {
 
 
 system.runInterval(() => {
-
-    let currentVL;
 
     if (system.currentTick % 20 == 0) {
 
@@ -210,21 +208,11 @@ system.runInterval(() => {
 			player.runCommandAsync(`scoreboard players set @s zPos ${Math.floor(player.location.z)}`);
 		}
 
-		if(getScore(player, "kickvl", 0) > config.ViolationsBeforeBan / 2 && !player.hasTag("strict")) {
+		if(getScore(player, "kickvl", 0) > config.kicksBeforeBan / 2 && !player.hasTag("strict")) {
 			try {
 				player.addTag("strict");
 			} catch (error) {
 				player.runCommandAsync(`tag "${player.name}" add strict`);
-			}
-		}
-		
-		if(config.autoReset) {
-			if(getScore(player, "tick_counter2", 0) > 300) {
-				if(!player.hasTag("reported") && player.hasTag("strict")) {
-					player.removeTag("strict");
-				}
-                resetWarns(player);
-				setScore(player, "tick_counter2", 0);
 			}
 		}
 
@@ -339,7 +327,7 @@ system.runInterval(() => {
 			autoclicker_a(player);
 		}
 
-		
+		//TODO: Move them into their own category
 		const container = player.getComponent("inventory")?.container;
 
         for (let i = 0; i < 36; i++) {
@@ -644,7 +632,7 @@ world.afterEvents.playerSpawn.subscribe((playerJoin) => {
             player.addTag(`Length:${Date.now() + time}`);
         }
 
-        if (config.banjoin_debug) {
+        if (config.banJoin_debug) {
             player.runCommandAsync(`tellraw @a[tag=op] {"rawtext":[{"text":"§r${themecolor}Rosh §j> §8${player.name} §ctried to join but was blocked due to his ban."}]}`);
         }
     }

@@ -27,7 +27,7 @@ export function flag(player, check, checkType, debugName, debug, shouldTP = fals
     if (typeof cancelObject !== "object" && typeof cancelObject !== "undefined") throw new TypeError(`Error: cancelObject is type of ${typeof cancelObject}. Expected "object" or "undefined"`);
 
     // Exclude staff or whitelisted players if configured
-    if ((config.exclude_staff && player.hasTag("op")) || config.flagWhitelist.includes(player.name)) return;
+    if ((config.exclude_staff && player.hasTag("op")) || config.excluded_players.includes(player.name)) return;
 
     // Sanitize and limit debug information
     debug = String(debug).replace(/"|\\|\n/gm, "");
@@ -349,7 +349,7 @@ export function ban(player) {
     }
 
     // If the player is in the whitelist, do nothing
-    if (config.flagWhitelist.includes(player.name)) return;
+    if (config.excluded_players.includes(player.name)) return;
 
     const themecolor = config.themecolor;
 
@@ -422,10 +422,16 @@ export function ban(player) {
     } else {
         banReason = "!";
     }
-    const banLength = time || "§nYour punishment is §8Permanent§n!";    
-    
+    const banLength = time || "§nYour punishment is §8Permanent§n!";
+
+    // Determine the final ban message
+    let banMessage = `§r${themecolor}Rosh §j> §cYou have been banned${banReason}\n\n ${banLength}`;
+    if (config.customBanMessage) {
+        banMessage = `${banMessage}\n\n ${config.customBanMessage}`;
+    }
+
     // Kick the player with the ban message
-    player.runCommandAsync(`kick "${player.name}" §r${themecolor}Rosh §j> §cYou have been banned${banReason}\n§r\n ${banLength}`);
+    player.runCommandAsync(`kick "${player.name}" ${banMessage}`);
 }
 
 
