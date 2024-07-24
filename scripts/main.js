@@ -5,7 +5,6 @@ import data from "./data/data.js";
 import { tag_system, setTitle } from "./utils/gameUtil.js";
 import { flag, ban, parseTime, getScore, setScore, getSpeed, aroundAir, tellStaff, debug } from "./util.js";
 import { commandHandler } from "./commands/handler.js";
-import { resetWarns } from "./commands/staff/resetwarns.js";
 import { mainGui, playerSettingsMenuSelected } from "./ui/mainGui.js";
 
 // Misc
@@ -60,6 +59,8 @@ import { scaffold_e } from "./checks/world/scaffold/scaffoldE.js";
 import { scaffold_f, dependencies_f } from "./checks/world/scaffold/scaffoldF.js";
 import { scaffold_g } from "./checks/world/scaffold/scaffoldG.js";
 import { scaffold_h, dependencies_h } from "./checks/world/scaffold/scaffoldH.js";
+//import { scaffold_i } from "./checks/world/scaffold/scaffoldI.js";
+import { scaffold_j } from "./checks/world/scaffold/scaffoldJ.js";
 import { tower_a } from "./checks/world/tower/towerA.js";
 import { tower_b } from "./checks/world/tower/towerB.js";
 
@@ -261,7 +262,7 @@ system.runInterval(() => {
 		}
 
 		debug(player, "Speed", speed, "devspeed");
-		debug(player, "FallDistance", player.fallDistance, "devfalldistance");
+		debug(player, "FallDistance", `${player.isOnGround ? `§a` : `§c`}${player.fallDistance}`, "devfalldistance");
         debug(player, "YVelocity", velocity.y, "devvelocity");
 		debug(player, "XRotation", rotation.x, "devrotationx");
 		debug(player, "YRotation", rotation.y, "devrotationy");
@@ -454,6 +455,8 @@ world.beforeEvents.playerPlaceBlock.subscribe(async (placeBlock) => {
 
     if (config.generalModules.scaffold) {
         await scaffold_h(player, block);
+        //scaffold_i(player, block);
+        scaffold_j(player, block);
 	}
 });
 

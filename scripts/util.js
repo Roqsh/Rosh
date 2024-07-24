@@ -303,17 +303,31 @@ function handleAlert(player, check, checkType, currentVl, debugName, debug, them
 
         // Generate a visual representation of the violation level
         let volume = ``;
-        const filled = currentVl;
-        const unfilled = maxVl - currentVl;
 
-        // Fill the volume bar with filled and unfilled sections
-        for (let i = 0; i < filled; i++) {
-            volume += `${themecolor}|`;
+        // If maxVl exceeds 10, calculate filled as a percentage of 10
+        if (maxVl > 10) {
+
+            const filled = Math.round((10 * currentVl) / maxVl);
+            const unfilled = 10 - filled;
+
+            // Fill the volume bar with filled and unfilled sections
+            for (let i = 0; i < filled; i++) {
+                volume += `${themecolor}|`;
+            }
+            for (let i = 0; i < unfilled; i++) {
+                volume += `§8|`;
+            }
+
+        } else {
+            
+            // Fill the volume bar directly if maxVl is 10 or less
+            for (let i = 0; i < currentVl; i++) {
+                volume += `${themecolor}|`;
+            }
+            for (let i = 0; i < maxVl - currentVl; i++) {
+                volume += `§8|`;
+            }
         }
-
-        for (let i = 0; i < unfilled; i++) {
-            volume += `§8|`;
-        }     
 
         // Notify staff in-game
         player.runCommandAsync(`tellraw @a[tag=notify,tag=debug] {"rawtext":[{"text":"§r${themecolor}Rosh §j> §8${player.name} §jfailed ${themecolor}${check}§j/${themecolor}${checkType.toUpperCase()}§j - {${debugName}=${debug}§j} [${volume}§j]"}]}`);

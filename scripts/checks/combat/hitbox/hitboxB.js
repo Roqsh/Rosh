@@ -3,9 +3,9 @@ import { flag, debug } from "../../../util";
 
 /**
  * Helper function to calculate the angle between two vectors.
- * @param {*} vec1 
- * @param {*} vec2 
- * @returns 
+ * @param {{x: number, y: number, z: number}} vec1 - The first vector.
+ * @param {{x: number, y: number, z: number}} vec2 - The second vector.
+ * @returns {number} - The angle between the two vectors in degrees.
  */
 function vectorAngle(vec1, vec2) {
 
@@ -18,9 +18,9 @@ function vectorAngle(vec1, vec2) {
 
 /**
  * Helper function to calculate the direction vector from yaw and pitch.
- * @param {*} yaw 
- * @param {*} pitch 
- * @returns 
+ * @param {number} yaw - The yaw angle in degrees.
+ * @param {number} pitch - The pitch angle in degrees.
+ * @returns {{x: number, y: number, z: number}} - The direction vector.
  */
 function getDirectionVector(yaw, pitch) {
 
@@ -36,13 +36,13 @@ function getDirectionVector(yaw, pitch) {
 
 /**
  * Helper function to calculate the 3D distance between two points.
- * @param {*} x1 
- * @param {*} y1 
- * @param {*} z1 
- * @param {*} x2 
- * @param {*} y2 
- * @param {*} z2 
- * @returns 
+ * @param {number} x1 - The x-coordinate of the first point.
+ * @param {number} y1 - The y-coordinate of the first point.
+ * @param {number} z1 - The z-coordinate of the first point.
+ * @param {number} x2 - The x-coordinate of the second point.
+ * @param {number} y2 - The y-coordinate of the second point.
+ * @param {number} z2 - The z-coordinate of the second point.
+ * @returns {number} - The distance between the two points.
  */
 function distance3D(x1, y1, z1, x2, y2, z2) {
     return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2) + Math.pow(z2 - z1, 2));
@@ -50,19 +50,23 @@ function distance3D(x1, y1, z1, x2, y2, z2) {
 
 /**
  * Helper function to calculate the eye height of a player.
- * @param {*} player 
- * @returns 
- * @remarks //TODO: Once Mojang adds .isCrawling or something similar, account for it by 0.40625
+ * @param {Object} player - The player object.
+ * @returns {number} - The eye height of the player.
+ * @remarks
+ * TODO: Once Mojang adds .isCrawling or something similar, account for it by 0.40625
  */
 function getEyeHeight(player) {
-
+    
     switch (true) {
         case player.isSneaking:
             return 1.28125;
+
         case player.isSwimming:
             return 0.40625;
+
         case player.isGliding:
             return 0.40625;
+
         default:
             return 1.625;
     }
@@ -70,8 +74,8 @@ function getEyeHeight(player) {
 
 /**
  * Determines if a player hit an entity while looking at it.
- * @param {*} player 
- * @param {*} entity 
+ * @param {Object} player - The player object.
+ * @param {Object} entity - The entity object.
  */
 export function hitbox_b(player, entity) {
 

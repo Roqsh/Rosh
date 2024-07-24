@@ -38,8 +38,13 @@ export function module(message, args) {
         return player.sendMessage(`§r${themecolor}Rosh §j> §cCouldn't find §8${module}§c. Please select a module from this list: §8\n${Object.keys(config[category]).join(", ")}`);
     }
 
-	// Handle the reset command
+    // Handle the reset command
     if (name === "reset") {
+        if (!defaultConfig[category] || !defaultConfig[category][module]) {
+            // Notify the player that no settings for the module could be found in default config
+            return player.sendMessage(`§r${themecolor}Rosh §j> §cNo default settings found for §8${fancyCheck}§c. Report to §8https://discord.gg/FNrJDvG95r§c.`);
+        }
+
         // Reset the module settings to default values
         config[category][module] = { ...defaultConfig[category][module] };
 
@@ -90,10 +95,10 @@ export function module(message, args) {
             return player.sendMessage(`§r${themecolor}Rosh §j> §cUnsupported setting type for §8${name}§c.`);
     }
 
-	// Check if the new value is the same as the current value
+    // Check if the new value is the same as the current value
     if (JSON.stringify(moduleData[name]) === JSON.stringify(newValue)) {
-	    return player.sendMessage(`§r${themecolor}Rosh §j> §8${fancyCheck} §cis already set to the provided value.`);
-	}
+        return player.sendMessage(`§r${themecolor}Rosh §j> §8${fancyCheck} §cis already set to the provided value.`);
+    }
 
     // Update the module setting
     moduleData[name] = newValue;

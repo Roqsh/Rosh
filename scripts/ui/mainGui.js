@@ -480,8 +480,6 @@ function modulesMenu(player) {
 
 function modulesCheckSelectMenu(player, selection) {
 
-    const themecolor = config.themecolor;
-
     player.playSound("mob.chicken.plop");
 
     const subCheck = modules[selection];
@@ -513,30 +511,35 @@ function modulesCheckSelectMenu(player, selection) {
 }
 
 function editModulesMenu(player, check) {
-
     const themecolor = config.themecolor;
 
+    // Play a sound to indicate the menu has been opened
     player.playSound("mob.chicken.plop");
 
+    // Retrieve the check data from either modules or misc_modules
     const checkData = config.modules[check] ?? config.misc_modules[check];
     let optionsMap = [];
 
     const menu = new MinecraftUI.ModalFormData()
-
         .title(`Editing ${uppercaseFirstLetter(check)}`);
 
-    for(const key of Object.keys(checkData)) {
-        if(punishmentSettings.includes(key)) continue;
+    for (const key of Object.keys(checkData)) {
+        // Skip keys that are in the punishmentSettings array
+        if (punishmentSettings.includes(key)) continue;
 
-        // Friendly setting name. Changes "multi_protection" to "Multi Protection"
+        // Convert the setting key to a more user-friendly format
         const settingName = uppercaseFirstLetter(key).replace(/_./g, (match) => " " + match[1].toUpperCase());
 
-        switch(typeof checkData[key]) {
+        switch (typeof checkData[key]) {
             case "number":
-                menu.slider(settingName, 0, 100, Number.isInteger(checkData[key]) ? 1 : 0.01, checkData[key]);
+                // Determine the max value for the slider (either 100 or the current setting value, whichever is higher)
+                const maxSliderValue = checkData[key] > 100 ? checkData[key] : 100;
+                // Determine the step value based on whether the setting value is an integer or a decimal
+                const step = Number.isInteger(checkData[key]) ? 1 : 0.01;
+                menu.slider(settingName, 0, maxSliderValue, step, checkData[key]);
                 optionsMap.push(key);
                 break;
-            case "boolean":
+            case "boolean":               
                 menu.toggle(settingName, checkData[key]);
                 optionsMap.push(key);
                 break;
@@ -548,7 +551,7 @@ function editModulesMenu(player, check) {
     }
 
     // Check if the module supports punishments
-    if(checkData.punishment) {
+    if (checkData.punishment) {
 
         menu.dropdown("Punishment", Object.keys(punishments), punishments[checkData.punishment]);
         menu.textField("Length", "Ex: 1d, 30s, ...", checkData["punishmentLength"]);
@@ -558,21 +561,24 @@ function editModulesMenu(player, check) {
     }
 
     menu.show(player).then((response) => {
-
-        if(response.canceled) return;
+    
+        if (response.canceled) return;
 
         const formValues = response.formValues ?? [];
 
-        for(const optionid in optionsMap) {
-            const name = optionsMap[optionid];         
+        // Update the check data with the new values from the form
+        for (const optionid in optionsMap) {
+            const name = optionsMap[optionid];
             checkData[name] = name === "punishment" ? Object.keys(punishments)[formValues[optionid]] : formValues[optionid];
         }
-      
+
+        // Save the updated config to the dynamic property
         world.setDynamicProperty("config", JSON.stringify(config));
 
+        // Convert the check name to a more readable format
         const fancyCheck = check.replace(/([A-Z])/g, '/$1').replace(/^./, str => str.toUpperCase());
+        
         player.sendMessage(`§r${themecolor}Rosh §j> §aUpdated the settings for §8${fancyCheck}§a:\n§8${JSON.stringify(checkData, null, 2)}`);
-
     });
 }
 

@@ -912,8 +912,26 @@ export default
         "scaffoldH": {
             "enabled": true,
             "description": "Checks for invalid held blocks",
-            "punishment": "kick", 
+            "punishment": "kick",
+            "punishmentLength": "7d", 
             "minVlbeforePunishment": 2
+        },
+
+        "scaffoldI": {
+            "enabled": true,
+            "description": "Checks for returning to the original yaw/pitch rotation before the placement happened.",
+            "punishment": "kick", 
+            "punishmentLength": "7d",
+            "minVlbeforePunishment": 2
+        },
+
+        "scaffoldJ": {
+            "enabled": true,
+            "description": "Checks for looking at the exact center of the placed block.",
+            "threshold": 0.001,
+            "punishment": "kick", 
+            "punishmentLength": "1d",
+            "minVlbeforePunishment": 9
         },
 
         "towerA": {

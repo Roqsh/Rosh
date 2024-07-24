@@ -7,6 +7,7 @@ const blockIdQueue = new Map();
  * Checks for invalid held blocks.
  * @name scaffold_h
  * @param {player} player - The player to check.
+ * @remarks Runs in the before event.
  */
 export async function scaffold_h(player) {
 
@@ -66,7 +67,7 @@ export async function scaffold_h(player) {
  * @name dependencies_h
  * @param {player} player - The player to check.
  * @param {block} block - The block being placed.
- * @remarks Depends on Scaffold/H.
+ * @remarks Runs in the after event. (Depends on scaffold_h)
  */
 export async function dependencies_h(player, block) {
 

@@ -96,10 +96,7 @@ export function scaffold_a(player, block) {
         const pitch_values = playerData.pitch;
         const yaw_values = playerData.yaw;
         
-        const distance = Math.sqrt(
-            Math.pow(block.location.x - player.location.x, 2) + 
-            Math.pow(block.location.z - player.location.z, 2)
-        );
+        const distance = calculateDistance(player.location, block.location);
 
         if (last_place_location && old_place_location && pitch_values) {
 
