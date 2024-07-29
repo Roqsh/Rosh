@@ -769,6 +769,36 @@ export function angleCalc(player, entity) {
 
 
 /**
+ * Returns a number representing the height on the y-axis of a player depending on their current action.
+ * @param {Object} player - The player object.
+ * @returns {number} - The eye height of the player.
+ * @remarks
+ * TODO: Once Mojang adds .isCrawling or something similar, account for it by 0.40625.
+ */
+export function getEyeHeight(player) {
+    // Validate the input
+    if (typeof player !== 'object' || player === null) {
+        throw new TypeError(`Error: player is of type ${typeof player}. Expected "object".`);
+    }
+    
+    switch (true) {
+        case player.isSneaking:
+            return 1.28125;
+
+        case player.isSwimming:
+            return 0.40625;
+
+        case player.isGliding:
+            return 0.40625;
+
+        default:
+            return 1.625;
+    }
+}
+
+
+
+/**
  * Find every possible coordinate between two sets of Vector3.
  * @name getBlocksBetween
  * @param {object} pos1 - First set of coordinates {x: number, y: number, z: number}

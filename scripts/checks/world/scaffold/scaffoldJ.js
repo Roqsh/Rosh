@@ -1,5 +1,5 @@
 import config from "../../../data/config.js";
-import { flag } from "../../../util";
+import { flag, getEyeHeight } from "../../../util";
 
 /**
  * Checks for looking at the exact center of the placed block.
@@ -18,7 +18,7 @@ export function scaffold_j(player, block) {
     const center = block.center();
     const bottomCenter = block.bottomCenter();
 
-    // Calculate the center positions for each block face (as we dont have an API implementation yet)
+    // Calculate the center positions for each block face (as we don't have an API implementation yet)
     const topCenter = {
         x: block.location.x + 0.5,
         y: block.location.y + 1.0,
@@ -50,19 +50,26 @@ export function scaffold_j(player, block) {
     };   
 
     // Get the player's position and view direction
-    const playerPosition = player.location;
     const viewDirection = player.getViewDirection();
+    const playerPosition = player.location;
+    const playerEyeHeight = getEyeHeight(player);
+    
+    const eyePosition = {
+        x: playerPosition.x,
+        y: playerPosition.y + playerEyeHeight,
+        z: playerPosition.z
+    };
 
     /**
-     * Computes the vector from the player to the given center position.
+     * Computes the vector from the player's eye position to the given center position.
      * @param {Object} center - The center position.
-     * @returns {Object} - The vector from the player to the center.
+     * @returns {Object} - The vector from the player's eye to the center.
      */
     function vectorTo(center) {
         return {
-            x: center.x - playerPosition.x,
-            y: center.y - playerPosition.y,
-            z: center.z - playerPosition.z
+            x: center.x - eyePosition.x,
+            y: center.y - eyePosition.y,
+            z: center.z - eyePosition.z
         };
     }
 
@@ -120,7 +127,7 @@ export function scaffold_j(player, block) {
     // Iterate over each center and compute how close the player’s view direction is to each center
     for (const { label, position } of centers) {
 
-        const toCenter = vectorTo(position); // Vector from player to the center
+        const toCenter = vectorTo(position); // Vector from player's eye to the center
         const normalizedToCenter = normalizeVector(toCenter); // Normalized vector
 
         const diff = vectorDifference(normalizedToCenter, viewDirection); // Difference between normalized vectors

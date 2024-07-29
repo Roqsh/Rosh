@@ -1,5 +1,5 @@
 import config from "../../../data/config.js";
-import { flag, debug } from "../../../util";
+import { flag, debug, getEyeHeight } from "../../../util";
 
 /**
  * Helper function to calculate the angle between two vectors.
@@ -46,30 +46,6 @@ function getDirectionVector(yaw, pitch) {
  */
 function distance3D(x1, y1, z1, x2, y2, z2) {
     return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2) + Math.pow(z2 - z1, 2));
-}
-
-/**
- * Helper function to calculate the eye height of a player.
- * @param {Object} player - The player object.
- * @returns {number} - The eye height of the player.
- * @remarks
- * TODO: Once Mojang adds .isCrawling or something similar, account for it by 0.40625
- */
-function getEyeHeight(player) {
-    
-    switch (true) {
-        case player.isSneaking:
-            return 1.28125;
-
-        case player.isSwimming:
-            return 0.40625;
-
-        case player.isGliding:
-            return 0.40625;
-
-        default:
-            return 1.625;
-    }
 }
 
 /**
