@@ -58,7 +58,7 @@ export async function scaffold_h(player) {
 
     } catch (error) {
         const themecolor = config.themecolor;
-        console.warn(`§r${themecolor}Rosh §j> §cThere was an error while trying to run Scaffold/H:\n§8${error}\n${error.stack}`);
+        console.warn(`§r${themecolor}Rosh §j> §cThere was an error while trying to run §8scaffold_h§c:\n§8${error}\n${error.stack}`);
     }
 }
 
@@ -75,10 +75,11 @@ export async function dependencies_h(player, block) {
 
     try {
 
-        // Placing two slabs combines into a double slab block leading to a false positive
-        if (/slab\d*$/.test(block.typeId)) {
+        // Placing two slabs combines into a double slab block, leading to a false positive
+        if (!block.isSolid || /slab\d*$/.test(block.typeId)) {
 
             // Remove the first element from the queue after the check
+            const playerQueue = blockIdQueue.get(player.name);
             playerQueue.shift();
             blockIdQueue.set(player.name, playerQueue);
             return;
@@ -102,6 +103,6 @@ export async function dependencies_h(player, block) {
 
     } catch (error) {
         const themecolor = config.themecolor;
-        console.warn(`§r${themecolor}Rosh §j> §cThere was an error while trying to run dependencies_h:\n§8${error}\n${error.stack}`);
+        console.warn(`§r${themecolor}Rosh §j> §cThere was an error while trying to run §8dependencies_h§c:\n§8${error}\n${error.stack}`);
     }
 }

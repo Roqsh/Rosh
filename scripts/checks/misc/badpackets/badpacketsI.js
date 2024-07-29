@@ -11,6 +11,9 @@ export function badpackets_i(player) {
 
     if (!config.modules.badpacketsI.enabled) return;
 
+    const preset = config.preset?.toLowerCase();
+    if(preset === "stable") return;
+    
     const packets = getScore(player, "packets", 0);
 
     if (packets > config.modules.badpacketsI.packets) {

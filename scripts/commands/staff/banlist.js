@@ -34,8 +34,8 @@ export function banlist(message, args) {
 
         player.sendMessage(`§r${themecolor}Rosh §j> §aHere's the current ban list:`);
 
-        banEntries.forEach(([name, info]) => {
-            player.sendMessage(`§8Player: ${name} \nBanned by: ${info.bannedBy} \nDate: ${info.date} \nReason: ${info.reason} \nDuration: ${info.duration}\n§r`);
+        banEntries.forEach(([name, info], index) => {
+            player.sendMessage(`§8Player: ${name} \nBanned by: ${info.bannedBy} \nDate: ${info.date} \nReason: ${info.reason} \nDuration: ${info.duration}${index < banEntries.length - 1 ? '\n§r' : ''}`);
         });
         return;
     }

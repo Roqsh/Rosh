@@ -33,3 +33,5 @@ export function scaffold_g(player) {
         } 
     }
 }
+
+// ! itemUse does not get triggered by mobile devices !

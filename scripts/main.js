@@ -61,6 +61,7 @@ import { scaffold_g } from "./checks/world/scaffold/scaffoldG.js";
 import { scaffold_h, dependencies_h } from "./checks/world/scaffold/scaffoldH.js";
 //import { scaffold_i } from "./checks/world/scaffold/scaffoldI.js";
 import { scaffold_j } from "./checks/world/scaffold/scaffoldJ.js";
+import { scaffold_k } from "./checks/world/scaffold/scaffoldK.js";
 import { tower_a } from "./checks/world/tower/towerA.js";
 import { tower_b } from "./checks/world/tower/towerB.js";
 
@@ -454,9 +455,10 @@ world.beforeEvents.playerPlaceBlock.subscribe(async (placeBlock) => {
     const { player, block } = placeBlock;
 
     if (config.generalModules.scaffold) {
-        await scaffold_h(player, block);
+        await scaffold_h(player);
         //scaffold_i(player, block);
         scaffold_j(player, block);
+        scaffold_k(player, block);
 	}
 });
 
@@ -464,9 +466,6 @@ world.beforeEvents.playerPlaceBlock.subscribe(async (placeBlock) => {
 world.afterEvents.playerPlaceBlock.subscribe(async (placeBlock) => {
 
 	const { player, block } = placeBlock;
-
-    const isLiquid = block.isLiquid;
-    const isAir = block.isAir;
 
     await dependencies_h(player, block);
 

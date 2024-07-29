@@ -421,12 +421,12 @@ export default
         },
 
         "badpacketsI": {
-            "enabled": true,
+            "enabled": false,
             "description": "Checks for sending too many packets at once.",
             "packets": 50,
             "punishment": "kick",
-            "punishmentLength": "7d",
-            "minVlbeforePunishment": 4
+            "punishmentLength": "1d",
+            "minVlbeforePunishment": 6
         },
 
         "badpacketsJ": {
@@ -914,7 +914,7 @@ export default
             "description": "Checks for invalid held blocks",
             "punishment": "kick",
             "punishmentLength": "7d", 
-            "minVlbeforePunishment": 2
+            "minVlbeforePunishment": 3
         },
 
         "scaffoldI": {
@@ -930,8 +930,16 @@ export default
             "description": "Checks for looking at the exact center of the placed block.",
             "threshold": 0.001,
             "punishment": "kick", 
-            "punishmentLength": "1d",
+            "punishmentLength": "7d",
             "minVlbeforePunishment": 9
+        },
+
+        "scaffoldK": {
+            "enabled": true,
+            "description": "Checks for placing blocks at liquid or air.",
+            "punishment": "kick", 
+            "punishmentLength": "7d",
+            "minVlbeforePunishment": 2
         },
 
         "towerA": {
