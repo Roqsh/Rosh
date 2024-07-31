@@ -8,6 +8,7 @@ import { kick } from "./punishments/kick.js";
 import { kickall } from "./punishments/kickall.js";
 import { mute } from "./punishments/mute.js";
 import { unmute } from "./punishments/unmute.js";
+import { warn } from "./punishments/warn.js";
 import { freeze } from "./punishments/freeze.js";
 import { unfreeze } from "./punishments/unfreeze.js";
 
@@ -131,6 +132,7 @@ function runCommand(msg, commandName, args) {
                 case "kickall": kickall(message); break;
                 case "mute": mute(message, args); break;
                 case "unmute": unmute(message, args); break;
+                case "warn": warn(message, args); break;
                 case "freeze": freeze(message, args); break;
                 case "unfreeze": unfreeze(message, args); break;
                 case "spectate": spectate(message, args); break;

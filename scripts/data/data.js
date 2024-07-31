@@ -2,5 +2,6 @@ export default
 {
     banList: [],
     unbanQueue: [],
-    recentLogs: []
+    recentLogs: [],
+    warnings: {}
 };

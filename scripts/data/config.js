@@ -103,6 +103,13 @@ export default
             "aliases": ["um"]
         },
 
+        "warn": {
+            "enabled": true,
+            "description": "!warn <player> <reason> - Warns a player for a specified reason\nRemarks: When getting warned too often, the player gets kicked",
+            "requiredTags": ["op"],
+            "aliases": ["w"]
+        },
+
         "freeze": {
             "enabled": true,
             "description": "!freeze <player> - Disables movement, camera and hud for a player",
@@ -191,7 +198,7 @@ export default
             "enabled": true,
             "description": "!notify - Lets you recieve flags",
             "requiredTags": ["op"],
-            "aliases": ["not","notifications"]
+            "aliases": ["not", "notifications", "alerts"]
         },
 
         "autoban": {
@@ -205,7 +212,7 @@ export default
             "enabled": true,
             "description": "!module <modulename> <setting> <value> - Lets you customize a check\nOr: !module <modulename> reset - Resets the values back to default",
             "requiredTags": ["op"],
-            "aliases": ["m", "settings", "setting"]
+            "aliases": ["m", "setting", "check"]
         },
 
         "stats": {
@@ -240,7 +247,7 @@ export default
             "enabled": true,
             "description": "!report <player> - Notifies staff to inspect a player",
             "requiredTags": [],
-            "aliases": ["r", "wdr", "ir", "isolate-report", "rep","isr","ir","isolatereport","isolate"]
+            "aliases": ["r", "rr", "roshreport", "rosh-report", "rep"]
         },
 
         "tag": {
@@ -250,34 +257,35 @@ export default
             "borderColor": "§8",
             "playerNameColor": "§r",
             "requiredTags": ["op"],
-            "aliases": ["rank"]
+            "aliases": ["rank", "nametag"]
         },
 
         "help": {
             "enabled": true,
             "description": "!help - See all available commands",
             "requiredTags": ["op"],
-            "aliases": ["support","commands","what"]
+            "aliases": ["support", "commands"]
         },
 
         "about": {
             "enabled": true,
             "description": "!about <modulname> - Lets you view the description of a check",
             "requiredTags": ["op"],
-            "aliases": ["what", "a", "info", "?", "define", "def"]
+            "aliases": ["what", "a", "info", "?", "define", "def", "description"]
         },
 
         "version": {
             "enabled": true,
             "description": "!version - See the current Rosh version",
             "requiredTags": ["op"],
-            "aliases": ["ver","about"]
+            "aliases": ["ver", "rosh"]
         },
 
         "credits": {
             "enabled": true,
             "description": "!credits - See the team behind Rosh",
-            "requiredTags": ["op"]
+            "requiredTags": ["op"],
+            "aliases": ["team", "developers", "authors"]
         }
     },
 
