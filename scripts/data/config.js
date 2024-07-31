@@ -18,8 +18,6 @@ export default
 
     "console_debug": true, // Shows flags and punishments in the console
 
-    "debug": true,
-
     "exclude_staff": false, // Ignores staff when enabled - Enable with caution!
 
     "excluded_players": [], // Who is able to bypass flags and punishments - ex: ["Playername1", "Playername2"]

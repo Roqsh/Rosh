@@ -1,7 +1,6 @@
 import config from "../../../data/config.js";
 import { flag } from "../../../util";
 import { EntityEquippableComponent, EquipmentSlot, ItemDurabilityComponent } from "@minecraft/server";
-import { MinecraftItemTypes } from "../../../data/index.js";
 
 /**
  * Checks for sending invalid glide "packets".
@@ -20,8 +19,8 @@ export function badpackets_j(player) {
 		const durability = elytra?.getComponent(ItemDurabilityComponent.componentId);
 
         if (
-            elytra?.typeId != MinecraftItemTypes.Elytra || 
-            elytra?.typeId == MinecraftItemTypes.Elytra && 
+            elytra?.typeId != "minecraft:elytra" || 
+            elytra?.typeId == "minecraft:elytra" && 
             durability.maxDurability - durability.damage <= 0
         ) {
 			flag(player, "BadPackets", "J", "invalid", "glide");

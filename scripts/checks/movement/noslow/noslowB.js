@@ -1,6 +1,5 @@
 import config from "../../../data/config.js";
 import { flag } from "../../../util";
-import { MinecraftBlockTypes, MinecraftEffectTypes } from "../../../data/index.js";
 
 /**
  * @name noslow_b
@@ -22,20 +21,20 @@ export function noslow_b(player) {
         x: Math.floor(player.location.x),
         y: Math.floor(player.location.y) + 1,
         z: Math.floor(player.location.z)
-    })?.typeId === MinecraftBlockTypes.Web;
+    })?.typeId === "minecraft:web";
 
     const bodyWeb = player.dimension.getBlock({
         x: Math.floor(player.location.x),
         y: Math.floor(player.location.y),
         z: Math.floor(player.location.z)
-    })?.typeId === MinecraftBlockTypes.Web;
+    })?.typeId === "minecraft:web";
 
     if(!headWeb && !bodyWeb) {
         lastPos.set(player.name, playerLocation);
     }
 
     const playerSpeed = Math.hypot(velocityX, velocityZ);
-    const limitIncrease = getSpeedIncrease(player.getEffect(MinecraftEffectTypes.Speed));
+    const limitIncrease = getSpeedIncrease(player.getEffect("speed"));
 
     if(headWeb === true || bodyWeb === true) {
 

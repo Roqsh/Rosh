@@ -61,8 +61,8 @@ export function warn(message, args) {
 
     // Define the warning display
     const warningMessages = [
-        '§j[§u|§8||§j]',
-        '§j[§u||§8|§j]'
+        `§j[${themecolor}|§8||§j]`,
+        `§j[${themecolor}||§8|§j]`
     ];
 
     switch (warningCount) {
