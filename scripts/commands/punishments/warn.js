@@ -24,7 +24,7 @@ export function warn(message, args) {
     }
 
     // Replace @s with the sender's name
-    const targetName = args[0].toLowerCase().replace(/"|\\|@s/g, player.name.toLowerCase());
+    const targetName = args[0].replace(/"|\\|@s/g, player.name);
 
     const minNameLength = 3;
     const maxNameLength = player.name.endsWith(')') ? 15 : 12;
@@ -76,7 +76,7 @@ export function warn(message, args) {
             break;
         case 3:
             // Kick the player after third warning
-            data.warnings[member.id] = 0; // Reset the warning count
+            delete data.warnings[member.id]; // Remove the player from warnings data
             player.runCommandAsync(`kick "${member.name}" §r${themecolor}Rosh §j> §cYou have been kicked for §8Accumulating of 3 warnings§c.`);
             break;
         default:
@@ -85,17 +85,12 @@ export function warn(message, args) {
             break;
     }
 
-    // Notify the initiator about the warn
+    // Notify the initiator about the warn and log it
     if (warningCount < 3) {
         player.sendMessage(`§r${themecolor}Rosh §j> §cYou have warned §8${member.name} §cfor §8${reason}§c. ${warningMessages[warningCount - 1]}`);
-    } else {
-        player.sendMessage(`§r${themecolor}Rosh §j> §cYou have kicked §8${member.name} §cfor accumulating 3 warnings.`);
-    }
-
-    // Log the warn event
-    if (warningCount < 3) {
         data.recentLogs.push(`§8${member.name} §chas been warned by §8${player.name}§c!`);
     } else {
+        player.sendMessage(`§r${themecolor}Rosh §j> §cYou have kicked §8${member.name} §cfor accumulating 3 warnings.`);
         data.recentLogs.push(`§8${member.name} §chas been kicked for §83 warnings!`);
     }
 }

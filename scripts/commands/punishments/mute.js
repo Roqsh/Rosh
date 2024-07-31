@@ -25,7 +25,7 @@ export function mute(message, args) {
     }
 
     // Replace @s with the sender's name
-    const targetName = args[0].toLowerCase().replace(/"|\\|@s/g, player.name.toLowerCase());
+    const targetName = args[0].replace(/"|\\|@s/g, player.name);
 
     const minNameLength = 3;
     const maxNameLength = player.name.endsWith(')') ? 15 : 12;

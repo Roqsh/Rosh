@@ -902,7 +902,7 @@ export function findPlayerByName(name) {
 
     // Find the player with the matching name
     for (const player of players) {
-        if (player.name.toLowerCase().includes(name)) {
+        if (player.name === name) {
             return player;
         }
     }

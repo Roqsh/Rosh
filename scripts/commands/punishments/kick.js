@@ -26,7 +26,7 @@ export function kick(message, args) {
     }
 
     // Replace @s with the sender's name
-    const targetName = args[0].toLowerCase().replace(/"|\\|@s/g, player.name.toLowerCase());
+    const targetName = args[0].replace(/"|\\|@s/g, player.name);
 
     // Switch to kickall if @a is selected
     if (targetName === "@a") {
