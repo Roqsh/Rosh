@@ -89,15 +89,15 @@ export function scaffold_j(player, block) {
 
     /**
      * Computes the difference between two vectors.
-     * @param {Object} v1 - The first vector.
-     * @param {Object} v2 - The second vector.
+     * @param {Object} vector1 - The first vector.
+     * @param {Object} vector2 - The second vector.
      * @returns {Object} - The difference between the two vectors.
      */
-    function vectorDifference(v1, v2) {
+    function vectorDifference(vector1, vector2) {
         return {
-            x: v1.x - v2.x,
-            y: v1.y - v2.y,
-            z: v1.z - v2.z
+            x: vector1.x - vector2.x,
+            y: vector1.y - vector2.y,
+            z: vector1.z - vector2.z
         };
     }
 

@@ -481,24 +481,10 @@ export default
         */
 
         "reachA": {
-            "enabled": true,
-            "description": "Checks for invalid reach",
+            "enabled": false,
+            "description": "Checks for exceeding the maximum reach when attacking.",
             "punishment": "kick",
-            "reach": 6.1,
-            "dynamicReach": true,
-            "smartReach": true,
-            "buffer": 7,
-            "dynamicData": {
-                "water": 3.5,
-                "still": 3.5,
-                "speed": 5.4
-            },
-            "entities_blacklist": [
-                "minecraft:enderman",
-                "minecraft:fireball",
-                "minecraft:ender_dragon",
-                "minecraft:ghast"
-            ],
+            "punishmentLength": "7d",
             "minVlbeforePunishment": 8
         },  
 

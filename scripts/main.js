@@ -258,6 +258,7 @@ system.runInterval(() => {
 			setScore(player, "airTime", flyTime + 1);
 		} else setScore(player, "airTime", 0);
 
+        // Debug utilities
 		if (player.hasTag("devtps")) {
 			setTitle(player, undefined, undefined, `§r§uDebug §j> Tps: §8${tps}`);
 		}
@@ -267,6 +268,22 @@ system.runInterval(() => {
         debug(player, "YVelocity", velocity.y, "devvelocity");
 		debug(player, "XRotation", rotation.x, "devrotationx");
 		debug(player, "YRotation", rotation.y, "devrotationy");
+
+        if (player.hasTag("devblockray")) {
+
+            const blockOptions = {
+                maxDistance: 8,
+                includePassableBlocks: true
+            };
+        
+            const blockResult = player.getBlockFromViewDirection(blockOptions);
+
+            if (blockResult) {
+                setTitle(player, undefined, undefined, `§aBlock: §8${blockResult.block.typeId} §aPosition: §8${blockResult.block.location.x}, ${blockResult.block.location.y}, ${blockResult.block.location.z} §aFace: §8${blockResult.face} §aFaceLocation: §8${blockResult.faceLocation.x}, ${blockResult.faceLocation.y}, ${blockResult.faceLocation.z}`);
+            } else {
+                setTitle(player, undefined, undefined, "§cNo block was hit by the raycast!");
+            }
+        }
 
 		if (player.isOnGround) {			
 		    player.lastGoodPosition = player.location;			
@@ -398,11 +415,9 @@ system.runInterval(() => {
             }
         }
 
-
         dependencies_e(player);
-		dependencies_f(player, tickValue, velocity);
+		dependencies_f(player, tickValue, velocity);  
 
-		
 		player.removeTag("attacking");
 		player.removeTag("itemUse");
 		player.removeTag("breaking");
@@ -674,7 +689,7 @@ world.afterEvents.playerSpawn.subscribe((playerJoin) => {
 	
 	const { mainColor, borderColor, playerNameColor } = config.customcommands.tag;
 
-	player.getTags().forEach(t => {
+	player.getTags().forEach(tag => {
 		if (tag.includes("tag:")) {
 			tag = tag.replace(/"|\\/g, "");
 			player.nameTag = `${borderColor}[§r${mainColor}${tag.slice(4)}§r${borderColor}]§r ${playerNameColor}${player.name}§r`;

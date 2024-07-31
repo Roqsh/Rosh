@@ -1,64 +1,71 @@
 import config from "../../../data/config.js";
-import { flag, getScore, setScore, getSpeed, debug } from "../../../util";
-import { getDistanceY } from "../../../utils/mathUtil.js";
+import { flag } from "../../../util";
 
 /**
+ * Checks for exceeding the maximum reach when attacking.
  * @name reach_a
- * @param {player} player - The player to check
- * @param {entity} entity - The hit entity
- * @remarks Checks for invalid reach
-*/
-
+ * @param {player} player - The player to check.
+ * @param {entity} entity - The hit entity.
+ */
 export function reach_a(player, entity) {
 
-	if(config.modules.reachA.enabled) {
-		
-		if(failedTags(player)) return;
+    const preset = config.preset?.toLowerCase();
 
-		setScore(player, "reach_a_reset", getScore(player, "reach_a_reset", 0) + 1);
+    if (!config.modules.reachA.enabled || preset === "stable") return;
 
-		let xz_distance = Math.sqrt(Math.pow(entity.location.x - player.location.x, 2) + Math.pow(entity.location.z - player.location.z, 2));
+    const DISTANCE = player.getGameMode() === "creative" ? 6 : 3;
 
-		debug(player, "Distance", xz_distance, "reach-a");
+    // Define the settings to use when raycasting
+    const raycastOptions = {
+        ignoreBlockCollision: false,
+        includeLiquidBlocks: false,
+        includePassableBlocks: false,
+        maxDistance: 10,
+    };
 
-		let y_distance = getDistanceY(player, entity);
+    // Perform the raycast and get the entities it hits
+    const raycastResult = player.getEntitiesFromViewDirection(raycastOptions);
 
-		checkDistance(player, xz_distance, y_distance, entity);
+    // If an entity was hit by the raycast, check the distance and flag if necessary
+    if (raycastResult.length > 0) {
+        
+        let message = "";
 
-		if(getScore(player, "reach_a_reset", 0) > 10) {
-			if(getScore(player, "reach_a_buffer", 0) > config.modules.reachA.buffer) {
-				flag(player, "Reach", "A", "distance", xz_distance, false);
-			}
-			setScore(player, "reach_a_buffer", 0);
-			setScore(player, "reach_a_reset", 0);
-		}
-	}
-}
+        // Get player's and entity's velocity
+        const playerVelocity = player.getVelocity();
+        const entityVelocity = entity.getVelocity();
 
-function failedTags(player) {
+        for (const Entity of raycastResult) {
 
-	const tags = ["gmc", "trident", "bow"];
+            let entityString = JSON.stringify(Entity);
+            let parsedEntity = JSON.parse(entityString);
 
-	for(const tag in tags) {
-		if(player.hasTag(tag)) return true;
-	} 
+            // Extract distance, typeId, and id if they exist
+            let distance = parsedEntity?.distance ?? "undefined";
+            let typeId = parsedEntity?.entity?.typeId ?? "undefined";
+            let id = parsedEntity?.entity?.id ?? "undefined";
 
-	return false;
-}
+            // Calculate the adjusted distance based on velocities
+            const adjustedDistance = distance - Math.sqrt(
+                Math.pow(playerVelocity.x - entityVelocity.x, 2) +
+                Math.pow(playerVelocity.y - entityVelocity.y, 2) +
+                Math.pow(playerVelocity.z - entityVelocity.z, 2)
+            );
 
-function checkDistance(player, xy_distance, y_distance, entity) {
+            message += `§aEntity: §8${typeId}§a, Distance: §8${distance}, Adjusted Distance: §8${adjustedDistance}\n`;
 
-	let min_reach = config.modules.reachA.reach;
+            if (
+                entity.typeId === typeId &&
+                entity.id === id &&
+                adjustedDistance > DISTANCE
+            ) {
+                flag(player, "Reach", "A", "distance", `${adjustedDistance},player=${entity.nameTag},entity=${typeId}`);
+            }
+        }
 
-	if(config.modules.reachA.smartReach) {
-
-		if(getSpeed(player) > 0.6) min_reach + 0.3;
-		if(player.hasTag("damaged")) min_reach + 0.04;
-		if(player.isSprinting) min_reach - 0.2;
-		min_reach - y_distance / 10;
-	}
-
-	if(xy_distance > min_reach && !config.modules.reachA.entities_blacklist.includes(entity.typeId)) {
-		setScore(player, "reach_a_buffer", getScore(player, "reach_a_buffer", 0) + 1);
-	}
+        // Debug the information
+        if (player.hasTag("deventityray")) player.sendMessage(message.trim());
+    } else {
+        if (player.hasTag("deventityray")) player.sendMessage("§cNo entity was hit by the raycast!");
+    }
 }
