@@ -1,8 +1,8 @@
 export default
 {
 
-    // This is only required to reset modules via the !module command
-    // (Do not change this!)
+    // This is only required to reset modules via the !module command. ( !module <module_name> reset )
+    // Therefore, you better not change this!
 
     "modules": {  
 
@@ -31,26 +31,28 @@ export default
         },
 
         "namespoofA": {
-            "enabled": false,
-            "minNameLength": 3,
-            "maxNameLength": 16,
+            "enabled": true,
+            "description": "Checks if a player's nametag length is invalid.",
             "punishment": "kick",
+            "punishmentLength": "7d",
             "minVlbeforePunishment": 1
         },
 
         "namespoofB": {
-            "enabled": false,
-            "regex": /[^A-Za-z0-9_\-() ]/,
+            "enabled": true,
+            "description": "Checks if a player's nametag contains invalid characters.",
             "punishment": "kick",
+            "punishmentLength": "7d",
             "minVlbeforePunishment": 1
         },
 
         "autotoolA": {
-            "enabled": false,
-            "description": "Checks for instant slot change after breaking a block",
+            "enabled": true,
+            "description": "Checks for suspiciously fast slot changes after starting to break a block.",
             "startBreakDelay": 53,
             "punishment": "kick",
-            "minVlbeforePunishment": 4
+            "punishmentLength": "7d",
+            "minVlbeforePunishment": 8
         },
 
         /*
@@ -79,35 +81,44 @@ export default
             "minVlbeforePunishment": 1
         },
 
-        "badpacketsB": {
-            "enabled": false,
-            "description": "Checks for moving to far in a tick",
-            "speed": 7.3,
+        "badpacketsA": {
+            "enabled": true,
+            "description": "Checks if a players rotation exceeds the vanilla rotation limit.",
             "punishment": "kick",
-            "punishmentLength": "1m",
-            "minVlbeforePunishment": 1
+            "punishmentLength": "7d",
+            "minVlbeforePunishment": 2
+        },
+
+        "badpacketsB": {
+            "enabled": true,
+            "description": "Checks if a player's selected slot is vanilla reachable.",
+            "punishment": "kick",
+            "punishmentLength": "7d",
+            "minVlbeforePunishment": 4
         },
 
         "badpacketsC": {
-            "enabled": false,
-            "description":"Checks for self-hit",
+            "enabled": true,
+            "description":"Checks for hitting yourself.",
             "punishment": "kick",
-            "punishmentLength": "1m",
-            "minVlbeforePunishment": 2
+            "punishmentLength": "7d",
+            "minVlbeforePunishment": 1
         },
 
         "badpacketsD": {
             "enabled": true,
-            "description": "Checks for derp hacks",
+            "description": "Checks for smooth yaw and pitch movements",
             "punishment": "kick",
+            "punishmentLength": "1h",
             "minVlbeforePunishment": 12
         },
 
         "badpacketsE": {
-            "enabled": false,
-            "description": "Patches a disabler on Vector Client (Changing location without velocity)",
+            "enabled": true,
+            "description": "Checks if the length of a message is valid.",
             "punishment": "kick",
-            "minVlbeforePunishment": 10
+            "punishmentLength": "7d",
+            "minVlbeforePunishment": 4
         },
 
         "badpacketsF": {
@@ -118,31 +129,34 @@ export default
         },
 
         "badpacketsG": {
-            "enabled": false,
-            "description": "",
+            "enabled": true,
+            "description": "Checks for movements without valid velocities.",
             "punishment": "kick",
-            "minVlbeforePunishment": 15
+            "punishmentLength": "7d",
+            "minVlbeforePunishment": 5
         },
 
         "badpacketsH": {
             "enabled": true,
-            "description": "Checks for flying without permissions",
+            "description": "Checks for flying without permission",
             "punishment": "kick",
             "minVlbeforePunishment": 8
         },
 
         "badpacketsI": {
-            "enabled": true,
-            "description": "Checks for head rotation over 90 ",
+            "enabled": false,
+            "description": "Checks for sending too many packets at once.",
+            "packets": 50,
             "punishment": "kick",
+            "punishmentLength": "1d",
             "minVlbeforePunishment": 6
         },
 
         "badpacketsJ": {
             "enabled": true,
-            "description": "Patches a disabler on Prax Client (Sending glide packets without elytra)",
+            "description": "Patches a disabler on Prax Client (Sending glide packets without an elytra)",
             "punishment": "kick",
-            "minVlbeforePunishment": 10
+            "minVlbeforePunishment": 8
         },
 
         "timerA": {
@@ -160,14 +174,14 @@ export default
             "description": "Checks for levels that are higher than what the item supports",
 			"levelExclusions": {}, // Example:  "sharpness": 69,
 			"punishment": "kick",
-			"minVlbeforePunishment": 1
+			"minVlbeforePunishment": 0
 		},
 
         "badenchantsB": {
             "enabled": true,
             "description": "Checks for negative enchantments",           
             "punishment": "kick",
-            "minVlbeforePunishment": 1
+            "minVlbeforePunishment": 0
         },
 
         "badenchantsC": {
@@ -175,14 +189,14 @@ export default
             "description": "Checks for unsupported enchantments",           
             "punishment": "kick",
             "multi_protection": true,
-            "minVlbeforePunishment": 1
+            "minVlbeforePunishment": 0
         },
 
         "badenchantsD": {
             "enabled": true,
             "description": "Checks for duplicate enchantments",           
             "punishment": "kick",
-            "minVlbeforePunishment": 1
+            "minVlbeforePunishment": 0
         },
 
         /*
@@ -190,24 +204,10 @@ export default
         */
 
         "reachA": {
-            "enabled": true,
-            "description": "Checks for invalid reach",
+            "enabled": false,
+            "description": "Checks for exceeding the maximum reach when attacking.",
             "punishment": "kick",
-            "reach": 6.1,
-            "dynamicReach": true,
-            "smartReach": true,
-            "buffer": 7,
-            "dynamicData": {
-                "water": 3.5,
-                "still": 3.5,
-                "speed": 5.4
-            },
-            "entities_blacklist": [
-                "minecraft:enderman",
-                "minecraft:fireball",
-                "minecraft:ender_dragon",
-                "minecraft:ghast"
-            ],
+            "punishmentLength": "7d",
             "minVlbeforePunishment": 8
         },  
 
@@ -335,6 +335,17 @@ export default
             "punishment": "kick",
             "angle": 55,
             "distance": 2.25,
+            "minVlbeforePunishment": 5
+        },
+
+        "hitboxB": {
+            "enabled": true,
+            "description": "Checks for not looking at the attacked Player.",
+            "threshold": 25, // Minimum angle threshold to consider "looking at" the entity
+            "height": 1.8, // Approximate height of the entity, adjust as needed (Player only, as the height differs between entities)
+            "distance": 2, // Minimum distance the player and the entity needs to have before failing the check
+            "punishment": "kick",
+            "punishmentLength": "7d",
             "minVlbeforePunishment": 5
         },
 
@@ -605,6 +616,39 @@ export default
             "description": "Checks for not triggering the 'itemUse' event",
             "punishment": "kick", 
             "minVlbeforePunishment": 0
+        },
+
+        "scaffoldH": {
+            "enabled": true,
+            "description": "Checks for invalid held blocks",
+            "punishment": "kick",
+            "punishmentLength": "7d", 
+            "minVlbeforePunishment": 3
+        },
+
+        "scaffoldI": {
+            "enabled": true,
+            "description": "Checks for returning to the original yaw/pitch rotation before the placement happened.",
+            "punishment": "kick", 
+            "punishmentLength": "7d",
+            "minVlbeforePunishment": 2
+        },
+
+        "scaffoldJ": {
+            "enabled": true,
+            "description": "Checks for looking at the exact center of the placed block.",
+            "threshold": 0.001,
+            "punishment": "kick", 
+            "punishmentLength": "7d",
+            "minVlbeforePunishment": 9
+        },
+
+        "scaffoldK": {
+            "enabled": true,
+            "description": "Checks for placing blocks at liquid or air.",
+            "punishment": "kick", 
+            "punishmentLength": "7d",
+            "minVlbeforePunishment": 2
         },
 
         "towerA": {
