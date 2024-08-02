@@ -1,6 +1,6 @@
 import data from "../../data/data.js";
 import config from "../../data/config.js";
-import { findPlayerByName } from "../../util.js";
+import { findPlayerByName, tellStaff } from "../../util.js";
 
 /**
  * Reports a player for a given reason.
@@ -66,7 +66,7 @@ export function report(message, args) {
     player.sendMessage(`§r${themecolor}Rosh §j> §aYou have reported §8${member.name} §afor §8${reason}§a.`);
 
     // Notify other staff members about the report
-    player.runCommandAsync(`tellraw @a[tag=notify, tag=op] {"rawtext":[{"text":"§r${themecolor}Rosh §j> §8${player.name} §ahas reported §8${member.name} §afor §8${reason}§a."}]}`);
+    tellStaff(`§r${themecolor}Rosh §j> §8${player.name} §ahas reported §8${member.name} §afor §8${reason}§a.`);
 
     // Log the report
     data.recentLogs.push(`§8${member.name} §chas been reported by §8${player.name}§c!`);

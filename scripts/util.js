@@ -157,7 +157,7 @@ function handleKickPunishment(player, kickvl, check, checkType, themecolor) {
             const message = `§8${player.name} §chas been kicked!`;
             data.recentLogs.push(message);
 
-            player.runCommandAsync(`tellraw @a[tag=notify,tag=op] {"rawtext":[{"text":"§r${themecolor}Rosh §j> §8${player.name} §chas been kicked for ${themecolor}${check}§j/${themecolor}${checkType.toUpperCase()} §c!"}]}`);
+            tellStaff(`§r${themecolor}Rosh §j> §8${player.name} §chas been kicked for ${themecolor}${check}§j/${themecolor}${checkType.toUpperCase()} §c!`, "notify");
             if (config.console_debug) console.warn(`§r${themecolor}Rosh §j> §8${player.name} §chas been kicked for ${themecolor}${check}§j/${themecolor}${checkType.toUpperCase()} §c!`);
 
             resetWarns(player);
@@ -219,7 +219,7 @@ function handleBanPunishment(player, check, checkType, themecolor, punishmentLen
             const message = `§8${player.name} §chas been banned!`;
             data.recentLogs.push(message);
 
-            player.runCommandAsync(`tellraw @a[tag=notify,tag=op] {"rawtext":[{"text":"§r${themecolor}Rosh §j> §8${player.name} §chas been banned for ${themecolor}${check}§j/${themecolor}${checkType.toUpperCase()} §c!"}]}`);
+            tellStaff(`§r${themecolor}Rosh §j> §8${player.name} §chas been banned for ${themecolor}${check}§j/${themecolor}${checkType.toUpperCase()} §c!`, "notify");
             if (config.console_debug) console.warn(`§r${themecolor}Rosh §j> §8${player.name} §chas been banned for ${themecolor}${check}§j/${themecolor}${checkType.toUpperCase()} §c!`);
 
             resetWarns(player);
@@ -253,7 +253,7 @@ function handleMutePunishment(player, check, checkType, themecolor) {
     const message = `§8${player.name} §chas been muted!`;
     data.recentLogs.push(message);
 
-    player.runCommandAsync(`tellraw @a[tag=notify,tag=op] {"rawtext":[{"text":"§r${themecolor}Rosh §j> §8${player.name} §chas been muted for ${themecolor}${check}§j/${themecolor}${checkType.toUpperCase()} §c!"}]}`);
+    tellStaff(`§r${themecolor}Rosh §j> §8${player.name} §chas been muted for ${themecolor}${check}§j/${themecolor}${checkType.toUpperCase()} §c!`, "notify");
     if (config.console_debug) console.warn(`§r${themecolor}Rosh §j> §8${player.name} §chas been muted for ${themecolor}${check}§j/${themecolor}${checkType.toUpperCase()} §c!`);
     
     resetWarns(player);
@@ -282,8 +282,8 @@ function handleAlert(player, check, checkType, currentVl, debugName, debug, them
     if (thememode === "Rosh") {
 
         // Notify staff in-game
-        player.runCommandAsync(`tellraw @a[tag=notify,tag=debug] {"rawtext":[{"text":"§r${themecolor}Rosh §j> §8${player.name} §jfailed ${themecolor}${check}§j/${themecolor}${checkType.toUpperCase()}§j - {${debugName}=${debug}, §8${currentVl}x§j}"}]}`);
-        player.runCommandAsync(`tellraw @a[tag=notify,tag=!debug] {"rawtext":[{"text":"§r${themecolor}Rosh §j> §8${player.name} §jfailed ${themecolor}${check}§j/${themecolor}${checkType.toUpperCase()}§j - {§8${currentVl}x§j}"}]}`);
+        tellStaff(`§r${themecolor}Rosh §j> §8${player.name} §jfailed ${themecolor}${check}§j/${themecolor}${checkType.toUpperCase()}§j - {${debugName}=${debug}, §8${currentVl}x§j}`, ["notify", "debug"]);
+        tellStaff(`§r${themecolor}Rosh §j> §8${player.name} §jfailed ${themecolor}${check}§j/${themecolor}${checkType.toUpperCase()}§j - {§8${currentVl}x§j}`, "notify", "debug");
 
         // Log the flag to the UI log section
         const logMessage = config.logSettings.showDebug 
@@ -330,8 +330,8 @@ function handleAlert(player, check, checkType, currentVl, debugName, debug, them
         }
 
         // Notify staff in-game
-        player.runCommandAsync(`tellraw @a[tag=notify,tag=debug] {"rawtext":[{"text":"§r${themecolor}Rosh §j> §8${player.name} §jfailed ${themecolor}${check}§j/${themecolor}${checkType.toUpperCase()}§j - {${debugName}=${debug}§j} [${volume}§j]"}]}`);
-        player.runCommandAsync(`tellraw @a[tag=notify,tag=!debug] {"rawtext":[{"text":"§r${themecolor}Rosh §j> §8${player.name} §jfailed ${themecolor}${check}§j/${themecolor}${checkType.toUpperCase()}§j - [${volume}§j]"}]}`);
+        tellStaff(`§r${themecolor}Rosh §j> §8${player.name} §jfailed ${themecolor}${check}§j/${themecolor}${checkType.toUpperCase()}§j - {${debugName}=${debug}§j} [${volume}§j]`, ["notify", "debug"]);
+        tellStaff(`§r${themecolor}Rosh §j> §8${player.name} §jfailed ${themecolor}${check}§j/${themecolor}${checkType.toUpperCase()}§j - [${volume}§j]`, "notify", "debug");
 
         // Log the flag to the UI log section
         const logMessage = config.logSettings.showDebug 
@@ -1002,21 +1002,60 @@ export function removeOp(player, initiator) {
  * Sends a message to all staff members. (Operator status)
  * @name tellStaff
  * @param {string} message - The message to send.
+ * @param {string|string[]} [tags] - An optional tag or array of tags to differentiate between staff members.
+ * @param {string|string[]} [excludeTags] - An optional tag or array of tags to exclude certain staff members.
  * @throws {TypeError} If message is not a string.
  */
-export function tellStaff(message) {
+export function tellStaff(message, tags, excludeTags) {
     // Validate the input
     if (typeof message !== "string") {
         throw new TypeError(`Error: message is type of ${typeof message}. Expected "string".`);
     }
 
+    // Ensure tags and excludeTags are arrays if provided
+    if (tags && !Array.isArray(tags)) {
+        tags = [tags];
+    }
+    if (excludeTags && !Array.isArray(excludeTags)) {
+        excludeTags = [excludeTags];
+    }
+
     // Get all players
     const players = world.getPlayers();
 
-    // Send the message to each staff member
+    // Send the message to each staff member, optionally filtered by tags and excludeTags
     for (const player of players) {
+
         if (player.isOp()) {
-            player.sendMessage(message);
+
+            let hasAllTags = true;
+            let hasExcludeTag = false;
+
+            // Check for include tags
+            if (tags) {
+
+                for (const tag of tags) {
+                    if (!player.hasTag(tag)) {
+                        hasAllTags = false;
+                        break;
+                    }
+                }
+            }
+
+            // Check for exclude tags
+            if (excludeTags) {
+                for (const excludeTag of excludeTags) {
+                    if (player.hasTag(excludeTag)) {
+                        hasExcludeTag = true;
+                        break;
+                    }
+                }
+            }
+
+            // Send message if all include tags are present and no excluded tags are present
+            if (hasAllTags && !hasExcludeTag) {
+                player.sendMessage(message);
+            }
         }
     }
 }
@@ -1269,7 +1308,7 @@ export function debug(player, name, debugInfo, tag) {
 
     // Send the debug information to players with the specified tag
     try {
-        player.runCommandAsync(`tellraw @s[tag=op, tag=${tag}] {"rawtext":[{"text":"§r${themecolor}Debug §j> ${name}: §8${debugInfoStr}"}]}`);
+        tellStaff(`§r${themecolor}Debug §j> ${name}: §8${debugInfoStr}`, tag);
     } catch (error) {
         console.error(`Error: Failed to send debug information. ${error.message}`);
     }

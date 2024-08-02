@@ -134,8 +134,8 @@
 				"beehive": {
 					"on_entry": [
 						"/clear @s beehive",
-						"/scoreboard players add @s[tag=!op] cbevl 1",
-						"/execute @s[tag=!op] ~~~ tellraw @a[tag=notify] {\"rawtext\":[{\"text\":\"§r§uRosh §j> §8\"},{\"selector\":\"@s\"},{\"text\":\" §jfailed §uExploit§j/§uA §j- {item=beehive, V=\"},{\"score\":{\"name\":\"@s\",\"objective\":\"cbevl\"}},{\"text\":\"}\"}]}"
+						"/scoreboard players add @s cbevl 1",
+						"/execute @s ~~~ tellraw @a[tag=notify] {\"rawtext\":[{\"text\":\"§r§uRosh §j> §8\"},{\"selector\":\"@s\"},{\"text\":\" §jfailed §uExploit§j/§uA §j- {item=beehive, V=\"},{\"score\":{\"name\":\"@s\",\"objective\":\"cbevl\"}},{\"text\":\"}\"}]}"
 					],
 					"transitions": [{
 						"cbeitems": "query.get_equipped_item_name != 'beehive'"
@@ -144,8 +144,8 @@
 				"bee_nest": {
 					"on_entry": [
 						"/clear @s bee_nest",
-						"/scoreboard players add @s[tag=!op] cbevl 1",
-						"/execute @s[tag=!op] ~~~ tellraw @a[tag=notify] {\"rawtext\":[{\"text\":\"§r§uRosh §j> §8\"},{\"selector\":\"@s\"},{\"text\":\" §jfailed §uExploit§j/§uA §j- {item=bee_nest, V=\"},{\"score\":{\"name\":\"@s\",\"objective\":\"cbevl\"}},{\"text\":\"}\"}]}"
+						"/scoreboard players add @s cbevl 1",
+						"/execute @s ~~~ tellraw @a[tag=notify] {\"rawtext\":[{\"text\":\"§r§uRosh §j> §8\"},{\"selector\":\"@s\"},{\"text\":\" §jfailed §uExploit§j/§uA §j- {item=bee_nest, V=\"},{\"score\":{\"name\":\"@s\",\"objective\":\"cbevl\"}},{\"text\":\"}\"}]}"
 					],
 					"transitions": [{
 						"cbeitems": "query.get_equipped_item_name != 'bee_nest'"
