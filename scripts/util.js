@@ -1033,7 +1033,6 @@ export function tellStaff(message, tags, excludeTags) {
 
             // Check for include tags
             if (tags) {
-
                 for (const tag of tags) {
                     if (!player.hasTag(tag)) {
                         hasAllTags = false;
@@ -1081,7 +1080,7 @@ export function tellPlayer(player, message) {
 
     // Send the message to the player
     try {
-        player.runCommandAsync(`tellraw "${player.name}" {"rawtext":[{"text":"${message}"}]}`);
+        player.sendMessage(message);
     } catch (error) {
         console.error(`Error: Failed to send message to player. ${error.message}`);
     }
