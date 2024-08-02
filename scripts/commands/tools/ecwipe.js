@@ -53,7 +53,7 @@ export function ecwipe(message, args) {
     }
 
     // Prevent clearing the ender chest of other staff members
-    if (member.hasTag("op")) {
+    if (member.isOp()) {
         player.sendMessage(`§r${themecolor}Rosh §j> §cYou cannot clear other staff members' ender chests.`);
         return;
     }

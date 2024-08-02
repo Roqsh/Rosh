@@ -3,7 +3,8 @@ import * as MinecraftUI from "@minecraft/server-ui";
 import config from "../data/config.js";
 import data from "../data/data.js";
 import { parseTime, uppercaseFirstLetter, tellStaff } from "../util.js";
-import { addOp, removeOp } from "../commands/staff/op.js";
+import { addOp } from "../commands/staff/op.js";
+import { removeOp } from "../commands/staff/deop.js";
 import { addVanish, removeVanish } from "../commands/tools/vanish.js";
 import { clearEnderchest } from "../commands/tools/ecwipe.js";
 import { handleNotification } from "../commands/staff/notify.js";   
@@ -109,7 +110,7 @@ function banMenuSelect(player, selection) {
 
         let playerName = `${plr.name}`;
         if(plr.id === player.id) playerName += " - You";
-        if(plr.hasTag("op")) playerName += `\n§8[${themecolor}Op§8]`;
+        if(plr.isOp()) playerName += `\n§8[${themecolor}Op§8]`;
         menu.button(playerName);
     }
 
@@ -210,8 +211,8 @@ function banPlayerMenu(player, playerSelected, lastMenu = 0) {
             if (t.startsWith("Reason:") || t.startsWith("Length:")) playerSelected.removeTag(t);
         });
 
-        if (playerSelected.hasTag("op")) {
-            playerSelected.sendMessage(`§r${themecolor}Rosh §j> §8${playerSelected.name} §cis an Rosh-Op and cannot be banned!`);
+        if (playerSelected.isOp()) {
+            playerSelected.sendMessage(`§r${themecolor}Rosh §j> §8${playerSelected.name} §cis an Operator and cannot be banned!`);
         } else {
             playerSelected.addTag(`Reason:${reason}`);
             if (banLength && !shouldPermBan) playerSelected.addTag(`Length:${Date.now() + banLength}`);
@@ -603,7 +604,7 @@ function playerSettingsMenu(player) {
 
         let playerName = `${plr.name}`;
         if(plr.id === player.id) playerName += " - You";
-        if(plr.hasTag("op")) playerName += `\n§8[${themecolor}Op§8]`;
+        if(plr.isOp()) playerName += `\n§8[${themecolor}Op§8]`;
         menu.button(playerName);
     }
 
@@ -628,7 +629,7 @@ export function playerSettingsMenuSelected(player, playerSelected) { // FIXME: (
     player.playSound("mob.chicken.plop");
     const menu = new MinecraftUI.ActionFormData()
         .title("Manage " + playerSelected.name)
-        .body(`§8Coordinates: ${Math.floor(playerSelected.location.x)}, ${Math.floor(playerSelected.location.y)}, ${Math.floor(playerSelected.location.z)}\nDimension: ${uppercaseFirstLetter((playerSelected.dimension.id).replace("minecraft:", ""))}\nRosh Op: ${playerSelected.hasTag("op") ? "§8[§a+§8]" : "§8[§c-§8]"}\nMuted: ${playerSelected.hasTag("isMuted") ? "§8[§a+§8]" : "§8[§c-§8]"}\nFrozen: ${playerSelected.hasTag("freeze") ? "§8[§a+§8]" : "§8[§c-§8]"}\nVanished: ${playerSelected.hasTag("vanish") ? "§8[§a+§8]" : "§8[§c-§8]"}\nFly Mode: ${playerSelected.hasTag("flying") ? "§8[§a+§8]" : "§8[§c-§8]"}`)
+        .body(`§8Coordinates: ${Math.floor(playerSelected.location.x)}, ${Math.floor(playerSelected.location.y)}, ${Math.floor(playerSelected.location.z)}\nDimension: ${uppercaseFirstLetter((playerSelected.dimension.id).replace("minecraft:", ""))}\nOperator: ${playerSelected.isOp() ? "§8[§a+§8]" : "§8[§c-§8]"}\nMuted: ${playerSelected.hasTag("isMuted") ? "§8[§a+§8]" : "§8[§c-§8]"}\nFrozen: ${playerSelected.hasTag("freeze") ? "§8[§a+§8]" : "§8[§c-§8]"}\nVanished: ${playerSelected.hasTag("vanish") ? "§8[§a+§8]" : "§8[§c-§8]"}\nFly Mode: ${playerSelected.hasTag("flying") ? "§8[§a+§8]" : "§8[§c-§8]"}`)
         .button("Clear EnderChest") // Fixed
         .button("Kick Player")      // Fixed
         .button("Ban Player");      // Fixed
@@ -642,8 +643,8 @@ export function playerSettingsMenuSelected(player, playerSelected) { // FIXME: (
     if (!playerSelected.hasTag("isMuted")) menu.button("Mute Player");    // Fixed
     else menu.button("Unmute Player");
 
-    if (!playerSelected.hasTag("op")) menu.button("Set as Rosh Op");      // Fixed (need to fix message for selected player, ex.use util functions) + deop no longer ui ability
-    else menu.button("Remove Player as Rosh Op");
+    if (!playerSelected.isOp()) menu.button("Set as Operator");      // Fixed (need to fix message for selected player, ex.use util functions) + deop no longer ui ability
+    else menu.button("Remove Operator status");
 
     if (!playerSelected.hasTag("vanish")) menu.button("Vanish Player");   // Broken (false flags for BadPackets/H, messages)
     else menu.button("Unvanish Player");
@@ -724,14 +725,14 @@ export function playerSettingsMenuSelected(player, playerSelected) { // FIXME: (
 
             case 6:
                 if (!config.customcommands.op.enabled) {
-                    return player.sendMessage(`§r${themecolor}Rosh §j> §cRosh-Opping players is disabled in config.`);
+                    return player.sendMessage(`§r${themecolor}Rosh §j> §cGranting players Operator status is disabled in config.`);
                 }
-                if (playerSelected.hasTag("op")) {
+                if (playerSelected.isOp()) {
                     removeOp(playerSelected);
-                    tellStaff(`§r${themecolor}Rosh §j> §8${player.name} §chas removed Rosh-Op status from §8${playerSelected.name}§c.`);
+                    tellStaff(`§r${themecolor}Rosh §j> §8${player.name} §chas removed Operator status from §8${playerSelected.name}§c.`);
                 } else {
                     addOp(playerSelected);
-                    tellStaff(`§r${themecolor}Rosh §j> §8${player.name} §ahas given §8${playerSelected.name} §aRosh-Op status.`);
+                    tellStaff(`§r${themecolor}Rosh §j> §8${player.name} §ahas given §8${playerSelected.name} §aOperator status.`);
                 }
                 playerSettingsMenuSelected(player, playerSelected);
                 break;

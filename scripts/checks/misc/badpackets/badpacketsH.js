@@ -13,7 +13,7 @@ export function badpackets_h(player) {
 
     if (player.hasTag("spec") || player.hasTag("gmc")) return;
         
-    if (player.isFlying && !player.hasTag("op")) {
+    if (player.isFlying && !player.isOp()) {
         flag(player, "BadPackets", "H", "isFlying", "true", true);
         player.runCommandAsync(`ability "${player.name}" mayfly false`);
     }

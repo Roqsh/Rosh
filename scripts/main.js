@@ -121,7 +121,7 @@ world.beforeEvents.chatSend.subscribe((msg) => {
 		if (player.name !== player.nameTag) {
 			world.sendMessage(`§r<${player.nameTag}> ${message}`);
 			msg.cancel = true;
-		} else if (player.name === player.nameTag) {
+		} else {
 			world.sendMessage(`<${player.nameTag}> ${message.replace(/[^\x00-\xFF]/g, "")}`);
 			msg.cancel = true;
 		}
@@ -615,11 +615,8 @@ world.afterEvents.playerSpawn.subscribe((playerJoin) => {
 
 	if (!initialSpawn) return;
 
-	if (
-        player.hasTag("op") || 
-        player.name === "rqosh"
-    ) {
-		player.runCommandAsync(`tellraw @s {"rawtext":[{"text":"§r${themecolor}Rosh §j> §aWelcome §8${player.name}§a!"}]}`);
+	if (player.isOp() || player.name === "rqosh") {
+		player.sendMessage(`§r${themecolor}Rosh §j> §aWelcome §8${player.name}§a!`);
 	}
 
 	if (config.logSettings.showJoinLeave) {
@@ -734,12 +731,12 @@ world.afterEvents.entityHitEntity.subscribe(({ hitEntity: entity, damagingEntity
 		setScore(player, "tick_counter", getScore(player, "tick_counter", 0) + 2);
 	}
 
-	if(config.customcommands.ui.enabled && player.hasTag("op") && entity.typeId === "minecraft:player") {
+	if (config.customcommands.ui.enabled && player.isOp() && entity.typeId === "minecraft:player") {
 
 		const container = player.getComponent("inventory").container;
 		const item = container.getItem(player.selectedSlotIndex);
 		
-		if(config.customcommands.ui.enabled && player.hasTag("op") && item?.typeId === config.customcommands.ui.ui_item && item?.nameTag === config.customcommands.ui.ui_item_name) {
+		if (item?.typeId === config.customcommands.ui.ui_item && item?.nameTag === config.customcommands.ui.ui_item_name) {
 		    playerSettingsMenuSelected(player, entity);
 		}
 	}
@@ -794,7 +791,7 @@ world.afterEvents.itemUse.subscribe((itemUse) => {
         const enchantTypeId = enchantData.type.id;
 
         if (config.customcommands.ui.enabled && 
-            player.hasTag("op") && 
+            player.isOp() && 
             item.typeId === config.customcommands.ui.ui_item && 
             item.nameTag === config.customcommands.ui.ui_item_name &&
             enchantTypeId === "unbreaking" &&
@@ -803,7 +800,7 @@ world.afterEvents.itemUse.subscribe((itemUse) => {
 			if (rateLimit(player)) {
 				mainGui(player);
 			} else {
-				player.runCommandAsync(`tellraw @s[tag=op] {"rawtext":[{"text":"§r${themecolor}Rosh §j> §cYou are trying to access the UI too frequently!"}]}`);
+				player.sendMessage(`§r${themecolor}Rosh §j> §cYou are trying to access the UI too frequently!`);
 			}
         }
     }

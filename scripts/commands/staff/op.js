@@ -4,7 +4,7 @@ import config from "../../data/config.js";
 import { findPlayerByName } from "../../util.js";
 
 /**
- * Grants operator status (Rosh-Op) to a specified player.
+ * Grants operator status to a specified player.
  * @param {object} message - The message object containing the sender property.
  * @param {Minecraft.Player} message.sender - The player who initiated the op command.
  * @param {Array} args - The arguments provided for the op command, where args[0] is the target player name.
@@ -45,15 +45,15 @@ export function op(message, args) {
         return;
     }
 
-    // Check if the player is already an operator
-    if (member.hasTag("op")) {
-        player.sendMessage(`§r${themecolor}Rosh §j> §cThis player already has Rosh-Op.`);
+    // Check if the player already has operator status
+    if (member.isOp()) {
+        player.sendMessage(`§r${themecolor}Rosh §j> §cThis player already has Operator status.`);
         return;
     }
     
     // Add operator status and notify other staff members
     addOp(member);
-    player.runCommandAsync(`tellraw @a[tag=op] {"rawtext":[{"text":"§r${themecolor}Rosh §j> §8${player.name} §ahas given §8${member.name} §aRosh-Op."}]}`);
+    player.runCommandAsync(`tellraw @a[tag=op] {"rawtext":[{"text":"§r${themecolor}Rosh §j> §8${player.name} §ahas given §8${member.name} §aOperator status."}]}`);
 
     // Log the op event
     data.recentLogs.push(`§8${member.name} §ahas been oped by §8${player.name}§a!`);
@@ -65,16 +65,6 @@ export function op(message, args) {
  */
 export function addOp(player) {
     const themecolor = config.themecolor;
-    player.addTag("op");
-    player.sendMessage(`§r${themecolor}Rosh §j> §aYou are now Rosh-Op.`);
-}
-
-/**
- * Revokes operator status from a player.
- * @param {Minecraft.Player} player - The player to be revoked of operator status.
- */
-export function removeOp(player) {
-    const themecolor = config.themecolor;
-    player.removeTag("op");
-    player.sendMessage(`§r${themecolor}Rosh §j> §cYou have been de-opped! Warning: If this is wrong contact your server admin!`);
+    player.setOp(true);
+    player.sendMessage(`§r${themecolor}Rosh §j> §aYou are now an Operator.`);
 }

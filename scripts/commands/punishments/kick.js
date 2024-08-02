@@ -70,7 +70,7 @@ export function kick(message, args) {
     }
 
     // Prevent kicking other staff members
-    if (member.hasTag("op")) {
+    if (member.isOp()) {
         player.sendMessage(`§r${themecolor}Rosh §j> §cYou cannot kick other staff members.`);
         return;
     }

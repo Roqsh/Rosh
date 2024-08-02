@@ -53,14 +53,14 @@ export function freeze(message, args) {
         return;
     }
 
-    // Check if the target player is yourself
+    // Prevent freezing oneself
     if (member.id === player.id) {
         player.sendMessage(`§r${themecolor}Rosh §j> §cYou cannot freeze yourself.`);
         return;
     }
 
-    // Check if the target player is Rosh-Op
-    if (member.hasTag("op")) {
+    // Prevent freezing other staff members
+    if (member.isOp()) {
         player.sendMessage(`§r${themecolor}Rosh §j> §cYou cannot freeze other staff members.`);
         return;
     }

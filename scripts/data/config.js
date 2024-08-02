@@ -63,109 +63,112 @@ export default
         "ban": {
             "enabled": true,
             "description": "!ban <player> <length> <reason> - Ban a player",
-            "requiredTags": ["op"],
+            "operator": true,
             "aliases": ["b"]
         },
 
         "unban": {
             "enabled": true,
             "description": "!unban <player> <reason> - Unban a player",
-            "requiredTags": ["op"],
+            "operator": true,
             "aliases": ["ub"]
         },
 
         "kick": {
             "enabled": true,
             "description": "!kick <player> <reason> - Kicks a player\nOr: !kick <player> -silent - Kicks a player without notifying them",
-            "requiredTags": ["op"],
+            "operator": true,
             "aliases": ["k"]
         },
 
         "kickall": {
             "enabled": true,
-            "description": "!kickall - Kicks all players except you and Rosh-Ops",
-            "requiredTags": ["op"]
+            "description": "!kickall - Kicks all players except you and staff members",
+            "operator": true,
+            "aliases": ["ka"]
         },
 
         "mute": {
             "enabled": true,
             "description": "!mute <player> - Removes the ability to chat from a player",
-            "requiredTags": ["op"],
+            "operator": true,
             "aliases": ["m"]
         },
 
         "unmute": {
             "enabled": true,
             "description": "!unmute <player> - Lets a player chat again",
-            "requiredTags": ["op"],
+            "operator": true,
             "aliases": ["um"]
         },
 
         "warn": {
             "enabled": true,
             "description": "!warn <player> <reason> - Warns a player for a specified reason\nRemarks: When getting warned too often, the player gets kicked",
-            "requiredTags": ["op"],
+            "operator": true,
             "aliases": ["w"]
         },
 
         "freeze": {
             "enabled": true,
             "description": "!freeze <player> - Disables movement, camera and hud for a player",
-            "requiredTags": ["op"]
+            "operator": true,
+            "aliases": ["f"]
         },
 
         "unfreeze": {
             "enabled": true,
             "description": "!unfreeze <player> - Reenables movement, camera and hud for a player",
-            "requiredTags": ["op"]
+            "operator": true,
+            "aliases": ["uf"]
         },
 
         "spectate": {
             "enabled": true,
             "description": "!spectate <player> - Spectate a player",
-            "requiredTags": ["op"],
+            "operator": true,
             "aliases": ["spec"]
         },
 
         "vanish": {
             "enabled": true,
             "description": "!vanish - Sets you in spectator mode",
-            "requiredTags": ["op"],
+            "operator": true,
             "aliases": ["v"]
         },
 
         "fly": {
             "enabled": true,
             "description": "!fly <player> - Lets a player fly",
-            "requiredTags": ["op"]
+            "operator": true
         },
 
         "invsee": {
             "enabled": true,
             "description": "!invsee <player> - See the contents of a players inventory",
-            "requiredTags": ["op"],
+            "operator": true,
             "aliases": ["inv"]
         },
 
         "cloneinv": {
             "enabled": true,
             "description": "!cloneinv <player> - Set your inventory to someone elses",
-            "requiredTags": ["op"],
+            "operator": true,
             "aliases": ["invclone", "invc"]
         },
 
         "ecwipe": {
             "enabled": true,
             "description": "!ecwipe <player> - Clears an enderchest of a player",
-            "requiredTags": ["op"],
+            "operator": true,
             "aliases": ["enderchestwipe", "ecw"]
         },
 
         "testaura": {
             "enabled": true,
             "description": "!testaura <player> - Lets you test players for killaura",
-            "requiredTags": ["op"],
-            "aliases": ["ta"]
+            "operator": true,
+            "aliases": ["ta", "killaura"]
         },
 
         "ui": {
@@ -174,77 +177,77 @@ export default
             "ui_item_name": "§r§uRosh§r",
             "ui_item": "minecraft:stone_axe",
             "rate_limit": 500, // (1000=1s)
-            "requiredTags": ["op"],
+            "operator": true,
             "aliases": ["gui"]
         },
 
         "op": {
             "enabled": true,
-            "description": "!op <player> - Grants a player Rosh-Op",
-            "requiredTags": ["op"],
-            "aliases": ["staff"]
+            "description": "!op <player> - Grants a player Operator status",
+            "operator": true,
+            "aliases": ["staff", "operator"]
         },
 
         "deop": {
             "enabled": true,
-            "description": "!deop <player> - Removes Rosh-Op from a player",
-            "requiredTags": ["op"],
+            "description": "!deop <player> - Revokes Operator status of a player",
+            "operator": true,
             "aliases": ["destaff", "demote", "do"]
         },
 
         "notify": {
             "enabled": true,
             "description": "!notify - Lets you recieve flags",
-            "requiredTags": ["op"],
+            "operator": true,
             "aliases": ["not", "notifications", "alerts"]
         },
 
         "autoban": {
             "enabled": true,
             "description": "!autoban - Enables or disables auto-baning players by Rosh",
-            "requiredTags": ["op"],
+            "operator": true,
             "aliases": ["ab"]
         },
 
         "module": {
             "enabled": true,
             "description": "!module <modulename> <setting> <value> - Lets you customize a check\nOr: !module <modulename> reset - Resets the values back to default",
-            "requiredTags": ["op"],
-            "aliases": ["m", "setting", "check"]
+            "operator": true,
+            "aliases": ["setting", "check"]
         },
 
         "stats": {
             "enabled": true,
             "description": "!stats <player> - Lets you see flags and punishments of a player",
-            "requiredTags": ["op"],
+            "operator": true,
             "aliases": ["info"]
         },
 
         "logs": {
             "enabled": true,
             "description": "!logs <page> - View all logged information",
-            "requiredTags": ["op"],
+            "operator": true,
             "aliases": ["log", "data", "recent", "rl", "recentlogs"]
         },
 
         "banlist": {
             "enabled": true,
             "description": "!banlist - Displays information of all banned players\nOr: !banlist <player> - View ban-related information of a specific player",
-            "requiredTags": ["op"],
+            "operator": true,
             "aliases": ["bl"]
         },
 
         "resetwarns": {
             "enabled": true,
             "description": "!resetwarns <player> - Resets all flags of a player",
-            "requiredTags": ["op"],
+            "operator": true,
             "aliases": ["rw"]
         },
 
         "report": {
             "enabled": true,
             "description": "!report <player> - Notifies staff to inspect a player",
-            "requiredTags": [],
+            "operator": false,
             "aliases": ["r", "rr", "roshreport", "rosh-report", "rep"]
         },
 
@@ -254,35 +257,35 @@ export default
             "mainColor": "§u",
             "borderColor": "§8",
             "playerNameColor": "§r",
-            "requiredTags": ["op"],
+            "operator": true,
             "aliases": ["rank", "nametag"]
         },
 
         "help": {
             "enabled": true,
             "description": "!help - See all available commands",
-            "requiredTags": ["op"],
+            "operator": true,
             "aliases": ["support", "commands"]
         },
 
         "about": {
             "enabled": true,
             "description": "!about <modulname> - Lets you view the description of a check",
-            "requiredTags": ["op"],
-            "aliases": ["what", "a", "info", "?", "define", "def", "description"]
+            "operator": true,
+            "aliases": ["what", "info", "?", "define", "def", "description"]
         },
 
         "version": {
             "enabled": true,
             "description": "!version - See the current Rosh version",
-            "requiredTags": ["op"],
+            "operator": false,
             "aliases": ["ver", "rosh"]
         },
 
         "credits": {
             "enabled": true,
             "description": "!credits - See the team behind Rosh",
-            "requiredTags": ["op"],
+            "operator": false,
             "aliases": ["team", "developers", "authors"]
         }
     },

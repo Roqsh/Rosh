@@ -53,6 +53,12 @@ export function warn(message, args) {
         return;
     }
 
+    // Prevent warning other staff members
+    if (member.isOp()) {
+        player.sendMessage(`§r${themecolor}Rosh §j> §cYou cannot warn other staff members.`);
+        return;
+    }
+
     // Warn the player and update the warning count
     if (!data.warnings[member.id]) data.warnings[member.id] = 0;
 

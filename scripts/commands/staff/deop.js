@@ -4,7 +4,7 @@ import config from "../../data/config.js";
 import { findPlayerByName } from "../../util.js";
 
 /**
- * De-ops a player in the world based on the provided message and arguments.
+ * Revokes operator status from a specified player.
  * @param {object} message - The message object containing the sender property.
  * @param {Minecraft.Player} message.sender - The player who initiated the deop event.
  * @param {Array} args - The arguments provided for the deop command, where args[0] is the target player name.
@@ -45,26 +45,26 @@ export function deop(message, args) {
         return;
     }
 
-    // Ensure the target player has the "op" tag
-    if (!member.hasTag("op")) {
-        player.sendMessage(`§r${themecolor}Rosh §j> §cThis player doesn't have Rosh-Op.`);
+    // Ensure the target player has operator status
+    if (!member.isOp()) {
+        player.sendMessage(`§r${themecolor}Rosh §j> §cThis player doesn't have Operator status.`);
         return;
     }
 
-    // Remove operator status and notify other staff member
+    // Remove operator status and notify other staff members
     removeOp(member);
-    player.runCommandAsync(`tellraw @a[tag=op] {"rawtext":[{"text":"§r${themecolor}Rosh §j> §8${player.name} §chas removed §8${member.name}'s §cRosh-Op status"}]}`);
+    player.runCommandAsync(`tellraw @a[tag=op] {"rawtext":[{"text":"§r${themecolor}Rosh §j> §8${player.name} §chas removed §8${member.name}'s §cOperator status"}]}`);
 
     // Log the de-op event
     data.recentLogs.push(`§8${member.name} §chas been de-oped by §8${player.name}§c!`);
 }
 
 /**
- * Removes the "op" tag from a player and notifies them.
- * @param {Minecraft.Player} player - The player to de-op.
+ * Revokes operator status from a player.
+ * @param {Minecraft.Player} player - The player to be revoked of operator status.
  */
 export function removeOp(player) {
     const themecolor = config.themecolor;
-    player.removeTag("op");
-    player.sendMessage(`§r${themecolor}Rosh §j> §cYou have been de-opped! Warning: If this is wrong contact your server admin!`);
+    player.setOp(false);
+    player.sendMessage(`§r${themecolor}Rosh §j> §cWarning: Your Operator status has been revoked!`);
 }

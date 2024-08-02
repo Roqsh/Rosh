@@ -92,8 +92,8 @@ export function commandHandler(message) {
 
         message.cancel = true;
 
-        // Check for required tags (permissions)
-        if (commandData.requiredTags.length >= 1 && commandData.requiredTags.some(tag => !player.hasTag(tag))) {
+        // Check for required permission (operator)
+        if (!player.isOp() && commandData.operator) {
             player.sendMessage(`§r${themecolor}Rosh §j> §cYou must be Op to use this command!`);
             return;
         }

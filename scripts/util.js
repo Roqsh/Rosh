@@ -27,7 +27,7 @@ export function flag(player, check, checkType, debugName, debug, shouldTP = fals
     if (typeof cancelObject !== "object" && typeof cancelObject !== "undefined") throw new TypeError(`Error: cancelObject is type of ${typeof cancelObject}. Expected "object" or "undefined"`);
 
     // Exclude staff or whitelisted players if configured
-    if ((config.exclude_staff && player.hasTag("op")) || config.excluded_players.includes(player.name)) return;
+    if ((config.exclude_staff && player.isOp()) || config.excluded_players.includes(player.name)) return;
 
     // Sanitize and limit debug information
     debug = String(debug).replace(/"|\\|\n/gm, "");
@@ -913,11 +913,11 @@ export function findPlayerByName(name) {
 
 
 /**
- * Adds the "op" tag to a player, making them an operator.
+ * Grants operator status to a specified player.
  * @name addOp
- * @param {import("@minecraft/server").Player} player - The player to add the "op" tag to.
+ * @param {import("@minecraft/server").Player} player - The player to grant the operator status to.
  * @param {import("@minecraft/server").Player} initiator - The player who initiated the action.
- * @example addOp(player, initiator); // Adds the "op" tag to the player
+ * @example addOp(player, initiator); // Adds operator status to the player
  * @throws {TypeError} If player or initiator is not an object.
  */
 export function addOp(player, initiator) {
@@ -932,10 +932,10 @@ export function addOp(player, initiator) {
     const themecolor = config.themecolor;
 
     try {
-        // Check if the player already has the "op" tag before attempting to add it
-        if (!player.hasTag("op")) {
-            // Add the "op" tag to the player
-            player.addTag("op");
+        // Check if the player already has an operator status before attempting to add it
+        if (!player.isOp()) {
+            // Add the operator status to the player
+            player.setOp(true);
 
             // Log the event to the UI and console
             const message = `§8${player.name} §ahas been oped by §8${initiator.name}§a!`;
@@ -944,23 +944,23 @@ export function addOp(player, initiator) {
             console.log(message);
 
             player.sendMessage(`§r${themecolor}Rosh §j> §aYou have been given operator status by §8${initiator.name}§a.`);
-            tellStaff(`§r${themecolor}Rosh §j> §8${initiator.name} §ahas given §8${player.name} §aRosh-Op status.`);
+            tellStaff(`§r${themecolor}Rosh §j> §8${initiator.name} §ahas given §8${player.name} §aOperator status.`);
         } else {
-            initiator.sendMessage(`§r${themecolor}Rosh §j> §8${player.name} §calready has Rosh operator status!`);
+            initiator.sendMessage(`§r${themecolor}Rosh §j> §8${player.name} §calready has an Operator status!`);
         }
     } catch (error) {
-        console.error(`Error: Failed to add "op" tag to player. ${error.message}`);
+        console.error(`Error: Failed to grant operator status to ${player.name}: ${error.message}`);
     }
 }
 
 
 
 /**
- * Removes the "op" tag from a player, revoking their operator status.
+ * Revokes a player's operator status.
  * @name removeOp
- * @param {import("@minecraft/server").Player} player - The player to remove the "op" tag from.
+ * @param {import("@minecraft/server").Player} player - The player to be revoked of operator status.
  * @param {import("@minecraft/server").Player} initiator - The player who initiated the action.
- * @example removeOp(player, initiator); // Removes the "op" tag from the player
+ * @example removeOp(player, initiator); // Removes operator status from the player
  * @throws {TypeError} If player or initiator is not an object.
  */
 export function removeOp(player, initiator) {
@@ -975,10 +975,10 @@ export function removeOp(player, initiator) {
     const themecolor = config.themecolor;
 
     try {
-        // Check if the player has the "op" tag before attempting to remove it
-        if (player.hasTag("op")) {
-            // Remove the "op" tag from the player
-            player.removeTag("op");
+        // Check if the player has an operator status before attempting to remove it
+        if (player.isOp()) {
+            // Remove the operator status from the player
+            player.setOp(false);
 
             // Log the event to the UI and console
             const message = `§8${player.name} §chas been de-oped by §8${initiator.name}§c!`;
@@ -987,40 +987,37 @@ export function removeOp(player, initiator) {
             console.log(message);
 
             player.sendMessage(`§r${themecolor}Rosh §j> §cYour operator status has been revoked by §8${initiator.name}§c.`);
-            tellStaff(`§r${themecolor}Rosh §j> §8${initiator.name} §chas removed §8${player.name}'s §cRosh-Op status.`);
+            tellStaff(`§r${themecolor}Rosh §j> §8${initiator.name} §chas removed §8${player.name}'s §cOperator status.`);
         } else {
-            initiator.sendMessage(`§r${themecolor}Rosh §j> §8${player.name} §cdoesnt have Rosh operator status!`);
+            initiator.sendMessage(`§r${themecolor}Rosh §j> §8${player.name} §cdoesnt have an Operator status!`);
         }
     } catch (error) {
-        console.error(`Error: Failed to remove "op" tag from player. ${error.message}`);
+        console.error(`Error: Failed to remove operator status from ${player.name}: ${error.message}`);
     }
 }
 
 
 
 /**
- * Sends a message to all players with specified tags (Rosh-Op).
+ * Sends a message to all staff members. (Operator status)
  * @name tellStaff
  * @param {string} message - The message to send.
- * @param {Array<string>} [tags=["op"]] - The tags that players must have to receive the message.
- * @throws {TypeError} If message is not a string or tags is not an array of strings.
+ * @throws {TypeError} If message is not a string.
  */
-export function tellStaff(message, tags = ["op"]) {
+export function tellStaff(message) {
     // Validate the input
     if (typeof message !== "string") {
         throw new TypeError(`Error: message is type of ${typeof message}. Expected "string".`);
     }
 
-    if (!Array.isArray(tags) || !tags.every(tag => typeof tag === "string")) {
-        throw new TypeError(`Error: tags is type of ${typeof tags}. Expected "array of strings".`);
-    }
+    // Get all players
+    const players = world.getPlayers();
 
-    // Get all players with the specified tags
-    const players = world.getPlayers({ tags });
-
-    // Send the message to each player
+    // Send the message to each staff member
     for (const player of players) {
-        player.sendMessage(message);
+        if (player.isOp()) {
+            player.sendMessage(message);
+        }
     }
 }
 

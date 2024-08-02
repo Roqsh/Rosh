@@ -81,7 +81,7 @@ export function ban(message, args) {
     }
 
     // Prevent banning other staff members
-    if (member.hasTag("op")) {
+    if (member.isOp()) {
         player.sendMessage(`§r${themecolor}Rosh §j> §cYou cannot ban other staff members.`);
         return;
     }
