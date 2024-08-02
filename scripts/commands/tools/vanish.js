@@ -1,4 +1,5 @@
 import config from "../../data/config.js";
+import { tellStaff } from "../../util.js";
 
 const oldGamemode = new Map();
 
@@ -38,7 +39,7 @@ export function removeVanish(player, themecolor) {
     oldGamemode.delete(player.name);
 
     // Notify the player and staff
-    player.runCommandAsync(`tellraw @a[tag=op] {"rawtext":[{"text":"§r${themecolor}Rosh §j> §8${player.name} §cis no longer vanished."}]}`);
+    tellStaff(`§r${themecolor}Rosh §j> §8${player.name} §cis no longer vanished.`);
     player.sendMessage(`§r${themecolor}Rosh §j> §cYou are now no longer vanished.`);
 }
 
@@ -55,7 +56,7 @@ export function addVanish(player, themecolor) {
     player.addTag("vanish");
     player.setGameMode("spectator");
 
-    // Notify the player and staff
-    player.runCommandAsync(`tellraw @a[tag=op] {"rawtext":[{"text":"§r${themecolor}Rosh §j> §8${player.name} §ais now vanished."}]}`);
+    // Notify the player and staff members
+    tellStaff(`§r${themecolor}Rosh §j> §8${player.name} §ais now vanished.`);
     player.sendMessage(`§r${themecolor}Rosh §j> §aYou are now vanished.`);
 }

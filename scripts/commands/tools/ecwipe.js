@@ -1,5 +1,5 @@
 import config from "../../data/config.js";
-import { findPlayerByName } from "../../util.js";
+import { findPlayerByName, tellStaff } from "../../util.js";
 
 /**
  * Clears a player's ender chest inventory.
@@ -61,7 +61,7 @@ export function ecwipe(message, args) {
     clearEnderchest(member);
 
     // Notify other staff members about the ender chest wipe
-    player.runCommandAsync(`tellraw @a[tag=op] {"rawtext":[{"text":"§r${themecolor}Rosh §j> §8${player.name} §chas cleared §8${member.name}'s §cender chest."}]}`);
+    tellStaff(`§r${themecolor}Rosh §j> §8${player.name} §chas cleared §8${member.name}'s §cender chest.`);
 }
 
 /**

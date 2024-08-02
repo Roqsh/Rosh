@@ -1,5 +1,5 @@
 import * as Minecraft from "@minecraft/server";
-import { animation, findPlayerByName } from "../../util.js";
+import { animation, findPlayerByName, tellStaff } from "../../util.js";
 import data from "../../data/data.js";
 import config from "../../data/config.js";
 
@@ -71,7 +71,7 @@ export function mute(message, args) {
     animation(player, 5);
 
     // Notify other staff members about the mute
-    player.runCommandAsync(`tellraw @a[tag=op] {"rawtext":[{"text":"§r${themecolor}Rosh §j> §8${player.nameTag} §chas muted §8${member.nameTag} §cfor §8${reason}"}]}`);
+    tellStaff(`§r${themecolor}Rosh §j> §8${player.nameTag} §chas muted §8${member.nameTag} §cfor §8${reason}`);
     
     // Log the mute event
     data.recentLogs.push(`§8${member.nameTag} §chas been muted by §8${player.nameTag}§c!`);

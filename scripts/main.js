@@ -623,11 +623,8 @@ world.afterEvents.playerSpawn.subscribe((playerJoin) => {
 		data.recentLogs.push(`§8${player.name} §jjoined the server`)
 	}
 
-    if (
-        thememode !== "Rosh" && 
-        thememode !== "Alice"
-    ) {
-        player.runCommandAsync(`tellraw @a[tag=op] {"rawtext":[{"text":"§r${themecolor}Rosh §j> §cNo valid thememode entered in config! The thememode has been set back to default."}]}`);
+    if (thememode !== "Rosh" && thememode !== "Alice") {
+        tellStaff(`§r${themecolor}Rosh §j> §cNo valid thememode entered in config! The thememode has been set back to default.`);
     }
 
     if (player.name in data.banList) {
@@ -647,7 +644,7 @@ world.afterEvents.playerSpawn.subscribe((playerJoin) => {
         }
 
         if (config.banJoin_debug) {
-            player.runCommandAsync(`tellraw @a[tag=op] {"rawtext":[{"text":"§r${themecolor}Rosh §j> §8${player.name} §ctried to join but was blocked due to his ban."}]}`);
+            tellStaff(`§r${themecolor}Rosh §j> §8${player.name} §ctried to join but was blocked due to his ban.`);
         }
     }
 

@@ -162,12 +162,12 @@ function kickPlayerMenu(player, playerSelected, lastMenu = 0) {
         const reason = `§r${themecolor}Rosh §j> §cYou have been kicked for: §8${reasonUI} §c!`;
 
         if (!isSilent) {
-            player.runCommandAsync(`tellraw @a[tag=op] {"rawtext":[{"text":"§r${themecolor}Rosh §j> §8${player.nameTag} §chas kicked §8${playerSelected.name} §cfor: §8${reasonUI}"}]}`);
-            data.recentLogs.push(`§8${playerSelected.nameTag} §chas been kicked by §8${player.nameTag}§c!`);
+            tellStaff(`§r${themecolor}Rosh §j> §8${player.name} §chas kicked §8${playerSelected.name} §cfor: §8${reasonUI}§c.`);
+            data.recentLogs.push(`§8${playerSelected.name} §chas been kicked by §8${player.name}§c!`);
             player.runCommandAsync(`kick "${playerSelected.name}" ${reason}`);
         } else {
-            player.runCommandAsync(`tellraw @a[tag=op] {"rawtext":[{"text":"§r${themecolor}Rosh §j> §8${player.nameTag} §chas kicked §8${playerSelected.name} §c(Silent) for: §8${reasonUI}"}]}`);
-            data.recentLogs.push(`§8${playerSelected.nameTag} §chas been kicked (Silent) by §8${player.nameTag}§c!`);
+            tellStaff(`§r${themecolor}Rosh §j> §8${player.name} §chas kicked §8${playerSelected.name} §c(Silent) for: §8${reasonUI}§c.`);
+            data.recentLogs.push(`§8${playerSelected.name} §chas been kicked (Silent) by §8${player.name}§c!`);
             playerSelected.triggerEvent("scythe:kick");
         }
     });
@@ -218,7 +218,7 @@ function banPlayerMenu(player, playerSelected, lastMenu = 0) {
             if (banLength && !shouldPermBan) playerSelected.addTag(`Length:${Date.now() + banLength}`);
             playerSelected.addTag("isBanned");
 
-            player.runCommandAsync(`tellraw @a[tag=op] {"rawtext":[{"text":"§r${themecolor}Rosh §j> §8${player.name} §chas banned §8${playerSelected.name} §cfor: §8${reason}"}]}`);
+            tellStaff(`§r${themecolor}Rosh §j> §8${player.name} §chas banned §8${playerSelected.name} §cfor: §8${reason}§c.`);
             data.recentLogs.push(`§8${playerSelected.name} §chas been banned by §8${player.name}§c!`);
 
             // Save all ban-related information
@@ -266,7 +266,7 @@ function unbanPlayerMenu(player) {
         // Remove the ban information from data.banList
         delete data.banList[playerToUnban];
 
-        player.runCommandAsync(`tellraw @a[tag=op] {"rawtext":[{"text":"§r${themecolor}Rosh §j> §8${player.nameTag} §ahas added §8${playerToUnban} §ainto the unban queue for: §8${reason}§a."}]}`);
+        tellStaff(`§r${themecolor}Rosh §j> §8${player.nameTag} §ahas added §8${playerToUnban} §ainto the unban queue for: §8${reason}§a.`);
         data.recentLogs.push(`§8${playerToUnban} §ahas been unbanned by §8${player.nameTag}§a!`);
     });
 }
@@ -678,11 +678,11 @@ export function playerSettingsMenuSelected(player, playerSelected) { // FIXME: (
                     return player.sendMessage(`§r${themecolor}Rosh §j> §cToggling Fly is disabled in config.`);
                 }
                 if (playerSelected.hasTag("flying")) {
-                    playerSelected.runCommandAsync("function tools/fly");
-                    player.runCommandAsync(`tellraw @a[tag=op] {"rawtext":[{"text":"§r${themecolor}Rosh §j> §8${player.name} §chas disabled fly mode for §8${playerSelected.name}§c."}]}`);
+                    playerSelected.runCommandAsync("function tools/fly"); // Broken
+                    tellStaff(`§r${themecolor}Rosh §j> §8${player.name} §chas disabled fly mode for §8${playerSelected.name}§c.`);
                 } else {
-                    playerSelected.runCommandAsync("function tools/fly");
-                    player.runCommandAsync(`tellraw @a[tag=op] {"rawtext":[{"text":"§r${themecolor}Rosh §j> §8${player.name} §ahas enabled fly mode for §8${playerSelected.name}§a."}]}`);
+                    playerSelected.runCommandAsync("function tools/fly"); // Broken
+                    tellStaff(`§r${themecolor}Rosh §j> §8${player.name} §ahas enabled fly mode for §8${playerSelected.name}§a.`);
                 }
                 playerSettingsMenuSelected(player, playerSelected);
                 break;

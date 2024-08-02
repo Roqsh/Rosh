@@ -1,5 +1,5 @@
 import * as Minecraft from "@minecraft/server";
-import { parseTime, findPlayerByName } from "../../util.js";
+import { parseTime, findPlayerByName, tellStaff } from "../../util.js";
 import data from "../../data/data.js";
 import config from "../../data/config.js";
 
@@ -58,7 +58,7 @@ export function ban(message, args) {
         }
 
         // Notify other staff members about the ban request
-        player.runCommandAsync(`tellraw @a[tag=op] {"rawtext":[{"text":"§r${themecolor}Rosh §j> §8${player.name} §chas added §8${targetName} §cto the ban queue for: §8${reason}§c, §8${duration}§c."}]}`);
+        tellStaff(`§r${themecolor}Rosh §j> §8${player.name} §chas added §8${targetName} §cto the ban queue for: §8${reason}§c, §8${duration}§c.`);
 
         // Log the ban event
         data.recentLogs.push(`§8${targetName} §chas been banned by §8${player.name}§c!`);
@@ -99,7 +99,7 @@ export function ban(message, args) {
     member.addTag("isBanned");
 
     // Notify other staff members about the ban
-    player.runCommandAsync(`tellraw @a[tag=op] {"rawtext":[{"text":"§r${themecolor}Rosh §j> §8${player.name} §chas banned §8${member.name} §cfor: §8${reason}§c, §8${duration}§c."}]}`);
+    tellStaff(`§r${themecolor}Rosh §j> §8${player.name} §chas banned §8${member.name} §cfor: §8${reason}§c, §8${duration}§c.`);
 
     // Log the ban event
     data.recentLogs.push(`§8${member.name} §chas been banned by §8${player.name}§c!`);

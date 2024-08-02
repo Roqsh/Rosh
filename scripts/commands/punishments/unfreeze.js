@@ -1,5 +1,5 @@
 import config from "../../data/config.js";
-import { findPlayerByName } from "../../util.js";
+import { findPlayerByName, tellStaff } from "../../util.js";
 
 /**
  * Unfreezes the players movement, camera and hud.
@@ -65,5 +65,5 @@ export function unfreeze(message, args) {
     member.sendMessage(`§r${themecolor}Rosh §j> §aYou are now unfrozen!`);
 
     // Notify other staff members about the freeze
-    player.runCommandAsync(`tellraw @a[tag=op] {"rawtext":[{"text":"§r${themecolor}Rosh §j> §8${player.name} §ahas unfrozen §8${member.name}§a."}]}`);
+    tellStaff(`§r${themecolor}Rosh §j> §8${player.name} §ahas unfrozen §8${member.name}§a.`);
 }

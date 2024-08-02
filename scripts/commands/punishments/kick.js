@@ -1,7 +1,7 @@
 import * as Minecraft from "@minecraft/server"; 
 import data from "../../data/data.js";
 import config from "../../data/config.js";
-import { findPlayerByName } from "../../util.js";
+import { findPlayerByName, tellStaff } from "../../util.js";
 import { kickall } from "./kickall.js";
 
 /**
@@ -76,7 +76,7 @@ export function kick(message, args) {
     }
 
     // Notify other staff members about the kick
-    player.runCommandAsync(`tellraw @a[tag=op] {"rawtext":[{"text":"§r${themecolor}Rosh §j> §8${player.nameTag} §chas kicked §8${member.name} §c${isSilent ? "(Silent) " : ""}for: §8${reason}"}]}`);
+    tellStaff(`§r${themecolor}Rosh §j> §8${player.nameTag} §chas kicked §8${member.name} §c${isSilent ? "(Silent) " : ""}for: §8${reason}`);
 
     // Log the kick event
     data.recentLogs.push(`§8${member.name} §chas been kicked ${isSilent ? "(Silent) " : ""}by §8${player.nameTag}§c!`);

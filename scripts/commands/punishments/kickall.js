@@ -1,6 +1,7 @@
 import * as Minecraft from "@minecraft/server"; 
 import data from "../../data/data.js";
 import config from "../../data/config.js";
+import { tellStaff } from "../../util.js";
 
 /**
  * Kicks all players in the world except the player who initiated the kickall event.
@@ -35,7 +36,7 @@ export function kickall(message) {
     });
 
     // Notify other staff members about the kickall event
-    player.runCommandAsync(`tellraw @a[tag=op] {"rawtext":[{"text":"§r${themecolor}Rosh §j> §8${player.name} §chas initiated a §8Mass Kick§c!"}]}`);
+    tellStaff(`§r${themecolor}Rosh §j> §8${player.name} §chas initiated a §8Mass Kick§c!`);
 
     // Log the kickall event
     data.recentLogs.push(`§8${player.name} §chas initiated a §8Mass Kick§c!`);

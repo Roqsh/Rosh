@@ -1,7 +1,7 @@
 import * as Minecraft from "@minecraft/server";
 import data from "../../data/data.js";
 import config from "../../data/config.js";
-import { findPlayerByName } from "../../util.js";
+import { findPlayerByName, tellStaff } from "../../util.js";
 
 /**
  * Revokes operator status from a specified player.
@@ -45,6 +45,12 @@ export function deop(message, args) {
         return;
     }
 
+    // Prevent deopping oneself
+    if (member.id === player.id) {
+        player.sendMessage(`§r${themecolor}Rosh §j> §cYou can't deop yourself.`);
+        return;
+    }
+
     // Ensure the target player has operator status
     if (!member.isOp()) {
         player.sendMessage(`§r${themecolor}Rosh §j> §cThis player doesn't have Operator status.`);
@@ -53,7 +59,7 @@ export function deop(message, args) {
 
     // Remove operator status and notify other staff members
     removeOp(member);
-    player.runCommandAsync(`tellraw @a[tag=op] {"rawtext":[{"text":"§r${themecolor}Rosh §j> §8${player.name} §chas removed §8${member.name}'s §cOperator status"}]}`);
+    tellStaff(`§r${themecolor}Rosh §j> §8${player.name} §chas removed §8${member.name}'s §cOperator status.`);
 
     // Log the de-op event
     data.recentLogs.push(`§8${member.name} §chas been de-oped by §8${player.name}§c!`);
