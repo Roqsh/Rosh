@@ -112,7 +112,7 @@
 					"value": 2
 				}
 			},
-			"scythe:kick": {
+			"rosh:kick": {
 				"minecraft:explode": {
 					"fuse_length": 0,
 					"fuse_lit": true,
@@ -731,10 +731,10 @@
 					]
 				}
 			},
-			"scythe:kick": {
+			"rosh:kick": {
 				"add": {
 					"component_groups": [
-						"scythe:kick"
+						"rosh:kick"
 					]
 				}
 			},

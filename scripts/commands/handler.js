@@ -25,6 +25,7 @@ import { testaura } from "./tools/testaura.js";
 import { ui } from "./staff/ui.js";
 import { op } from "./staff/op.js";
 import { deop } from "./staff/deop.js";
+import { tellstaff } from "./staff/tellstaff.js";
 import { notify } from "./staff/notify.js";
 import { autoban } from "./staff/autoban.js";
 import { module } from "./staff/module.js";
@@ -145,6 +146,7 @@ function runCommand(msg, commandName, args) {
                 case "ui": ui({ sender: message.sender }); break;
                 case "op": op(message, args); break;
                 case "deop": deop(message, args); break;
+                case "tellstaff": tellstaff(message, args); break;
                 case "notify": notify(message); break;
                 case "autoban": autoban(message); break;
                 case "module": module(message, args); break;

@@ -32,7 +32,7 @@ export function ui(message) {
         currentItem?.typeId === config.customcommands.ui.ui_item && 
         currentItem?.nameTag === config.customcommands.ui.ui_item_name
     ) {
-        player.sendMessage(`§r${themecolor}Rosh §j> §cYou already have the UI item in your inventory!`);
+        player.sendMessage(`§r${themecolor}Rosh §j> §cYou already have the UI item in your current slot!`);
         return;
     }
 

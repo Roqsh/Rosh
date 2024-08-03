@@ -190,6 +190,8 @@ system.runInterval(() => {
 
 		const speed = getSpeed(player);
 
+        const themecolor = config.themecolor;
+
 		player.removeTag("noPitchDiff");
 
 		if (player.hasTag("isBanned")) {
@@ -260,7 +262,7 @@ system.runInterval(() => {
 
         // Debug utilities
 		if (player.hasTag("devtps")) {
-			setTitle(player, undefined, undefined, `§r§uDebug §j> Tps: §8${tps}`);
+			setTitle(player, undefined, undefined, `§r${themecolor}Debug §j> Tps: §8${tps}`);
 		}
 
 		debug(player, "Speed", speed, "devspeed");

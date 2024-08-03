@@ -1,4 +1,4 @@
-import * as Minecraft from "@minecraft/server"; 
+import * as Minecraft from "@minecraft/server";
 import data from "../../data/data.js";
 import config from "../../data/config.js";
 import { tellStaff } from "../../util.js";

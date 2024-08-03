@@ -195,6 +195,13 @@ export default
             "aliases": ["destaff", "demote", "do"]
         },
 
+        "tellstaff": {
+            "enabled": true,
+            "description": "!tellstaff <message> - Sends a message to all staff members",
+            "operator": true,
+            "aliases": ["irc"]
+        },
+
         "notify": {
             "enabled": true,
             "description": "!notify - Lets you recieve flags",
@@ -227,7 +234,7 @@ export default
             "enabled": true,
             "description": "!logs <page> - View all logged information",
             "operator": true,
-            "aliases": ["log", "data", "recent", "rl", "recentlogs"]
+            "aliases": ["log", "logged", "recentlogs", "rl"]
         },
 
         "banlist": {
@@ -272,7 +279,7 @@ export default
             "enabled": true,
             "description": "!about <modulname> - Lets you view the description of a check",
             "operator": true,
-            "aliases": ["what", "info", "?", "define", "def", "description"]
+            "aliases": ["description"]
         },
 
         "version": {

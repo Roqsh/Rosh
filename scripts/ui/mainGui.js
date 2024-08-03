@@ -168,7 +168,7 @@ function kickPlayerMenu(player, playerSelected, lastMenu = 0) {
         } else {
             tellStaff(`§r${themecolor}Rosh §j> §8${player.name} §chas kicked §8${playerSelected.name} §c(Silent) for: §8${reasonUI}§c.`);
             data.recentLogs.push(`§8${playerSelected.name} §chas been kicked (Silent) by §8${player.name}§c!`);
-            playerSelected.triggerEvent("scythe:kick");
+            playerSelected.triggerEvent("rosh:kick");
         }
     });
 }

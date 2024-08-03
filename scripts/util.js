@@ -166,7 +166,7 @@ function handleKickPunishment(player, kickvl, check, checkType, themecolor) {
         }
     } catch (error) {
         // Fallback in case of an error
-        player.triggerEvent("scythe:kick");
+        player.triggerEvent("rosh:kick");
         console.error(`${new Date().toISOString()} | ${error}${error.stack}`);
     }
 }
@@ -226,7 +226,7 @@ function handleBanPunishment(player, check, checkType, themecolor, punishmentLen
         }
     } catch (error) {
         // Fallback in case of an error
-        player.triggerEvent("scythe:kick");
+        player.triggerEvent("rosh:kick");
         console.error(`${new Date().toISOString()} | ${error}${error.stack}`);
     }
 }
