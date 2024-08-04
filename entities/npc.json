@@ -16,7 +16,7 @@
 			}
 		},
 		"component_groups": {
-			"scythe:despawn": {
+			"rosh:despawn": {
 				"minecraft:instant_despawn": {
 					"remove_child_entities": true
 				}
@@ -174,10 +174,10 @@
 			"minecraft:physics": {}
 		},
 		"events": {
-			"scythe:despawn": {
+			"rosh:despawn": {
 				"add": {
 					"component_groups": [
-						"scythe:despawn"
+						"rosh:despawn"
 					]
 				}
 			}

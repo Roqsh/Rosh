@@ -3,7 +3,7 @@ import { system, world, ItemTypes, ItemStack } from "@minecraft/server";
 import config from "./data/config.js";
 import data from "./data/data.js";
 import { tag_system, setTitle } from "./utils/gameUtil.js";
-import { flag, ban, parseTime, getScore, setScore, getSpeed, aroundAir, tellStaff, debug } from "./util.js";
+import { flag, ban, parseTime, getScore, setScore, tellStaff, getSpeed, aroundAir, debug } from "./util.js";
 import { commandHandler } from "./commands/handler.js";
 import { mainGui, playerSettingsMenuSelected } from "./ui/mainGui.js";
 

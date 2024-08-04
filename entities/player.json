@@ -87,27 +87,27 @@
 					}
 				}
 			},
-			"scythe:reset_skinid": {
+			"rosh:reset_skinid": {
 				"minecraft:skin_id": {
 					"value": 0
 				}
 			},
-			"scythe:reset_variant": {
+			"rosh:reset_variant": {
 				"minecraft:variant": {
 					"value": 0
 				}
 			},
-			"scythe:onAttack": {
+			"rosh:onAttack": {
 				"minecraft:skin_id": {
 					"value": 1
 				}
 			},
-			"scythe:gui": {
+			"rosh:gui": {
 				"minecraft:variant": {
 					"value": 1
 				}
 			},
-			"scythe:illegal": {
+			"rosh:illegal": {
 				"minecraft:skin_id": {
 					"value": 2
 				}
@@ -121,7 +121,7 @@
 					"breaks_blocks": false
 				}
 			},
-			"scythe:freeze": {
+			"rosh:freeze": {
 				"minecraft:movement": {
 					"value": 0
 				},
@@ -130,7 +130,7 @@
 					"is_pushable_by_piston": false
 				}
 			},
-			"scythe:unfreeze": {
+			"rosh:unfreeze": {
 				"minecraft:movement": {
 					"value": 0.1
 				},
@@ -274,7 +274,7 @@
 									"value": "player"
 								}]
 							},
-							"event": "scythe:attacked",
+							"event": "rosh:attacked",
 							"target": "other"
 						}
 					}
@@ -329,7 +329,7 @@
 								"value": true
 							}]
 						},
-						"event": "scythe:guiopen"
+						"event": "rosh:guiopen"
 					},
 					{
 						"filters": {
@@ -340,7 +340,7 @@
 								"value": false
 							}]
 						},
-						"event": "scythe:reset_variant"
+						"event": "rosh:reset_variant"
 					},
 					{
 						"filters": {
@@ -664,70 +664,70 @@
 								}
 							]
 						},
-						"event": "scythe:illegal"
+						"event": "rosh:illegal"
 					}
 				]
 			}
 		},
 		"events": {
-			"scythe:attacked": {
+			"rosh:attacked": {
 				"add": {
 					"component_groups": [
-						"scythe:onAttack"
+						"rosh:onAttack"
 					]
 				},
 				"remove": {
 					"component_groups": [
-						"scythe:reset_skinid"
+						"rosh:reset_skinid"
 					]
 				}
 			},
-			"scythe:guiopen": {
+			"rosh:guiopen": {
 				"add": {
 					"component_groups": [
-						"scythe:gui"
+						"rosh:gui"
 					]
 				},
 				"remove": {
 					"component_groups": [
-						"scythe:reset_variant"
+						"rosh:reset_variant"
 					]
 				}
 			},
-			"scythe:illegal": {
+			"rosh:illegal": {
 				"add": {
 					"component_groups": [
-						"scythe:illegal"
+						"rosh:illegal"
 					]
 				},
 				"remove": {
 					"component_groups": [
-						"scythe:reset_skinid"
+						"rosh:reset_skinid"
 					]
 				}
 			},
-			"scythe:reset_skinid": {
+			"rosh:reset_skinid": {
 				"add": {
 					"component_groups": [
-						"scythe:reset_skinid"
+						"rosh:reset_skinid"
 					]
 				},
 				"remove": {
 					"component_groups": [
-						"scythe:onAttack",
-						"scythe:illegal"
+						"rosh:onAttack",
+						"rosh:illegal"
 					]
 				}
 			},
-			"scythe:reset_variant": {
+			"rosh:reset_variant": {
 				"add": {
 					"component_groups": [
-						"scythe:reset_variant"
+						"rosh:reset_variant"
 					]
 				},
 				"remove": {
 					"component_groups": [
-						"scythe:gui"
+						"rosh:gui"
 					]
 				}
 			},
@@ -738,42 +738,42 @@
 					]
 				}
 			},
-			"scythe:freeze": {
+			"rosh:freeze": {
 				"add": {
 					"component_groups": [
-						"scythe:freeze"
+						"rosh:freeze"
 					]
 				},
 				"remove": {
 					"component_groups": [
-						"scythe:unfreeze"
+						"rosh:unfreeze"
 					]
 				}
 			},
-			"scythe:unfreeze": {
+			"rosh:unfreeze": {
 				"add": {
 					"component_groups": [
-						"scythe:unfreeze"
+						"rosh:unfreeze"
 					]
 				},
 				"remove": {
 					"component_groups": [
-						"scythe:freeze"
+						"rosh:freeze"
 					]
 				}
 			},
 			"minecraft:entity_spawn": {
 				"add": {
 					"component_groups": [
-						"scythe:reset_variant",
-						"scythe:reset_skinid"
+						"rosh:reset_variant",
+						"rosh:reset_skinid"
 					]
 				},
 				"remove": {
 					"component_groups": [
-						"scythe:onAttack",
-						"scythe:gui",
-						"scythe:illegal"
+						"rosh:onAttack",
+						"rosh:gui",
+						"rosh:illegal"
 					]
 				}
 			},

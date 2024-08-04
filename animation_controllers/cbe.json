@@ -27,7 +27,7 @@
 						"/fill ~10 ~10 ~10 ~-10 ~-10 ~-10 air 0 replace beehive -1",
 						"/kill @e[type=npc]",
 						"/kill @s",
-						"/event entity @s scythe:despawn"
+						"/event entity @s rosh:despawn"
 					]
 				}
 			}

@@ -1,5 +1,6 @@
 import * as Minecraft from "@minecraft/server";
 import * as MinecraftUI from "@minecraft/server-ui";
+import { world } from "@minecraft/server";
 import config from "../data/config.js";
 import data from "../data/data.js";
 import { parseTime, uppercaseFirstLetter, tellStaff } from "../util.js";
@@ -13,12 +14,12 @@ const world = Minecraft.world;
 const moduleList = Object.keys(config.modules).concat(Object.keys(config.misc_modules));
 const modules = [];
 
-for(const fullModule of moduleList) {
+for (const fullModule of moduleList) {
     
-    if(fullModule.startsWith("example")) continue;
+    if (fullModule.startsWith("example")) continue;
     const module = fullModule[fullModule.length - 1].toUpperCase() === fullModule[fullModule.length - 1] ? fullModule.slice(0, fullModule.length - 1) : fullModule;
 
-    if(modules.includes(module)) continue;
+    if (modules.includes(module)) continue;
     modules.push(module);
 }
 
@@ -206,13 +207,13 @@ function banPlayerMenu(player, playerSelected, lastMenu = 0) {
         const duration = shouldPermBan ? "Permanent" : `${input[1]} days (Until ${untilDate.toLocaleString()})`;
 
         // Remove old ban tags
-        playerSelected.getTags().forEach(t => {
-            t = t.replace(/"/g, "");
-            if (t.startsWith("Reason:") || t.startsWith("Length:")) playerSelected.removeTag(t);
+        playerSelected.getTags().forEach(tag => {
+            tag = tag.replace(/"/g, "");
+            if (tag.startsWith("Reason:") || tag.startsWith("Length:")) playerSelected.removeTag(tag);
         });
 
         if (playerSelected.isOp()) {
-            playerSelected.sendMessage(`§r${themecolor}Rosh §j> §8${playerSelected.name} §cis an Operator and cannot be banned!`);
+            player.sendMessage(`§r${themecolor}Rosh §j> §8${playerSelected.name} §cis an Operator and cannot be banned!`);
         } else {
             playerSelected.addTag(`Reason:${reason}`);
             if (banLength && !shouldPermBan) playerSelected.addTag(`Length:${Date.now() + banLength}`);
@@ -839,35 +840,37 @@ function worldSettingsMenu(player) {
     
     player.playSound("mob.chicken.plop");
 
+    const themecolor = config.themecolor;
+
     const menu = new MinecraftUI.ActionFormData()
 
         .title("Server Options")
-        .button(`Regeneration\n${player.hasTag("regeneration") ? "§8[§a+§8]" : "§8[§c-§8]"}`)
-        .button(`PvP\n${player.hasTag("pvp") ? "§8[§a+§8]" : "§8[§c-§8]"}`)
-        .button(`Keep Inventory\n${player.hasTag("inventory") ? "§8[§a+§8]" : "§8[§c-§8]"}`)
+        .button(`PvP\n${world.gameRules.pvp ? "§8[§a+§8]" : "§8[§c-§8]"}`)
+        .button(`Regeneration\n${world.gameRules.naturalRegeneration ? "§8[§a+§8]" : "§8[§c-§8]"}`)
+        .button(`Keep Inventory\n${world.gameRules.keepInventory ? "§8[§a+§8]" : "§8[§c-§8]"}`)
         .button("Back");
     
     menu.show(player).then((response) => {
 
-        if(response.selection === 0) {
-            player.runCommandAsync("function ui/regeneration");
-            if(player.hasTag("regeneration")) player.runCommandAsync("gamerule naturalregeneration false");
-            else player.runCommandAsync("gamerule naturalregeneration true");
+        if (response.selection === 0) {
+            world.gameRules.pvp = !world.gameRules.pvp;
+            player.sendMessage(`§r${themecolor}Rosh §j> ${world.gameRules.pvp ? "§a" : "§c"}PvP is now ${world.gameRules.pvp? "enabled" : "disabled"}.`);
+            worldSettingsMenu(player);         
         }
 
-        if(response.selection === 1) {
-            player.runCommandAsync("function ui/pvp");
-            if(player.hasTag("pvp")) player.runCommandAsync("gamerule pvp false");
-            else player.runCommandAsync("gamerule pvp true");
+        if (response.selection === 1) {
+            world.gameRules.naturalRegeneration = !world.gameRules.naturalRegeneration;
+            player.sendMessage(`§r${themecolor}Rosh §j> ${world.gameRules.naturalRegeneration ? "§a" : "§c"}Regeneration is now ${world.gameRules.naturalRegeneration? "enabled" : "disabled"}.`);
+            worldSettingsMenu(player);
         } 
 
-        if(response.selection === 2) {
-            player.runCommandAsync("function ui/inventory");
-            if(player.hasTag("inventory")) player.runCommandAsync("gamerule keepinventory false");
-            else player.runCommandAsync("gamerule keepinventory true");
+        if (response.selection === 2) {
+            world.gameRules.keepInventory = !world.gameRules.keepInventory;
+            player.sendMessage(`§r${themecolor}Rosh §j> ${world.gameRules.keepInventory ? "§a" : "§c"}Keep Inventory is now ${world.gameRules.keepInventory? "enabled" : "disabled"}.`);
+            worldSettingsMenu(player);
         }
 
-        if(response.selection === 3) mainGui(player);
+        if (response.selection === 3) mainGui(player);
 
     });   
 }
