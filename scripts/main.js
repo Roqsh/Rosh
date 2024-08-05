@@ -84,7 +84,6 @@ import { aim_c } from "./checks/combat/aim/aimC.js";
 //import { aim_d } from "./checks/combat/aim/aimD.js";
 //import { aim_e } from "./checks/combat/aim/aimE.js";
 
-
 let tps = 20;
 let lagValue = 1;
 let lastDate = Date.now();
@@ -765,7 +764,7 @@ function rateLimit(player) {
     const lastAttempt = accessAttempts.get(player.name) || 0;
     const timeDiff = now - lastAttempt;
 
-    // Allow access if more than config time have passed since the last attempt
+    // Allow access if more than config time has passed since the last attempt
 	// Prevents cheaters from accessing the UI by spamming so fast that theres a chance that you can glitch in (but I havent seen this kind of method yet)
     if (timeDiff > config.customcommands.ui.rate_limit) {
         accessAttempts.set(player.name, now);
