@@ -2,7 +2,7 @@ import * as MinecraftUI from "@minecraft/server-ui";
 import { world } from "@minecraft/server";
 import config from "../../data/config.js";
 import data from "../../data/data.js";
-import { mainGui } from "../mainGui.js";
+import { mainMenu } from "../mainGui.js";
 
 /**
  * Displays all logs in a menu.
@@ -14,6 +14,8 @@ export function logsMenu(player, page = 0) {
     // Play a sound to indicate the menu has been opened
     player.playSound("mob.chicken.plop");
 
+    const themecolor = config.themecolor;
+
     const LinesPerPage = config.logSettings.linesPerPage;
     const logs = data.recentLogs;
     const totalPages = Math.ceil(logs.length / LinesPerPage);
@@ -21,6 +23,7 @@ export function logsMenu(player, page = 0) {
     const end = start + LinesPerPage;
     const text = logs.length ? logs.slice(start, end).join("\n") : "§8No logs available yet.";
 
+    // Create the menu to display the logs
     const menu = new MinecraftUI.ActionFormData()
         .title(`Rosh Logs - ${page + 1}/${totalPages}`)
         .body(text);
@@ -37,10 +40,13 @@ export function logsMenu(player, page = 0) {
     menu.button("Log Settings");
     menu.button("Back");
 
+    // Show the menu to the player and handle the response
     menu.show(player).then((response) => {
 
         // Check if a valid selection was made
-        if (response.canceled) return;
+        if (response.canceled) {
+            return;
+        }
 
         if (response.selection === 0 && page > 0) {
             logsMenu(player, page - 1);
@@ -49,13 +55,13 @@ export function logsMenu(player, page = 0) {
         } else if (response.selection === buttonIndex) {
             logsSettingsMenu(player);
         } else if (response.selection === buttonIndex + 1) {
-            mainGui(player);
+            mainMenu(player);
         }
 
     }).catch((error) => {
         // Handle promise rejection
-        player.sendMessage(`${themecolor}Rosh §j> §cAn error occurred while displaying the logs menu. Please try again.`);
-        console.error("Error showing logs menu: ", error);
+        console.error(`${new Date().toISOString()} | ${error}${error.stack}`);
+        player.sendMessage(`${themecolor}Rosh §j> §cAn error occurred:\n§8${error}\n${error.stack}`);
     });
 }
 
@@ -70,7 +76,7 @@ function logsSettingsMenu(player) {
     // Play a sound to indicate the menu has been opened
     player.playSound("mob.chicken.plop");
 
-    // Create the settings menu
+    // Create the log settings menu
     const menu = new MinecraftUI.ModalFormData()
         .title("Log Settings")
         .toggle("Show Debug", logSettings.showDebug)
@@ -78,11 +84,13 @@ function logsSettingsMenu(player) {
         .toggle("Show Join/Leave Messages", logSettings.showJoinLeave)
         .slider("Lines Per Page", 10, 100, 1, logSettings.linesPerPage);
 
-    // Show the menu to the player
+    // Show the menu to the player and handle the response
     menu.show(player).then((response) => {
 
         // Check if a valid selection was made
-        if (response.canceled) return;
+        if (response.canceled) {
+            return;
+        }
 
         try {
             // Destructure the response values
@@ -109,14 +117,14 @@ function logsSettingsMenu(player) {
             );
 
         } catch (error) {
-            // Handle any errors updating the log settings
-            player.sendMessage(`${themecolor}Rosh §j> §cAn error occurred while updating the log settings. Please try again.`);
-            console.error("Error updating log settings: ", error);
+            // Handle promise rejection
+            console.error(`${new Date().toISOString()} | ${error}${error.stack}`);
+            player.sendMessage(`${themecolor}Rosh §j> §cAn error occurred:\n§8${error}\n${error.stack}`);
         }
 
     }).catch((error) => {
         // Handle promise rejection
-        player.sendMessage(`${themecolor}Rosh §j> §cAn error occurred while displaying the log-settings menu. Please try again.`);
-        console.error("Error showing settings menu: ", error);
+        console.error(`${new Date().toISOString()} | ${error}${error.stack}`);
+        player.sendMessage(`${themecolor}Rosh §j> §cAn error occurred:\n§8${error}\n${error.stack}`);
     });
 }

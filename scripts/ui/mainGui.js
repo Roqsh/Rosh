@@ -16,15 +16,15 @@ import { logsMenu } from "./sections/logsMenu.js";
  * Displays the UI that gets opened by the UI item.
  * @param {Object} player - The player to whom the menu is shown. 
  */
-export function mainGui(player) {
+export function mainMenu(player) {
     
     // Play a sound to indicate the menu has been opened
     player.playSound("mob.chicken.plop");
 
     const themecolor = config.themecolor;
 
+    // Create the main menu with all sub-menus
     const menu = new MinecraftUI.ActionFormData()
-
 		.title("Rosh Settings")
 		.button("Punish Menu")
         .button("Settings")
@@ -34,30 +34,17 @@ export function mainGui(player) {
         .button("Rosh Logs")
         .button("Debug Menu");
     
+    // Show the menu to the player and handle the response
     menu.show(player).then((response) => {
 
         switch (response.selection) {
-            case 0:
-                punishMenu(player);
-                break;
-            case 1:
-                settingsMenu(player);
-                break;
-            case 2:
-                modulesMenu(player);
-                break;
-            case 3:
-                playerSettingsMenu(player);
-                break;
-            case 4:
-                worldSettingsMenu(player);
-                break;
-            case 5:
-                logsMenu(player);
-                break;
-            case 6:
-                debugSettingsMenu(player);
-                break;
+            case 0: punishMenu(player); break;
+            case 1: settingsMenu(player); break;
+            case 2: modulesMenu(player); break;
+            case 3: playerSettingsMenu(player); break;
+            case 4: worldSettingsMenu(player); break;
+            case 5: logsMenu(player); break;
+            case 6: debugSettingsMenu(player); break;
         }
 
     }).catch((error) => {
@@ -68,63 +55,104 @@ export function mainGui(player) {
 }
 
 
-// ====================== //
-//       Punish Menu      //
-// ====================== //
 
+/**
+ * Displays a menu with all available punishment options.
+ * @param {Object} player - The player to whom the menu is shown.
+ */
 function punishMenu(player) {
     
     // Play a sound to indicate the menu has been opened
     player.playSound("mob.chicken.plop");
 
+    // Create a menu will all available punishments
     const menu = new MinecraftUI.ActionFormData()
-
         .title("Punish Menu")
         .button("Kick Player")
         .button("Ban Player")
         .button("Unban Player")
         .button("Back");
     
+    // Show the menu to the player and handle the response
     menu.show(player).then((response) => {
 
-        if (response.selection === 0) banMenuSelect(player, response.selection);
-        if (response.selection === 1) banMenuSelect(player, response.selection);
-        if (response.selection === 2) unbanPlayerMenu(player);
-        if (response.selection === 3) mainGui(player);
+        // Check if a valid selection was made
+        if (response.canceled) {
+            return;
+        }
+        
+        switch(response.selection) {
+            case 0: kickPlayerMenu(player); break;
+            case 1: banPlayerMenu(player); break;
+            case 2: unbanPlayerMenu(player); break;
+            case 3: mainMenu(player); break;
+        }
 
+    }).catch((error) => {
+        // Handle promise rejection
+        console.error(`${new Date().toISOString()} | ${error}${error.stack}`);
+        player.sendMessage(`${themecolor}Rosh §j> §cAn error occurred:\n§8${error}\n${error.stack}`);
     });
 }
 
+
+
+/**
+ * 
+ * @param {Object} player - The player to whom the menu is shown. 
+ * @param {*} selection 
+ */
 function banMenuSelect(player, selection) {
 
     // Play a sound to indicate the menu has been opened
     player.playSound("mob.chicken.plop");
+
     const themecolor = config.themecolor;
 
-    const allPlayers = world.getPlayers();
+    const allPlayers = world.getAllPlayers();
 
+    // Create a menu will all available punishments
     const menu = new MinecraftUI.ActionFormData()
-
         .title("Punish Menu");
     
-    for(const plr of allPlayers) {
+        // Gets all available players
+        for (const plr of allPlayers) {
 
-        let playerName = `${plr.name}`;
-        if(plr.id === player.id) playerName += " - You";
-        if(plr.isOp()) playerName += `\n§8[${themecolor}Op§8]`;
-        menu.button(playerName);
-    }
+            let playerName = `${plr.name}`;
+
+            // Check if the player name matches the initiator's name and marks it with "You"
+            if (plr.id === player.id) {
+                playerName += " - You";
+            }
+
+            // Check if the player is an operator and mark it with "Op"
+            if (plr.isOp()) {
+                playerName += `\n§8[${themecolor}Op§8]`;
+            }
+
+            // Display the player and his (modified) name
+            menu.button(playerName);
+        }
 
     menu.button("Back");
 
+    // Show the menu to the player and handle the response
     menu.show(player).then((response) => {
 
-        if(response.canceled) return punishMenu(player);
+        // Check if a valid selection was made
+        if (response.canceled) {
+            return;
+        }
        
-        if([...allPlayers].length > response.selection) {         
+        if ([...allPlayers].length > response.selection) {         
             if(selection === 0) kickPlayerMenu(player, [...allPlayers][response.selection]);          
             if(selection === 1) banPlayerMenu(player, [...allPlayers][response.selection]);
         } else punishMenu(player);
+
+    }).catch((error) => {
+        // Handle promise rejection
+        console.error(`${new Date().toISOString()} | ${error}${error.stack}`);
+        player.sendMessage(`${themecolor}Rosh §j> §cAn error occurred:\n§8${error}\n${error.stack}`);
     });
 }
 
@@ -140,20 +168,17 @@ function kickPlayerMenu(player, playerSelected, lastMenu = 0) {
     player.playSound("mob.chicken.plop");
 
     const menu = new MinecraftUI.ModalFormData()
-
         .title("Kick Player Menu - " + playerSelected.name)
         .textField("Kick Reason:", "§o§7No Reason Provided")
         .toggle("Silent", false);
 
+    // Show the menu to the player and handle the response
     menu.show(player).then((response) => {
 
         if (response.canceled) {
             switch (lastMenu) {
-                case 0:
-                    banMenuSelect(player, lastMenu);
-                    break;
-                case 1:
-                    playerSettingsMenuSelected(player, playerSelected);
+                case 0: banMenuSelect(player, lastMenu); break;
+                case 1: playerSettingsMenuSelected(player, playerSelected);
             }
             return;
         }
@@ -172,10 +197,17 @@ function kickPlayerMenu(player, playerSelected, lastMenu = 0) {
             data.recentLogs.push(`§8${playerSelected.name} §chas been kicked (Silent) by §8${player.name}§c!`);
             playerSelected.triggerEvent("rosh:kick");
         }
+    }).catch((error) => {
+        // Handle promise rejection
+        console.error(`${new Date().toISOString()} | ${error}${error.stack}`);
+        player.sendMessage(`${themecolor}Rosh §j> §cAn error occurred:\n§8${error}\n${error.stack}`);
     });
 }
 
 function banPlayerMenu(player, playerSelected, lastMenu = 0) {
+
+    // Play a sound to indicate the menu has been opened
+    player.playSound("mob.chicken.plop");
 
     const themecolor = config.themecolor;
     
@@ -183,15 +215,13 @@ function banPlayerMenu(player, playerSelected, lastMenu = 0) {
         return player.sendMessage(`§r${themecolor}Rosh §j> §cBanning players is disabled in config.js.`);
     }
 
-    // Play a sound to indicate the menu has been opened
-    player.playSound("mob.chicken.plop");
-
     const menu = new MinecraftUI.ModalFormData()
         .title("Ban Player Menu - " + playerSelected.name)
         .textField("Ban Reason:", "§o§7No Reason Provided")
         .slider("Ban Length (in days)", 0, 365, 1)
         .toggle("Permanent Ban", true);
 
+    // Show the menu to the player and handle the response
     menu.show(player).then((response) => {
         if (response.canceled) {
             if (lastMenu === 0) banMenuSelect(player, lastMenu);
@@ -232,6 +262,10 @@ function banPlayerMenu(player, playerSelected, lastMenu = 0) {
                 duration: duration
             };
         }
+    }).catch((error) => {
+        // Handle promise rejection
+        console.error(`${new Date().toISOString()} | ${error}${error.stack}`);
+        player.sendMessage(`${themecolor}Rosh §j> §cAn error occurred:\n§8${error}\n${error.stack}`);
     });
 }
 
@@ -247,11 +281,11 @@ function unbanPlayerMenu(player) {
     player.playSound("mob.chicken.plop");
 
     const menu = new MinecraftUI.ModalFormData()
-
         .title("Unban Player Menu")
         .textField("Player to unban:", "§o§7Enter player name")
         .textField("Unban Reason:", "§o§7No Reason Provided");
 
+    // Show the menu to the player and handle the response
     menu.show(player).then((response) => {
         
         if(response.canceled) return punishMenu(player);
@@ -272,6 +306,11 @@ function unbanPlayerMenu(player) {
 
         tellStaff(`§r${themecolor}Rosh §j> §8${player.nameTag} §ahas added §8${playerToUnban} §ainto the unban queue for: §8${reason}§a.`);
         data.recentLogs.push(`§8${playerToUnban} §ahas been unbanned by §8${player.nameTag}§a!`);
+
+    }).catch((error) => {
+        // Handle promise rejection
+        console.error(`${new Date().toISOString()} | ${error}${error.stack}`);
+        player.sendMessage(`${themecolor}Rosh §j> §cAn error occurred:\n§8${error}\n${error.stack}`);
     });
 }
 
@@ -296,27 +335,20 @@ function settingsMenu(player) {
         .button(`Thememode\n§8${config.thememode}`)
         .button("Back");
 
+    // Show the menu to the player and handle the response
     menu.show(player).then((response) => {
         switch (response.selection) {
-            case 0:
-                handleNotification(player, themecolor);
-                break;
-            case 1:
-                autobanMenu(player);
-                break;
-            case 2:
-                presetMenu(player);
-                break;
-            case 3:
-                themecolorMenu(player);
-                break;
-            case 4:
-                thememodeMenu(player);
-                break;
-            case 5:
-                mainGui(player);
-                break;
+            case 0: handleNotification(player, themecolor); break;
+            case 1: autobanMenu(player); break;
+            case 2: presetMenu(player); break;
+            case 3: themecolorMenu(player); break;
+            case 4: thememodeMenu(player); break; 
+            case 5: mainMenu(player); break;
         }
+    }).catch((error) => {
+        // Handle promise rejection
+        console.error(`${new Date().toISOString()} | ${error}${error.stack}`);
+        player.sendMessage(`${themecolor}Rosh §j> §cAn error occurred:\n§8${error}\n${error.stack}`);
     });
 }
 
@@ -331,6 +363,7 @@ function autobanMenu(player) {
         .title("Autoban")
         .toggle("Enable Autoban", config.autoban);
 
+    // Show the menu to the player and handle the response
     menu.show(player).then((response) => {
         if (response.canceled) {
             return settingsMenu(player);
@@ -340,6 +373,11 @@ function autobanMenu(player) {
         world.setDynamicProperty("config", JSON.stringify(config));
 
         player.sendMessage(`§r${themecolor}Rosh §j> ${config.autoban ? "§a" : "§c"}Auto-baning is now ${config.autoban ? "enabled" : "disabled"}!`);
+
+    }).catch((error) => {
+        // Handle promise rejection
+        console.error(`${new Date().toISOString()} | ${error}${error.stack}`);
+        player.sendMessage(`${themecolor}Rosh §j> §cAn error occurred:\n§8${error}\n${error.stack}`);
     });
 }
 
@@ -353,10 +391,10 @@ function presetMenu(player) {
     const currentPresetIndex = config.preset === "stable" ? 0 : 1;
 
     const menu = new MinecraftUI.ModalFormData()
-
        .title("Choose preset")
        .dropdown("Preset", ["Stable", "Beta"], currentPresetIndex);
 
+    // Show the menu to the player and handle the response
     menu.show(player).then((response) => {
 
         if (response.canceled) {
@@ -383,8 +421,9 @@ function presetMenu(player) {
             console.error("Failed to set dynamic property 'config':", error);
         }
     }).catch((error) => {
-        player.sendMessage(`§r${themecolor}Rosh §j> §cAn error occurred. Please try again.`);
-        console.error("Error showing presets menu:", error);
+        // Handle promise rejection
+        console.error(`${new Date().toISOString()} | ${error}${error.stack}`);
+        player.sendMessage(`${themecolor}Rosh §j> §cAn error occurred:\n§8${error}\n${error.stack}`);
     });
 }
 
@@ -405,6 +444,7 @@ function themecolorMenu(player) {
         .title("Choose Themecolor")
         .dropdown("Color", themecolors, currentColorIndex);
 
+    // Show the menu to the player and handle the response
     menu.show(player).then((response) => {
         if (response.canceled) {
             return settingsMenu(player);
@@ -422,7 +462,9 @@ function themecolorMenu(player) {
         player.sendMessage(`§r${selectedColor.substring(0, 2)}Rosh §j> §aThemecolor set to ${selectedColor.substring(0, 2)}Color§a!`);
 
     }).catch((error) => {
-        console.error("Error showing themecolor menu:", error);
+        // Handle promise rejection
+        console.error(`${new Date().toISOString()} | ${error}${error.stack}`);
+        player.sendMessage(`${themecolor}Rosh §j> §cAn error occurred:\n§8${error}\n${error.stack}`);
     });
 }
 
@@ -441,6 +483,7 @@ function thememodeMenu(player) {
         .title("Choose Thememode")
         .dropdown("Mode", thememodes, currentModeIndex);
 
+    // Show the menu to the player and handle the response
     menu.show(player).then((response) => {
         if (response.canceled) {
             return settingsMenu(player);
@@ -458,7 +501,9 @@ function thememodeMenu(player) {
         player.sendMessage(`§r${themecolor}Rosh §j> §aThememode set to §8${selectedMode}§a!`);
 
     }).catch((error) => {
-        player.sendMessage("Error showing thememode menu:", error);
+        // Handle promise rejection
+        console.error(`${new Date().toISOString()} | ${error}${error.stack}`);
+        player.sendMessage(`${themecolor}Rosh §j> §cAn error occurred:\n§8${error}\n${error.stack}`);
     });
 }
 
@@ -497,20 +542,27 @@ function modulesMenu(player) {
     // Play a sound to indicate the menu has been opened
     player.playSound("mob.chicken.plop");
 
-    const settings_menu = new MinecraftUI.ActionFormData()
+    const themecolor = config.themecolor;
 
+    const menu = new MinecraftUI.ActionFormData()
         .title("Modules")
 
-    for(const subModule of modules) {
-        settings_menu.button(uppercaseFirstLetter(subModule));
+    for (const subModule of modules) {
+        menu.button(uppercaseFirstLetter(subModule));
     }
 
-    settings_menu.button("Back");
+    menu.button("Back");
 
-    settings_menu.show(player).then((response) => {
-        if(!modules[response.selection ?? -1]) return mainGui(player);
+    // Show the menu to the player and handle the response
+    menu.show(player).then((response) => {
+        if (!modules[response.selection ?? - 1]) return mainMenu(player);
 
         modulesCheckSelectMenu(player, response.selection);
+
+    }).catch((error) => {
+        // Handle promise rejection
+        console.error(`${new Date().toISOString()} | ${error}${error.stack}`);
+        player.sendMessage(`${themecolor}Rosh §j> §cAn error occurred:\n§8${error}\n${error.stack}`);
     });
 }
 
@@ -519,31 +571,38 @@ function modulesCheckSelectMenu(player, selection) {
     // Play a sound to indicate the menu has been opened
     player.playSound("mob.chicken.plop");
 
+    const themecolor = config.themecolor;
+
     const subCheck = modules[selection];
 
     const menu = new MinecraftUI.ActionFormData()
-
         .title("Configure Modules")
 
     const checks = [];
-    for(const module of moduleList) {
-        if(!module.startsWith(subCheck)) continue;
+    for (const module of moduleList) {
+        if (!module.startsWith(subCheck)) continue;
         checks.push(module);
 
         const checkData = config.modules[module] ?? config.misc_modules[module];
         menu.button(`${uppercaseFirstLetter(subCheck)}/${module[module.length - 1]}\n${checkData.enabled ? "§8[§a+§8]" : "§8[§c-§8]"}`);
     }
 
-    if(checks.length === 1) return editModulesMenu(player, checks[0]);
+    if (checks.length === 1) return editModulesMenu(player, checks[0]);
 
     menu.button("Back");
 
+    // Show the menu to the player and handle the response
     menu.show(player).then((response) => {
         const selection = response.selection ?? - 1;
 
-        if(!checks[selection]) return modulesMenu(player);
+        if (!checks[selection]) return modulesMenu(player);
 
         editModulesMenu(player, checks[selection]);
+
+    }).catch((error) => {
+        // Handle promise rejection
+        console.error(`${new Date().toISOString()} | ${error}${error.stack}`);
+        player.sendMessage(`${themecolor}Rosh §j> §cAn error occurred:\n§8${error}\n${error.stack}`);
     });
 }
 
@@ -598,6 +657,7 @@ function editModulesMenu(player, check) {
         optionsMap = optionsMap.concat(punishmentSettings);
     }
 
+    // Show the menu to the player and handle the response
     menu.show(player).then((response) => {
     
         if (response.canceled) return;
@@ -617,6 +677,11 @@ function editModulesMenu(player, check) {
         const fancyCheck = check.replace(/([A-Z])/g, '/$1').replace(/^./, str => str.toUpperCase());
         
         player.sendMessage(`§r${themecolor}Rosh §j> §aUpdated the settings for §8${fancyCheck}§a:\n§8${JSON.stringify(checkData, null, 2)}`);
+
+    }).catch((error) => {
+        // Handle promise rejection
+        console.error(`${new Date().toISOString()} | ${error}${error.stack}`);
+        player.sendMessage(`${themecolor}Rosh §j> §cAn error occurred:\n§8${error}\n${error.stack}`);
     });
 }
 
@@ -635,7 +700,6 @@ function playerSettingsMenu(player) {
     const allPlayers = world.getPlayers();
 
     const menu = new MinecraftUI.ActionFormData()
-
         .title("Manage Players")
     
     for(const plr of allPlayers) {
@@ -648,9 +712,10 @@ function playerSettingsMenu(player) {
 
     menu.button("Back");
 
+    // Show the menu to the player and handle the response
     menu.show(player).then((response) => {
         if([...allPlayers].length > response.selection) playerSettingsMenuSelected(player, [...allPlayers][response.selection]);
-            else mainGui(player);
+            else mainMenu(player);
     });
 }
 
@@ -695,6 +760,7 @@ export function playerSettingsMenuSelected(player, playerSelected) { // FIXME: (
         .button('Killaura Check')
         .button("Back");
 
+    // Show the menu to the player and handle the response
     menu.show(player).then((response) => {
         switch (response.selection) {
             case 0:
@@ -787,21 +853,11 @@ export function playerSettingsMenuSelected(player, playerSelected) { // FIXME: (
                 }
                 playerSettingsMenuSelected(player, playerSelected);
                 break;
-            case 8:
-                playerSettingsMenuSelectedTeleport(player, playerSelected);
-                break;
-            case 9:
-                playerSettingsMenuSelectedGamemode(player, playerSelected);
-                break;
-            case 10:
-                playerSelected.runCommandAsync("function tools/stats");
-                break;
-            case 11:
-                playerSelected.runCommandAsync("summon rosh:killaura ~ ~4 ~3");
-                break;
-            case 12:
-                playerSettingsMenu(player);
-                break;
+            case 8: playerSettingsMenuSelectedTeleport(player, playerSelected); break;
+            case 9: playerSettingsMenuSelectedGamemode(player, playerSelected); break;
+            case 10: playerSelected.runCommandAsync("function tools/stats"); break;
+            case 11: playerSelected.runCommandAsync("summon rosh:killaura ~ ~4 ~3"); break;
+            case 12: playerSettingsMenu(player); break;
         }
 
         if (response.canceled) playerSettingsMenu(player);
@@ -821,13 +877,13 @@ function playerSettingsMenuSelectedTeleport(player, selectedPlayer) {
     const themecolor = config.themecolor;
 
     const menu = new MinecraftUI.ActionFormData()
-
         .title("Teleport Menu")
         .body(`Managing ${selectedPlayer.name}.`)
         .button(`Teleport to ${selectedPlayer.name}`)
         .button(`Teleport ${selectedPlayer.name} to you`)
         .button("Back");
     
+    // Show the menu to the player and handle the response
     menu.show(player).then((response) => {
 
         switch(response.selection) {
@@ -871,7 +927,6 @@ function playerSettingsMenuSelectedGamemode(player, selectedPlayer) {
     const themecolor = config.themecolor;
 
     const menu = new MinecraftUI.ActionFormData()
-
         .title("Gamemode Menu")
         .body(`Managing ${selectedPlayer.name}.`)
         .button("Creative")
@@ -880,23 +935,15 @@ function playerSettingsMenuSelectedGamemode(player, selectedPlayer) {
         .button("Spectator")
         .button("Back");
     
+    // Show the menu to the player and handle the response
     menu.show(player).then((response) => {
 
         switch (response.selection) {
-            case 0:
-                selectedPlayer.setGameMode("creative");
-                break;
-            case 1:
-                selectedPlayer.setGameMode("survival");
-                break;
-            case 2:
-                selectedPlayer.setGameMode("adventure");
-                break;
-            case 3:
-                selectedPlayer.setGameMode("spectator");
-                break;
-            default:
-                playerSettingsMenuSelectedGamemode(player, selectedPlayer);
+            case 0: selectedPlayer.setGameMode("creative"); break;
+            case 1: selectedPlayer.setGameMode("survival"); break;
+            case 2: selectedPlayer.setGameMode("adventure"); break;
+            case 3: selectedPlayer.setGameMode("spectator"); break;
+            default: playerSettingsMenuSelectedGamemode(player, selectedPlayer);
         }
 
     }).catch((error) => {
@@ -918,7 +965,6 @@ function debugSettingsMenu(player) {
     player.playSound("mob.chicken.plop");
 
     const menu = new MinecraftUI.ActionFormData()
-
         .title("Debug Menu")
         .button(`Checks\n${player.hasTag("debug") ? "§8[§a+§8]" : "§8[§c-§8]"}`)
         .button(`Packets\n${player.hasTag("packetlogger") ? "§8[§a+§8]" : "§8[§c-§8]"}`)
@@ -930,6 +976,7 @@ function debugSettingsMenu(player) {
         .button(`Cps\n${player.hasTag("cps") ? "§8[§a+§8]" : "§8[§c-§8]"}`)
         .button("Back");
     
+    // Show the menu to the player and handle the response
     menu.show(player).then((response) => {
 
         if (response.selection === 0) player.runCommandAsync("function ui/debug");
@@ -940,7 +987,7 @@ function debugSettingsMenu(player) {
         if (response.selection === 5) player.runCommandAsync("function ui/devrotationx");
         if (response.selection === 6) player.runCommandAsync("function ui/devrotationy");
         if (response.selection === 7) player.runCommandAsync("function ui/devcps");
-        if (response.selection === 8) mainGui(player);
+        if (response.selection === 8) mainMenu(player);
 
     });
 }

@@ -1,7 +1,7 @@
 import * as MinecraftUI from "@minecraft/server-ui";
 import { world } from "@minecraft/server";
 import config from "../../data/config.js";
-import { mainGui } from "../mainGui.js";
+import { mainMenu } from "../mainGui.js";
 
 /**
  * Displays the world settings menu to the player.
@@ -31,20 +31,10 @@ export function worldSettingsMenu(player) {
         }
 
         switch (response.selection) {
-            case 0:
-                toggleGameRule(player, 'pvp', 'PvP');
-                break;
-            case 1:
-                toggleGameRule(player, 'naturalRegeneration', 'Regeneration');
-                break;
-            case 2:
-                toggleGameRule(player, 'keepInventory', 'Keep Inventory');
-                break;
-            case 3:
-                mainGui(player);
-                break;
-            default:
-                player.sendMessage(`${themecolor}Rosh §j> §cAn error occurred: §8Invalid selection.`);
+            case 0: toggleGameRule(player, 'pvp', 'PvP'); break;
+            case 1: toggleGameRule(player, 'naturalRegeneration', 'Regeneration'); break;
+            case 2: toggleGameRule(player, 'keepInventory', 'Keep Inventory'); break;
+            case 3: mainMenu(player); break;
         }
     });
 }

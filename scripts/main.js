@@ -5,7 +5,7 @@ import data from "./data/data.js";
 import { tag_system, setTitle } from "./utils/gameUtil.js";
 import { flag, ban, parseTime, getScore, setScore, tellStaff, getSpeed, aroundAir, debug } from "./util.js";
 import { commandHandler } from "./commands/handler.js";
-import { mainGui, playerSettingsMenuSelected } from "./ui/mainGui.js";
+import { mainMenu, playerSettingsMenuSelected } from "./ui/mainGui.js";
 
 // Misc
 import { badpackets_a } from "./checks/misc/badpackets/badpacketsA.js";
@@ -795,7 +795,7 @@ world.afterEvents.itemUse.subscribe((itemUse) => {
             enchantData.level === 3
         ) {
 			if (rateLimit(player)) {
-				mainGui(player);
+				mainMenu(player);
 			} else {
 				player.sendMessage(`§r${themecolor}Rosh §j> §cYou are trying to access the UI too frequently!`);
 			}
