@@ -1,0 +1,122 @@
+import * as MinecraftUI from "@minecraft/server-ui";
+import { world } from "@minecraft/server";
+import config from "../../data/config.js";
+import data from "../../data/data.js";
+import { mainGui } from "../mainGui.js";
+
+/**
+ * Displays all logs in a menu.
+ * @param {Object} player - The player to whom the menu is shown. 
+ * @param {Number} page - The page of the logs menu.
+ */
+export function logsMenu(player, page = 0) {
+
+    // Play a sound to indicate the menu has been opened
+    player.playSound("mob.chicken.plop");
+
+    const LinesPerPage = config.logSettings.linesPerPage;
+    const logs = data.recentLogs;
+    const totalPages = Math.ceil(logs.length / LinesPerPage);
+    const start = page * LinesPerPage;
+    const end = start + LinesPerPage;
+    const text = logs.length ? logs.slice(start, end).join("\n") : "§8No logs available yet.";
+
+    const menu = new MinecraftUI.ActionFormData()
+        .title(`Rosh Logs - ${page + 1}/${totalPages}`)
+        .body(text);
+
+    let buttonIndex = 0;
+    if (page > 0) {
+        menu.button("< Previous Page");
+        buttonIndex++;
+    }
+    if (page < totalPages - 1) {
+        menu.button("Next Page >");
+        buttonIndex++;
+    }
+    menu.button("Log Settings");
+    menu.button("Back");
+
+    menu.show(player).then((response) => {
+
+        // Check if a valid selection was made
+        if (response.canceled) return;
+
+        if (response.selection === 0 && page > 0) {
+            logsMenu(player, page - 1);
+        } else if (response.selection === (page > 0 ? 1 : 0) && page < totalPages - 1) {
+            logsMenu(player, page + 1);
+        } else if (response.selection === buttonIndex) {
+            logsSettingsMenu(player);
+        } else if (response.selection === buttonIndex + 1) {
+            mainGui(player);
+        }
+
+    }).catch((error) => {
+        // Handle promise rejection
+        player.sendMessage(`${themecolor}Rosh §j> §cAn error occurred while displaying the logs menu. Please try again.`);
+        console.error("Error showing logs menu: ", error);
+    });
+}
+
+/**
+ * Displays the log settings menu to customize the way the logs menu is shown.
+ * @param {Object} player - The player to whom the menu is shown. 
+ */
+function logsSettingsMenu(player) {
+
+    const { themecolor, logSettings } = config;
+
+    // Play a sound to indicate the menu has been opened
+    player.playSound("mob.chicken.plop");
+
+    // Create the settings menu
+    const menu = new MinecraftUI.ModalFormData()
+        .title("Log Settings")
+        .toggle("Show Debug", logSettings.showDebug)
+        .toggle("Show Chat", logSettings.showChat)
+        .toggle("Show Join/Leave Messages", logSettings.showJoinLeave)
+        .slider("Lines Per Page", 10, 100, 1, logSettings.linesPerPage);
+
+    // Show the menu to the player
+    menu.show(player).then((response) => {
+
+        // Check if a valid selection was made
+        if (response.canceled) return;
+
+        try {
+            // Destructure the response values
+            const [showDebug, showChat, showJoinLeave, linesPerPage] = response.formValues;
+
+            // Update the configuration
+            config.logSettings = {
+                showDebug,
+                showChat,
+                showJoinLeave,
+                linesPerPage
+            };
+
+            // Save the updated configuration
+            world.setDynamicProperty("config", JSON.stringify(config));
+
+            // Notify the player of the changes
+            player.sendMessage(
+                `§r${themecolor}Rosh §j> §aUpdated the log settings:\n` +
+                `§8Show Debug: ${showDebug}\n` +
+                `Show Chat: ${showChat}\n` +
+                `Show Join/Leave Messages: ${showJoinLeave}\n` +
+                `Lines Per Page: ${linesPerPage}`
+            );
+
+        } catch (error) {
+            // Handle any errors updating the log settings
+            player.sendMessage(`${themecolor}Rosh §j> §cAn error occurred while updating the log settings. Please try again.`);
+            console.error("Error updating log settings: ", error);
+        }
+
+    }).catch((error) => {
+        // Handle promise rejection
+        player.sendMessage(`${themecolor}Rosh §j> §cAn error occurred while displaying the log-settings menu. Please try again.`);
+        console.error("Error showing settings menu: ", error);
+    });
+}

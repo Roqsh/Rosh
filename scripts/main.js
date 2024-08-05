@@ -89,13 +89,12 @@ let tps = 20;
 let lagValue = 1;
 let lastDate = Date.now();
 
-
 world.beforeEvents.chatSend.subscribe((msg) => {
 
     const themecolor = config.themecolor;
 
 	const { sender: player, message } = msg;
-
+    
     badpackets_e(player, message, msg)
 
 	if (message.includes("horion") || message.includes("borion") || message.includes("packet") || message.includes("vector") || message.includes("prax") || message.includes("zephyr") || message.includes("nuvola")  || message.includes("aelous") || message.includes("disepi") || message.includes("ambrosial") || message.includes("utility mod") || message.includes("nigga") || message.includes("niger")) {	

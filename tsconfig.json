@@ -1,0 +1,13 @@
+{
+    "compilerOptions": {
+      "allowJs": true,
+      "checkJs": false,
+      "moduleResolution": "node",
+      "outDir": "./dist",
+      "baseUrl": ".",
+      "typeRoots": ["./node_modules/@types", "./types"]
+    },
+    "include": ["scripts"],
+    "exclude": ["node_modules"]
+}
+  
