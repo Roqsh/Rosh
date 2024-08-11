@@ -7,6 +7,7 @@ declare module "@minecraft/server" {
 		Player: any,
 
 		flagAutotoolA: boolean,
+        isCrawling: boolean,
 
         autotoolSwitchDelay: number,
         blocksBroken: number,
@@ -32,6 +33,7 @@ declare module "@minecraft/server" {
 		Entity: any,
 		
 		flagAutotoolA: boolean,
+        isRiding: boolean,
 
 		name: string,
 

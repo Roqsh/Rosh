@@ -76,8 +76,8 @@ function shouldFlagForDiagonal(pitch_values, yaw_values) {
 /**
  * Checks for diagonal scaffolds. [Beta]
  * @name scaffold_a
- * @param {player} player - The player to check
- * @param {block} block - The placed block
+ * @param {import("@minecraft/server").Player} player - The player to check
+ * @param {import("@minecraft/server").Block} block - The placed block
  * @remarks TODO: Add check if diag is in air (below done, sides need to be done, hard to implement
  * as you need to figure out when x and z are covered by the diag block and when they are air), add backwards compatibility, etc...
 */

@@ -3,7 +3,7 @@ import { flag, getSpeed } from "../../../util";
 
 /**
  * @name scaffold_e
- * @param {player} player - The player to check
+ * @param {import("@minecraft/server").Player} player - The player to check
  * @remarks Checks for going too fast while placing
  */
 export function scaffold_e(player) {

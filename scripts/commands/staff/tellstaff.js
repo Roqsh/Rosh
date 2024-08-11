@@ -5,6 +5,7 @@ import { tellStaff } from "../../util.js";
 /**
  * Sends a message from a player to all staff members.
  * @param {Object} message - The message object containing the sender and other details.
+ * @param {Minecraft.Player} message.sender - The player who initiated the tellstaff command.
  * @param {Array} args - The arguments passed with the command, expected to be the message to send.
  * @returns {void}
  */

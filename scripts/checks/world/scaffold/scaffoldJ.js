@@ -4,8 +4,8 @@ import { flag, getEyeHeight } from "../../../util";
 /**
  * Checks for looking at the exact center of the placed block.
  * @name scaffold_j
- * @param {player} player - The player to check.
- * @param {block} block - The placed block.
+ * @param {import("@minecraft/server").Player} player - The player to check.
+ * @param {import("@minecraft/server").Block} block - The placed block.
  */
 export function scaffold_j(player, block) {
 

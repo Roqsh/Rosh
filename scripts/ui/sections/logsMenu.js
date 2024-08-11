@@ -71,10 +71,10 @@ export function logsMenu(player, page = 0) {
  */
 function logsSettingsMenu(player) {
 
-    const { themecolor, logSettings } = config;
-
     // Play a sound to indicate the menu has been opened
     player.playSound("mob.chicken.plop");
+
+    const { themecolor, logSettings } = config;
 
     // Create the log settings menu
     const menu = new MinecraftUI.ModalFormData()

@@ -6,11 +6,15 @@ import { parseTime, uppercaseFirstLetter, tellStaff } from "../util.js";
 import { addOp } from "../commands/staff/op.js";
 import { removeOp } from "../commands/staff/deop.js";
 import { addVanish, removeVanish } from "../commands/tools/vanish.js";
-import { clearEnderchest } from "../commands/tools/ecwipe.js";
 import { handleNotification } from "../commands/staff/notify.js";
 
-import { worldSettingsMenu } from "./sections/worldSettingsMenu.js";
-import { logsMenu } from "./sections/logsMenu.js";
+//import { punishMenu } from "./sections/punishMenu.js";
+//import { settingsMenu } from "./sections/settingsMenu.js";
+//import { checksMenu } from "./sections/checksMenu.js";
+//import { playerMenu } from "./sections/playerMenu.js";
+import { worldMenu } from "./sections/worldMenu.js";        // Done
+import { logsMenu } from "./sections/logsMenu.js";          // Done
+import { debugMenu } from "./sections/debugMenu.js";        // Done
 
 /**
  * Displays the UI that gets opened by the UI item.
@@ -28,8 +32,8 @@ export function mainMenu(player) {
 		.title("Rosh Settings")
 		.button("Punish Menu")
         .button("Settings")
-        .button("Modules")
-        .button(`Manage Players\n§8§o${[...world.getPlayers()].length} online`)
+        .button("Checks")
+        .button(`Manage Players\n§8§o${[...world.getAllPlayers()].length} online`)
         .button("Server Options")
         .button("Rosh Logs")
         .button("Debug Menu");
@@ -40,17 +44,17 @@ export function mainMenu(player) {
         switch (response.selection) {
             case 0: punishMenu(player); break;
             case 1: settingsMenu(player); break;
-            case 2: modulesMenu(player); break;
-            case 3: playerSettingsMenu(player); break;
-            case 4: worldSettingsMenu(player); break;
+            case 2: checksMenu(player); break;
+            case 3: playerMenu(player); break;
+            case 4: worldMenu(player); break;
             case 5: logsMenu(player); break;
-            case 6: debugSettingsMenu(player); break;
+            case 6: debugMenu(player); break;
         }
 
     }).catch((error) => {
         // Handle promise rejection
-        player.sendMessage(`${themecolor}Rosh §j> §cAn error occurred while displaying the main menu. Please try again.`);
-        console.error("Error showing main menu: ", error);
+        console.error(`${new Date().toISOString()} | ${error}${error.stack}`);
+        player.sendMessage(`${themecolor}Rosh §j> §cAn error occurred:\n§8${error}\n${error.stack}`);
     });
 }
 
@@ -64,6 +68,8 @@ function punishMenu(player) {
     
     // Play a sound to indicate the menu has been opened
     player.playSound("mob.chicken.plop");
+
+    const themecolor = config.themecolor;
 
     // Create a menu will all available punishments
     const menu = new MinecraftUI.ActionFormData()
@@ -80,7 +86,7 @@ function punishMenu(player) {
         if (response.canceled) {
             return;
         }
-        
+
         switch(response.selection) {
             case 0: kickPlayerMenu(player); break;
             case 1: banPlayerMenu(player); break;
@@ -98,9 +104,9 @@ function punishMenu(player) {
 
 
 /**
- * 
+ * Displays a list of all currently active players.
  * @param {Object} player - The player to whom the menu is shown. 
- * @param {*} selection 
+ * @param {Number} selection 
  */
 function banMenuSelect(player, selection) {
 
@@ -111,7 +117,7 @@ function banMenuSelect(player, selection) {
 
     const allPlayers = world.getAllPlayers();
 
-    // Create a menu will all available punishments
+    // Create a menu that lists all currently active players
     const menu = new MinecraftUI.ActionFormData()
         .title("Punish Menu");
     
@@ -138,15 +144,11 @@ function banMenuSelect(player, selection) {
 
     // Show the menu to the player and handle the response
     menu.show(player).then((response) => {
-
-        // Check if a valid selection was made
-        if (response.canceled) {
-            return;
-        }
        
+        // Open the kick or ban menu based on the last clicked menu in punishMenu or return back to that menu if the "Back" button was clicked
         if ([...allPlayers].length > response.selection) {         
-            if(selection === 0) kickPlayerMenu(player, [...allPlayers][response.selection]);          
-            if(selection === 1) banPlayerMenu(player, [...allPlayers][response.selection]);
+            if (selection === 0) kickPlayerMenu(player, [...allPlayers][response.selection]);          
+            if (selection === 1) banPlayerMenu(player, [...allPlayers][response.selection]);
         } else punishMenu(player);
 
     }).catch((error) => {
@@ -156,19 +158,24 @@ function banMenuSelect(player, selection) {
     });
 }
 
+
+
+/**
+ * 
+ * @param {Object} player - The player to whom the menu is shown. 
+ * @param {*} playerSelected 
+ * @param {*} lastMenu  
+ */
 function kickPlayerMenu(player, playerSelected, lastMenu = 0) {
-
-    const themecolor = config.themecolor;
-
-    if (!config.customcommands.kick.enabled) {
-        return player.sendMessage(`§r${themecolor}Rosh §j> §cKicking players is disabled in config.js.`);
-    }
 
     // Play a sound to indicate the menu has been opened
     player.playSound("mob.chicken.plop");
 
+    const themecolor = config.themecolor;
+
+    // Create a menu with options for kicking another player
     const menu = new MinecraftUI.ModalFormData()
-        .title("Kick Player Menu - " + playerSelected.name)
+        .title(`Kick Player Menu - ${playerSelected.name}`)
         .textField("Kick Reason:", "§o§7No Reason Provided")
         .toggle("Silent", false);
 
@@ -178,7 +185,7 @@ function kickPlayerMenu(player, playerSelected, lastMenu = 0) {
         if (response.canceled) {
             switch (lastMenu) {
                 case 0: banMenuSelect(player, lastMenu); break;
-                case 1: playerSettingsMenuSelected(player, playerSelected);
+                case 1: playerMenuSelected(player, playerSelected);
             }
             return;
         }
@@ -204,19 +211,24 @@ function kickPlayerMenu(player, playerSelected, lastMenu = 0) {
     });
 }
 
+
+
+/**
+ * 
+ * @param {*} player 
+ * @param {*} playerSelected 
+ * @param {*} lastMenu  
+ */
 function banPlayerMenu(player, playerSelected, lastMenu = 0) {
 
     // Play a sound to indicate the menu has been opened
     player.playSound("mob.chicken.plop");
 
     const themecolor = config.themecolor;
-    
-    if (!config.customcommands.ban.enabled) {
-        return player.sendMessage(`§r${themecolor}Rosh §j> §cBanning players is disabled in config.js.`);
-    }
 
+    // Create a menu with options for banning another player
     const menu = new MinecraftUI.ModalFormData()
-        .title("Ban Player Menu - " + playerSelected.name)
+        .title(`Ban Player Menu - ${playerSelected.name}`)
         .textField("Ban Reason:", "§o§7No Reason Provided")
         .slider("Ban Length (in days)", 0, 365, 1)
         .toggle("Permanent Ban", true);
@@ -225,7 +237,7 @@ function banPlayerMenu(player, playerSelected, lastMenu = 0) {
     menu.show(player).then((response) => {
         if (response.canceled) {
             if (lastMenu === 0) banMenuSelect(player, lastMenu);
-            if (lastMenu === 1) playerSettingsMenuSelected(player, playerSelected);
+            if (lastMenu === 1) playerMenuSelected(player, playerSelected);
             return;
         }
 
@@ -269,17 +281,20 @@ function banPlayerMenu(player, playerSelected, lastMenu = 0) {
     });
 }
 
+
+
+/**
+ * 
+ * @param {*} player 
+ */
 function unbanPlayerMenu(player) {
-
-    const themecolor = config.themecolor;
-
-    if (!config.customcommands.unban.enabled) {
-        return player.sendMessage(`§r${themecolor}Rosh §j> §cUnbanning players is disabled in config.js.`);
-    }
 
     // Play a sound to indicate the menu has been opened
     player.playSound("mob.chicken.plop");
 
+    const themecolor = config.themecolor;
+
+    // Create a menu with options for unbanning another player
     const menu = new MinecraftUI.ModalFormData()
         .title("Unban Player Menu")
         .textField("Player to unban:", "§o§7Enter player name")
@@ -315,6 +330,7 @@ function unbanPlayerMenu(player) {
 }
 
 
+
 // ====================== //
 //     Settings Menu      //
 // ====================== //
@@ -326,6 +342,7 @@ function settingsMenu(player) {
 
     const themecolor = config.themecolor;
 
+    // Create a menu with options for changing certain Rosh settings
     const menu = new MinecraftUI.ActionFormData()
         .title("Settings")
         .button(`Notifications\n${player.hasTag("notify") ? "§8[§a+§8]" : "§8[§c-§8]"}`)
@@ -359,6 +376,7 @@ function autobanMenu(player) {
 
     const themecolor = config.themecolor;
 
+    // Create a menu to enable or disable automatically banning other players
     const menu = new MinecraftUI.ModalFormData()
         .title("Autoban")
         .toggle("Enable Autoban", config.autoban);
@@ -390,6 +408,7 @@ function presetMenu(player) {
 
     const currentPresetIndex = config.preset === "stable" ? 0 : 1;
 
+    // Create a menu to choose between the stable and beta preset
     const menu = new MinecraftUI.ModalFormData()
        .title("Choose preset")
        .dropdown("Preset", ["Stable", "Beta"], currentPresetIndex);
@@ -440,6 +459,7 @@ function themecolorMenu(player) {
 
     const currentColorIndex = themecolors.indexOf(themecolor + "Color");
 
+    // Create a menu to select the color to use for Rosh
     const menu = new MinecraftUI.ModalFormData()
         .title("Choose Themecolor")
         .dropdown("Color", themecolors, currentColorIndex);
@@ -479,6 +499,7 @@ function thememodeMenu(player) {
 
     const currentModeIndex = thememodes.indexOf(thememode);
 
+    // Create a menu to select the theme-mode to use for Rosh
     const menu = new MinecraftUI.ModalFormData()
         .title("Choose Thememode")
         .dropdown("Mode", thememodes, currentModeIndex);
@@ -537,15 +558,20 @@ const punishmentSettings = [
 //     Modules Menu       //
 // ====================== //
 
-function modulesMenu(player) {
+/**
+ * 
+ * @param {Object} player - The player to whom the menu is shown.
+ */
+function checksMenu(player) {
 
     // Play a sound to indicate the menu has been opened
     player.playSound("mob.chicken.plop");
 
     const themecolor = config.themecolor;
 
+    // Create a menu that shows all categorised checks
     const menu = new MinecraftUI.ActionFormData()
-        .title("Modules")
+        .title("Checks")
 
     for (const subModule of modules) {
         menu.button(uppercaseFirstLetter(subModule));
@@ -566,17 +592,26 @@ function modulesMenu(player) {
     });
 }
 
+/**
+ * Displays a menu to configure checks for a specific module category.
+ * This menu shows sub-checks related to the selected module and allows the player
+ * to navigate to another menu for editing individual check settings.
+ * 
+ * @param {Object} player - The player to whom the menu is shown. This object represents the player in the game.
+ * @param {*} selection - The selected module or category which determines which checks are shown in the menu.
+ * @returns {void}
+ */
 function modulesCheckSelectMenu(player, selection) {
 
     // Play a sound to indicate the menu has been opened
     player.playSound("mob.chicken.plop");
 
     const themecolor = config.themecolor;
-
     const subCheck = modules[selection];
 
+    // Create a menu to display all sub-checks of one check category
     const menu = new MinecraftUI.ActionFormData()
-        .title("Configure Modules")
+        .title("Configure Checks");
 
     const checks = [];
     for (const module of moduleList) {
@@ -587,17 +622,17 @@ function modulesCheckSelectMenu(player, selection) {
         menu.button(`${uppercaseFirstLetter(subCheck)}/${module[module.length - 1]}\n${checkData.enabled ? "§8[§a+§8]" : "§8[§c-§8]"}`);
     }
 
-    if (checks.length === 1) return editModulesMenu(player, checks[0]);
+    if (checks.length === 1) return editChecksMenu(player, checks[0], selection);
 
     menu.button("Back");
 
     // Show the menu to the player and handle the response
     menu.show(player).then((response) => {
-        const selection = response.selection ?? - 1;
+        const selection = response.selection ?? -1;
 
-        if (!checks[selection]) return modulesMenu(player);
+        if (!checks[selection]) return checksMenu(player);
 
-        editModulesMenu(player, checks[selection]);
+        editChecksMenu(player, checks[selection], selection);
 
     }).catch((error) => {
         // Handle promise rejection
@@ -606,37 +641,44 @@ function modulesCheckSelectMenu(player, selection) {
     });
 }
 
-function editModulesMenu(player, check) {
 
+/**
+ * Displays a menu for editing the settings of a specific check for a player.
+ * This menu allows the player to modify settings for the specified check and
+ * provides a way to return to the previous menu.
+ * 
+ * @param {Object} player - The player to whom the menu is shown. This object represents the player in the game.
+ * @param {string} check - The key of the check in the config to be edited. This determines which check's settings will be shown.
+ * @param {*} previousSelection - The previous selection or module category, used to return to the previous menu.
+ * @returns {void}
+ */
+function editChecksMenu(player, check, previousSelection) {
     // Play a sound to indicate the menu has been opened
     player.playSound("mob.chicken.plop");
 
     const themecolor = config.themecolor;
-
-    // Retrieve the check data from either modules or misc_modules
+    const fancyCheck = check.replace(/([A-Z])/g, '/$1').replace(/^./, str => str.toUpperCase());
     const checkData = config.modules[check] ?? config.misc_modules[check];
     let optionsMap = [];
+    const originalCheckData = { ...checkData }; // Save a copy of the original check data
 
+    // Create a menu to edit the sub-check's settings
     const menu = new MinecraftUI.ModalFormData()
-        .title(`Editing ${uppercaseFirstLetter(check)}`);
+        .title(`Editing ${fancyCheck}`);
 
     for (const key of Object.keys(checkData)) {
-        // Skip keys that are in the punishmentSettings array
         if (punishmentSettings.includes(key)) continue;
 
-        // Convert the setting key to a more user-friendly format
         const settingName = uppercaseFirstLetter(key).replace(/_./g, (match) => " " + match[1].toUpperCase());
 
         switch (typeof checkData[key]) {
             case "number":
-                // Determine the max value for the slider (either 100 or the current setting value, whichever is higher)
                 const maxSliderValue = checkData[key] > 100 ? checkData[key] : 100;
-                // Determine the step value based on whether the setting value is an integer or a decimal
                 const step = Number.isInteger(checkData[key]) ? 1 : 0.01;
                 menu.slider(settingName, 0, maxSliderValue, step, checkData[key]);
                 optionsMap.push(key);
                 break;
-            case "boolean":               
+            case "boolean":
                 menu.toggle(settingName, checkData[key]);
                 optionsMap.push(key);
                 break;
@@ -647,9 +689,7 @@ function editModulesMenu(player, check) {
         }
     }
 
-    // Check if the module supports punishments
     if (checkData.punishment) {
-
         menu.dropdown("Punishment", Object.keys(punishments), punishments[checkData.punishment]);
         menu.textField("Length", "Ex: 1d, 30s, ...", checkData["punishmentLength"]);
         menu.slider("Minimum Violations", 0, 20, 1, checkData["minVlbeforePunishment"]);
@@ -659,24 +699,88 @@ function editModulesMenu(player, check) {
 
     // Show the menu to the player and handle the response
     menu.show(player).then((response) => {
-    
         if (response.canceled) return;
 
         const formValues = response.formValues ?? [];
+        let isChanged = false;
 
-        // Update the check data with the new values from the form
         for (const optionid in optionsMap) {
             const name = optionsMap[optionid];
-            checkData[name] = name === "punishment" ? Object.keys(punishments)[formValues[optionid]] : formValues[optionid];
+            const newValue = name === "punishment" ? Object.keys(punishments)[formValues[optionid]] : formValues[optionid];
+            
+            if (checkData[name] !== newValue) {
+                isChanged = true;
+            }
+            
+            checkData[name] = newValue;
         }
 
-        // Save the updated config to the dynamic property
-        world.setDynamicProperty("config", JSON.stringify(config));
+        if (isChanged) {
+            world.setDynamicProperty("config", JSON.stringify(config));
+            player.sendMessage(`${themecolor}Rosh §j> §aUpdated the settings for §8${fancyCheck}§a:\n§8${JSON.stringify(checkData, null, 2)}`);
+        } else {
+            player.sendMessage(`${themecolor}Rosh §j> §8${fancyCheck} §cwas already set to the provided values.`);
+        }
 
-        // Convert the check name to a more readable format
-        const fancyCheck = check.replace(/([A-Z])/g, '/$1').replace(/^./, str => str.toUpperCase());
+        // Return to the previous menu
+        modulesCheckSelectMenu(player, previousSelection);
         
-        player.sendMessage(`§r${themecolor}Rosh §j> §aUpdated the settings for §8${fancyCheck}§a:\n§8${JSON.stringify(checkData, null, 2)}`);
+    }).catch((error) => {
+        // Handle promise rejection
+        console.error(`${new Date().toISOString()} | ${error}${error.stack}`);
+        player.sendMessage(`${themecolor}Rosh §j> §cAn error occurred:\n§8${error}\n${error.stack}`);
+    });
+}
+
+
+
+
+/**
+ * Displays a list of all available players to manage.
+ * @param {Object} player - The player to whom the menu is shown. 
+ */
+function playerMenu(player) {
+    
+    // Play a sound to indicate the menu has been opened
+    player.playSound("mob.chicken.plop");
+
+    const themecolor = config.themecolor;
+
+    const allPlayers = world.getAllPlayers();
+
+    // Create a menu that lists all currently active players
+    const menu = new MinecraftUI.ActionFormData()
+        .title("Manage Players")
+    
+        // Gets all available players
+        for (const plr of allPlayers) {
+
+            let playerName = `${plr.name}`;
+
+            // Check if the player name matches the initiator's name and marks it with "You"
+            if (plr.id === player.id) {
+                playerName += " - You";
+            }
+
+            // Check if the player is an operator and mark it with "Op"
+            if (plr.isOp()) {
+                playerName += `\n§8[${themecolor}Op§8]`;
+            }
+
+            // Display the player and his (modified) name
+            menu.button(playerName);
+        }
+
+    menu.button("Back");
+
+    // Show the menu to the player and handle the response
+    menu.show(player).then((response) => {
+
+        if ([...allPlayers].length > response.selection) {
+            playerMenuSelected(player, [...allPlayers][response.selection]);
+        } else {
+            mainMenu(player);
+        }
 
     }).catch((error) => {
         // Handle promise rejection
@@ -686,181 +790,163 @@ function editModulesMenu(player, check) {
 }
 
 
-// ====================== //
-//     Manage Players     //
-// ====================== //
 
-function playerSettingsMenu(player) {
-    
-    // Play a sound to indicate the menu has been opened
-    player.playSound("mob.chicken.plop");
+//TODO: Implement the new command features (Other: Comments, JSDocs, etc.)
+//FIXME: BadPackets/H in fly mode, etc.
 
-    const themecolor = config.themecolor;
-
-    const allPlayers = world.getPlayers();
-
-    const menu = new MinecraftUI.ActionFormData()
-        .title("Manage Players")
-    
-    for(const plr of allPlayers) {
-
-        let playerName = `${plr.name}`;
-        if(plr.id === player.id) playerName += " - You";
-        if(plr.isOp()) playerName += `\n§8[${themecolor}Op§8]`;
-        menu.button(playerName);
-    }
-
-    menu.button("Back");
-
-    // Show the menu to the player and handle the response
-    menu.show(player).then((response) => {
-        if([...allPlayers].length > response.selection) playerSettingsMenuSelected(player, [...allPlayers][response.selection]);
-            else mainMenu(player);
-    });
-}
-
-//TODO: Implement the new command features (Other: Comments, JSDocs, etc)
-export function playerSettingsMenuSelected(player, playerSelected) { // FIXME: (badpackets/h in vanish (#staff messages), etc. ...)
+/**
+ * Displays a menu with various options for managing another player.
+ * @param {Object} player - The player to whom the menu is shown. 
+ * @param {Object} selectedPlayer - The player who is getting managed.
+ */
+export function playerMenuSelected(player, selectedPlayer) {
 
     // Play a sound to indicate the menu has been opened
     player.playSound("mob.chicken.plop");
 
     const themecolor = config.themecolor;
 
-    if (!playerSelected) {
-        return player.sendMessage(`§r${themecolor}Rosh §j> §cPlayer §8${playerSelected} was not found.`);
-    }
-
+    // Create a menu with various options for managing the selected player
     const menu = new MinecraftUI.ActionFormData()
-        .title("Manage " + playerSelected.name)
-        .body(`§8Coordinates: ${Math.floor(playerSelected.location.x)}, ${Math.floor(playerSelected.location.y)}, ${Math.floor(playerSelected.location.z)}\nDimension: ${uppercaseFirstLetter((playerSelected.dimension.id).replace("minecraft:", ""))}\nOperator: ${playerSelected.isOp() ? "§8[§a+§8]" : "§8[§c-§8]"}\nMuted: ${playerSelected.hasTag("isMuted") ? "§8[§a+§8]" : "§8[§c-§8]"}\nFrozen: ${playerSelected.hasTag("freeze") ? "§8[§a+§8]" : "§8[§c-§8]"}\nVanished: ${playerSelected.hasTag("vanish") ? "§8[§a+§8]" : "§8[§c-§8]"}\nFly Mode: ${playerSelected.hasTag("flying") ? "§8[§a+§8]" : "§8[§c-§8]"}`)
-        .button("Clear EnderChest") // Fixed
-        .button("Kick Player")      // Fixed
-        .button("Ban Player");      // Fixed
-
-    if (!playerSelected.hasTag("flying")) menu.button("Enable Fly Mode"); // Broken
-    else menu.button("Disable Fly Mode");
-
-    if (!playerSelected.hasTag("freeze")) menu.button("Freeze Player");   // Fixed
-    else menu.button("Unfreeze Player");
-
-    if (!playerSelected.hasTag("isMuted")) menu.button("Mute Player");    // Fixed
-    else menu.button("Unmute Player");
-
-    if (!playerSelected.isOp()) menu.button("Set as Operator");      // Fixed (need to fix message for selected player, ex.use util functions) + deop no longer ui ability
-    else menu.button("Remove Operator status");
-
-    if (!playerSelected.hasTag("vanish")) menu.button("Vanish Player");   // Broken (false flags for BadPackets/H, messages)
-    else menu.button("Unvanish Player");
-
-    menu
+        .title(`Manage ${selectedPlayer.name}`)
+        .body(
+            `§8Coordinates: ${Math.floor(selectedPlayer.location.x)}, ${Math.floor(selectedPlayer.location.y)}, ${Math.floor(selectedPlayer.location.z)}\n` + 
+            `Dimension: ${uppercaseFirstLetter((selectedPlayer.dimension.id).replace("minecraft:", ""))}\n` + 
+            `Operator: ${selectedPlayer.isOp() ? "§8[§a+§8]" : "§8[§c-§8]"}\n` + 
+            `Muted: ${selectedPlayer.hasTag("isMuted") ? "§8[§a+§8]" : "§8[§c-§8]"}\n` + 
+            `Frozen: ${selectedPlayer.hasTag("frozen") ? "§8[§a+§8]" : "§8[§c-§8]"}\n` + 
+            `Vanished: ${selectedPlayer.hasTag("vanish") ? "§8[§a+§8]" : "§8[§c-§8]"}\n` + 
+            `Fly Mode: ${selectedPlayer.hasTag("flying") ? "§8[§a+§8]" : "§8[§c-§8]"}`
+        )
+        .button("Clear EnderChest")  // Fixed
+        .button("Kick Player")       // Fixed
+        .button("Ban Player")        // Fixed
+        .button(`${selectedPlayer.hasTag("flying") ? "Disable Fly Mode" : "Enable Fly Mode"}`) // Fixed
+        .button(`${selectedPlayer.hasTag("frozen") ? "Unfreeze Player" : "Freeze Player"}`)    // Fixed
+        .button(`${selectedPlayer.hasTag("isMuted") ? "Unmute Player" : "Mute Player"}`)       // Fixed
+        .button(`${selectedPlayer.isOp() ? "Remove Operator status" : "Set as Operator"}`)     // Fixed
+        .button(`${selectedPlayer.hasTag("vanish") ? "Unvanish Player" : "Vanish Player"}`)    // Fixed   
         .button("Teleport")        // Fixed
         .button("Switch Gamemode") // Fixed
         .button("View Logs")       // Broken (needs to be improved)
-        .button('Killaura Check')
+        .button('Killaura Check')  // Broken (needs to be improved)
         .button("Back");
 
     // Show the menu to the player and handle the response
     menu.show(player).then((response) => {
+
         switch (response.selection) {
+
             case 0:
-                if (!config.customcommands.ecwipe.enabled) {
-                    return player.sendMessage(`§r${themecolor}Rosh §j> §cEnderchest wiping is disabled in config.`);
-                }
-                clearEnderchest(playerSelected);
-                player.sendMessage(`§r${themecolor}Rosh §j> §cYou have cleared §8${playerSelected.name}'s §cenderchest.`);
-                playerSettingsMenuSelected(player, playerSelected);
+                clearEnderchest(selectedPlayer);
+                selectedPlayer.sendMessage(`${themecolor}Rosh §j> §cYour ender chest has been cleared by §8${player.name}§c.`)
+                player.sendMessage(`${themecolor}Rosh §j> §cYou have cleared §8${selectedPlayer.name}'s §cenderchest.`);
+                playerMenuSelected(player, selectedPlayer);
                 break;
+
             case 1:
-                kickPlayerMenu(player, playerSelected, 1);
+                kickPlayerMenu(player, selectedPlayer, 1);
                 break;
+
             case 2:
-                banPlayerMenu(player, playerSelected, 1);
+                banPlayerMenu(player, selectedPlayer, 1);
                 break;
 
             case 3:
-                if (!config.customcommands.fly.enabled) {
-                    return player.sendMessage(`§r${themecolor}Rosh §j> §cToggling Fly is disabled in config.`);
-                }
-                if (playerSelected.hasTag("flying")) {
-                    playerSelected.runCommandAsync("function tools/fly"); // Broken
-                    tellStaff(`§r${themecolor}Rosh §j> §8${player.name} §chas disabled fly mode for §8${playerSelected.name}§c.`);
+                if (selectedPlayer.hasTag("flying")) {
+                    selectedPlayer.removeTag("flying");
+                    selectedPlayer.runCommandAsync("ability @s mayfly false");
+                    selectedPlayer.sendMessage(`${themecolor}Rosh §j> §cYou are no longer in fly mode.`);
+                    tellStaff(`${themecolor}Rosh §j> §8${player.name} §chas disabled fly mode for §8${selectedPlayer.name}§c.`);
                 } else {
-                    playerSelected.runCommandAsync("function tools/fly"); // Broken
-                    tellStaff(`§r${themecolor}Rosh §j> §8${player.name} §ahas enabled fly mode for §8${playerSelected.name}§a.`);
+                    selectedPlayer.addTag("flying");
+                    selectedPlayer.runCommandAsync("ability @s mayfly true");
+                    selectedPlayer.sendMessage(`§r${themecolor}Rosh §j> §aYou are now in fly mode.`);
+                    tellStaff(`${themecolor}Rosh §j> §8${player.name} §ahas enabled fly mode for §8${selectedPlayer.name}§a.`);
                 }
-                playerSettingsMenuSelected(player, playerSelected);
+                playerMenuSelected(player, selectedPlayer);
                 break;
 
             case 4:
-                if (!config.customcommands.freeze.enabled) {
-                    return player.sendMessage(`§r${themecolor}Rosh §j> §cToggling Freeze is disabled in config.`);
-                }
-                if (playerSelected.hasTag("freeze")) {
-                    playerSelected.removeTag("freeze");
-                    playerSelected.sendMessage(`§r${themecolor}Rosh §j> §aYou are no longer frozen.`);
-                    playerSelected.runCommandAsync("inputpermission set @s movement enabled");
-                    playerSelected.runCommandAsync("inputpermission set @s camera enabled");
-                    player.sendMessage(`§r${themecolor}Rosh §j> §aYou have unfrozen §8${playerSelected.name}§a.`);
+                if (selectedPlayer.hasTag("frozen")) {
+                    selectedPlayer.removeTag("frozen");
+                    selectedPlayer.sendMessage(`§r${themecolor}Rosh §j> §aYou are no longer frozen.`);
+                    selectedPlayer.runCommandAsync("inputpermission set @s movement enabled");
+                    selectedPlayer.runCommandAsync("inputpermission set @s camera enabled");
+                    selectedPlayer.runCommandAsync(`hud @s reset`);
+                    player.sendMessage(`§r${themecolor}Rosh §j> §aYou have unfrozen §8${selectedPlayer.name}§a.`);
                 } else {
-                    playerSelected.addTag("freeze");
-                    playerSelected.sendMessage(`§r${themecolor}Rosh §j> §cYou are now frozen.`);
-                    playerSelected.runCommandAsync("inputpermission set @s movement disabled");
-                    playerSelected.runCommandAsync("inputpermission set @s camera disabled");
-                    player.sendMessage(`§r${themecolor}Rosh §j> §cYou have frozen §8${playerSelected.name}§c.`);
+                    // Prevent freezing yourself
+                    if (selectedPlayer.id === player.id) {
+                        player.sendMessage(`${themecolor}Rosh §j> §cYou can't freeze yourself.`);
+                        return;
+                    }
+                    selectedPlayer.addTag("frozen");
+                    selectedPlayer.sendMessage(`§r${themecolor}Rosh §j> §cYou are now frozen.`);
+                    selectedPlayer.runCommandAsync("inputpermission set @s movement disabled");
+                    selectedPlayer.runCommandAsync("inputpermission set @s camera disabled");
+                    selectedPlayer.runCommandAsync(`hud @s hide`);
+                    player.sendMessage(`§r${themecolor}Rosh §j> §cYou have frozen §8${selectedPlayer.name}§c.`);
                 }
-                playerSettingsMenuSelected(player, playerSelected);
+                playerMenuSelected(player, selectedPlayer);
                 break;
 
             case 5:
-
-                if (!config.customcommands.mute.enabled) {
-                    return player.sendMessage(`§r${themecolor}Rosh §j> §cMuting players is disabled in config.`);
-                }
-                if (playerSelected.hasTag("isMuted")) {
-                    playerSelected.removeTag("isMuted");
-                    playerSelected.sendMessage(`§r${themecolor}Rosh §j> §aYou are no longer muted.`);
-                    player.sendMessage(`§r${themecolor}Rosh §j> §aYou have unmuted §8${playerSelected.name}§a.`);
+                if (selectedPlayer.hasTag("isMuted")) {
+                    selectedPlayer.removeTag("isMuted");
+                    selectedPlayer.sendMessage(`${themecolor}Rosh §j> §aYou are no longer muted.`);
+                    selectedPlayer.runCommandAsync("ability @s mute false");
+                    player.sendMessage(`${themecolor}Rosh §j> §aYou have unmuted §8${selectedPlayer.id === player.id ? "§ayourself" : `${selectedPlayer.name}`}§a.`);
                 } else {
-                    playerSelected.addTag("isMuted");
-                    playerSelected.sendMessage(`§r${themecolor}Rosh §j> §cYou are now muted.`);
-                    player.sendMessage(`§r${themecolor}Rosh §j> §cYou have muted §8${playerSelected.name}§c.`);
+                    // Prevent muting yourself
+                    if (selectedPlayer.id === player.id) {
+                        player.sendMessage(`${themecolor}Rosh §j> §cYou can't mute yourself.`);
+                        return;
+                    }
+                    selectedPlayer.addTag("isMuted");
+                    selectedPlayer.sendMessage(`${themecolor}Rosh §j> §cYou are now muted.`);
+                    selectedPlayer.runCommandAsync("ability @s mute true");
+                    player.sendMessage(`${themecolor}Rosh §j> §cYou have muted §8${selectedPlayer.name}§c.`);
                 }
+                playerMenuSelected(player, selectedPlayer);
                 break;
 
             case 6:
-                if (!config.customcommands.op.enabled) {
-                    return player.sendMessage(`§r${themecolor}Rosh §j> §cGranting players Operator status is disabled in config.`);
-                }
-                if (playerSelected.isOp()) {
-                    removeOp(playerSelected);
-                    tellStaff(`§r${themecolor}Rosh §j> §8${player.name} §chas removed Operator status from §8${playerSelected.name}§c.`);
+                if (selectedPlayer.isOp()) {
+                    // Prevent deopping oneself
+                    if (selectedPlayer.id === player.id) {
+                        player.sendMessage(`${themecolor}Rosh §j> §cYou can't deop yourself.`);
+                        return;
+                    }
+                    removeOp(selectedPlayer);
+                    tellStaff(`${themecolor}Rosh §j> §8${player.name} §chas removed Operator status from §8${selectedPlayer.name}§c.`);
                 } else {
-                    addOp(playerSelected);
-                    tellStaff(`§r${themecolor}Rosh §j> §8${player.name} §ahas given §8${playerSelected.name} §aOperator status.`);
+                    tellStaff(`${themecolor}Rosh §j> §8${player.name} §ahas given §8${selectedPlayer.name} §aOperator status.`);
+                    addOp(selectedPlayer);
+                    playerMenuSelected(player, selectedPlayer);
                 }
-                playerSettingsMenuSelected(player, playerSelected);
                 break;
 
             case 7:
-                if (!config.customcommands.vanish.enabled) {
-                    return player.sendMessage(`§r${themecolor}Rosh §j> §cToggling Vanish is disabled in config.`);
-                }
-                if (playerSelected.hasTag("vanish")) {
-                    removeVanish(playerSelected, themecolor);
+                if (selectedPlayer.hasTag("vanish")) {
+                    removeVanish(selectedPlayer, themecolor);
                 } else {
-                    addVanish(playerSelected, themecolor);
+                    addVanish(selectedPlayer, themecolor);
                 }
-                playerSettingsMenuSelected(player, playerSelected);
+                playerMenuSelected(player, selectedPlayer);
                 break;
-            case 8: playerSettingsMenuSelectedTeleport(player, playerSelected); break;
-            case 9: playerSettingsMenuSelectedGamemode(player, playerSelected); break;
-            case 10: playerSelected.runCommandAsync("function tools/stats"); break;
-            case 11: playerSelected.runCommandAsync("summon rosh:killaura ~ ~4 ~3"); break;
-            case 12: playerSettingsMenu(player); break;
+
+            case 8: playerMenuTeleport(player, selectedPlayer); break;
+            case 9: playerMenuGamemode(player, selectedPlayer); break;
+            case 10: selectedPlayer.runCommandAsync("function tools/stats"); break;         // TODO
+            case 11: selectedPlayer.runCommandAsync("summon rosh:killaura ~ ~4 ~3"); break; // TODO
+            case 12: playerMenu(player); break;
         }
 
-        if (response.canceled) playerSettingsMenu(player);
+    }).catch((error) => {
+        // Handle promise rejection
+        console.error(`${new Date().toISOString()} | ${error}${error.stack}`);
+        player.sendMessage(`${themecolor}Rosh §j> §cAn error occurred:\n§8${error}\n${error.stack}`);
     });
 }
 
@@ -869,16 +955,20 @@ export function playerSettingsMenuSelected(player, playerSelected) { // FIXME: (
  * @param {Object} player - The player to whom the menu is shown. 
  * @param {Object} selectedPlayer - The second player to execute the teleport with.
  */
-function playerSettingsMenuSelectedTeleport(player, selectedPlayer) {
+function playerMenuTeleport(player, selectedPlayer) {
 
     // Play a sound to indicate the menu has been opened
     player.playSound("mob.chicken.plop");
 
     const themecolor = config.themecolor;
 
+    // Create a menu for easier teleportation
     const menu = new MinecraftUI.ActionFormData()
-        .title("Teleport Menu")
-        .body(`Managing ${selectedPlayer.name}.`)
+        .title(`Teleport Menu - ${selectedPlayer.name}`)
+        .body(
+            `§aLocation: §8${Math.floor(selectedPlayer.location.x)}§a, §8${Math.floor(selectedPlayer.location.y)}§a, §8${Math.floor(selectedPlayer.location.z)}\n` +
+            `§aDimension: §8${uppercaseFirstLetter((selectedPlayer.dimension.id).replace("minecraft:", ""))}`
+        )
         .button(`Teleport to ${selectedPlayer.name}`)
         .button(`Teleport ${selectedPlayer.name} to you`)
         .button("Back");
@@ -889,22 +979,23 @@ function playerSettingsMenuSelectedTeleport(player, selectedPlayer) {
         switch(response.selection) {
             case 0:
                 player.tryTeleport(selectedPlayer.location, {
-                    checkForBlocks: true,
+                    checkForBlocks: false,
                     dimension: selectedPlayer.dimension, 
                     keepVelocity: false
-                });
+                }); 
+                player.sendMessage(`${themecolor}Rosh §j> §aYou have been teleported to ${selectedPlayer.id === player.id ? "yourself" : `§8${selectedPlayer.name}`}§a.`);
                 break;
 
             case 1:
                 selectedPlayer.tryTeleport(player.location, {
-                    checkForBlocks: true,
+                    checkForBlocks: false,
                     dimension: player.dimension,
                     keepVelocity: false
                 });
+                player.sendMessage(`${themecolor}Rosh §j> §8${selectedPlayer.name} §ahas been teleported to you.`); 
                 break;
 
-            default:
-                playerSettingsMenuSelected(player, selectedPlayer);
+            case 2: playerMenuSelected(player, selectedPlayer); break;
         }
 
     }).catch((error) => {
@@ -919,19 +1010,20 @@ function playerSettingsMenuSelectedTeleport(player, selectedPlayer) {
  * @param {Object} player - The player to whom the menu is shown. 
  * @param {Object} selectedPlayer - The player whos gamemode should be changed.
  */
-function playerSettingsMenuSelectedGamemode(player, selectedPlayer) {
+function playerMenuGamemode(player, selectedPlayer) {
     
     // Play a sound to indicate the menu has been opened
     player.playSound("mob.chicken.plop");
 
     const themecolor = config.themecolor;
 
+    // Create a menu for changing gamemodes
     const menu = new MinecraftUI.ActionFormData()
-        .title("Gamemode Menu")
-        .body(`Managing ${selectedPlayer.name}.`)
-        .button("Creative")
-        .button("Survival")
+        .title(`Gamemode Menu - ${selectedPlayer.name}`)
+        .body(`§aGamemode: §8${uppercaseFirstLetter(selectedPlayer.getGameMode())}`)
         .button("Adventure")
+        .button("Survival")
+        .button("Creative")
         .button("Spectator")
         .button("Back");
     
@@ -939,11 +1031,11 @@ function playerSettingsMenuSelectedGamemode(player, selectedPlayer) {
     menu.show(player).then((response) => {
 
         switch (response.selection) {
-            case 0: selectedPlayer.setGameMode("creative"); break;
-            case 1: selectedPlayer.setGameMode("survival"); break;
-            case 2: selectedPlayer.setGameMode("adventure"); break;
-            case 3: selectedPlayer.setGameMode("spectator"); break;
-            default: playerSettingsMenuSelectedGamemode(player, selectedPlayer);
+            case 0: updateGameMode(selectedPlayer, player, "adventure"); break;
+            case 1: updateGameMode(selectedPlayer, player, "survival"); break;
+            case 2: updateGameMode(selectedPlayer, player, "creative"); break;
+            case 3: updateGameMode(selectedPlayer, player, "spectator"); break;
+            case 4: playerMenuSelected(player, selectedPlayer); break;
         }
 
     }).catch((error) => {
@@ -953,41 +1045,29 @@ function playerSettingsMenuSelectedGamemode(player, selectedPlayer) {
     });
 }
 
+/**
+ * Updates the gamemode of the selected player.
+ * @param {Object} selectedPlayer - The player whose gamemode to change.
+ * @param {Object} player - The player who initiated the change.
+ * @param {String} gamemode - The gamemode to which the selected player should be updated.
+ */
+function updateGameMode(selectedPlayer, player, gamemode) {
 
+    const themecolor = config.themecolor;
 
-// ====================== //
-//       Debug Menu       //
-// ====================== //
+    // Checks if the player has the neccessary privileges to change to a specific gamemode
+    if (gamemode === "creative" || gamemode === "spectator" && !selectedPlayer.isOp()) {
+        player.sendMessage(`${themecolor}Rosh §j> §8${selectedPlayer.name} §cdoesn't have the neccessary privileges to switch to that gamemode.`);
+        return;
+    }
 
-function debugSettingsMenu(player) {
-    
-    // Play a sound to indicate the menu has been opened
-    player.playSound("mob.chicken.plop");
+    // Checks if the player already is in the specified gamemode.
+    if (gamemode === selectedPlayer.getGameMode()) {
+        player.sendMessage(`${themecolor}Rosh §j> §8${selectedPlayer.id === player.id ? "§cYou are" : `${selectedPlayer.name} §cis`} §calready in that gamemode.`);
+        return;
+    }
 
-    const menu = new MinecraftUI.ActionFormData()
-        .title("Debug Menu")
-        .button(`Checks\n${player.hasTag("debug") ? "§8[§a+§8]" : "§8[§c-§8]"}`)
-        .button(`Packets\n${player.hasTag("packetlogger") ? "§8[§a+§8]" : "§8[§c-§8]"}`)
-        .button(`Speed\n${player.hasTag("devspeed") ? "§8[§a+§8]" : "§8[§c-§8]"}`)
-        .button(`FallDistance\n${player.hasTag("devfalldistance") ? "§8[§a+§8]" : "§8[§c-§8]"}`)
-        .button(`Tps\n${player.hasTag("devtps") ? "§8[§a+§8]" : "§8[§c-§8]"}`)
-        .button(`XRotation\n${player.hasTag("devrotationx") ? "§8[§a+§8]" : "§8[§c-§8]"}`)
-        .button(`YRotation\n${player.hasTag("devrotationy") ? "§8[§a+§8]" : "§8[§c-§8]"}`)
-        .button(`Cps\n${player.hasTag("cps") ? "§8[§a+§8]" : "§8[§c-§8]"}`)
-        .button("Back");
-    
-    // Show the menu to the player and handle the response
-    menu.show(player).then((response) => {
-
-        if (response.selection === 0) player.runCommandAsync("function ui/debug");
-        if (response.selection === 1) player.runCommandAsync("function ui/packets"); 
-        if (response.selection === 2) player.runCommandAsync("function ui/devspeed");
-        if (response.selection === 3) player.runCommandAsync("function ui/devfalldistance");
-        if (response.selection === 4) player.runCommandAsync("function ui/devtps");
-        if (response.selection === 5) player.runCommandAsync("function ui/devrotationx");
-        if (response.selection === 6) player.runCommandAsync("function ui/devrotationy");
-        if (response.selection === 7) player.runCommandAsync("function ui/devcps");
-        if (response.selection === 8) mainMenu(player);
-
-    });
+    // Update the gamemode of the player and notify them about the change
+    selectedPlayer.setGameMode(gamemode);
+    player.sendMessage(`${themecolor}Rosh §j> ${selectedPlayer.id === player.id ? "§aYour" : `§8${selectedPlayer.name}'s`} §agamemode is now §8${uppercaseFirstLetter(selectedPlayer.getGameMode())}§a.`);
 }

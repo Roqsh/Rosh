@@ -5,7 +5,7 @@ import data from "./data/data.js";
 import { tag_system, setTitle } from "./utils/gameUtil.js";
 import { flag, ban, parseTime, getScore, setScore, tellStaff, getSpeed, aroundAir, debug } from "./util.js";
 import { commandHandler } from "./commands/handler.js";
-import { mainMenu, playerSettingsMenuSelected } from "./ui/mainGui.js";
+import { mainMenu, playerMenuSelected } from "./ui/mainGui.js";
 
 // Misc
 import { badpackets_a } from "./checks/misc/badpackets/badpacketsA.js";
@@ -162,7 +162,6 @@ world.afterEvents.entityHurt.subscribe((data) => {
 
 });
 
-
 system.runInterval(() => {
 
     if (system.currentTick % 20 == 0) {
@@ -194,6 +193,13 @@ system.runInterval(() => {
 
 		if (player.hasTag("isBanned")) {
             ban(player);
+        }
+
+        // Whacky solution for missing riding property in Minecraft.Entity
+        if (player.hasTag("riding")) {
+            player.isRiding = true;
+        } else {
+            player.isRiding = false;
         }
         
 		if(player.blocksBroken >= 1 && config.modules.nukerA.enabled) player.blocksBroken = 0;
@@ -285,10 +291,15 @@ system.runInterval(() => {
             }
         }
 
+        if (player.hasTag("health")) {
+            const health = player.getComponent("health");
+            player.onScreenDisplay.setActionBar(`${themecolor}Rosh §j> §8Health: ${health.currentValue < health.effectiveMax ? "§c" : "§a"}${health.currentValue}§8/§a${health.effectiveMax}`);
+        }
+        
 		if (player.isOnGround) {			
 		    player.lastGoodPosition = player.location;			
 		}
-		
+
 		if (config.generalModules.fly) {
 			fly_a(player);
 			fly_b(player);
@@ -479,7 +490,7 @@ world.beforeEvents.playerPlaceBlock.subscribe(async (placeBlock) => {
 
 
 world.afterEvents.playerPlaceBlock.subscribe(async (placeBlock) => {
-
+    
 	const { player, block } = placeBlock;
 
     await dependencies_h(player, block);
@@ -734,7 +745,7 @@ world.afterEvents.entityHitEntity.subscribe(({ hitEntity: entity, damagingEntity
 		const item = container.getItem(player.selectedSlotIndex);
 		
 		if (item?.typeId === config.customcommands.ui.ui_item && item?.nameTag === config.customcommands.ui.ui_item_name) {
-		    playerSettingsMenuSelected(player, entity);
+		    playerMenuSelected(player, entity);
 		}
 	}
 

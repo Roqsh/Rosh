@@ -50,8 +50,8 @@ function distance3D(x1, y1, z1, x2, y2, z2) {
 
 /**
  * Determines if a player hit an entity while looking at it.
- * @param {Object} player - The player object.
- * @param {Object} entity - The entity object.
+ * @param {import("@minecraft/server").Player} player - The player object.
+ * @param {import("@minecraft/server").Entity} entity - The entity object.
  */
 export function hitbox_b(player, entity) {
 

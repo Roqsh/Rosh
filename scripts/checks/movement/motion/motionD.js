@@ -2,10 +2,10 @@ import config from "../../../data/config.js";
 import { flag, getSpeed } from "../../../util.js";
 
 const lastUpdateTime = new Map();
-const lastpos = new Map();
+const lastPos = new Map();
 
 /**
- * Checks for not going to the predicted direction.
+ * Checks for discrepancies between predicted and actual motion.
  * @name motion_d
  * @param {player} player - The player to check
  */
@@ -16,51 +16,55 @@ export function motion_d(player) {
     const playerVelocity = player.getVelocity();
     const playerSpeed = getSpeed(player);
     const now = Date.now();
+    const playerName = player.name;
 
-    if (lastUpdateTime.get(player.name) && !player.hasTag("stairs") && !player.isFlying) {
+    const lastUpdate = lastUpdateTime.get(playerName);
+    const lastPosition = lastPos.get(playerName);
 
-        let max_value = 45;
+    if (lastUpdate && !player.hasTag("stairs") && !player.isFlying) {
 
-        const timeElapsed = now - lastUpdateTime.get(player.name);
+        let maxValue = 45;
+
+        const timeElapsed = now - lastUpdate;
         
-        const lastPos = lastpos.get(player.name);
+        if (lastPosition) {
+            const predictedPosition = {
+                x: lastPosition.x + playerVelocity.x * timeElapsed / 1000.0,
+                y: lastPosition.y + playerVelocity.y * timeElapsed / 1000.0,
+                z: lastPosition.z + playerVelocity.z * timeElapsed / 1000.0
+            };
 
-        const predictedX = lastPos.x + playerVelocity.x * timeElapsed / 1000.0;
-        const predictedY = lastPos.y + playerVelocity.y * timeElapsed / 1000.0;
-        const predictedZ = lastPos.z + playerVelocity.z * timeElapsed / 1000.0;
+            const actualPosition = player.location;
 
-        const actualX = player.location.x;
-        const actualY = player.location.y;
-        const actualZ = player.location.z;
+            if (player.hasTag("damaged") && !player.hasTag("fall_damage")) {
+                maxValue += 50;
+            }
 
-        if ((player.hasTag("damaged") && !player.hasTag("fall_damage"))) {
-            max_value += 50;
-        }
+            if (player.isJumping) {
+                maxValue += 50;
+            }
 
-        if (player.isJumping) {
-            max_value += 50;
-        }
+            const distanceSquared = (predictedPosition.x - actualPosition.x) ** 2 + 
+                                    (predictedPosition.y - actualPosition.y) ** 2 + 
+                                    (predictedPosition.z - actualPosition.z) ** 2;
 
-        const distance = Math.sqrt((predictedX - actualX) ** 2 + (predictedY - actualY) ** 2 + (predictedZ - actualZ) ** 2);
+            const maxDistanceSquared = (maxValue * timeElapsed / 1000.0) ** 2;
 
-        if(
-            playerSpeed !== 0 && 
-            //(Math.abs(lastPos.x - actualX) + Math.abs(lastPos.z - actualZ)) / 2 < 5 && 
-            //player.fallDistance < 3 &&
-            !player.getEffect("speed") &&
-            !player.hasTag("placing") && 
-            !player.hasTag("slime") 
-        ) {
-        
-            if (distance > max_value * timeElapsed / 1000.0) {
-                flag(player, "Motion", "D", "prediction-Diff", distance, true);
+            if (
+                playerSpeed !== 0 && 
+                !player.getEffect("speed") &&
+                !player.hasTag("placing") && 
+                !player.hasTag("slime")
+            ) {
+                if (distanceSquared > maxDistanceSquared) {
+                    flag(player, "Motion", "D", "prediction-Diff", Math.sqrt(distanceSquared), true);
+                }
             }
         }
     }
 
-    lastUpdateTime.set(player.name, Date.now());
-
-    lastpos.set(player.name, {
+    lastUpdateTime.set(playerName, now);
+    lastPos.set(playerName, {
         x: player.location.x, 
         y: player.location.y, 
         z: player.location.z

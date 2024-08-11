@@ -6,7 +6,7 @@ const playerBlockPlaceState = new Map();
 /**
  * Checks for not triggering the 'itemUse' event.
  * @name scaffold_g
- * @param {player} player - The player to check
+ * @param {import("@minecraft/server").Player} player - The player to check
  * @remarks When placing a single block (not while keep holding the press button/or jumpbridging) you will trigger the 'itemUse' event.
  * Some cheat clients forget to trigger this event on their first block place, which we can detect.
  */

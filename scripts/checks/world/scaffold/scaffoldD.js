@@ -4,8 +4,8 @@ import { flag, angleCalc } from "../../../util";
 /**
  * Checks for not looking at the placed block (with the angle diff)
  * @name scaffold_d
- * @param {player} player - The player to check
- * @param {block} block - The placed block
+ * @param {import("@minecraft/server").Player} player - The player to check
+ * @param {import("@minecraft/server").Block} block - The placed block
  */
 export function scaffold_d(player, block) {
 

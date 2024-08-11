@@ -1,54 +1,56 @@
 import config from "../../../data/config.js";
-import { flag, setScore, getScore } from "../../../util";
+import { flag } from "../../../util";
 
 /**
  * Checks for not looking at the placed block.
  * @name scaffold_c
- * @param {player} player - The player to check
- * @param {block} block - The placed block
+ * @param {import("@minecraft/server").Player} player - The player to check.
+ * @param {import("@minecraft/server").Block} block - The placed block.
  */
 export function scaffold_c(player, block) {
 
-    if (config.modules.scaffoldC.enabled) {
+    if (!config.modules.scaffoldC.enabled) return;
 
-        const rotation = player.getRotation();
+    let isChecked = false;
 
-        const blockUnder = player.dimension.getBlock({
-            x: Math.floor(player.location.x), 
-            y: Math.floor(player.location.y) - 1, 
-            z: Math.floor(player.location.z)
-        });
+    const rotation = player.getRotation();
 
-        if (
-            blockUnder.location.x === block.location.x && 
-            blockUnder.location.y === block.location.y && 
-            blockUnder.location.z === block.location.z
-        ) { 
-            if (rotation.x < 44.025) {
-                flag(player, "Scaffold", "C", "xRot", rotation.x);
-                setScore(player, "break", 1);
-            }  
-        }
+    const blockUnderPlayer = player.dimension.getBlock({
+        x: Math.floor(player.location.x), 
+        y: Math.floor(player.location.y) - 1, 
+        z: Math.floor(player.location.z)
+    });
 
-        if (
-            getScore(player, "break", 0) !== 1 && 
-            player.location.y > block.location.y && 
-            rotation.x < 16 && 
-            !player.hasTag("riding") && 
-            !player.isSwimming
-        ) {           
+    if (
+        blockUnderPlayer.location.x === block.location.x && 
+        blockUnderPlayer.location.y === block.location.y && 
+        blockUnderPlayer.location.z === block.location.z
+    ) { 
+        if (rotation.x < 44.025) {
             flag(player, "Scaffold", "C", "xRot", rotation.x);
-        } else {
-            setScore(player, "break", 0);
-        }
-
-        const distance = Math.sqrt(
-            Math.pow(block.location.x - player.location.x, 2) + 
-            Math.pow(block.location.z - player.location.z, 2)
-        );
-
-        if (Math.abs(rotation.x) > 75 && distance > 2.75) {
-            flag(player, "Scaffold", "C", "distance", `${distance},xRot=${rotation.x}`);
-        }
+            isChecked = true;
+        }  
     }
+
+    if (
+        !isChecked && 
+        (player.location.y - 1) > block.location.y && 
+        rotation.x < 0 && 
+        !player.hasTag("riding") && 
+        !player.isSwimming
+    ) {           
+        flag(player, "Scaffold", "C", "xRot", rotation.x);
+        isChecked = true;
+    }
+
+    const distance = Math.sqrt(
+        Math.pow(block.location.x - player.location.x, 2) + 
+        Math.pow(block.location.z - player.location.z, 2)
+    );
+
+    if (!isChecked && Math.abs(rotation.x) > 75 && distance > 2.75) {
+        flag(player, "Scaffold", "C", "distance", `${distance},xRot=${rotation.x}`);
+    }
+
+    isChecked = false;
 }

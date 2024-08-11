@@ -4,8 +4,8 @@ import { flag } from "../../../util";
 /**
  * Checks for placing blocks at liquid or air.
  * @name scaffold_k
- * @param {player} player - The player to check.
- * @param {block} block - The placed block.
+ * @param {import("@minecraft/server").Player} player - The player to check.
+ * @param {import("@minecraft/server").Block} block - The placed block.
  */
 export function scaffold_k(player, block) {
 
@@ -15,7 +15,7 @@ export function scaffold_k(player, block) {
     if (block.typeId === "minecraft:waterlily" || block.typeId === "minecraft:frog_spawn") {
 
         if (!block.below(1).isLiquid && !block.below(1).isWaterlogged) {
-            flag(player, "Scaffold", "K", "invalid-placement", `${block.typeId},below: ${blockBelow(block)}`);
+            flag(player, "Scaffold", "K", "invalid-placement", `${block.typeId},below: ${blockState(block.below(1))}`);
         }
         return;
     }
@@ -44,21 +44,21 @@ export function scaffold_k(player, block) {
 }
 
 /**
- * Returns a string representation of the block below the given block.
+ * Returns a string representation of the given block.
  * @name blockBelow
- * @param {block} block - The reference block.
+ * @param {import("@minecraft/server").Block} block - The reference block.
  * @returns {string} - A string indicating the type of block below (Air, Liquid, Waterlogged, Solid).
  */
-function blockBelow(block) {
+function blockState(block) {
     
     switch (true) {
-        case block.below(1).isAir:
+        case block.isAir:
             return "Air";
 
-        case block.below(1).isLiquid:
+        case block.isLiquid:
             return "Liquid";
 
-        case block.below(1).isWaterlogged:
+        case block.isWaterlogged:
             return "Waterlogged";
         
         default:

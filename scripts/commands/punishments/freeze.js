@@ -1,3 +1,4 @@
+import * as Minecraft from "@minecraft/server";
 import config from "../../data/config.js";
 import { findPlayerByName, tellStaff } from "../../util.js";
 
@@ -5,6 +6,7 @@ import { findPlayerByName, tellStaff } from "../../util.js";
  * Freezes the players movement, camera and hud until he gets unfrozen.
  * @name freeze
  * @param {object} message - The message object containing the sender's information.
+ * @param {Minecraft.Player} message.sender - The player who initiated the freeze event.
  * @param {array} args - Additional arguments provided, with the first argument being the target player's name.
  * @throws {TypeError} If the message is not an object or if args is not an array.
  */

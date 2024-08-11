@@ -1,4 +1,5 @@
 import * as MinecraftUI from "@minecraft/server-ui";
+import { Player } from "@minecraft/server";
 import { world } from "@minecraft/server";
 import config from "../../data/config.js";
 import { mainMenu } from "../mainGui.js";
@@ -7,7 +8,7 @@ import { mainMenu } from "../mainGui.js";
  * Displays the world settings menu to the player.
  * @param {Object} player - The player to whom the menu is shown.
  */
-export function worldSettingsMenu(player) {
+export function worldMenu(player) {
     
     // Play a sound to indicate the menu has been opened
     player.playSound("mob.chicken.plop");
@@ -36,6 +37,11 @@ export function worldSettingsMenu(player) {
             case 2: toggleGameRule(player, 'keepInventory', 'Keep Inventory'); break;
             case 3: mainMenu(player); break;
         }
+        
+    }).catch((error) => {
+        // Handle promise rejection
+        console.error(`${new Date().toISOString()} | ${error}${error.stack}`);
+        player.sendMessage(`${themecolor}Rosh §j> §cAn error occurred:\n§8${error}\n${error.stack}`);
     });
 }
 
@@ -57,6 +63,6 @@ function toggleGameRule(player, gameRule, ruleName) {
     // Notify the player about the change
     player.sendMessage(`§r${config.themecolor}Rosh §j> ${color}${ruleName} is now ${status}.`);
     
-    // Re-open the settings menu for the player
-    worldSettingsMenu(player);
+    // Re-open the world menu for the player
+    worldMenu(player);
 }

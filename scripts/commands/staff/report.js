@@ -1,3 +1,4 @@
+import * as Minecraft from "@minecraft/server";
 import data from "../../data/data.js";
 import config from "../../data/config.js";
 import { findPlayerByName, tellStaff } from "../../util.js";
@@ -5,6 +6,7 @@ import { findPlayerByName, tellStaff } from "../../util.js";
 /**
  * Reports a player for a given reason.
  * @param {object} message - The message object containing the sender information.
+ * @param {Minecraft.Player} message.sender - The player who initiated the report command.
  * @param {Array<string>} args - The arguments passed with the command. The first element should be the target player's name, followed by the reason.
  * @throws {TypeError} If the message or args are not of the expected type.
  */

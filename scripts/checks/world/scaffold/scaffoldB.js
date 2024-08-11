@@ -4,7 +4,7 @@ import { flag } from "../../../util";
 /**
  * Checks for placing with an integer x/y rotation.
  * @name scaffold_b
- * @param {Player} player - The player to check.
+ * @param {import("@minecraft/server").Player} player - The player to check.
  * @remarks After your initial spawn, your rotation is 0, which is therefore excluded.
  */
 export function scaffold_b(player) {

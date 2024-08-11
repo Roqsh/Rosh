@@ -6,7 +6,7 @@ const blockIdQueue = new Map();
 /**
  * Checks for invalid held blocks.
  * @name scaffold_h
- * @param {player} player - The player to check.
+ * @param {import("@minecraft/server").Player} player - The player to check.
  * @remarks Runs in the before event.
  */
 export async function scaffold_h(player) {
@@ -45,6 +45,16 @@ export async function scaffold_h(player) {
             flag(player, "Scaffold", "H", "heldItem", `${selectedItem.typeId}, amount=${selectedItem.amount}`);
         }
 
+        // If the held item is not stackable and has more than 1, flag
+        if (!selectedItem.isStackable && selectedItem.amount > 1) {
+            flag(player, "Scaffold", "H", "nonStackableItem", `${selectedItem.typeId}, amount=${selectedItem.amount}`);
+        }
+
+        // If the amount of the held item is larger than its max amount, flag
+        if (selectedItem.amount > selectedItem.maxAmount) {
+            flag(player, "Scaffold", "H", "oversizedItem", `${selectedItem.typeId}, amount=${selectedItem.amount}, maxAmount=${selectedItem.maxAmount}`);
+        }
+
         // Ensure block ID queue exists for the player
         if (!blockIdQueue.has(player.name)) {
             blockIdQueue.set(player.name, []);
@@ -65,8 +75,8 @@ export async function scaffold_h(player) {
 /**
  * Used to check for non-matching Ids for Scaffold/H.
  * @name dependencies_h
- * @param {player} player - The player to check.
- * @param {block} block - The block being placed.
+ * @param {import("@minecraft/server").Player} player - The player to check.
+ * @param {import("@minecraft/server").Block} block - The block being placed.
  * @remarks Runs in the after event. (Depends on scaffold_h)
  */
 export async function dependencies_h(player, block) {
@@ -91,10 +101,11 @@ export async function dependencies_h(player, block) {
         }
 
         const playerQueue = blockIdQueue.get(player.name);
+        const heldItem = playerQueue || "none";
 
         // If the player's held item does not match the placed block, flag
         if (!playerQueue.includes(block.typeId)) {
-            flag(player, "Scaffold", "H", "heldItem", `${playerQueue.length > 0 ? playerQueue.join(', ') : 'none'}, placedBlock=${block.typeId}`);
+            flag(player, "Scaffold", "H", "heldItem", `${heldItem}, placedBlock=${block.typeId}`);
         }
 
         // Remove the first element from the queue after the check

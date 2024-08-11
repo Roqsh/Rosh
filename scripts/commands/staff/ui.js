@@ -4,6 +4,7 @@ import config from "../../data/config.js";
 /**
  * Gives the player the UI item.
  * @param {object} message - The message object containing the sender's information.
+ * @param {Minecraft.Player} message.sender - The player who initiated the ui command.
  * @throws {TypeError} If message is not an object.
  */
 export function ui(message) {
