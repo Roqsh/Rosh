@@ -1,7 +1,7 @@
 import * as Minecraft from "@minecraft/server";
 import config from "../../data/config.js";
 import data from "../../data/data.js";
-import { findPlayerByName } from "../../util.js";
+import { timeDisplay, findPlayerByName } from "../../util.js";
 
 /**
  * Warns a player for a specified reason and kicks them if they reach the warning limit.
@@ -95,9 +95,9 @@ export function warn(message, args) {
     // Notify the initiator about the warn and log it
     if (warningCount < 3) {
         player.sendMessage(`§r${themecolor}Rosh §j> §cYou have warned §8${member.name} §cfor §8${reason}§c. ${warningMessages[warningCount - 1]}`);
-        data.recentLogs.push(`§8${member.name} §chas been warned by §8${player.name}§c!`);
+        data.recentLogs.push(`${timeDisplay()}§8${member.name} §chas been warned by §8${player.name}§c!`);
     } else {
         player.sendMessage(`§r${themecolor}Rosh §j> §cYou have kicked §8${member.name} §cfor accumulating 3 warnings.`);
-        data.recentLogs.push(`§8${member.name} §chas been kicked for §83 warnings!`);
+        data.recentLogs.push(`${timeDisplay()}§8${member.name} §chas been kicked for §83 warnings!`);
     }
 }

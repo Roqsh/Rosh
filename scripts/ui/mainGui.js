@@ -2,7 +2,7 @@ import * as MinecraftUI from "@minecraft/server-ui";
 import { world } from "@minecraft/server";
 import config from "../data/config.js";
 import data from "../data/data.js";
-import { parseTime, uppercaseFirstLetter, tellStaff } from "../util.js";
+import { parseTime, timeDisplay, uppercaseFirstLetter, tellStaff } from "../util.js";
 import { addOp } from "../commands/staff/op.js";
 import { removeOp } from "../commands/staff/deop.js";
 import { addVanish, removeVanish } from "../commands/tools/vanish.js";
@@ -197,11 +197,11 @@ function kickPlayerMenu(player, playerSelected, lastMenu = 0) {
 
         if (!isSilent) {
             tellStaff(`§r${themecolor}Rosh §j> §8${player.name} §chas kicked §8${playerSelected.name} §cfor: §8${reasonUI}§c.`);
-            data.recentLogs.push(`§8${playerSelected.name} §chas been kicked by §8${player.name}§c!`);
+            data.recentLogs.push(`${timeDisplay()}§8${playerSelected.name} §chas been kicked by §8${player.name}§c!`);
             player.runCommandAsync(`kick "${playerSelected.name}" ${reason}`);
         } else {
             tellStaff(`§r${themecolor}Rosh §j> §8${player.name} §chas kicked §8${playerSelected.name} §c(Silent) for: §8${reasonUI}§c.`);
-            data.recentLogs.push(`§8${playerSelected.name} §chas been kicked (Silent) by §8${player.name}§c!`);
+            data.recentLogs.push(`${timeDisplay()}§8${playerSelected.name} §chas been kicked (Silent) by §8${player.name}§c!`);
             playerSelected.triggerEvent("rosh:kick");
         }
     }).catch((error) => {
@@ -264,7 +264,7 @@ function banPlayerMenu(player, playerSelected, lastMenu = 0) {
             playerSelected.addTag("isBanned");
 
             tellStaff(`§r${themecolor}Rosh §j> §8${player.name} §chas banned §8${playerSelected.name} §cfor: §8${reason}§c.`);
-            data.recentLogs.push(`§8${playerSelected.name} §chas been banned by §8${player.name}§c!`);
+            data.recentLogs.push(`${timeDisplay()}§8${playerSelected.name} §chas been banned by §8${player.name}§c!`);
 
             // Save all ban-related information
             data.banList[playerSelected.name] = {
@@ -320,7 +320,7 @@ function unbanPlayerMenu(player) {
         delete data.banList[playerToUnban];
 
         tellStaff(`§r${themecolor}Rosh §j> §8${player.nameTag} §ahas added §8${playerToUnban} §ainto the unban queue for: §8${reason}§a.`);
-        data.recentLogs.push(`§8${playerToUnban} §ahas been unbanned by §8${player.nameTag}§a!`);
+        data.recentLogs.push(`${timeDisplay()}§8${playerToUnban} §ahas been unbanned by §8${player.nameTag}§a!`);
 
     }).catch((error) => {
         // Handle promise rejection

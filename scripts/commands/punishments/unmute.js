@@ -1,7 +1,7 @@
 import * as Minecraft from "@minecraft/server";
 import data from "../../data/data.js";
 import config from "../../data/config.js";
-import { findPlayerByName, tellStaff } from "../../util.js";
+import { timeDisplay, findPlayerByName, tellStaff } from "../../util.js";
 
 /**
  * Unmutes a specified player.
@@ -59,5 +59,5 @@ export function unmute(message, args) {
     tellStaff(`§r${themecolor}Rosh §j> §8${player.nameTag} §ahas unmuted §8${member.nameTag} §afor §8${reason}`);
 
     // Log the unmute event
-    data.recentLogs.push(`§8${member.nameTag} §ahas been unmuted by §8${player.nameTag}§a!`);
+    data.recentLogs.push(`${timeDisplay()}§8${member.nameTag} §ahas been unmuted by §8${player.nameTag}§a!`);
 }

@@ -1,7 +1,7 @@
 import * as Minecraft from "@minecraft/server";
 import data from "../../data/data.js";
 import config from "../../data/config.js";
-import { tellStaff } from "../../util.js";
+import { timeDisplay, tellStaff } from "../../util.js";
 
 /**
  * Adds a player to the unban queue with an optional reason.
@@ -61,5 +61,5 @@ export function unban(message, args) {
     tellStaff(`§r${themecolor}Rosh §j> §8${player.nameTag} §ahas added §8${member} §ato the unban queue for: §8${reason}§a.`);
 
     // Log the unban event
-    data.recentLogs.push(`§8${member} §ahas been unbanned by §8${player.nameTag}§a!`);
+    data.recentLogs.push(`${timeDisplay()}§8${member} §ahas been unbanned by §8${player.nameTag}§a!`);
 }

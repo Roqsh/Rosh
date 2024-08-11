@@ -4,7 +4,7 @@ import { mainMenu } from "../mainGui.js";
 
 /**
  * Displays a debug menu to the player with options to toggle various debugging features.
- * @param {Object} player - The player to whom the menu is shown.
+ * @param {import("@minecraft/server").Player} player - The player to whom the menu is shown.
  */
 export function debugMenu(player) {
 
@@ -60,7 +60,7 @@ export function debugMenu(player) {
 
 /**
  * Toggles a tag on the player and sends a confirmation message.
- * @param {Object} player - The player to whom the tag will be added or removed.
+ * @param {import("@minecraft/server").Player} player - The player to whom the tag will be added or removed.
  * @param {string} tag - The tag to add or remove.
  * @param {string} description - The description of the tag for the confirmation message.
  * @returns {Promise<void>} - A promise that resolves when the tag operation is complete.

@@ -154,7 +154,7 @@ function handleKickPunishment(player, kickvl, check, checkType, themecolor) {
 
         } else {
             // Notify about the kick and reset warnings
-            const message = `§8${player.name} §chas been kicked!`;
+            const message = `${timeDisplay()}§8${player.name} §chas been kicked!`;
             data.recentLogs.push(message);
 
             tellStaff(`§r${themecolor}Rosh §j> §8${player.name} §chas been kicked for ${themecolor}${check}§j/${themecolor}${checkType.toUpperCase()} §c!`, "notify");
@@ -216,7 +216,7 @@ function handleBanPunishment(player, check, checkType, themecolor, punishmentLen
             };
 
             // Notify about the ban and reset warnings
-            const message = `§8${player.name} §chas been banned!`;
+            const message = `${timeDisplay()}§8${player.name} §chas been banned!`;
             data.recentLogs.push(message);
 
             tellStaff(`§r${themecolor}Rosh §j> §8${player.name} §chas been banned for ${themecolor}${check}§j/${themecolor}${checkType.toUpperCase()} §c!`, "notify");
@@ -250,7 +250,7 @@ function handleMutePunishment(player, check, checkType, themecolor) {
     player.runCommandAsync("ability @s mute true");
 
     // Notify about the mute and reset warnings
-    const message = `§8${player.name} §chas been muted!`;
+    const message = `${timeDisplay()}§8${player.name} §chas been muted!`;
     data.recentLogs.push(message);
 
     tellStaff(`§r${themecolor}Rosh §j> §8${player.name} §chas been muted for ${themecolor}${check}§j/${themecolor}${checkType.toUpperCase()} §c!`, "notify");
@@ -286,10 +286,10 @@ function handleAlert(player, check, checkType, currentVl, debugName, debug, them
         tellStaff(`§r${themecolor}Rosh §j> §8${player.name} §jfailed ${themecolor}${check}§j/${themecolor}${checkType.toUpperCase()}§j - {§8${currentVl}x§j}`, "notify", "debug");
 
         // Log the flag to the UI log section
-        const logMessage = config.logSettings.showDebug 
-            ? `§8${player.name} §jfailed ${themecolor}${check}§j/${themecolor}${checkType} §j- {${debugName}=${debug}, §8${currentVl}x§j}`
-            : `§8${player.name} §jfailed ${themecolor}${check}§j/${themecolor}${checkType} §j- {§8${currentVl}x§j}`;
-        data.recentLogs.push(logMessage);
+        const message = config.logSettings.showDebug 
+            ? `${timeDisplay()}§8${player.name} §jfailed ${themecolor}${check}§j/${themecolor}${checkType} §j- {${debugName}=${debug}, §8${currentVl}x§j}`
+            : `${timeDisplay()}§8${player.name} §jfailed ${themecolor}${check}§j/${themecolor}${checkType} §j- {§8${currentVl}x§j}`;
+        data.recentLogs.push(message);
 
         // Log to console if enabled
         if (config.console_debug) {
@@ -334,10 +334,10 @@ function handleAlert(player, check, checkType, currentVl, debugName, debug, them
         tellStaff(`§r${themecolor}Rosh §j> §8${player.name} §jfailed ${themecolor}${check}§j/${themecolor}${checkType.toUpperCase()}§j - [${volume}§j]`, "notify", "debug");
 
         // Log the flag to the UI log section
-        const logMessage = config.logSettings.showDebug 
-            ? `§8${player.name} §jfailed ${themecolor}${check}§j/${themecolor}${checkType} §j- {${debugName}=${debug}§j} [${volume}§j]`
-            : `§8${player.name} §jfailed ${themecolor}${check}§j/${themecolor}${checkType} §j- [${volume}§j]`;
-        data.recentLogs.push(logMessage);
+        const message = config.logSettings.showDebug 
+            ? `${timeDisplay()}§8${player.name} §jfailed ${themecolor}${check}§j/${themecolor}${checkType} §j- {${debugName}=${debug}§j} [${volume}§j]`
+            : `${timeDisplay()}§8${player.name} §jfailed ${themecolor}${check}§j/${themecolor}${checkType} §j- [${volume}§j]`;
+        data.recentLogs.push(message);
         
         // Log to console if enabled
         if (config.console_debug) {
@@ -574,6 +574,45 @@ export function msToTime(milliseconds = 0) {
 
     // Return the converted time as an object
     return { weeks, days, hours, minutes, seconds };
+}
+
+
+
+/**
+ * Displays a time based on the provided format.
+ * @param {string} format - Either 'german' or 'default'. If no format is given, default will be used.
+ * @returns {string} formattedTime - The formatted time as a string.
+ * @remarks This functon was designed for the 'showTimestamps' option for logging,
+ * and therefore only returns a string if enabled via config. (config.logSettings.showTimestamps)
+ * @example timeDisplay(); Returns: [12:24:2050]
+ */
+export function timeDisplay(format) {
+
+    // Create a new Date object
+    const now = new Date();
+
+    // Get date and time components
+    const day = String(now.getDate()).padStart(2, '0'); // e.g., 11
+    const month = String(now.getMonth() + 1).padStart(2, '0'); // e.g., 08 (months are zero-indexed)
+    const year = now.getFullYear(); // e.g., 2024
+
+    let formattedTime = ``;
+
+    if (format === "german") {
+    
+        // Format the date and time in German style
+        formattedTime = config.logSettings.showTimestamps 
+            ? `§j[§8${day}.${month}.${year}§j] ` 
+            : ``;
+
+    } else {
+        
+        formattedTime = config.logSettings.showTimestamps
+            ? `§j[§8${month}:${day}:${year}§j] `
+            : ``;
+    }
+
+    return formattedTime;
 }
 
 
@@ -938,7 +977,7 @@ export function addOp(player, initiator) {
             player.setOp(true);
 
             // Log the event to the UI and console
-            const message = `§8${player.name} §ahas been oped by §8${initiator.name}§a!`;
+            const message = `${timeDisplay()}§8${player.name} §ahas been oped by §8${initiator.name}§a!`;
             data.recentLogs.push(message);
 
             console.log(message);
@@ -981,7 +1020,7 @@ export function removeOp(player, initiator) {
             player.setOp(false);
 
             // Log the event to the UI and console
-            const message = `§8${player.name} §chas been de-oped by §8${initiator.name}§c!`;
+            const message = `${timeDisplay()}§8${player.name} §chas been de-oped by §8${initiator.name}§c!`;
             data.recentLogs.push(message);
 
             console.log(message);

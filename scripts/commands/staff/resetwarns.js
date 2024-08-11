@@ -1,7 +1,7 @@
 import * as Minecraft from "@minecraft/server";
 import data from "../../data/data.js";
 import config from "../../data/config.js";
-import { setScore, findPlayerByName, tellStaff } from "../../util";
+import { timeDisplay, setScore, findPlayerByName, tellStaff } from "../../util";
 
 /**
  * Resets the warning count for a specified player.
@@ -57,7 +57,7 @@ export function resetwarns(message, args) {
     resetWarns(member);
 
     // Log the reset warns event
-    data.recentLogs.push(`§8${member.name}'s §awarns have been reset by §8${player.name}§a!`);
+    data.recentLogs.push(`${timeDisplay()}§8${member.name}'s §awarns have been reset by §8${player.name}§a!`);
 }
 
 /**

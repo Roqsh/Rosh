@@ -42,6 +42,7 @@ export default
     "logSettings": { // Adjust the settings of the log menu (can be done in game too)
         "compactMode": false, // Not yet implemented
         "showErrors": false,  // Not yet implemented
+        "showTimestamps": false,
         "showDebug": false,
         "showChat": false,
         "showJoinLeave": true,

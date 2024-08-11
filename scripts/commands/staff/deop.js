@@ -1,7 +1,7 @@
 import * as Minecraft from "@minecraft/server";
 import data from "../../data/data.js";
 import config from "../../data/config.js";
-import { findPlayerByName, tellStaff } from "../../util.js";
+import { timeDisplay, findPlayerByName, tellStaff } from "../../util.js";
 
 /**
  * Revokes operator status from a specified player.
@@ -62,7 +62,7 @@ export function deop(message, args) {
     tellStaff(`§r${themecolor}Rosh §j> §8${player.name} §chas removed §8${member.name}'s §cOperator status.`);
 
     // Log the de-op event
-    data.recentLogs.push(`§8${member.name} §chas been de-oped by §8${player.name}§c!`);
+    data.recentLogs.push(`${timeDisplay()}§8${member.name} §chas been de-oped by §8${player.name}§c!`);
 }
 
 /**

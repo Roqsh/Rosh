@@ -3,7 +3,7 @@ import { system, world, ItemTypes, ItemStack } from "@minecraft/server";
 import config from "./data/config.js";
 import data from "./data/data.js";
 import { tag_system, setTitle } from "./utils/gameUtil.js";
-import { flag, ban, parseTime, getScore, setScore, tellStaff, getSpeed, aroundAir, debug } from "./util.js";
+import { flag, ban, parseTime, timeDisplay, getScore, setScore, tellStaff, getSpeed, aroundAir, debug } from "./util.js";
 import { commandHandler } from "./commands/handler.js";
 import { mainMenu, playerMenuSelected } from "./ui/mainGui.js";
 
@@ -112,8 +112,8 @@ world.beforeEvents.chatSend.subscribe((msg) => {
 	commandHandler(msg);
 
 	if (config.logSettings.showChat) {
-		data.recentLogs.push(`§r<${player.nameTag}> ${message}`);
-	}
+        data.recentLogs.push(`${timeDisplay()}§r<${player.nameTag}> ${message}`);
+    }
 
 	if (!msg.cancel) {
 		if (player.name !== player.nameTag) {
@@ -612,7 +612,7 @@ world.beforeEvents.playerLeave.subscribe((playerLeave) => {
     const { player } = playerLeave;
 
 	if (config.logSettings.showJoinLeave) {
-		data.recentLogs.push(`§8${player.name} §jleft the server`);
+		data.recentLogs.push(`${timeDisplay()}§8${player.name} §jleft the server`);
 	}	
 });
 
@@ -631,7 +631,7 @@ world.afterEvents.playerSpawn.subscribe((playerJoin) => {
 	}
 
 	if (config.logSettings.showJoinLeave) {
-		data.recentLogs.push(`§8${player.name} §jjoined the server`)
+		data.recentLogs.push(`${timeDisplay()}§8${player.name} §jjoined the server`)
 	}
 
     if (thememode !== "Rosh" && thememode !== "Alice") {

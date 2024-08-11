@@ -1,5 +1,5 @@
 import * as Minecraft from "@minecraft/server";
-import { animation, findPlayerByName, tellStaff } from "../../util.js";
+import { animation, timeDisplay, findPlayerByName, tellStaff } from "../../util.js";
 import data from "../../data/data.js";
 import config from "../../data/config.js";
 
@@ -74,5 +74,5 @@ export function mute(message, args) {
     tellStaff(`§r${themecolor}Rosh §j> §8${player.nameTag} §chas muted §8${member.nameTag} §cfor §8${reason}`);
     
     // Log the mute event
-    data.recentLogs.push(`§8${member.nameTag} §chas been muted by §8${player.nameTag}§c!`);
+    data.recentLogs.push(`${timeDisplay()}§8${member.nameTag} §chas been muted by §8${player.nameTag}§c!`);
 }

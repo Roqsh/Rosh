@@ -6,8 +6,8 @@ import { mainMenu } from "../mainGui.js";
 
 /**
  * Displays all logs in a menu.
- * @param {Object} player - The player to whom the menu is shown. 
- * @param {Number} page - The page of the logs menu.
+ * @param {import("@minecraft/server").Player} player - The player to whom the menu is shown. 
+ * @param {number} page - The page of the logs menu.
  */
 export function logsMenu(player, page = 0) {
 
@@ -67,7 +67,7 @@ export function logsMenu(player, page = 0) {
 
 /**
  * Displays the log settings menu to customize the way the logs menu is shown.
- * @param {Object} player - The player to whom the menu is shown. 
+ * @param {import("@minecraft/server").Player} player - The player to whom the menu is shown. 
  */
 function logsSettingsMenu(player) {
 
@@ -79,6 +79,7 @@ function logsSettingsMenu(player) {
     // Create the log settings menu
     const menu = new MinecraftUI.ModalFormData()
         .title("Log Settings")
+        .toggle("Show Timestamps", logSettings.showTimestamps)
         .toggle("Show Debug", logSettings.showDebug)
         .toggle("Show Chat", logSettings.showChat)
         .toggle("Show Join/Leave Messages", logSettings.showJoinLeave)
@@ -94,10 +95,11 @@ function logsSettingsMenu(player) {
 
         try {
             // Destructure the response values
-            const [showDebug, showChat, showJoinLeave, linesPerPage] = response.formValues;
+            const [showTimestamps, showDebug, showChat, showJoinLeave, linesPerPage] = response.formValues;
 
             // Update the configuration
             config.logSettings = {
+                showTimestamps,
                 showDebug,
                 showChat,
                 showJoinLeave,
@@ -109,8 +111,9 @@ function logsSettingsMenu(player) {
 
             // Notify the player of the changes
             player.sendMessage(
-                `§r${themecolor}Rosh §j> §aUpdated the log settings:\n` +
-                `§8Show Debug: ${showDebug}\n` +
+                `${themecolor}Rosh §j> §aUpdated the log settings:\n§8` +
+                `Show Timestamps: ${showTimestamps}\n` +
+                `Show Debug: ${showDebug}\n` +
                 `Show Chat: ${showChat}\n` +
                 `Show Join/Leave Messages: ${showJoinLeave}\n` +
                 `Lines Per Page: ${linesPerPage}`

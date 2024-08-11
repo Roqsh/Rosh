@@ -1,7 +1,7 @@
 import * as Minecraft from "@minecraft/server";
 import data from "../../data/data.js";
 import config from "../../data/config.js";
-import { findPlayerByName, tellStaff } from "../../util.js";
+import { timeDisplay, findPlayerByName, tellStaff } from "../../util.js";
 
 /**
  * Reports a player for a given reason.
@@ -71,5 +71,5 @@ export function report(message, args) {
     tellStaff(`§r${themecolor}Rosh §j> §8${player.name} §ahas reported §8${member.name} §afor §8${reason}§a.`);
 
     // Log the report
-    data.recentLogs.push(`§8${member.name} §chas been reported by §8${player.name}§c!`);
+    data.recentLogs.push(`${timeDisplay()}§8${member.name} §chas been reported by §8${player.name}§c!`);
 }

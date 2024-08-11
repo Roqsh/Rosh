@@ -1,7 +1,7 @@
 import * as Minecraft from "@minecraft/server";
 import data from "../../data/data.js";
 import config from "../../data/config.js";
-import { tellStaff } from "../../util.js";
+import { timeDisplay, tellStaff } from "../../util.js";
 
 /**
  * Kicks all players in the world except the player who initiated the kickall event.
@@ -39,5 +39,5 @@ export function kickall(message) {
     tellStaff(`§r${themecolor}Rosh §j> §8${player.name} §chas initiated a §8Mass Kick§c!`);
 
     // Log the kickall event
-    data.recentLogs.push(`§8${player.name} §chas initiated a §8Mass Kick§c!`);
+    data.recentLogs.push(`${timeDisplay()}§8${player.name} §chas initiated a §8Mass Kick§c!`);
 }

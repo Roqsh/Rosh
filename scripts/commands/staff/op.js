@@ -1,7 +1,7 @@
 import * as Minecraft from "@minecraft/server";
 import data from "../../data/data.js";
 import config from "../../data/config.js";
-import { findPlayerByName, tellStaff } from "../../util.js";
+import { timeDisplay, findPlayerByName, tellStaff } from "../../util.js";
 
 /**
  * Grants operator status to a specified player.
@@ -56,7 +56,7 @@ export function op(message, args) {
     tellStaff(`§r${themecolor}Rosh §j> §8${player.name} §ahas given §8${member.name} §aOperator status.`);
 
     // Log the op event
-    data.recentLogs.push(`§8${member.name} §ahas been oped by §8${player.name}§a!`);
+    data.recentLogs.push(`${timeDisplay()}§8${member.name} §ahas been oped by §8${player.name}§a!`);
 }
 
 /**
