@@ -57,7 +57,7 @@
 					}],
 					"on_entry": [
 						"/tag @s remove hasGUIopen",
-						"/tellraw @a[tag=packetlogger] {\"rawtext\":[{\"text\":\"§r§uRosh §j> Received §uOpenChest§j-§uPacket §jfrom §8\"},{\"selector\":\"@s\"},{\"text\":\" §j- {stop}\"}]}",
+						"/tellraw @a[tag=eventlogger] {\"rawtext\":[{\"text\":\"§r§uRosh §j> Received §uOpenChest§j-§uPacket §jfrom §8\"},{\"selector\":\"@s\"},{\"text\":\" §j- {stop}\"}]}",
                         "/scoreboard players add @s packets 1"
 					]
 				},
@@ -67,7 +67,7 @@
 					}],
 					"on_entry": [
                         "/tag @s add hasGUIopen",
-						"/tellraw @a[tag=packetlogger] {\"rawtext\":[{\"text\":\"§r§uRosh §j> Received §uOpenChest§j-§uPacket §jfrom §8\"},{\"selector\":\"@s\"},{\"text\":\" §j- {start}\"}]}",
+						"/tellraw @a[tag=eventlogger] {\"rawtext\":[{\"text\":\"§r§uRosh §j> Received §uOpenChest§j-§uPacket §jfrom §8\"},{\"selector\":\"@s\"},{\"text\":\" §j- {start}\"}]}",
                         "/scoreboard players add @s packets 1"
 					]
 				}
@@ -82,7 +82,7 @@
 					}],
 					"on_entry": [
 						"/tag @s remove attack",
-						"/tellraw @a[tag=packetlogger] {\"rawtext\":[{\"text\":\"§r§uRosh §j> Received §uAttack§j-§uPacket §jfrom §8\"},{\"selector\":\"@s\"},{\"text\":\" §j- {stop}\"}]}",
+						"/tellraw @a[tag=eventlogger] {\"rawtext\":[{\"text\":\"§r§uRosh §j> Received §uAttack§j-§uPacket §jfrom §8\"},{\"selector\":\"@s\"},{\"text\":\" §j- {stop}\"}]}",
 						"@s rosh:reset_skinid"
 					]
 				},
@@ -92,7 +92,7 @@
 					}],
 					"on_entry": [
 						"/tag @s add attack",
-						"/tellraw @a[tag=packetlogger] {\"rawtext\":[{\"text\":\"§r§uRosh §j> Received §uAttack§j-§uPacket §jfrom §8\"},{\"selector\":\"@s\"},{\"text\":\" §j- {start}\"}]}",
+						"/tellraw @a[tag=eventlogger] {\"rawtext\":[{\"text\":\"§r§uRosh §j> Received §uAttack§j-§uPacket §jfrom §8\"},{\"selector\":\"@s\"},{\"text\":\" §j- {start}\"}]}",
 						"/scoreboard players add @s[tag=hasGUIopen] invmovevl 1",
 						"/execute @s[tag=hasGUIopen] ~~~ tellraw @a[tag=notify] {\"rawtext\":[{\"text\":\"§r§uRosh §j> §8\"},{\"selector\":\"@s\"},{\"text\":\" §jfailed §uInventoryMods§j/§uB §j- {is_attacking, V=\"},{\"score\":{\"name\":\"@s\",\"objective\":\"invmovevl\"}},{\"text\":\"}\"}]}",
 						"/execute @s[tag=right,scores={right=3..}] ~~~ function checks/alerts/interactuse",

@@ -17,13 +17,15 @@ export function debugMenu(player) {
     const menu = new MinecraftUI.ActionFormData()
         .title("Debug Menu")
         .button(`Checks\n${player.hasTag("debug") ? "§8[§a+§8]" : "§8[§c-§8]"}`)
-        .button(`Events\n${player.hasTag("packetlogger") ? "§8[§a+§8]" : "§8[§c-§8]"}`)
+        .button(`Events\n${player.hasTag("eventlogger") ? "§8[§a+§8]" : "§8[§c-§8]"}`)
         .button(`Speed\n${player.hasTag("devspeed") ? "§8[§a+§8]" : "§8[§c-§8]"}`)
         .button(`FallDistance\n${player.hasTag("devfalldistance") ? "§8[§a+§8]" : "§8[§c-§8]"}`)
         .button(`Tps\n${player.hasTag("devtps") ? "§8[§a+§8]" : "§8[§c-§8]"}`)
         .button(`XRotation\n${player.hasTag("devrotationx") ? "§8[§a+§8]" : "§8[§c-§8]"}`)
         .button(`YRotation\n${player.hasTag("devrotationy") ? "§8[§a+§8]" : "§8[§c-§8]"}`)
         .button(`Cps\n${player.hasTag("cps") ? "§8[§a+§8]" : "§8[§c-§8]"}`)
+        .button(`Health\n${player.hasTag("health") ? "§8[§a+§8]" : "§8[§c-§8]"}`)
+        .button(`BlockRaycasts\n${player.hasTag("devblockray") ? "§8[§a+§8]" : "§8[§c-§8]"}`)
         .button("Back");
     
     // Show the menu to the player and handle the response
@@ -37,14 +39,16 @@ export function debugMenu(player) {
         // Perform actions based on the selected option
         switch (response.selection) {
             case 0: toggleTag(player, "debug", "Check-Debug"); break;
-            case 1: toggleTag(player, "packetlogger", "Events"); break;
+            case 1: toggleTag(player, "eventlogger", "Events"); break;
             case 2: toggleTag(player, "devspeed", "Speed"); break;
             case 3: toggleTag(player, "devfalldistance", "FallDistance"); break;
             case 4: toggleTag(player, "devtps", "Tps"); break;
             case 5: toggleTag(player, "devrotationx", "XRotation"); break;
             case 6: toggleTag(player, "devrotationy", "YRotation"); break;
             case 7: toggleTag(player, "cps", "Cps"); break;
-            case 8: mainMenu(player); break;
+            case 8: toggleTag(player, "health", "Health"); break;
+            case 9: toggleTag(player, "devblockray", "Block-Raycasts"); break;
+            case 10: mainMenu(player); break;
         }
 
     }).catch((error) => {

@@ -265,15 +265,15 @@ system.runInterval(() => {
 		} else setScore(player, "airTime", 0);
 
         // Debug utilities
-		if (player.hasTag("devtps")) {
-			setTitle(player, undefined, undefined, `§r${themecolor}Debug §j> Tps: §8${tps}`);
-		}
-
 		debug(player, "Speed", speed, "devspeed");
 		debug(player, "FallDistance", `${player.isOnGround ? `§a` : `§c`}${player.fallDistance}`, "devfalldistance");
         debug(player, "YVelocity", velocity.y, "devvelocity");
 		debug(player, "XRotation", rotation.x, "devrotationx");
 		debug(player, "YRotation", rotation.y, "devrotationy");
+
+        if (player.hasTag("devtps")) {
+            player.onScreenDisplay.setActionBar(`${themecolor}Debug §j> Tps: §8${tps}`);
+        }
 
         if (player.hasTag("devblockray")) {
 
@@ -285,15 +285,15 @@ system.runInterval(() => {
             const blockResult = player.getBlockFromViewDirection(blockOptions);
 
             if (blockResult) {
-                setTitle(player, undefined, undefined, `§aBlock: §8${blockResult.block.typeId} §aPosition: §8${blockResult.block.location.x}, ${blockResult.block.location.y}, ${blockResult.block.location.z} §aFace: §8${blockResult.face} §aFaceLocation: §8${blockResult.faceLocation.x}, ${blockResult.faceLocation.y}, ${blockResult.faceLocation.z}`);
+                player.onScreenDisplay.setActionBar(`${themecolor}Debug §j> §aBlock: §8${blockResult.block.typeId}§a/§8${blockResult.block.location.x}, ${blockResult.block.location.y}, ${blockResult.block.location.z} §aFace: §8${blockResult.face}§a/§8${blockResult.faceLocation.x}, ${blockResult.faceLocation.y}, ${blockResult.faceLocation.z}`);
             } else {
-                setTitle(player, undefined, undefined, "§cNo block was hit by the raycast!");
+                player.onScreenDisplay.setActionBar(`${themecolor}Debug §j> §cNo block was hit by the raycast!`);
             }
         }
 
         if (player.hasTag("health")) {
             const health = player.getComponent("health");
-            player.onScreenDisplay.setActionBar(`${themecolor}Rosh §j> §8Health: ${health.currentValue < health.effectiveMax ? "§c" : "§a"}${health.currentValue}§8/§a${health.effectiveMax}`);
+            player.onScreenDisplay.setActionBar(`${themecolor}Debug §j> §8Health: ${health.currentValue < health.effectiveMax ? "§c" : "§a"}${health.currentValue}§8/§a${health.effectiveMax}`);
         }
         
 		if (player.isOnGround) {			
