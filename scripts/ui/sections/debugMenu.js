@@ -15,7 +15,7 @@ export function debugMenu(player) {
 
     // Create a menu with buttons for accessing various debugging tools
     const menu = new MinecraftUI.ActionFormData()
-        .title("Debug Menu")
+        .title("Debug Tools")
         .button(`Checks\n${player.hasTag("debug") ? "§8[§a+§8]" : "§8[§c-§8]"}`)
         .button(`Events\n${player.hasTag("eventlogger") ? "§8[§a+§8]" : "§8[§c-§8]"}`)
         .button(`Speed\n${player.hasTag("devspeed") ? "§8[§a+§8]" : "§8[§c-§8]"}`)
@@ -28,10 +28,10 @@ export function debugMenu(player) {
         .button(`BlockRaycasts\n${player.hasTag("devblockray") ? "§8[§a+§8]" : "§8[§c-§8]"}`)
         .button("Back");
     
-    // Show the menu to the player and handle the response
+    // Show the menu to the player and handle the response based on the player's selection
     menu.show(player).then((response) => {
 
-        // Check if the menu was cancelled
+        // Check if the menu was cancelled and return if so
         if (response.canceled) {
             return;
         }
@@ -79,4 +79,7 @@ function toggleTag(player, tag, description) {
         player.addTag(tag);
         player.sendMessage(`${themecolor}Rosh §j> §8${description} §awill now be displayed.`);
     }
+
+    // Re-open the debug menu for the player
+    debugMenu(player);
 }

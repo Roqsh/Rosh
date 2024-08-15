@@ -1,3 +1,4 @@
+import * as Minecraft from "@minecraft/server";
 import config from "../../data/config.js";
 import { findPlayerByName } from "../../util.js";
 
@@ -5,6 +6,7 @@ import { findPlayerByName } from "../../util.js";
  * Tests if a player uses Killaura. (Killaura/E needs to be enabled aswell as the Beta toggle)
  * @name testaura
  * @param {object} message - The message object containing the sender's information.
+ * @param {Minecraft.Player} message.sender - The player who initiated the stats command.
  * @param {array} args - Additional arguments provided, with the first argument being the target player's name.
  * @throws {TypeError} If the message is not an object or if args is not an array.
  */
@@ -47,14 +49,24 @@ export function testaura(message, args) {
         return;
     }
 
+    summonAuraBot(player, member);
+}
+
+/**
+ * Summons a bot to detect simple Killaura cheats.
+ * @param {Minecraft.Player} player - The player who initiated the check.
+ * @param {Minecraft.Player} targetPlayer - The target player to check for Killaura-cheats.
+ */
+export function summonAuraBot(player, targetPlayer) {
+
     // Get random coordinates to spawn the bot
     const x = Math.random() * 6 - 3;
     const y = Math.random() * 2; 
     const z = Math.random() * 6 - 3; 
 
     // Spawn the bot to check for Killaura
-    member.runCommandAsync(`summon rosh:killaura ~${x} ~${y} ~${z}`);
+    targetPlayer.runCommandAsync(`summon rosh:killaura ~${x} ~${y} ~${z}`);
     
     // Notify the initiator
-    player.sendMessage(`§r${themecolor}Rosh §j> §aKillaura bot succesfully spawned.`);
+    player.sendMessage(`${config.themecolor}Rosh §j> §aKillaura bot succesfully spawned.`);
 }

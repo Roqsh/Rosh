@@ -1,12 +1,11 @@
 import * as MinecraftUI from "@minecraft/server-ui";
-import { Player } from "@minecraft/server";
-import { world } from "@minecraft/server";
+import { Player, world } from "@minecraft/server";
 import config from "../../data/config.js";
 import { mainMenu } from "../mainGui.js";
 
 /**
- * Displays the world settings menu to the player.
- * @param {Object} player - The player to whom the menu is shown.
+ * Displays the world settings menu to the player which allows for the customization of game rules.
+ * @param {import("@minecraft/server").Player} player - The player to whom the menu is shown.
  */
 export function worldMenu(player) {
     
@@ -21,12 +20,13 @@ export function worldMenu(player) {
         .button(`PvP\n${world.gameRules.pvp ? "§8[§a+§8]" : "§8[§c-§8]"}`)
         .button(`Regeneration\n${world.gameRules.naturalRegeneration ? "§8[§a+§8]" : "§8[§c-§8]"}`)
         .button(`Keep Inventory\n${world.gameRules.keepInventory ? "§8[§a+§8]" : "§8[§c-§8]"}`)
+        .button(`Immediate Respawn\n${world.gameRules.doImmediateRespawn ? "§8[§a+§8]" : "§8[§c-§8]"}`)
         .button("Back");
 
-    // Show the menu to the player and handle the response
+    // Show the menu to the player and handle the response based on the player's selection
     menu.show(player).then((response) => {
 
-        // Check if a valid selection was made
+        // Check if the menu was cancelled and return if so
         if (response.canceled) {
             return;
         }
@@ -35,7 +35,8 @@ export function worldMenu(player) {
             case 0: toggleGameRule(player, 'pvp', 'PvP'); break;
             case 1: toggleGameRule(player, 'naturalRegeneration', 'Regeneration'); break;
             case 2: toggleGameRule(player, 'keepInventory', 'Keep Inventory'); break;
-            case 3: mainMenu(player); break;
+            case 3: toggleGameRule(player, 'doImmediateRespawn', 'Immediate Respawn'); break;
+            case 4: mainMenu(player); break;
         }
         
     }).catch((error) => {
@@ -47,7 +48,7 @@ export function worldMenu(player) {
 
 /**
  * Toggles a specified game rule and notifies the player.
- * @param {Object} player - The player to be notified.
+ * @param {import("@minecraft/server").Player} player - The player to be notified.
  * @param {string} gameRule - The game rule to toggle.
  * @param {string} ruleName - The name of the rule to display in the notification.
  */
@@ -61,7 +62,7 @@ function toggleGameRule(player, gameRule, ruleName) {
     const color = world.gameRules[gameRule] ? "§a" : "§c";
 
     // Notify the player about the change
-    player.sendMessage(`§r${config.themecolor}Rosh §j> ${color}${ruleName} is now ${status}.`);
+    player.sendMessage(`§r${config.themecolor}Rosh §j> §8${ruleName}${color} is now ${status}.`);
     
     // Re-open the world menu for the player
     worldMenu(player);

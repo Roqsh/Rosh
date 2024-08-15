@@ -50,7 +50,7 @@ export function flag(player, check, checkType, debugName, debug, shouldTP = fals
     if (cancelObject) cancelObject.cancel = true;
 
     // Handle scoreboard for the check
-    const scoreboardObjective = check === "CommandBlockExploit" ? "cbevl" : `${check.toLowerCase()}vl`;
+    const scoreboardObjective = `${check.toLowerCase()}vl`;
     if (!world.scoreboard.getObjective(scoreboardObjective)) {
         world.scoreboard.addObjective(scoreboardObjective, scoreboardObjective);
     }
@@ -812,7 +812,7 @@ export function angleCalc(player, entity) {
  * @param {Object} player - The player object.
  * @returns {number} - The eye height of the player.
  * @remarks
- * TODO: Once Mojang adds .isCrawling or something similar, account for it by 0.40625.
+ * TODO: Once Mojang adds .isCrawling or something similar, account for it by 0.40625. (.isRiding needs to be accounted for too)
  */
 export function getEyeHeight(player) {
     // Validate the input

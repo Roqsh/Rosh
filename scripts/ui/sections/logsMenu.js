@@ -5,7 +5,7 @@ import data from "../../data/data.js";
 import { mainMenu } from "../mainGui.js";
 
 /**
- * Displays all logs in a menu.
+ * Displays all Rosh logs in a menu.
  * @param {import("@minecraft/server").Player} player - The player to whom the menu is shown. 
  * @param {number} page - The page of the logs menu.
  */
@@ -25,7 +25,7 @@ export function logsMenu(player, page = 0) {
 
     // Create the menu to display the logs
     const menu = new MinecraftUI.ActionFormData()
-        .title(`Rosh Logs - ${page + 1}/${totalPages}`)
+        .title(`Logs - ${page + 1}/${totalPages}`)
         .body(text);
 
     let buttonIndex = 0;
@@ -40,10 +40,10 @@ export function logsMenu(player, page = 0) {
     menu.button("Log Settings");
     menu.button("Back");
 
-    // Show the menu to the player and handle the response
+    // Show the menu to the player and handle the response based on the player's selection
     menu.show(player).then((response) => {
 
-        // Check if a valid selection was made
+        // Check if the menu was cancelled and return if so
         if (response.canceled) {
             return;
         }
@@ -66,7 +66,7 @@ export function logsMenu(player, page = 0) {
 }
 
 /**
- * Displays the log settings menu to customize the way the logs menu is shown.
+ * Displays the log settings menu to customize the way the logs are shown.
  * @param {import("@minecraft/server").Player} player - The player to whom the menu is shown. 
  */
 function logsSettingsMenu(player) {
@@ -85,10 +85,10 @@ function logsSettingsMenu(player) {
         .toggle("Show Join/Leave Messages", logSettings.showJoinLeave)
         .slider("Lines Per Page", 10, 100, 1, logSettings.linesPerPage);
 
-    // Show the menu to the player and handle the response
+    // Show the menu to the player and handle the response based on the player's selection
     menu.show(player).then((response) => {
 
-        // Check if a valid selection was made
+        // Check if the menu was cancelled and return if so
         if (response.canceled) {
             return;
         }

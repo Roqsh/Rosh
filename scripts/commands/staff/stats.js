@@ -24,7 +24,7 @@ export function stats(message, args) {
 
     // Check if target player name is provided
     if (!args.length) {
-        player.sendMessage(`§r${themecolor}Rosh §j> §cYou need to provide whose stats to get.`);
+        player.sendMessage(`${themecolor}Rosh §j> §cYou need to provide whose stats to get.`);
         return;
     }
 
@@ -36,7 +36,7 @@ export function stats(message, args) {
 
     // Check if target player name is valid
     if (targetName.length < minNameLength || targetName.length > maxNameLength) {
-        player.sendMessage(`§r${themecolor}Rosh §j> §cYou need to provide a valid player to get their stats from.`);
+        player.sendMessage(`${themecolor}Rosh §j> §cYou need to provide a valid player to get their stats from.`);
         return;
     }
 
@@ -45,9 +45,24 @@ export function stats(message, args) {
 
     // Handle case where the target player is not found
     if (!member) {
-        player.sendMessage(`§r${themecolor}Rosh §j> §cCouldn't find that player.`);
+        player.sendMessage(`${themecolor}Rosh §j> §cCouldn't find that player.`);
         return;
     }
+
+    getStats(player, member);
+}
+
+/**
+ * Gets all Rosh violations from a player.
+ * @param {Minecraft.Player} player - The player who initiated the event.
+ * @param {Minecraft.Player} member - The player whos stats to get.
+ */
+export function getStats(player, member) {
+
+    const themecolor = config.themecolor;
+
+    let hasCheckViolation = false;
+    let hasBeenKicked = false;
 
     // Declare all violations
     const violations = [
@@ -99,13 +114,25 @@ export function stats(message, args) {
             };
 
             // Send the message to the player
-            player.sendMessage(`§r${themecolor}Rosh §j> §8${member.name} §chas §8${score} §c${violationText[violation]} violation${score > 1 ? "s" : ""}.`);
+            player.sendMessage(`${themecolor}Rosh §j> §8${member.name} §chas §8${score} §c${violationText[violation]} violation${score > 1 ? "s" : ""}.`);
+
+            hasCheckViolation = true;
         }
     }
 
     // Get the kick amount
     const kickAmount = getScore(member, "kickvl", 0);
 
-    // Send the message to the player
-    player.sendMessage(`§r${themecolor}Rosh §j> §8${member.name} §chas been kicked §8${kickAmount} §ctime${kickAmount > 1 ? "s" : ""}.`);
+    // Only display kicks if their score is higher than 0
+    if (!kickAmount == 0) {
+        // Send the message to the player
+        player.sendMessage(`${themecolor}Rosh §j> §8${member.name} §chas been kicked §8${kickAmount} §ctime${kickAmount > 1 ? "s" : ""}.`);
+
+        hasBeenKicked = true;   
+    }
+
+    // Send a default message if the checked player does not have any violations or kicks
+    if (hasCheckViolation === false && hasBeenKicked === false) {
+        player.sendMessage(`${themecolor}Rosh §j> §cThis player does not have any violations to display.`);
+    }
 }
