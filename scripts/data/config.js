@@ -921,7 +921,7 @@ export default
         },
 
         "scaffoldI": {
-            "enabled": true,
+            "enabled": false,
             "description": "Checks for returning to the original yaw/pitch rotation before the placement happened.",
             "punishment": "kick", 
             "punishmentLength": "7d",

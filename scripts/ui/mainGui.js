@@ -25,8 +25,8 @@ export function mainMenu(player) {
 
     // Create the main menu with all sub-menus
     const menu = new MinecraftUI.ActionFormData()
-		.title("Rosh Settings")
-		.button("Punish Menu")
+        .title("Rosh Settings")
+        .button("Punish Menu")
         .button("Settings")
         .button("Checks")
         .button(`Manage Players\n§8§o${[...world.getAllPlayers()].length} online`)
