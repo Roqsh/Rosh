@@ -1,9 +1,11 @@
+import * as Minecraft from "@minecraft/server";
 import config from '../../data/config.js';
 
 /**
  * Displays all available commands.
  * @name help
  * @param {object} message - Message object
+ * @param {Minecraft.Player} message.sender - The player who initiated the command.
  * @throws {TypeError} If message is not an object
  */
 export function help(message) {

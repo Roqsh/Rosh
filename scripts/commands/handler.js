@@ -1,3 +1,4 @@
+import * as Minecraft from "@minecraft/server";
 import { world, system } from "@minecraft/server";
 import config from "../data/config.js";
 
@@ -45,6 +46,7 @@ import { credits } from "./info/credits.js";
 /**
  * Handles incoming commands from players.
  * @param {object} message - Message data
+ * @param {Minecraft.Player} message.sender - The player who initiated the command.
  * @throws {TypeError} If message is not an object
  */
 export function commandHandler(message) {
@@ -121,6 +123,7 @@ export function commandHandler(message) {
  * @param {Array<string>} args - Arguments passed to the command
  */
 function runCommand(msg, commandName, args) {
+    
     const themecolor = config.themecolor;
     const message = { ...msg, sender: world.getPlayers({ name: msg.sender.name })[0] };
 

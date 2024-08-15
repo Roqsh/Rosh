@@ -1,9 +1,11 @@
+import * as Minecraft from "@minecraft/server";
 import config from "../../data/config.js";
 import { findPlayerByName, tellStaff } from "../../util.js";
 
 /**
  * Clears a player's ender chest inventory.
  * @param {object} message - The message object containing the sender's information.
+ * @param {Minecraft.Player} message.sender - The player who initiated the command.
  * @param {array} args - Additional arguments provided, with the first argument being the target player's name.
  * @throws {TypeError} If the message is not an object or if args is not an array.
  */

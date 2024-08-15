@@ -1,8 +1,10 @@
+import * as Minecraft from "@minecraft/server";
 import config from "../../data/config.js";
 
 /**
  * Sends a description of the specified module to the player.
  * @param {object} message - The message object containing the sender's information.
+ * @param {Minecraft.Player} message.sender - The player who initiated the command.
  * @param {array} args - Additional arguments provided, with the first argument being the module name.
  * @throws {TypeError} If the message is not an object or if args is not an array.
  */

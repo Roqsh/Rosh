@@ -1,3 +1,4 @@
+import * as Minecraft from "@minecraft/server";
 import config from "../../data/config.js";
 import { tellStaff } from "../../util.js";
 
@@ -6,6 +7,7 @@ const oldGamemode = new Map();
 /**
  * Toggle vanish state for a player.
  * @param {object} message - The message object containing the sender's information.
+ * @param {Minecraft.Player} message.sender - The player who initiated the command.
  * @throws {TypeError} If the message is not an object or if args is not an array.
  */
 export function vanish(message) {

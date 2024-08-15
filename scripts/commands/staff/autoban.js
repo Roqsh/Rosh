@@ -5,6 +5,7 @@ import config from '../../data/config.js';
  * Enables or disables Auto-baning.
  * @name autoban
  * @param {object} message - Message object
+ * @param {Minecraft.Player} message.sender - The player who initiated the command.
  * @throws {TypeError} If message is not an object
  */
 export function autoban(message) {

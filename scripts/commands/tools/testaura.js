@@ -3,7 +3,7 @@ import config from "../../data/config.js";
 import { findPlayerByName } from "../../util.js";
 
 /**
- * Tests if a player uses Killaura. (Killaura/E needs to be enabled aswell as the Beta toggle)
+ * Tests if a player uses Killaura. (Killaura/E and the Beta toggle need to be enabled!).
  * @name testaura
  * @param {object} message - The message object containing the sender's information.
  * @param {Minecraft.Player} message.sender - The player who initiated the stats command.

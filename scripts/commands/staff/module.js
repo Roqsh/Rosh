@@ -5,6 +5,7 @@ import defaultConfig from '../../data/defaultConfig.js';
 /**
  * Handles the module command to view or update configuration settings.
  * @param {object} message - The message object containing the sender information.
+ * @param {Minecraft.Player} message.sender - The player who initiated the command.
  * @param {Array} args - The arguments provided with the command.
  * @throws {TypeError} - If message or args are not objects.
  */
