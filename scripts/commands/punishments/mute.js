@@ -62,16 +62,16 @@ export function mute(message, args) {
 
     // Add "isMuted" tag and notify the muted player
     member.addTag("isMuted");
-    member.sendMessage(`§r${themecolor}Rosh §j> §cYou have been muted for §8${reason}`);
+    member.sendMessage(`§r${themecolor}Rosh §j> §cYou have been muted for: §8${reason}§c.`);
 
     // Execute the mute command
     member.runCommandAsync("ability @s mute true");
 
     // Run the animation
-    animation(player, 5);
+    animation(member, 5);
 
     // Notify other staff members about the mute
-    tellStaff(`§r${themecolor}Rosh §j> §8${player.nameTag} §chas muted §8${member.nameTag} §cfor §8${reason}`);
+    tellStaff(`§r${themecolor}Rosh §j> §8${player.nameTag} §chas muted §8${member.nameTag} §cfor: §8${reason}§c.`);
     
     // Log the mute event
     data.recentLogs.push(`${timeDisplay()}§8${member.nameTag} §chas been muted by §8${player.nameTag}§c!`);

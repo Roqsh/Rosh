@@ -1,3 +1,4 @@
+import * as Minecraft from "@minecraft/server";
 import * as MinecraftUI from "@minecraft/server-ui";
 import { world } from "@minecraft/server";
 import config from "../../data/config.js";
@@ -142,9 +143,9 @@ export function playerMenuSelected(player, selectedPlayer) {
                 if (selectedPlayer.hasTag("frozen")) {
                     selectedPlayer.removeTag("frozen");
                     selectedPlayer.sendMessage(`§r${themecolor}Rosh §j> §aYou are no longer frozen.`);
-                    selectedPlayer.runCommandAsync("inputpermission set @s movement enabled");
-                    selectedPlayer.runCommandAsync("inputpermission set @s camera enabled");
-                    selectedPlayer.runCommandAsync(`hud @s reset`);
+                    selectedPlayer.inputPermissions.movementEnabled = true;
+                    selectedPlayer.inputPermissions.cameraEnabled = true;
+                    selectedPlayer.onScreenDisplay.setHudVisibility(Minecraft.HudVisibility.Reset);
                     player.sendMessage(`§r${themecolor}Rosh §j> §aYou have unfrozen §8${selectedPlayer.name}§a.`);
                 } else {
                     // Prevent freezing yourself
@@ -154,9 +155,9 @@ export function playerMenuSelected(player, selectedPlayer) {
                     }
                     selectedPlayer.addTag("frozen");
                     selectedPlayer.sendMessage(`§r${themecolor}Rosh §j> §cYou are now frozen.`);
-                    selectedPlayer.runCommandAsync("inputpermission set @s movement disabled");
-                    selectedPlayer.runCommandAsync("inputpermission set @s camera disabled");
-                    selectedPlayer.runCommandAsync(`hud @s hide`);
+                    selectedPlayer.inputPermissions.movementEnabled = false;
+                    selectedPlayer.inputPermissions.cameraEnabled = false;
+                    selectedPlayer.onScreenDisplay.setHudVisibility(Minecraft.HudVisibility.Hide);
                     player.sendMessage(`§r${themecolor}Rosh §j> §cYou have frozen §8${selectedPlayer.name}§c.`);
                 }
                 playerMenuSelected(player, selectedPlayer);

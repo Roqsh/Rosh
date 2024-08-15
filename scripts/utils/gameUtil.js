@@ -68,16 +68,23 @@ export async function setTitle(player, title = null, subtitle = null, actionbar 
  * @param {string} particleName - The name of the particle effect to display.
  * @returns {Promise<void>} A promise that resolves when the command has been executed.
  */
-export async function setParticle(player, particleName) {
+export function setParticle(player, particleName) {
     // Return if the particle is not given
     if (!particleName) {
         console.error('Particle name must be provided');
         return;
     }
 
+    // Create the location to spawn the particle
+    const location = {
+        x: player.location.x,
+        y: player.location.y,
+        z: player.location.z,
+    };
+
     try {
         // Execute the particle command at the player's location
-        await player.runCommandAsync(`particle minecraft:${particleName} ~ ~ ~`);
+        player.spawnParticle(`minecraft:${animation}`, location);
     } catch (error) {
         // Log an error message if the command execution fails
         console.error(`Failed to set particle effect for player ${player.name}:`, error);

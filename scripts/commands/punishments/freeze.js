@@ -71,9 +71,9 @@ export function freeze(message, args) {
     member.addTag("frozen");
 
     // Freeze the input actions of the target player
-    member.runCommandAsync(`inputpermission set @s movement disabled`);
-    member.runCommandAsync(`inputpermission set @s camera disabled`);
-    member.runCommandAsync(`hud @s hide`);
+    member.inputPermissions.movementEnabled = false;
+    member.inputPermissions.cameraEnabled = false;
+    member.onScreenDisplay.setHudVisibility(Minecraft.HudVisibility.Hide);
 
     // Notify the player that he is frozen
     member.sendMessage(`§r${themecolor}Rosh §j> §cYou are now frozen!`);

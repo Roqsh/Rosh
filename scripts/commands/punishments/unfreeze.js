@@ -59,9 +59,9 @@ export function unfreeze(message, args) {
     member.removeTag("frozen");
 
     // Unfreeze the input actions of the target player
-    member.runCommandAsync(`inputpermission set @s movement enabled`);
-    member.runCommandAsync(`inputpermission set @s camera enabled`);
-    member.runCommandAsync(`hud @s reset`);
+    member.inputPermissions.movementEnabled = true;
+    member.inputPermissions.cameraEnabled = true;
+    member.onScreenDisplay.setHudVisibility(Minecraft.HudVisibility.Reset);
 
     // Notify the player that he is unfrozen
     member.sendMessage(`§r${themecolor}Rosh §j> §aYou are now unfrozen!`);

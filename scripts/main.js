@@ -688,7 +688,6 @@ world.afterEvents.playerSpawn.subscribe((playerJoin) => {
 	player.removeTag("right");
 	player.removeTag("left");
 	player.removeTag("gliding");
-	
 	player.removeTag("moving");
 	player.removeTag("sleeping");
 	

@@ -458,7 +458,7 @@ export function ban(player) {
  * @example animation(rqosh, 2); // Executes the totem particle animation
  * @throws {TypeError} If player is not an object or type is not a number
  */
-export async function animation(player, type) {
+export function animation(player, type) {
     // Validate the input
     if (typeof player !== 'object' || player === null) {
         throw new TypeError(`Error: player is type of ${typeof player}. Expected "object".`);
@@ -485,9 +485,16 @@ export async function animation(player, type) {
         throw new Error(`Error: No animation found for type ${type}.`);
     }
 
+    // Create the location to spawn the particle
+    const location = {
+        x: player.location.x,
+        y: player.location.y,
+        z: player.location.z,
+    };
+
     // Execute the animation
     try {
-        await player.runCommandAsync(`particle minecraft:${animation} ~ ~ ~`);
+        player.spawnParticle(`minecraft:${animation}`, location);
     } catch (error) {
         console.error(`Error: Failed to execute animation for player. ${error.message}`);
     }
