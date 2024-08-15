@@ -4,27 +4,11 @@
  */
 export async function tag_system(player) {
     try {
-        // Remove existing gamemode tags
-        await Promise.all([
-            player.runCommandAsync(`tag @a[m=!c] remove gmc`),
-            player.runCommandAsync(`tag @a[m=!s] remove gms`),
-            player.runCommandAsync(`tag @a[m=!a] remove gma`),
-            player.runCommandAsync(`tag @a[m=!spectator] remove spec`)
-        ]);
-
         // Add tags based on held items
         await Promise.all([
             player.runCommandAsync(`tag @a[hasitem={item=ender_pearl,location=slot.weapon.mainhand}] add ender_pearl`),
             player.runCommandAsync(`tag @a[hasitem={item=trident,location=slot.weapon.mainhand}] add trident`),
             player.runCommandAsync(`tag @a[hasitem={item=bow,location=slot.weapon.mainhand}] add bow`)
-        ]);
-
-        // Add tags based on the player's gamemode
-        await Promise.all([
-            player.runCommandAsync(`tag @a[m=c] add gmc`),
-            player.runCommandAsync(`tag @a[m=s] add gms`),
-            player.runCommandAsync(`tag @a[m=a] add gma`),
-            player.runCommandAsync(`tag @a[m=spectator] add spec`)
         ]);
 
         // Update scoreboard values

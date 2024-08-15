@@ -131,7 +131,7 @@ world.beforeEvents.chatSend.subscribe((msg) => {
 world.afterEvents.chatSend.subscribe(({ sender: player }) => {
 
     //TODO: Recode them (Move them into their own category and add Spammer/E)
-	if(config.modules.spammerA.enabled && player.isSprinting && player.hasTag("ground") && !player.isJumping) {
+	if(config.modules.spammerA.enabled && player.isSprinting && player.isOnGround && !player.isJumping) {
 		flag(player, "Spammer", "A", "moving", "true");
 	}
 
@@ -261,7 +261,7 @@ system.runInterval(() => {
 
         // Fly/D delay
 		const flyTime = getScore(player, "airTime", 0);
-		if(!player.isOnGround && !player.hasTag("ground") && aroundAir(player)) {
+		if(!player.isOnGround && aroundAir(player)) {
 			setScore(player, "airTime", flyTime + 1);
 		} else setScore(player, "airTime", 0);
 
@@ -687,9 +687,8 @@ world.afterEvents.playerSpawn.subscribe((playerJoin) => {
 	player.removeTag("hasGUIopen");
 	player.removeTag("right");
 	player.removeTag("left");
-	player.removeTag("ground");
 	player.removeTag("gliding");
-	player.removeTag("sprinting");
+	
 	player.removeTag("moving");
 	player.removeTag("sleeping");
 	

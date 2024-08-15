@@ -18,7 +18,7 @@ export function fly_d(player) {
 
         if(
             !player.isFlying && 
-            !player.hasTag("gmc") && 
+            !player.getGameMode() === "creative" && 
             !player.isOnGround && 
             !player.isJumping &&
             getScore(player, "airTime", 0) > 10 &&

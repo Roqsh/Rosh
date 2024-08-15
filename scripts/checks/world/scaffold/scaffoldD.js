@@ -16,7 +16,7 @@ export function scaffold_d(player, block) {
             Math.pow(block.location.z - player.location.z, 2)
         );
 
-        if (angleCalc(player, block) > 75 && distance > 2.75 && !player.hasTag("gmc")) {
+        if (angleCalc(player, block) > 75 && distance > 2.75 && !player.getGameMode() === "creative") {
             flag(player, "Scaffold", "D", "distance", `${distance},angle=${angleCalc(player, block)}`)
         }
     }

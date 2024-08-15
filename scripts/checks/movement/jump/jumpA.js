@@ -18,7 +18,7 @@ export function jump_a(player) {
 
         const height = player.fallDistance;
 
-        if(player.isJumping && player.hasTag("jump") && !player.isOnGround && !player.hasTag("trident") && !player.getEffect("jump_boost") && !player.hasTag("slime") && !player.hasTag("damaged")) {
+        if(player.isJumping && !player.isOnGround && !player.hasTag("trident") && !player.getEffect("jump_boost") && !player.hasTag("slime") && !player.hasTag("damaged")) {
 
             if(lastHeight.has(player.name) && height < lastHeight.get(player.name)?.l && height >= config.modules.invalidjumpA.height) {
                 flag(player, "InvalidJump", "A", "height", height);

@@ -16,7 +16,7 @@ export function jump_b(player) {
         const preset = config.preset?.toLowerCase();
         if(preset === "stable") return;
 
-        if(inAir(player) === true && aroundAir(player) === true && player.isJumping && player.hasTag("jump") && !player.isOnGround && !player.hasTag("trident") && !player.getEffect("jump_boost") && !player.hasTag("slime") && !player.hasTag("damaged")) {
+        if(inAir(player) === true && aroundAir(player) === true && player.isJumping && !player.isOnGround && !player.hasTag("trident") && !player.getEffect("jump_boost") && !player.hasTag("slime") && !player.hasTag("damaged")) {
 
             const height = player.fallDistance;
 

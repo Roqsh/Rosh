@@ -11,7 +11,7 @@ const lastPos = new Map();
 
 export function noslow_b(player) {
 
-    if(!config.modules.noslowB.enabled || player.hasTag("spec") || player.isFlying) return;
+    if(!config.modules.noslowB.enabled || player.getGameMode() === "spectator" || player.isFlying) return;
     
     const playerLocation = player.location;
     const playerLastPos = lastPos.get(player.name) ?? player.location;

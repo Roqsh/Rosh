@@ -12,7 +12,7 @@ export async function nuker_a(player, revertBlock) {
 
     if(config.modules.nukerA.enabled) {
 
-		if(player.hasTag("gmc")) return;
+		if(player.getGameMode() === "creative") return;
 
 	    player.blocksBroken++;
 

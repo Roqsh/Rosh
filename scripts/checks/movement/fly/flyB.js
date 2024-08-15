@@ -14,9 +14,9 @@ export function fly_b(player) {
     if(config.modules.flyB.enabled && aroundAir(player)) {
 
         if (
-            player.hasTag("gmc") || 
+            player.getGameMode() === "creative" || 
             player.hasTag("elytra") || 
-            player.hasTag("spec") ||
+            player.getGameMode() === "spectator" ||
             player.hasTag("flying") ||
             player.hasTag("placing")
         ) return;
