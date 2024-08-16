@@ -33,7 +33,7 @@ export async function fly(message, args) {
     const targetName = args[0].replace(/"|\\|@s/g, player.name);
 
     const minNameLength = 3;
-    const maxNameLength = player.name.endsWith(')') ? 15 : 12;
+    const maxNameLength = targetName.endsWith(')') ? 15 : 12;
 
     // Check if target player name is valid
     if (targetName.length < minNameLength || targetName.length > maxNameLength) {

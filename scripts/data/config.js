@@ -4,7 +4,7 @@ export default
 
     "themecolor": "§u", // The color of the theme which is used for Rosh - ex: §a, §c, §9, etc.
 
-    "thememode": "Rosh", // Switch between the default style of 'Rosh' or use others, such as 'Alice'
+    "thememode": "Alice", // Switch between the default style of 'Rosh' or use others, such as 'Alice'
 
     "silent": true, // Wether to set the player back or not if he fails a check. - (Recommended: true, reduces the chance of false positives)
 
