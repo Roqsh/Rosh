@@ -86,7 +86,7 @@ export async function dependencies_h(player, block) {
     try {
 
         // Placing two slabs combines into a double slab block, leading to a false positive
-        if (!block.isSolid || /slab\d*$/.test(block.typeId)) {
+        if (!block.isSolid || /slab\d*$/.test(block.typeId) || /.*concrete_powder$/.test(block.typeId)) {
 
             // Remove the first element from the queue after the check
             const playerQueue = blockIdQueue.get(player.name);

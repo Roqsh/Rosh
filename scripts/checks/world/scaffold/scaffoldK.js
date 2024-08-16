@@ -23,6 +23,18 @@ export function scaffold_k(player, block) {
     // Webs break under water, sometimes leading to a mismatch where the web is surrounded by water
     if (block.typeId === "minecraft:web") return;
 
+    // Due to gravity, when spammed sand-like blocks sometimes end up being surrounded by air/water
+    if (
+        block.typeId === "minecraft:sand" || 
+        block.typeId === "minecraft:suspicious_sand" || 
+        block.typeId === "minecraft:red_sand" || 
+        block.typeId === "minecraft:gravel" ||
+        block.typeId === "minecraft:suspicious_gravel" ||
+        /.*concrete_powder$/.test(block.typeId)
+    ) {
+        return;
+    }
+
     // Define adjacent blocks with their relative directions
     const adjacentBlocks = [
         { direction: "above", block: block.above(1) },
