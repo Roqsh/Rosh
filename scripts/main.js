@@ -667,9 +667,7 @@ world.afterEvents.playerSpawn.subscribe((playerJoin) => {
 	if (config.modules.killauraB.enabled) player.lastLeftClick = NaN;
 	if (config.modules.killauraC.enabled) player.entitiesHit = [];
 	if (config.customcommands.report.enabled) player.reports = [];
-
 	if (player.isOnGround) player.lastGoodPosition = player.location;
-	player.gamemode = player.getGameMode();
 
 	setScore(player, "tick_counter2", 0);
 
@@ -834,18 +832,22 @@ system.beforeEvents.watchdogTerminate.subscribe((watchdogTerminate) => {
 });
 
 
-if([...world.getPlayers()].length >= 1) {
-	for(const player of world.getPlayers()) {
+if ([...world.getPlayers()].length >= 1) {
 
-		if(config.modules.spammerA.enabled) player.lastMessageSent = 0;
-		if(config.modules.nukerA.enabled) player.blocksBroken = 0;
-		if(config.modules.autoclickerA.enabled) player.firstAttack = Date.now();
-		if(config.modules.autoclickerA.enabled) player.cps = 0;
-		if(config.modules.killauraB.enabled) player.lastLeftClick = NaN;
-		if(config.modules.killauraC.enabled) player.entitiesHit = [];
-		if(config.customcommands.report.enabled) player.reports = [];
-		
-		if(player.isOnGround) player.lastGoodPosition = player.location;
-		player.gamemode = player.getGameMode();
+	for (const player of world.getPlayers()) {
+
+		if (config.modules.spammerA.enabled) player.lastMessageSent = 0;
+		if (config.modules.nukerA.enabled) player.blocksBroken = 0;
+		if (config.modules.autoclickerA.enabled) player.firstAttack = Date.now();
+		if (config.modules.autoclickerA.enabled) player.cps = 0;
+		if (config.modules.killauraB.enabled) player.lastLeftClick = NaN;
+		if (config.modules.killauraC.enabled) player.entitiesHit = [];
+		if (config.customcommands.report.enabled) player.reports = [];
+		if (player.isOnGround) player.lastGoodPosition = player.location;
+
+        // Inform the player about the successfull reload
+        if (player.isOp()) {
+            player.sendMessage(`${config.themecolor}Rosh §j> §aRosh has been successfully reloaded!`);
+        }
 	}
 };
