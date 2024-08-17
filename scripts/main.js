@@ -5,8 +5,8 @@ import data from "./data/data.js";
 import { tag_system, setTitle } from "./utils/gameUtil.js";
 import { flag, ban, parseTime, timeDisplay, getScore, setScore, tellStaff, getSpeed, aroundAir, debug } from "./util.js";
 import { commandHandler } from "./commands/handler.js";
-import { mainMenu } from "./ui/mainGui.js";
-import { playerMenuSelected } from "./ui/sections/playerMenu.js";
+import { mainMenu } from "./ui/mainMenu.js";
+import { playerMenuSelected } from "./ui/main/playerMenu.js";
 
 // Misc
 import { badpackets_a } from "./checks/misc/badpackets/badpacketsA.js";

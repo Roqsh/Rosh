@@ -1,7 +1,7 @@
 import * as MinecraftUI from "@minecraft/server-ui";
 import { Player, world } from "@minecraft/server";
 import config from "../../data/config.js";
-import { mainMenu } from "../mainGui.js";
+import { mainMenu } from "../mainMenu.js";
 
 /**
  * Displays the world settings menu to the player which allows for the customization of game rules.

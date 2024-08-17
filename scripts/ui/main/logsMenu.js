@@ -2,7 +2,7 @@ import * as MinecraftUI from "@minecraft/server-ui";
 import { world } from "@minecraft/server";
 import config from "../../data/config.js";
 import data from "../../data/data.js";
-import { mainMenu } from "../mainGui.js";
+import { mainMenu } from "../mainMenu.js";
 
 /**
  * Displays all Rosh logs in a menu.

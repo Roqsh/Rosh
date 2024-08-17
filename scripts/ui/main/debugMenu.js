@@ -1,6 +1,6 @@
 import * as MinecraftUI from "@minecraft/server-ui";
 import config from "../../data/config.js";
-import { mainMenu } from "../mainGui.js";
+import { mainMenu } from "../mainMenu.js";
 
 /**
  * Displays a debug menu to the player with options to toggle various debugging features.

@@ -3,7 +3,7 @@ import { world } from "@minecraft/server";
 import config from "../../data/config.js";
 import data from "../../data/data.js";
 import { parseTime, timeDisplay, tellStaff } from "../../util.js";
-import { mainMenu } from "../mainGui.js";
+import { mainMenu } from "../mainMenu.js";
 import { playerMenuSelected } from "./playerMenu.js";
 
 /**

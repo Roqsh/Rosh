@@ -3,7 +3,7 @@ import { world } from "@minecraft/server";
 import config from "../../data/config.js";
 import data from "../../data/data.js";
 import { uppercaseFirstLetter } from "../../util.js";
-import { mainMenu } from "../mainGui.js";
+import { mainMenu } from "../mainMenu.js";
 
 const moduleList = Object.keys(config.modules).concat(Object.keys(config.misc_modules));
 const modules = [];

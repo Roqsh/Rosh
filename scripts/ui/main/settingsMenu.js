@@ -2,7 +2,7 @@ import * as MinecraftUI from "@minecraft/server-ui";
 import { world } from "@minecraft/server";
 import config from "../../data/config.js";
 import { handleNotification } from "../../commands/staff/notify.js";
-import { mainMenu } from "../mainGui.js";
+import { mainMenu } from "../mainMenu.js";
 
 /**
  * Displays a menu with various options for customizing Rosh.

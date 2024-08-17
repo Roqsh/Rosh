@@ -9,7 +9,7 @@ import { removeOp } from "../../commands/staff/deop.js";
 import { addVanish, removeVanish } from "../../commands/tools/vanish.js";
 import { summonAuraBot } from "../../commands/tools/testaura.js";
 import { getStats } from "../../commands/staff/stats.js";
-import { mainMenu } from "../mainGui.js";
+import { mainMenu } from "../mainMenu.js";
 import { kickPlayerMenu, banPlayerMenu } from "./punishMenu.js";
 
 /**
