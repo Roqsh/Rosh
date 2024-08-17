@@ -350,7 +350,6 @@ function handleAlert(player, check, checkType, currentVl, debugName, debug, them
 
 /**
  * Bans a player from the game.
- * 
  * @name ban
  * @param {import("@minecraft/server").Player} player - The player object.
  * @example ban(rqosh);
@@ -1160,7 +1159,7 @@ export function getSpeed(player) {
 
 
 /**
- * Gets a player's total speed.
+ * Gets a player's total speed. [Unused]
  * @name getTotalSpeed
  * @param {import("@minecraft/server").Player} player - The player to get the speed from.
  * @returns {number} The total speed of the player.
@@ -1286,7 +1285,7 @@ export function inAir(player) {
 
 
 /**
- * Plays a sound for a player.
+ * Plays a sound for a player. [Unused]
  * @name setSound
  * @param {object} player - The player running the sound function. This should be an object with a `runCommandAsync` method.
  * @param {string} id - The id of the played sound. This should be a non-empty string.
