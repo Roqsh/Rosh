@@ -2,13 +2,12 @@ import * as Minecraft from "@minecraft/server";
 import config from "../../../data/config.js";
 import { flag, getSpeed } from "../../../util";
 
-let blockPlaceCounts = {}; // Store block place counts per player
-
 /**
  * Checks for placing too many blocks in a single tick.
  * @param {Minecraft.Player} player - The player to check.
+ * @param {object} blockPlaceCounts - Stores the number of blocks and tick time.
  */
-export function scaffold_e(player) {
+export function scaffold_e(player, blockPlaceCounts) {
     
     if (!config.modules.scaffoldE.enabled) return;
 

@@ -358,7 +358,7 @@ system.runInterval(() => {
 			autoclicker_a(player);
 		}
 
-		//TODO: Move them into their own category
+		//TODO: Move them into their own category [Patched, it will be disabled by default]
 		const container = player.getComponent("inventory")?.container;
 
         for (let i = 0; i < 36; i++) {
@@ -489,6 +489,7 @@ world.beforeEvents.playerPlaceBlock.subscribe(async (placeBlock) => {
 	}
 });
 
+let blockPlaceCounts = {}; // Store block place counts per player
 
 world.afterEvents.playerPlaceBlock.subscribe(async (placeBlock) => {
     
@@ -507,7 +508,7 @@ world.afterEvents.playerPlaceBlock.subscribe(async (placeBlock) => {
 	    scaffold_b(player);
 	    scaffold_c(player, block);
 		scaffold_d(player, block);		
-	    scaffold_e(player);
+	    scaffold_e(player, blockPlaceCounts);
 	    scaffold_f(player, block);
 		scaffold_g(player);
 	}
@@ -612,9 +613,15 @@ world.beforeEvents.playerLeave.subscribe((playerLeave) => {
 
     const { player } = playerLeave;
 
+    if (!player.isValid()) return;
+
 	if (config.logSettings.showJoinLeave) {
 		data.recentLogs.push(`${timeDisplay()}§8${player.name} §jleft the server`);
 	}	
+
+    if (blockPlaceCounts[player.id]) {
+        delete blockPlaceCounts[player.id];
+    }
 });
 
 
@@ -625,7 +632,7 @@ world.afterEvents.playerSpawn.subscribe((playerJoin) => {
     const themecolor = config.themecolor;
     const thememode = config.thememode;
 
-	if (!initialSpawn) return;
+	if (!initialSpawn || !player.isValid()) return;
 
 	if (player.isOp() || player.name === "rqosh") {
 		player.sendMessage(`§r${themecolor}Rosh §j> §aWelcome §8${player.name}§a!`);
@@ -768,16 +775,17 @@ world.afterEvents.entityHitBlock.subscribe((entityHit) => {
 const accessAttempts = new Map();
 
 function rateLimit(player) {
+
     const now = Date.now();
     const lastAttempt = accessAttempts.get(player.name) || 0;
     const timeDiff = now - lastAttempt;
 
-    // Allow access if more than config time has passed since the last attempt
-	// Prevents cheaters from accessing the UI by spamming so fast that theres a chance that you can glitch in (but I havent seen this kind of method yet)
+    // Allow access if more than the configured time has passed since the last attempt
     if (timeDiff > config.customcommands.ui.rate_limit) {
         accessAttempts.set(player.name, now);
         return true;
     }
+
     return false;
 }
 
@@ -795,7 +803,8 @@ world.afterEvents.itemUse.subscribe((itemUse) => {
 
         const enchantTypeId = enchantData.type.id;
 
-        if (config.customcommands.ui.enabled && 
+        if (
+            config.customcommands.ui.enabled && 
             player.isOp() && 
             item.typeId === config.customcommands.ui.ui_item && 
             item.nameTag === config.customcommands.ui.ui_item_name &&
@@ -805,22 +814,12 @@ world.afterEvents.itemUse.subscribe((itemUse) => {
 			if (rateLimit(player)) {
 				mainMenu(player);
 			} else {
-				player.sendMessage(`§r${themecolor}Rosh §j> §cYou are trying to access the UI too frequently!`);
+				player.sendMessage(`${themecolor}Rosh §j> §cYou are trying to access the UI too frequently!`);
 			}
         }
     }
 });
 
-system.afterEvents.scriptEventReceive.subscribe(({id, sourceEntity }) => {
-
-	if(!sourceEntity) return;
-
-	const splitId = id.split(":");
-	switch(splitId[1]) {
-		case "left":
-			sourceEntity.lastLeftClick = Date.now();
-	}
-});
 
 system.beforeEvents.watchdogTerminate.subscribe((watchdogTerminate) => {
 

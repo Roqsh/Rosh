@@ -26,7 +26,7 @@ export function scaffold_c(player, block) {
         blockUnderPlayer.location.y === block.location.y && 
         blockUnderPlayer.location.z === block.location.z
     ) { 
-        if (rotation.x < 44.025) {
+        if (rotation.x < 44) {
             flag(player, "Scaffold", "C", "xRot", rotation.x);
             isChecked = true;
         }  
@@ -50,7 +50,13 @@ export function scaffold_c(player, block) {
 
     const heightDifference = Math.abs(block.location.y - player.location.y);
 
-    if (!isChecked && Math.abs(rotation.x) > 75 && distance > 2.75 && heightDifference < 1.4) {
+    if (
+        !isChecked &&
+        !player.isFlying &&
+        Math.abs(rotation.x) > 75 && 
+        distance > 2.75 && 
+        heightDifference < 1.4
+    ) {
         flag(player, "Scaffold", "C", "distance", `${distance},xRot=${rotation.x}`);
     }
 

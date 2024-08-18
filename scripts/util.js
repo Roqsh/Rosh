@@ -36,10 +36,11 @@ export function flag(player, check, checkType, debugName, debug, shouldTP = fals
         debug = debug.slice(0, 256) + `(+${extraLength} additional characters)`;
     }
 
-    // Teleport player if needed
     const rotation = player.getRotation();
-    if (shouldTP && config.silent === false) {
-        player.teleport(check === "Crasher" ? {x: 30000000, y: 30000000, z: 30000000} : player.lastGoodPosition, {
+
+    // Teleport player if needed
+    if (shouldTP && !config.silent) {
+        player.teleport(player.lastGoodPosition, {
             dimension: player.dimension,
             rotation: {x: rotation.x, y: rotation.y},
             keepVelocity: true
@@ -589,8 +590,8 @@ export function msToTime(milliseconds = 0) {
  * @param {string} format - Either 'german' or 'default'. If no format is given, default will be used.
  * @returns {string} formattedTime - The formatted time as a string.
  * @remarks This functon was designed for the 'showTimestamps' option for logging,
- * and therefore only returns a string if enabled via config. (config.logSettings.showTimestamps)
- * @example timeDisplay(); Returns: [12:24:2050]
+ * and therefore only returns a string if enabled via config! (config.logSettings.showTimestamps)
+ * @example timeDisplay(); // Returns current time in this format: [12:24:2050]
  */
 export function timeDisplay(format) {
 
@@ -885,7 +886,7 @@ export function getBlocksBetween({ x: x1, y: y1, z: z1 }, { x: x2, y: y2, z: z2 
 
 
 /**
- * Finds the nearest player to a given entity.
+ * Finds the nearest player to a given entity. [Unused]
  * @name getClosestPlayer
  * @param {object} entity - The entity to check.
  * @returns {object|null} - The closest player object, or null if no player is found.
@@ -1253,7 +1254,7 @@ export function aroundAir(player) {
 
 
 /**
- * @name inAir - Returns true if a player is in air (Paradox Anticheat Code)
+ * @name inAir - Returns true if a player is in air (Refactored Paradox Anticheat Code)
  * @param {object} player - The player that you are checking
  * @example if(inAir(player)) flag(player, "Movement', "A")
  * @remarks Flags for Movement/A if a player is in air
