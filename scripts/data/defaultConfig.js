@@ -599,16 +599,19 @@ export default
 
         "scaffoldE": {
             "enabled": true,
-            "description": "Checks for going too fast while placing",
+            "description": "Checks for placing too many blocks in a single tick.",
+            "amount": 3,
             "punishment": "kick",
-            "minVlbeforePunishment": 2
+            "punishmentLength": "7d",
+            "minVlbeforePunishment": 4
         },
 
         "scaffoldF": {
             "enabled": true,
-            "description":"Checks for placing too many blocks scaffold-ish per 20 ticks",
+            "description":"Checks for suspicious icy-bridging behaviour per 20 ticks.",
             "punishment": "kick",
-            "minVlbeforePunishment": 1
+            "punishmentLength": "7d",
+            "minVlbeforePunishment": 2
         },
 
         "scaffoldG": {

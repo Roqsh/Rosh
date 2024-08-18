@@ -39,7 +39,7 @@
 					"/scoreboard objectives add flyvl dummy",
                     "/scoreboard objectives add noslowvl dummy",
 					"/scoreboard objectives add speedvl dummy",
-					"/scoreboard objectives add scaffoldAmount dummy",
+					"/scoreboard objectives add currentBlockAmount dummy",
 					"/scoreboard objectives add tickValue dummy",
 					"/scoreboard objectives add nofallvl dummy",
 					"/scoreboard objectives add breakervl dummy",

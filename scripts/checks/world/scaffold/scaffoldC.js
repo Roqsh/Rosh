@@ -48,7 +48,9 @@ export function scaffold_c(player, block) {
         Math.pow(block.location.z - player.location.z, 2)
     );
 
-    if (!isChecked && Math.abs(rotation.x) > 75 && distance > 2.75) {
+    const heightDifference = Math.abs(block.location.y - player.location.y);
+
+    if (!isChecked && Math.abs(rotation.x) > 75 && distance > 2.75 && heightDifference < 1.4) {
         flag(player, "Scaffold", "C", "distance", `${distance},xRot=${rotation.x}`);
     }
 

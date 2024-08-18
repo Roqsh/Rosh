@@ -34,4 +34,4 @@ export function scaffold_g(player) {
     }
 }
 
-// ! itemUse does not get triggered by mobile devices !
+// ! itemUse does not get triggered by mobile devices when placing blocks!

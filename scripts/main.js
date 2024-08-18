@@ -57,7 +57,7 @@ import { scaffold_b } from "./checks/world/scaffold/scaffoldB.js";
 import { scaffold_c } from "./checks/world/scaffold/scaffoldC.js";
 import { scaffold_d } from "./checks/world/scaffold/scaffoldD.js";
 import { scaffold_e } from "./checks/world/scaffold/scaffoldE.js";
-import { scaffold_f, dependencies_f } from "./checks/world/scaffold/scaffoldF.js";
+import { scaffold_f, scaffold_f_dependency } from "./checks/world/scaffold/scaffoldF.js";
 import { scaffold_g } from "./checks/world/scaffold/scaffoldG.js";
 import { scaffold_h, dependencies_h } from "./checks/world/scaffold/scaffoldH.js";
 //import { scaffold_i } from "./checks/world/scaffold/scaffoldI.js";
@@ -428,25 +428,25 @@ system.runInterval(() => {
         }
 
         dependencies_e(player);
-		dependencies_f(player, tickValue, velocity);  
+		scaffold_f_dependency(player, tickValue);  
 
 		player.removeTag("attacking");
-		player.removeTag("itemUse");
 		player.removeTag("breaking");
+        player.removeTag("itemUse");
 		
-		if(tickValue > 19) {
+		if (tickValue === 20) {
 			const currentCounter = getScore(player, "tick_counter", 0);
 			setScore(player, "tick_counter", currentCounter + 1);
 			setScore(player, "tick_counter2", getScore(player, "tick_counter2", 0) + 1);
 			setScore(player, "tag_reset", getScore(player, "tag_reset", 0) + 1);
-			setScore(player, "scaffold_g_reset", getScore(player, "scaffold_g_reset", 0) + 1);
             setScore(player, "packets", 0);
+            setScore(player, "tickValue", 0);
 			player.removeTag("snow");
+            player.removeTag("placing");
 		}
 
-		if(getScore(player, "tag_reset", 0) > 5) {
+		if (getScore(player, "tag_reset", 0) > 5) {
 			player.removeTag("slime")
-			player.removeTag("placing");
 			player.removeTag("ice");
 			player.removeTag("damaged");
 			player.removeTag("fall_damage");

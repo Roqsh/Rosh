@@ -7,7 +7,6 @@ const lastXZ = new Map();
  * Checks for drastically changing xz velocity whilst in air.
  * @name strafe_a
  * @param {player} player - The player to check
- * @remarks 
  */
 export function strafe_a(player) {
     
@@ -24,7 +23,9 @@ export function strafe_a(player) {
 
         let maxChange = config.modules.strafeA.maxChange;
 
-        if (player.getEffect("speed")) value += 0.75;
+        if (player.getEffect("speed")) {
+            maxChange += 0.75;
+        }
 
         if (lastXZ.has(player.name)) {
             
