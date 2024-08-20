@@ -2,7 +2,7 @@
 > This project is still in development and is currently undergoing a whole recode.
 
 # Rosh
-Rosh is an open-source Anticheat designed for Minecraft Bedrock Edition that mainly targets Pc players.
+Rosh is an open-source Anticheat designed for Minecraft Bedrock Edition that makes use of its in-build Scripting API.
 It is currently in version 1.25 [Dev] and supports 1.21.20 .
 
 Important Notes:
@@ -14,6 +14,8 @@ Special Thanks to:
 - NT AUTHORITY/hpwd / @MrDiamond64
 - 4urxra / @Dream23322
 <3
+
+## Setup
 
 ## Detections
 A list of all checks Rosh currently has. Keep in mind that those are not 100% compensated and the accuracy may differ.
