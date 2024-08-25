@@ -2,9 +2,10 @@ import config from "../../../data/config.js";
 import { flag } from "../../../util";
 
 /**
- * Checks for not looking at the placed block.
+ * Checks for not looking at the placed block. (rotation)
  * @param {import("@minecraft/server").Player} player - The player to check.
  * @param {import("@minecraft/server").Block} block - The placed block.
+ * @remarks [WIP] This check will be updated in the near future.
  */
 export function scaffold_c(player, block) {
 

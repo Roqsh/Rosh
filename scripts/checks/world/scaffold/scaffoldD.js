@@ -1,23 +1,30 @@
+import * as Minecraft from "@minecraft/server";
 import config from "../../../data/config.js";
-import { flag, angleCalc } from "../../../util";
+import { flag, angleCalc, debug } from "../../../util";
 
 /**
- * Checks for not looking at the placed block (with the angle diff)
- * @name scaffold_d
- * @param {import("@minecraft/server").Player} player - The player to check
- * @param {import("@minecraft/server").Block} block - The placed block
+ * Checks for not looking at the placed block. (angle)
+ * @param {Minecraft.Player} player - The player to check.
+ * @param {Minecraft.Block} block - The placed block.
+ * @remarks [WIP] This check will be updated in the near future.
  */
 export function scaffold_d(player, block) {
 
-    if (config.modules.scaffoldD.enabled) {
+    if (!config.modules.scaffoldD.enabled || player.isFlying) return;
 
-        const distance = Math.sqrt(
-            Math.pow(block.location.x - player.location.x, 2) + 
-            Math.pow(block.location.z - player.location.z, 2)
-        );
+    const MAX_ANGLE = config.modules.scaffoldD.angle;
+    const DISTANCE_THRESHOLD = config.modules.scaffoldD.distance;
 
-        if (angleCalc(player, block) > 75 && distance > 2.75 && !player.getGameMode() === "creative") {
-            flag(player, "Scaffold", "D", "distance", `${distance},angle=${angleCalc(player, block)}`)
-        }
+    const distance = Math.sqrt(
+        Math.pow(block.location.x - player.location.x, 2) + 
+        Math.pow(block.location.z - player.location.z, 2)
+    );
+
+    const angle = angleCalc(player, block);
+
+    debug(player, "Angle", `${angle}, Distance: ${distance}`, "angleblock");
+
+    if (angle > MAX_ANGLE && distance > DISTANCE_THRESHOLD) {
+        flag(player, "Scaffold", "D", "angle", `${angle},distance=${distance}`);
     }
 }

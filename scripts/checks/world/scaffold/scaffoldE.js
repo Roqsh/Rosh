@@ -9,9 +9,7 @@ import { flag } from "../../../util";
  */
 export function scaffold_e(player, blockPlaceCounts) {
     
-    if (!config.modules.scaffoldE.enabled) return;
-
-    if (player.isFlying) return;
+    if (!config.modules.scaffoldE.enabled || player.isFlying) return;
 
     // With butterflying, 2 placements per tick are achievable
     const AMOUNT = config.modules.scaffoldE.amount;

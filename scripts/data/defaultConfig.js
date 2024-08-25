@@ -586,6 +586,8 @@ export default
         "scaffoldD": {
             "enabled": true,
             "description": "Checks for not looking at the placed block",
+            "angle": 75,
+            "distance": 2,
             "punishment": "kick",
             "minVlbeforePunishment": 3
         },
