@@ -4,7 +4,6 @@ import { findPlayerByName, endsWithNumberInParentheses, tellStaff } from "../../
 
 /**
  * Unfreezes the players movement, camera and hud.
- * @name unfreeze
  * @param {object} message - The message object containing the sender's information.
  * @param {Minecraft.Player} message.sender - The player who initiated the unfreeze event.
  * @param {array} args - Additional arguments provided, with the first argument being the target player's name.
@@ -29,7 +28,8 @@ export function unfreeze(message, args) {
     }
 
     // Replace @s with the sender's name
-    const targetName = args[0].replace(/"|\\|@s/g, player.name);
+    const filteredName = args[0].replace(/"|'|`|\\/g, "");
+    const targetName = filteredName.replace(/@s/g, player.name);
 
     const minNameLength = 3;
     const maxNameLength = endsWithNumberInParentheses(targetName) ? 15 : 12;

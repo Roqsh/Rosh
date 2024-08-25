@@ -38,7 +38,7 @@ export function unban(message, args) {
     }
 
     const reason = args.slice(1).join(" ").replace(/"|\\/g, "") || "No reason specified";
-
+    
     // Check if the member is already in the unban queue
     if (data.unbanQueue.includes(targetName)) {
         player.sendMessage(`${themecolor}Rosh §j> §8${targetName} §cis already queued for an unban.`);

@@ -28,7 +28,8 @@ export function tag(message, args) {
     }
 
     // Replace @s with the sender's name
-    const targetName = args[0].toLowerCase().replace(/"|\\|@s/g, player.name.toLowerCase());
+    const filteredName = args[0].replace(/"|'|`|\\/g, "");
+    const targetName = filteredName.replace(/@s/g, player.name);
 
     const minNameLength = 3;
     const maxNameLength = endsWithNumberInParentheses(targetName) ? 15 : 12;

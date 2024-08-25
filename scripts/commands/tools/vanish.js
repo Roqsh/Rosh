@@ -32,6 +32,7 @@ export function vanish(message) {
  * @param {string} themecolor - The theme color for messages.
  */
 export function removeVanish(player, themecolor) {
+    
     // Remove the invisible mark from the player
     player.removeTag("vanish");
 
@@ -51,6 +52,7 @@ export function removeVanish(player, themecolor) {
  * @param {string} themecolor - The theme color for messages.
  */
 export function addVanish(player, themecolor) {
+
     // Store the original gamemode of the player
     oldGamemode.set(player.name, player.getGameMode());
 

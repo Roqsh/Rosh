@@ -3,7 +3,6 @@ import config from '../../data/config.js';
 
 /**
  * Displays the team behind Rosh.
- * @name credits
  * @param {object} message - Message object
  * @param {Minecraft.Player} message.sender - The player who initiated the command.
  * @throws {TypeError} If message is not an object

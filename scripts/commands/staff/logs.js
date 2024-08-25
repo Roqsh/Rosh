@@ -4,7 +4,6 @@ import config from "../../data/config.js";
 
 /**
  * Displays logged information.
- * @name logs
  * @param {object} message - The message object containing the sender's information.
  * @param {Minecraft.Player} message.sender - The player who initiated the command.
  * @param {array} args - Additional arguments provided, with the first argument being the target player's name.
