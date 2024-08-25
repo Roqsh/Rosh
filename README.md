@@ -2,33 +2,54 @@
 > This project is still in development and is currently undergoing a whole recode.
 
 # Rosh
-Rosh is an open-source Anticheat designed for Minecraft Bedrock Edition that mainly targets Pc players.
-It is currently in version 1.24 [Dev] and supports 1.21.0x, 1.21.1x and 1.21.2x .
+Rosh is an open-source Anticheat designed for Minecraft Bedrock Edition that makes use of its in-build Scripting API.
+It is currently in version 1.25 [Dev] and supports 1.21.20 (Previews excluded).
 
 Important Notes:
-- Found any Bugs, False flags or bypasses? Be sure to check out Rosh's official discord server!
+- Found any Bugs, False flags or bypasses and want to suggest certain features? Be sure to check out Rosh's official discord server!
   https://discord.gg/FNrJDvG95r
-- Altough this project is open-source, please avoid copying certain features and claim them as your own.
+- Altough this project is open-source, please avoid copying certain features and claiming them as your own.
 
 Special Thanks to:
-- NT AUTHORITY/hpwd / MrDiamond64
-- Dream23322 / 4urxra
+- NT AUTHORITY/hpwd / @MrDiamond64
+- 4urxra / @Dream23322
 <3
+
+## Setup
 
 ## Detections
 A list of all checks Rosh currently has. Keep in mind that those are not 100% compensated and the accuracy may differ.
 However, Rosh is currently undergoing a recode that targets certain issues.
 
+Combat:
+
+Movement:
+
 World
 - Scaffold
-  - (A) Checks for typicall diagonal cheats
-  - (B) Checks for smoothed rotations
-  - (C) Checks for not looking at the placed block
-  - (D) Another rotation check
-  - (E) Unnatural speeds
-  - (F) Suspicious placement behavior
-  - (G) Not triggering itemUse
-  - (H) Invalid held Items
+  - (A)
+  - (B)
+  - (C)
+  - (D)
+  - (E)
+  - (F)
+  - (G)
+  - (H)
+  - (I) [WIP]
+  - (J)
+  - (K)
 
 - Tower
   - (A)
+  - (B)
+
+- Nuker
+  - (A)
+  - (B)
+  - (C)
+  - (D)
+
+- BlockReach
+  - (A)
+
+Misc:
