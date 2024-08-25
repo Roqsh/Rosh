@@ -15,10 +15,12 @@ export function fly_b(player) {
 
         if (
             player.getGameMode() === "creative" || 
-            player.hasTag("elytra") || 
             player.getGameMode() === "spectator" ||
+            player.hasTag("elytra") || 
             player.hasTag("flying") ||
-            player.hasTag("placing")
+            player.hasTag("placing") ||
+            player.isFlying ||
+            player.isOnGround
         ) return;
 
         const velocityY = player.getVelocity().y;
@@ -27,8 +29,8 @@ export function fly_b(player) {
 
             const count = fly_b_map.get(player);
             
-            if(count >= config.modules.flyB.amount && velocityY == 0 && !player.isOnGround && hVelocity(player) !== 0) {
-                flag(player, "Fly", "B", "Velocity", velocityY, false);
+            if(count >= config.modules.flyB.amount && velocityY == 0) {
+                flag(player, "Fly", "B", "yVel", velocityY);
             }
 
             if(velocityY == 0) {

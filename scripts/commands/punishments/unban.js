@@ -20,46 +20,46 @@ export function unban(message, args) {
 
     // Check if target player name is provided
     if (!args.length) {
-        player.sendMessage(`§r${themecolor}Rosh §j> §cYou need to provide who to unban.`);
+        player.sendMessage(`${themecolor}Rosh §j> §cYou need to provide who to unban.`);
         return;
     }
 
     // Replace @s with the sender's name
-    const targetName = args[0].replace(/"|\\|@s/g, player.name);
+    const filteredName = args[0].replace(/"|'|`|\\/g, "");
+    const targetName = filteredName.replace(/@s/g, player.name);
 
     const minNameLength = 3;
     const maxNameLength = targetName.endsWith(')') ? 15 : 12;
 
     // Check if target player name is valid
     if (targetName.length < minNameLength || targetName.length > maxNameLength) {
-        player.sendMessage(`§r${themecolor}Rosh §j> §cYou need to provide a valid player to unban.`);
+        player.sendMessage(`${themecolor}Rosh §j> §cYou need to provide a valid player to unban.`);
         return;
     }
 
-    const member = args[0].replace(/"|\\/g, ""); // Extract member name
     const reason = args.slice(1).join(" ").replace(/"|\\/g, "") || "No reason specified";
 
     // Check if the member is already in the unban queue
-    if (data.unbanQueue.includes(member.toLowerCase())) {
-        player.sendMessage(`§r${themecolor}Rosh §j> §8${member} §cis already queued for an unban.`);
+    if (data.unbanQueue.includes(targetName)) {
+        player.sendMessage(`${themecolor}Rosh §j> §8${targetName} §cis already queued for an unban.`);
         return;
     }
 
     // Prevent unbanning oneself
-    if (member.id === player.id) {
-        player.sendMessage(`§r${themecolor}Rosh §j> §cYou cannot unban yourself.`);
+    if (targetName === player.name) {
+        player.sendMessage(`${themecolor}Rosh §j> §cYou cannot unban yourself.`);
         return;
     }
 
     // Add member to the unban queue
-    data.unbanQueue.push(member.toLowerCase());
+    data.unbanQueue.push(targetName);
 
     // Remove the ban information from data.banList
-    delete data.banList[member];
+    delete data.banList[targetName];
 
     // Notify other staff members about the unban request
-    tellStaff(`§r${themecolor}Rosh §j> §8${player.nameTag} §ahas added §8${member} §ato the unban queue for: §8${reason}§a.`);
+    tellStaff(`${themecolor}Rosh §j> §8${player.name} §ahas added §8${targetName} §ato the unban queue for: §8${reason}§a.`);
 
     // Log the unban event
-    data.recentLogs.push(`${timeDisplay()}§8${member} §ahas been unbanned by §8${player.nameTag}§a!`);
+    data.recentLogs.push(`${timeDisplay()}§8${targetName} §ahas been unbanned by §8${player.name}§a!`);
 }

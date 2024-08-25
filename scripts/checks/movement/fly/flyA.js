@@ -13,7 +13,7 @@ export function fly_a(player) {
 
         const velocity = player.getVelocity();
         
-        if (aroundAir(player)) {
+        if (aroundAir(player) && !player.isGliding) {
             
             let max_v_up = 0.62;
 

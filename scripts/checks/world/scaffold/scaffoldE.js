@@ -1,6 +1,6 @@
 import * as Minecraft from "@minecraft/server";
 import config from "../../../data/config.js";
-import { flag, getSpeed } from "../../../util";
+import { flag } from "../../../util";
 
 /**
  * Checks for placing too many blocks in a single tick.

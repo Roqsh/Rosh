@@ -778,10 +778,10 @@ export default
         },
 
         "motionD": {
-            "enabled": true,
+            "enabled": false,
             "description": "Checks for not going to the predicted direction",
             "punishment": "kick",
-            "minVlbeforePunishment": 3
+            "minVlbeforePunishment": 5
         },
 
         "motionE": {
@@ -792,7 +792,7 @@ export default
         },
 
         "strafeA": {
-            "enabled": true,
+            "enabled": false,
             "description": "Checks for drastically changing xz velocity whilst in air",
             "punishment": "kick",
             "maxChange": 0.2,

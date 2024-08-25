@@ -3,7 +3,6 @@ import { flag } from "../../../util";
 
 /**
  * Checks for not looking at the placed block.
- * @name scaffold_c
  * @param {import("@minecraft/server").Player} player - The player to check.
  * @param {import("@minecraft/server").Block} block - The placed block.
  */
@@ -34,7 +33,7 @@ export function scaffold_c(player, block) {
 
     if (
         !isChecked && 
-        (player.location.y - 1) > block.location.y && 
+        (player.location.y - 0.6) > block.location.y && 
         rotation.x < 0 && 
         !player.hasTag("riding") && 
         !player.isSwimming
@@ -55,7 +54,7 @@ export function scaffold_c(player, block) {
         !player.isFlying &&
         Math.abs(rotation.x) > 75 && 
         distance > 2.75 && 
-        heightDifference < 1.4
+        heightDifference < 2.1
     ) {
         flag(player, "Scaffold", "C", "distance", `${distance},xRot=${rotation.x}`);
     }

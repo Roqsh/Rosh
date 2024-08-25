@@ -3,7 +3,6 @@ import config from '../../data/config.js';
 
 /**
  * Enables or disables Auto-baning.
- * @name autoban
  * @param {object} message - Message object
  * @param {Minecraft.Player} message.sender - The player who initiated the command.
  * @throws {TypeError} If message is not an object
@@ -23,7 +22,7 @@ export function autoban(message) {
         config.autoban = true;
 
         // Notify the player
-        player.sendMessage(`§r${themecolor}Rosh §j> §aAuto-baning is now enabled!`);
+        player.sendMessage(`${themecolor}Rosh §j> §aAutoBan is now enabled!`);
     
         // Save the updated config to the world properties
         world.setDynamicProperty("config", JSON.stringify(config));
@@ -32,7 +31,7 @@ export function autoban(message) {
         config.autoban = false;
 
         // Notify the player
-        player.sendMessage(`§r${themecolor}Rosh §j> §cAuto-baning is now disabled!`);
+        player.sendMessage(`${themecolor}Rosh §j> §cAutoBan is now disabled!`);
 
         // Save the updated config to the world properties
         world.setDynamicProperty("config", JSON.stringify(config));

@@ -113,7 +113,7 @@ export function flag(player, check, checkType, debugName, debug, shouldTP = fals
  * @param {string} checkType - The type of sub-check.
  * @param {string} themecolor - The theme color for messages.
  * @param {number} [kickvl] - The current kick violation level.
- * @param {string} [punishmentLength="30d"] - The length of the punishment for bans.
+ * @param {string} [punishmentLength] - The length of the punishment for bans.
  */
 function handlePunishment(punishment, player, check, checkType, themecolor, kickvl, punishmentLength) {
     switch (punishment) {

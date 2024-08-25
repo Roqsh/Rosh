@@ -16,10 +16,10 @@ export function fly_c(player) {
 
             const posDiff = Math.abs(player.location.x - lastPosition.get(player.name).x) + Math.abs(player.location.z - lastPosition.get(player.name).z);
 
-            debug(player, "Position difference", posDiff, "pos");
+            debug(player, "Position difference", `${posDiff}, Ground: ${player.isOnGround ? "§aTrue" : "§cFalse"}`, "pos");
 
             if (player.isOnGround && posDiff < 8 && posDiff !== 0 && !player.isJumping && !player.hasTag("damaged")) {
-                flag(player, "Fly", "C", "onGround", "spoof");
+                flag(player, "Fly", "C", "onGround", "spoofed");
             }
         }
 
