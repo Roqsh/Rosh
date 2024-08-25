@@ -47,7 +47,7 @@ export function scaffold_f_dependency(player, tick) {
         }
 
         debug(player, "Blocks", `${colorCode}${currentBlockCount} §8bps §j(max: §n${maxAllowedBlocks}§j)`, "bps");
-
+        
         // Reset block count after each check
         setScore(player, "currentBlockAmount", 0);
     }

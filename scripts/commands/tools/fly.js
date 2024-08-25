@@ -1,6 +1,6 @@
 import * as Minecraft from "@minecraft/server";
 import config from "../../data/config.js";
-import { findPlayerByName } from "../../util.js";
+import { findPlayerByName, endsWithNumberInParentheses } from "../../util.js";
 
 /**
  * Gives a player the ability to fly.
@@ -8,6 +8,7 @@ import { findPlayerByName } from "../../util.js";
  * @param {object} message - The message object containing the sender's information.
  * @param {Minecraft.Player} message.sender - The player who initiated the command.
  * @param {array} args - Additional arguments provided, with the first argument being the target player's name.
+ * @remarks **Requires the education edition toggle to be turned on.**
  * @throws {TypeError} If the message is not an object or if args is not an array.
  */
 export async function fly(message, args) {
@@ -33,7 +34,7 @@ export async function fly(message, args) {
     const targetName = args[0].replace(/"|\\|@s/g, player.name);
 
     const minNameLength = 3;
-    const maxNameLength = targetName.endsWith(')') ? 15 : 12;
+    const maxNameLength = endsWithNumberInParentheses(targetName) ? 15 : 12;
 
     // Check if target player name is valid
     if (targetName.length < minNameLength || targetName.length > maxNameLength) {

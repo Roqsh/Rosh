@@ -25,7 +25,7 @@ export function logs(message, args = []) {
     // Determine the page or set it to 1 if no page is specified
     let page = args[0] ? parseInt(args[0]) : 1;
 
-    // Check if page is less than 1 and send an error message
+    // Check for an invalid page selection and send an error message
     if (isNaN(page) || page < 1) {
         player.sendMessage(`§r${themecolor}Rosh §j> §cPage number must be at least 1.`);
         return;

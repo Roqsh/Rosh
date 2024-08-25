@@ -1,7 +1,7 @@
 import * as Minecraft from "@minecraft/server";
 import config from "../../data/config.js";
 import data from "../../data/data.js";
-import { timeDisplay, findPlayerByName } from "../../util.js";
+import { timeDisplay, findPlayerByName, endsWithNumberInParentheses } from "../../util.js";
 
 /**
  * Warns a player for a specified reason and kicks them if they reach the warning limit.
@@ -28,7 +28,7 @@ export function warn(message, args) {
     const targetName = args[0].replace(/"|\\|@s/g, player.name);
 
     const minNameLength = 3;
-    const maxNameLength = targetName.endsWith(')') ? 15 : 12;
+    const maxNameLength = endsWithNumberInParentheses(targetName) ? 15 : 12;
 
     // Check if target player name is valid
     if (targetName.length < minNameLength || targetName.length > maxNameLength) {

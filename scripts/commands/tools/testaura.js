@@ -1,13 +1,14 @@
 import * as Minecraft from "@minecraft/server";
 import config from "../../data/config.js";
-import { findPlayerByName } from "../../util.js";
+import { findPlayerByName, endsWithNumberInParentheses } from "../../util.js";
 
 /**
- * Tests if a player uses Killaura. (Killaura/E and the Beta toggle need to be enabled!).
+ * Tests if a player uses Killaura.
  * @name testaura
  * @param {object} message - The message object containing the sender's information.
  * @param {Minecraft.Player} message.sender - The player who initiated the stats command.
  * @param {array} args - Additional arguments provided, with the first argument being the target player's name.
+ * @remarks **Requires Killaura/E and the Beta toggle to be turned on.**
  * @throws {TypeError} If the message is not an object or if args is not an array.
  */
 export function testaura(message, args) {
@@ -32,7 +33,7 @@ export function testaura(message, args) {
     const targetName = args[0].replace(/"|\\|@s/g, player.name);
 
     const minNameLength = 3;
-    const maxNameLength = targetName.endsWith(')') ? 15 : 12;
+    const maxNameLength = endsWithNumberInParentheses(targetName) ? 15 : 12;
 
     // Check if target player name is valid
     if (targetName.length < minNameLength || targetName.length > maxNameLength) {

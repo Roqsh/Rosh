@@ -1,6 +1,6 @@
 import * as Minecraft from "@minecraft/server";
 import config from "../../data/config.js";
-import { findPlayerByName } from "../../util.js";
+import { findPlayerByName, endsWithNumberInParentheses } from "../../util.js";
 
 /**
  * Allows a player to spectate another player.
@@ -27,7 +27,7 @@ export function spectate(message, args) {
     const targetName = args[0].replace(/"|\\|@s/g, player.name);
 
     const minNameLength = 3;
-    const maxNameLength = targetName.endsWith(')') ? 15 : 12;
+    const maxNameLength = endsWithNumberInParentheses(targetName) ? 15 : 12;
 
     // Check if target player name is valid
     if (targetName.length < minNameLength || targetName.length > maxNameLength) {

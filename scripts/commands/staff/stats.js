@@ -1,6 +1,6 @@
 import * as Minecraft from "@minecraft/server";
 import config from "../../data/config.js";
-import { getScore, findPlayerByName } from "../../util";
+import { getScore, findPlayerByName, endsWithNumberInParentheses } from "../../util";
 
 /**
  * Gets stats from a player (such as kicks, flags, etc.).
@@ -32,7 +32,7 @@ export function stats(message, args) {
     const targetName = args[0].replace(/"|\\|@s/g, player.name);
 
     const minNameLength = 3;
-    const maxNameLength = targetName.endsWith(')') ? 15 : 12;
+    const maxNameLength = endsWithNumberInParentheses(targetName) ? 15 : 12;
 
     // Check if target player name is valid
     if (targetName.length < minNameLength || targetName.length > maxNameLength) {

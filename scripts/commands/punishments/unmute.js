@@ -1,7 +1,7 @@
 import * as Minecraft from "@minecraft/server";
 import data from "../../data/data.js";
 import config from "../../data/config.js";
-import { timeDisplay, findPlayerByName, tellStaff } from "../../util.js";
+import { timeDisplay, findPlayerByName, endsWithNumberInParentheses, tellStaff } from "../../util.js";
 
 /**
  * Unmutes a specified player.
@@ -28,7 +28,7 @@ export function unmute(message, args) {
     const targetName = args[0].replace(/"|\\|@s/g, player.name);
 
     const minNameLength = 3;
-    const maxNameLength = targetName.endsWith(')') ? 15 : 12;
+    const maxNameLength = endsWithNumberInParentheses(targetName) ? 15 : 12;
 
     // Check if target player name is valid
     if (targetName.length < minNameLength || targetName.length > maxNameLength) {
