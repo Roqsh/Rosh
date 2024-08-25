@@ -52,9 +52,6 @@ export function unmute(message, args) {
     member.removeTag("isMuted");
     member.sendMessage(`§r${themecolor}Rosh §j> §aYou have been unmuted.`);
 
-    // Execute the unmute command
-    member.runCommandAsync("ability @s mute false");
-
     // Notify other staff members about the unmute
     tellStaff(`§r${themecolor}Rosh §j> §8${player.nameTag} §ahas unmuted §8${member.nameTag} §afor §8${reason}`);
 

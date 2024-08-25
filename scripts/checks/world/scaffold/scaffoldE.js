@@ -5,7 +5,7 @@ import { flag } from "../../../util";
 /**
  * Checks for placing too many blocks in a single tick.
  * @param {Minecraft.Player} player - The player to check.
- * @param {object} blockPlaceCounts - Stores the number of blocks and tick time.
+ * @param {object} blockPlaceCounts - Stores the number of blocks and the last tick time.
  */
 export function scaffold_e(player, blockPlaceCounts) {
     

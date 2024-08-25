@@ -246,9 +246,8 @@ function handleMutePunishment(player, check, checkType, themecolor) {
         player.sendMessage(`§r${themecolor}Rosh §j> §cYou have been muted!`);
     }
 
-    // Tag the player as muted and enable mute ability
+    // Tag the player as muted which prevents messages from being sent
     player.addTag("isMuted");
-    player.runCommandAsync("ability @s mute true");
 
     // Notify about the mute and reset warnings
     const message = `${timeDisplay()}§8${player.name} §chas been muted!`;

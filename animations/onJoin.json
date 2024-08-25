@@ -58,9 +58,7 @@
 					"/scoreboard objectives add invmove_delay dummy",
 					"/scoreboard objectives add c dummy",
 					"/scoreboard objectives add reach_a_reset dummy",
-					"/scoreboard objectives add reach_a_buffer dummy",
-		
-					"/ability @s[tag=flying,m=!c] mayfly true"
+					"/scoreboard objectives add reach_a_buffer dummy"
 				]
 			},
 			"animation_length": 9.9,

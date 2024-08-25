@@ -92,21 +92,22 @@ let lastDate = Date.now();
 world.beforeEvents.chatSend.subscribe((msg) => {
 
     const themecolor = config.themecolor;
-
 	const { sender: player, message } = msg;
+
+    let cancelEvent = false;
     
-    badpackets_e(player, message, msg)
+    badpackets_e(player, message, msg);
 
 	if (message.includes("horion") || message.includes("borion") || message.includes("packet") || message.includes("vector") || message.includes("prax") || message.includes("zephyr") || message.includes("nuvola")  || message.includes("aelous") || message.includes("disepi") || message.includes("ambrosial") || message.includes("utility mod") || message.includes("nigga") || message.includes("niger")) {	
-		msg.cancel = true;
+		cancelEvent = true;
 	}
 
 	if (message.includes("Horion") || message.includes("Borion") || message.includes("Packet") || message.includes("Vector") || message.includes("Prax") || message.includes("Zephyr") || message.includes("Nuvola") || message.includes("Aelous") || message.includes("Disepi") || message.includes("Ambrosial") || message.includes("Lunaris") || message.includes("Nigga") || message.includes("Niger")) {
-		msg.cancel = true;
+		cancelEvent = true;
 	}
 
 	if (player.hasTag("isMuted")) {
-		msg.cancel = true;
+		cancelEvent = true;
 		player.sendMessage(`§r${themecolor}Rosh §j> §cUnable to send that message - You are muted!`);
 	}
 
@@ -119,12 +120,17 @@ world.beforeEvents.chatSend.subscribe((msg) => {
 	if (!msg.cancel) {
 		if (player.name !== player.nameTag) {
 			world.sendMessage(`§r<${player.nameTag}> ${message}`);
-			msg.cancel = true;
+			cancelEvent = true;
 		} else {
 			world.sendMessage(`<${player.nameTag}> ${message.replace(/[^\x00-\xFF]/g, "")}`);
-			msg.cancel = true;
+			cancelEvent = true;
 		}
 	}
+
+    // Prevent the message from being sent
+    if (cancelEvent) {
+        msg.cancel = true;
+    }
 });
 
 

@@ -64,9 +64,6 @@ export function mute(message, args) {
     member.addTag("isMuted");
     member.sendMessage(`§r${themecolor}Rosh §j> §cYou have been muted for: §8${reason}§c.`);
 
-    // Execute the mute command
-    member.runCommandAsync("ability @s mute true");
-
     // Run the animation
     animation(member, 5);
 
