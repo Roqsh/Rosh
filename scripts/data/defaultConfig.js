@@ -32,7 +32,7 @@ export default
 
         "namespoofA": {
             "enabled": true,
-            "description": "Checks if a player's nametag length is invalid.",
+            "description": "Checks if a player's name length is invalid.",
             "punishment": "kick",
             "punishmentLength": "7d",
             "minVlbeforePunishment": 1
@@ -40,7 +40,7 @@ export default
 
         "namespoofB": {
             "enabled": true,
-            "description": "Checks if a player's nametag contains invalid characters.",
+            "description": "Checks if a player's name contains invalid characters.",
             "punishment": "kick",
             "punishmentLength": "7d",
             "minVlbeforePunishment": 1
@@ -61,16 +61,9 @@ export default
 
         "exploitA": {
             "enabled": true,
-            "description": "Checks for invalid skins",
+            "description": "Checks for being below the possible y-Level.",
             "punishment": "kick",
-            "minVlbeforePunishment": 2
-        },
-
-        "exploitB": {
-            "enabled": true,
-            "description": "Checks for being below world",
-            "punishment": "kick",
-            "minVlbeforePunishment": 6
+            "minVlbeforePunishment": 1
         },
 
         "crasherA": {
@@ -115,10 +108,10 @@ export default
 
         "badpacketsE": {
             "enabled": true,
-            "description": "Checks if the length of a message is valid.",
+            "description": "Checks for invalid message properties.",
             "punishment": "kick",
             "punishmentLength": "7d",
-            "minVlbeforePunishment": 4
+            "minVlbeforePunishment": 3
         },
 
         "badpacketsF": {
@@ -608,7 +601,7 @@ export default
 
         "scaffoldF": {
             "enabled": true,
-            "description":"Checks for suspicious icy-bridging behaviour per 20 ticks.",
+            "description":"Checks for suspicious icy-bridging behavior per 20 ticks.",
             "punishment": "kick",
             "punishmentLength": "7d",
             "minVlbeforePunishment": 2

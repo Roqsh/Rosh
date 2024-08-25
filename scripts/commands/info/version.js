@@ -18,5 +18,5 @@ export function version(message) {
     const themecolor = config.themecolor;
 
     // Send the player the version message
-    player.sendMessage(`§r${themecolor}Rosh §j> §aRosh is currently at §8v1.24§a!`);
+    player.sendMessage(`§r${themecolor}Rosh §j> §aRosh is currently at §8v1.25 [Dev] §a!`);
 }

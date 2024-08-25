@@ -20,7 +20,6 @@ import { badpackets_h } from "./checks/misc/badpackets/badpacketsH.js";
 import { badpackets_i } from "./checks/misc/badpackets/badpacketsI.js";
 import { badpackets_j } from "./checks/misc/badpackets/badpacketsJ.js";
 import { exploit_a } from "./checks/misc/exploit/exploitA.js";
-import { exploit_b } from "./checks/misc/exploit/exploitB.js";
 import { namespoof_a } from "./checks/misc/namespoof/namespoofA.js";
 import { namespoof_b } from "./checks/misc/namespoof/namespoofB.js";
 import { timer_a } from "./checks/misc/timer/timerA.js";
@@ -337,7 +336,6 @@ system.runInterval(() => {
             badpackets_i(player);
 			badpackets_j(player);
 			exploit_a(player);
-			exploit_b(player);
 			timer_a(player, player.lastPosition, lagValue);
 		}
 

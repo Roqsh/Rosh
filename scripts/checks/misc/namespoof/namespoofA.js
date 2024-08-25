@@ -1,11 +1,12 @@
+import * as Minecraft from "@minecraft/server";
 import config from "../../../data/config.js";
-import { flag } from "../../../util";
+import { flag, endsWithNumberInParentheses } from "../../../util";
 
 /**
- * Checks if a player's nametag length is invalid.
- * @name namespoof_a
- * @param {Object} player - The player to check.
- * @remarks If two players with the same Xbox account are connected via LAN,
+ * Checks if a player's name length is invalid.
+ * @param {Minecraft.Player} player - The player to check.
+ * @remarks 
+ * If two players with the same Xbox account are connected via LAN,
  * the second player will be marked with Player(2), which adds 3 additional 
  * characters that we will account for by checking if the name ends with `)`.
  */
@@ -13,23 +14,12 @@ export function namespoof_a(player) {
 
     if (!config.modules.namespoofA.enabled) return;
 
-    // Adjust length limits if the name ends with a closing parenthesis (')')
-    if (player.name.endsWith(')')) {
+    // Adjust length limits if the name ends with a closing parenthesis (")")
+    const playerName = player.name;
+    const minNameLength = 3;
+    const maxNameLength = endsWithNumberInParentheses(playerName) ? 15 : 12;
 
-        if (
-            player.name.length < 3 || 
-            player.name.length > 15
-        ) {
-            flag(player, "Namespoof", "A", "name-length", `${player.name.length}`);
-        }
-
-    } else {
-
-        if (
-            player.name.length < 3 || 
-            player.name.length > 12
-        ) {
-            flag(player, "Namespoof", "A", "name-length", `${player.name.length}`);
-        }
+    if (playerName.length < minNameLength || playerName.length > maxNameLength) {  
+        flag(player, "Namespoof", "A", "name-length", playerName.length);
     }
 }

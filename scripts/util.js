@@ -958,6 +958,19 @@ export function findPlayerByName(name) {
 
 
 /**
+ * Checks if a string ends with a number enclosed in parentheses.
+ *
+ * @param {string} string - The string to check.
+ * @returns {boolean} - Returns true if the string ends with a number inside parentheses, false otherwise.
+ * @remarks This function is used to detect if a player's name has been modified by the game. (eg. "Player(2)" )
+ */
+export function endsWithNumberInParentheses(string) {
+    return /\(\d+\)$/.test(string);
+}
+
+
+
+/**
  * Grants operator status to a specified player.
  * @name addOp
  * @param {import("@minecraft/server").Player} player - The player to grant the operator status to.

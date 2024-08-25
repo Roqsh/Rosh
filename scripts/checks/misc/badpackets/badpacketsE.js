@@ -18,7 +18,7 @@ export function badpackets_e(player, message, msg) {
 
     let cancelEvent = false;
 
-    // Invalid message lengths can cause problems when viewed from other clients
+    // Invalid message lengths can cause problems when viewed by other clients
     if (invalidLength) {
         flag(player, "BadPackets", "E", "message-length", `${message.length}`);
         cancelEvent = true;
