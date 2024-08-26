@@ -1,6 +1,6 @@
 import config from "../../../data/config.js";
 import { flag } from "../../../util";
-import { getAbsoluteGcd } from "../../../utils/mathUtil.js";
+import { Statistics } from "../../../utils/math.js";
 
 /**
  * @name aim_b
@@ -29,8 +29,8 @@ export function aim_b(player) {
                 const deltaPitch2 = Math.abs(pitchDat.one - pitchDat.two);
                 const deltaYaw2 = Math.abs(yawDat.one - yawDat.two);
 
-                const constantYaw = getAbsoluteGcd(deltaYaw, deltaYaw2);
-                const constantPitch = getAbsoluteGcd(deltaPitch, deltaPitch2);
+                const constantYaw = Statistics.getAbsoluteGcd(deltaYaw, deltaYaw2);
+                const constantPitch = Statistics.getAbsoluteGcd(deltaPitch, deltaPitch2);
 
                 if(player.hasTag("aim_debug2")) player.sendMessage("constantYaw" + constantYaw + "constantPitch" + constantPitch);
                 

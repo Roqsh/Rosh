@@ -1,6 +1,6 @@
 import config from "../../../data/config.js";
 import { flag, debug } from "../../../util";
-import { gcd, EXPANDER } from "../../../utils/mathUtil";
+import { gcd, EXPANDER } from "../../../utils/math";
 
 /**
  * @name aim_e

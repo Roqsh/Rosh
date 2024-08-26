@@ -1,6 +1,6 @@
 import config from "../../../data/config.js";
 import { flag, debug } from "../../../util";
-import { getAverage, getStandardDeviation } from "../../../utils/mathUtil";
+import { getAverage, getStandardDeviation } from "../../../utils/math";
 import EvictingList from "../../../utils/data/evlist.js";
 
 const data = new Map();

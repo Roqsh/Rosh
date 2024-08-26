@@ -1,6 +1,6 @@
 import config from "../../../data/config.js";
 import { flag, getScore, setScore } from "../../../util";
-import { hVelocity_2 } from "../../../utils/mathUtil.js";
+import { hVelocity_2 } from "../../../utils/math.js";
 
 const motion_c_map = new Map();
 
