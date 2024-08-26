@@ -210,7 +210,7 @@ system.runInterval(() => {
             player.isRiding = false;
         }
 
-        if (selectedItem.typeId === "minecraft:trident") {
+        if (selectedItem?.typeId === "minecraft:trident") {
             player.isHoldingTrident = true; 
         } else {
             player.isHoldingTrident = false;
@@ -387,8 +387,6 @@ system.runInterval(() => {
 		}
 
 		//TODO: Move them into their own category [Patched, it will be disabled by default]
-		const container = player.getComponent("inventory")?.container;
-
         for (let i = 0; i < 36; i++) {
             const item = container.getItem(i);
             if (!item) continue;

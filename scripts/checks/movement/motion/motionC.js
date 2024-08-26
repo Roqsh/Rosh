@@ -1,6 +1,5 @@
 import config from "../../../data/config.js";
 import { flag, getScore, setScore } from "../../../util";
-import { hVelocity_2 } from "../../../utils/math.js";
 
 const motion_c_map = new Map();
 
@@ -38,7 +37,9 @@ export function motion_c(player) {
             return;
         }
 
-        if(hVelocity_2(player) > minVelocity) {
+        const hVelocity =  Math.abs(player.getVelocity().x - player.getVelocity().z);
+
+        if(hVelocity > minVelocity) {
 
             setScore(player, "motion_c_data", getScore(player, "motion_c_data", 0) + 1);
 

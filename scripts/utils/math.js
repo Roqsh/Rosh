@@ -161,8 +161,6 @@ export class Vector3D {
     }
 }
 
-
-
 /**
  * A collection of statistical functions for analyzing datasets.
  */
@@ -265,7 +263,6 @@ export class Statistics {
     /**
      * Calculates the Greatest Common Divisor (GCD) of two integers.
      * This function returns the absolute value of the GCD to ensure the result is non-negative.
-     * 
      * @param {number} a - The first integer.
      * @param {number} b - The second integer.
      * @returns {number} - The absolute value of the GCD of the two integers.

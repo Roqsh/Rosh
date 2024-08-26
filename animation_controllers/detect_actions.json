@@ -333,32 +333,6 @@
 					]
 				}
 			}
-		},
-
-		"controller.animation.trident": {
-			"states": {
-				"default": {
-					"transitions": [{
-						"trident": "query.get_equipped_item_name == 'trident'"
-					}],
-					"on_entry": [
-						"/tag @s remove trident",
-                        "/tellraw @a[tag=eventlogger] {\"rawtext\":[{\"text\":\"§r§uRosh §j> Received §uTrident§j-§uPacket§j from §8\"},{\"selector\":\"@s\"},{\"text\":\" §j- {stop}\"}]}",
-						"/scoreboard players set @s last_attack 0",
-                        "/scoreboard players add @s packets 1"
-					]
-				},
-				"trident": {
-					"transitions": [{
-						"default": "query.get_equipped_item_name != 'trident'"
-					}],
-					"on_entry": [
-						"/tag @s add trident",
-                        "/tellraw @a[tag=eventlogger] {\"rawtext\":[{\"text\":\"§r§uRosh §j> Received §uTrident§j-§uPacket§j from §8\"},{\"selector\":\"@s\"},{\"text\":\" §j- {start}\"}]}",
-                        "/scoreboard players add @s packets 1"
-					]
-				}
-			}
 		}
 	}
 }

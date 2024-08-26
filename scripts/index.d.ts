@@ -4,10 +4,6 @@ declare module "@minecraft/server" {
 	
 	interface Player {
 
-		Player: any,
-
-		flagAutotoolA: boolean,
-
         /**
          * Wheter the player is crawling. For example: Getting pushed down by a trapdoor.
          * @Rosh
@@ -58,6 +54,8 @@ declare module "@minecraft/server" {
          */
         isHoldingTrident: boolean,
 
+        flagAutotoolA: boolean,
+
         autotoolSwitchDelay: number,
         blocksBroken: number,
         cps: number,
@@ -74,16 +72,11 @@ declare module "@minecraft/server" {
 		reports: Array<String>,
 		
 		lastGoodPosition: Vector3
-
 	}
 
 	interface Entity {
-
-		Entity: any,
 		
 		flagAutotoolA: boolean,
-
-		name: string,
 
         autotoolSwitchDelay: number,
 		cps: number,
@@ -95,6 +88,5 @@ declare module "@minecraft/server" {
         startBreakTime: number,
 
 		entitiesHit: Array<String>
-
 	}
 }
