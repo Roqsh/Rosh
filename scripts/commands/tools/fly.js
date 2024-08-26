@@ -25,7 +25,7 @@ export async function fly(message, args) {
 
     // Check if target player name is provided
     if (!args.length) {
-        player.sendMessage(`§r${themecolor}Rosh §j> §cYou need to provide who to let fly.`);
+        player.sendMessage(`${themecolor}Rosh §j> §cYou need to provide who to let fly.`);
         return;
     }
 
@@ -38,7 +38,7 @@ export async function fly(message, args) {
 
     // Check if target player name is valid
     if (targetName.length < minNameLength || targetName.length > maxNameLength) {
-        player.sendMessage(`§r${themecolor}Rosh §j> §cYou need to provide a valid player to let him fly.`);
+        player.sendMessage(`${themecolor}Rosh §j> §cYou need to provide a valid player to let him fly.`);
         return;
     }
 
@@ -47,7 +47,7 @@ export async function fly(message, args) {
 
     // Handle case where the target player is not found
     if (!member) {
-        player.sendMessage(`§r${themecolor}Rosh §j> §cCouldn't find that player.`);
+        player.sendMessage(`${themecolor}Rosh §j> §cCouldn't find that player.`);
         return;
     }
 
@@ -58,25 +58,35 @@ export async function fly(message, args) {
 
     // Handle case where the target player is already in creative mode
     if (![...checkGmc].length) {
-        player.sendMessage(`§r${themecolor}Rosh §j> §cThis player is in creative which already allows flying by default.`);
+        player.sendMessage(`${themecolor}Rosh §j> §cThis player is in creative which already allows flying by default.`);
         return;
     }
 
     // Toggle flying ability for the target player
     if (member.hasTag("flying")) {
         await member.removeTag("flying");
-        await member.runCommandAsync("ability @s mayfly false");
-        member.sendMessage(`§r${themecolor}Rosh §j> §cYou are no longer in fly mode.`);
+        try {
+            await member.runCommandAsync("ability @s mayfly false");
+        } catch (error) {
+            player.sendMessage(`${themecolor}Rosh §j> §cFor this feature to work, Education Edition needs to be enabled in World settings!`);
+            return;
+        }
+        member.sendMessage(`${themecolor}Rosh §j> §cYou are no longer in fly mode.`);
     } else {
         await member.addTag("flying");
-        await member.runCommandAsync("ability @s mayfly true");
-        member.sendMessage(`§r${themecolor}Rosh §j> §aYou are now in fly mode.`);
+        try {
+            await member.runCommandAsync("ability @s mayfly true");
+        } catch (error) {
+            player.sendMessage(`${themecolor}Rosh §j> §cFor this feature to work, Education Edition needs to be enabled in World settings!`);
+            return;
+        }
+        member.sendMessage(`${themecolor}Rosh §j> §aYou are now in fly mode.`);
     }
 
     // Notify the initiator
     if (member.hasTag("flying")) {
-        player.sendMessage(`§r${themecolor}Rosh §j> §8${member.name} §acan now fly.`);
+        player.sendMessage(`${themecolor}Rosh §j> §8${member.name} §acan now fly.`);
     } else {
-        player.sendMessage(`§r${themecolor}Rosh §j> §8${member.name} §ccan no longer fly.`);
+        player.sendMessage(`${themecolor}Rosh §j> §8${member.name} §ccan no longer fly.`);
     }
 }
