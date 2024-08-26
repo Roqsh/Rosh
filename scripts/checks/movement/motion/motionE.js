@@ -13,11 +13,11 @@ export function motion_e(player) {
     if (config.modules.motionE.enabled) {
 
         if (
-            player.hasTag("trident") ||  
+            player.isHoldingTrident ||  
             player.hasTag("placing") ||
             player.hasTag("damaged") ||
             player.hasTag("elytra") ||
-            player.hasTag("slime") ||
+            player.isOnSlime ||
             player.isJumping || 
             player.isGliding
         ) return;

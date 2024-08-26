@@ -22,12 +22,12 @@ export function noslow_a(player) {
         if (
             player.hasTag("right") &&
             !player.getEffect("speed") && 
-            !player.hasTag("ice") && 
-            !player.hasTag("slime") && 
             !player.hasTag("damaged") &&
-            !player.hasTag("trident") &&
-            !player.isGliding && 
-            !player.isInWater && 
+            !player.isHoldingTrident &&
+            !player.isGliding &&
+            !player.isInWater &&
+            !player.isOnIce &&
+            !player.isOnSlime &&
             player.isOnGround &&
             getScore(player, "right", 0) >= 15 &&
             speed > maxSpeed

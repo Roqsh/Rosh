@@ -33,7 +33,7 @@ export function speed_a(player) {
                 modifiedSpeed += 0.9;
             }
 
-            if(playerSpeed > modifiedSpeed && !player.hasTag("damaged") && !player.hasTag("trident") && !player.hasTag("ice") && !player.hasTag("slime")) {
+            if(playerSpeed > modifiedSpeed && !player.hasTag("damaged") && !player.isHoldingTrident && !player.isOnIce && !player.isOnSlime) {
                 flag(player, "Speed", "A", "speed", playerSpeed, true);
             }
     
@@ -46,12 +46,12 @@ export function speed_a(player) {
             }
     
             if(!player.hasTag("strict")) {
-                if(playerSpeed > maxSpeed2 + 0.1 && !player.hasTag("strict") && !player.hasTag("damaged") && !player.isFlying && !player.hasTag("trident") && !player.hasTag("ice") && !player.hasTag("slime")) {
+                if(playerSpeed > maxSpeed2 + 0.1 && !player.hasTag("strict") && !player.hasTag("damaged") && !player.isFlying && !player.isHoldingTrident && !player.isOnIce && !player.isOnSlime) {
                     flag(player, "Speed", "A", "speed", playerSpeed, true);
                 }
             
             } else {
-                if(playerSpeed > maxSpeed2 && !player.hasTag("damaged") && !player.isFlying && !player.hasTag("trident") && !player.hasTag("ice") && !player.hasTag("slime")) {
+                if(playerSpeed > maxSpeed2 && !player.hasTag("damaged") && !player.isFlying && !player.isHoldingTrident && !player.isOnIce && !player.isOnSlime) {
                     flag(player, "Speed", "A", "speed", playerSpeed, true);
                 }
             }

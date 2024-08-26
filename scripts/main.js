@@ -188,7 +188,9 @@ system.runInterval(() => {
 
         const xpForNextLevel = player.totalXpNeededForNextLevel;
         const xpAtCurrentLevel = player.xpEarnedAtCurrentLevel;
+        const container = player.getComponent("inventory")?.container;
         const selectedSlot = player.selectedSlotIndex;
+        const selectedItem = container.getItem(selectedSlot);
         const level = player.level;
 
 		const speed = getSpeed(player);
@@ -206,6 +208,12 @@ system.runInterval(() => {
             player.isRiding = true;
         } else {
             player.isRiding = false;
+        }
+
+        if (selectedItem.typeId === "minecraft:trident") {
+            player.isHoldingTrident = true; 
+        } else {
+            player.isHoldingTrident = false;
         }
         
 		if(player.blocksBroken >= 1 && config.modules.nukerA.enabled) player.blocksBroken = 0;
@@ -230,25 +238,41 @@ system.runInterval(() => {
 			}
 		}
 
-		const blockBelow = player.dimension.getBlock({x: player.location.x, y: player.location.y - 1, z: player.location.z}) ?? {typeId: "minecraft:air"};
+		const blockUnderPlayer = player.dimension.getBlock({
+            x: player.location.x, 
+            y: player.location.y - 1, 
+            z: player.location.z
+        });
+        
+        switch (true) {
 
-		if(blockBelow.typeId.includes("ice")) {
-			player.addTag("ice");
-		}
-		if(blockBelow.typeId.includes("slime")) {
-			player.addTag("slime");
-		}
-		if(player.hasTag("trident")) {
-			setScore(player, "right", 0);
-		}
-		if(blockBelow.typeId.includes("end_portal")) {
-			player.addTag("end_portal");
+            case blockUnderPlayer.typeId.includes("ice"):
+                player.isOnIce = true;
+                break;
+
+            case blockUnderPlayer.typeId.includes("snow"):
+                player.isOnSnow = true;
+                break;
+
+            case blockUnderPlayer.typeId.includes("slime"):
+                player.isOnSlime = true;
+                break;
+
+            case blockUnderPlayer.typeId.includes("stairs"):
+                player.isRunningStairs = true;
+                break;
+
+            // Add more cases as needed
+            default:
+                // Optional: Handle the case where no match is found
+                break;
         }
-		if(blockBelow.typeId.includes("stairs")) {
-			player.addTag("stairs");
-		}
-		if(player.hasTag("slime")) {
+        
+		if (player.isOnSlime) {
 			setScore(player, "tick_counter2", 0);
+		}
+        if (player.isHoldingTrident) {
+			setScore(player, "right", 0);
 		}
 
 		tag_system(player);	
@@ -445,23 +469,25 @@ system.runInterval(() => {
 			setScore(player, "tag_reset", getScore(player, "tag_reset", 0) + 1);
             setScore(player, "packets", 0);
             setScore(player, "tickValue", 0);
-			player.removeTag("snow");
             player.removeTag("placing");
 		}
 
 		if (getScore(player, "tag_reset", 0) > 5) {
-			player.removeTag("slime")
-			player.removeTag("ice");
 			player.removeTag("damaged");
 			player.removeTag("fall_damage");
 			player.removeTag("end_portal");
-			player.removeTag("stairs");
 			player.removeTag("timer_bypass");
 			player.removeTag("ender_pearl");
-			player.removeTag("trident");
 			player.removeTag("bow");
 			setScore(player, "tag_reset", 0);
-		}	
+		}
+
+        player.isCrawling = false;
+        player.isRunningStairs = false;
+
+        player.isOnIce = false;
+        player.isOnSnow = false;
+        player.isOnSlime = false;
 	}
 });
 
@@ -559,13 +585,6 @@ world.afterEvents.playerBreakBlock.subscribe(async (blockBreak) => {
 	}
 
 	let revertBlock = false;
-
-	if (
-        brokenBlockId === "minecraft:snow" || 
-        brokenBlockId === "minecraft:snow_layer"
-    ) {
-		player.addTag("snow");
-	}
 	
     if (config.generalModules.nuker) {   
         await nuker_a(player, revertBlock);      

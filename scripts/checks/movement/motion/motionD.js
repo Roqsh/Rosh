@@ -21,7 +21,7 @@ export function motion_d(player) {
     const lastUpdate = lastUpdateTime.get(playerName);
     const lastPosition = lastPos.get(playerName);
 
-    if (lastUpdate && !player.hasTag("stairs") && !player.isFlying) {
+    if (lastUpdate && !player.isRunningStairs && !player.isFlying) {
 
         let maxValue = 45;
 
@@ -54,7 +54,7 @@ export function motion_d(player) {
                 playerSpeed !== 0 && 
                 !player.getEffect("speed") &&
                 !player.hasTag("placing") && 
-                !player.hasTag("slime")
+                !player.isOnSlime
             ) {
                 if (distanceSquared > maxDistanceSquared) {
                     flag(player, "Motion", "D", "prediction-Diff", Math.sqrt(distanceSquared), true);

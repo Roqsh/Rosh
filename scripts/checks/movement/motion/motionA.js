@@ -9,7 +9,7 @@ export function motion_a(player) {
 
         if (
             !player.isOnGround || 
-            player.hasTag("trident") || 
+            player.isHoldingTrident || 
             player.hasTag("elytra")
         ) return;
 

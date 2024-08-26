@@ -30,7 +30,7 @@ export function strafe_b(player) {
                 (lastVelocity.z < 0 && velocity.z > 0.28 || lastVelocity.z > 0.28 && velocity.z < 0)
             )
 
-            const allow = !player.hasTag("swimming") && !player.hasTag("trident") && velocity.y > 0 && !player.hasTag("elytra") && !player.hasTag("slime") && !player.getEffect("speed") && !player.hasTag("damaged");
+            const allow = !player.hasTag("swimming") && !player.isHoldingTrident && velocity.y > 0 && !player.hasTag("elytra") && !player.isOnSlime && !player.getEffect("speed") && !player.hasTag("damaged");
 
             if(invalid && allow) flag(player, "Strafe", "B", "xVel", `${velocity.x},zVel${velocity.z}`);
         }
