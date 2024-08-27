@@ -331,6 +331,21 @@ export class Statistics {
     }
 
     /**
+     * Calculates the Z-score of each data point in a dataset to detect outliers with a Z-score greater than 2.
+     * @param {number[]} data - The dataset to analyze.
+     * @returns {{zScores: number[], outliers: number[]}} An object containing the z-scores and identified outliers.
+     */
+    static getZScoreOutliers(data) {
+        const mean = data.reduce((sum, val) => sum + val, 0) / data.length;
+        const stdDev = this.getStandardDeviation(data);
+        
+        const zScores = data.map(value => (value - mean) / stdDev);
+        const outliers = data.filter((_, i) => Math.abs(zScores[i]) > 2); // Z-score > 2 as a threshold
+        
+        return { zScores, outliers };
+    }
+
+    /**
      * Calculates the median of a dataset.
      * @param {number[]} data - The dataset to calculate the median from.
      * @returns {number} The median value.
@@ -499,8 +514,16 @@ export class EvictingList {
      * Gets the current size of the evicting list.
      * @returns {number} The number of elements currently in the list.
      */
-    size() {
+    getCurrentSize() {
         return this.map.size;
+    }
+
+    /**
+     * Gets the maximum capacity of the evicting list.
+     * @returns {number} The maximum number of elements the list can hold.
+     */
+    getMaxSize() {
+        return this.capacity;
     }
 
     /**
