@@ -463,10 +463,11 @@ export class EvictingList {
     /**
      * Adds a new key-value pair to the list.
      * If the list exceeds the capacity, the oldest item is evicted.
+     * If the key already exists, it will be overwritten.
      * @param {string} key - The key of the element to add.
      * @param {*} value - The value of the element to add.
      */
-    put(key, value) {
+    add(key, value) {
         // If the key already exists, remove it from the queue and map
         if (this.map.has(key)) {
             this.queue = this.queue.filter(item => item !== key);
@@ -524,6 +525,31 @@ export class EvictingList {
      */
     getMaxSize() {
         return this.capacity;
+    }
+
+    /**
+     * Checks if the evicting list has no stored data.
+     * @returns {boolean} True if the list is empty, false otherwise.
+     */
+    isEmpty() {
+        return this.getCurrentSize() === 0;
+    }
+
+    /**
+     * Checks if the evicting list is at its maximum capacity.
+     * @returns {boolean} True if the list is at its maximum capacity, false otherwise.
+     */ 
+    isFull() {
+        return this.getCurrentSize() === this.getMaxSize();
+    }
+
+    /**
+     * Checks if the evicting list contains a specific key.
+     * @param {string} key - The key to check for.
+     * @returns {boolean} True if the list contains the key, false otherwise.
+     */
+    containsKey(key) {
+        return this.map.has(key);
     }
 
     /**
