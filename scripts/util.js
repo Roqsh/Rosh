@@ -1,3 +1,4 @@
+import * as Minecraft from "@minecraft/server";
 import config from "./data/config.js";
 import data from "./data/data.js";
 import { world } from "@minecraft/server";
@@ -5,7 +6,7 @@ import { resetWarns } from "./commands/staff/resetwarns.js";
 
 /**
  * Alerts staff if a player fails a check.
- * @param {object} player - The player object.
+ * @param {Minecraft.Player} player - The player object.
  * @param {string} check - The name of the check that was failed.
  * @param {string} checkType - The type of sub-check that was failed.
  * @param {string | undefined} [debugName] - The name of the debug value.
@@ -13,8 +14,7 @@ import { resetWarns } from "./commands/staff/resetwarns.js";
  * @param {boolean} [shouldTP=false] - Whether to teleport the player to their last good position.
  * @param {object | undefined} [cancelObject] - Object with property "cancel" to cancel the event.
  * @remarks Dependend on handler functions such as resetWarns, handlePunishment etc.
- * @example 
- * flag(player, "Spammer", "B", "Combat", undefined, undefined, undefined, msg, undefined);
+ * @example flag(player, "Spammer", "B", "Delay", `${delay}ms`, false, Minecraft.ChatSendBeforeEvent);
  */
 export function flag(player, check, checkType, debugName, debug, shouldTP = false, cancelObject) {
     // Input validation
@@ -108,7 +108,7 @@ export function flag(player, check, checkType, debugName, debug, shouldTP = fals
 /**
  * Handles various types of punishments.
  * @param {string} punishment - The type of punishment (e.g., "kick", "ban", "mute").
- * @param {object} player - The player to be punished.
+ * @param {Minecraft.Player} player - The player to be punished.
  * @param {string} check - The name of the check.
  * @param {string} checkType - The type of sub-check.
  * @param {string} themecolor - The theme color for messages.
@@ -134,7 +134,7 @@ function handlePunishment(punishment, player, check, checkType, themecolor, kick
 
 /**
  * Handles kick punishment logic.
- * @param {object} player - The player to be kicked.
+ * @param {Minecraft.Player} player - The player to be kicked.
  * @param {number} kickvl - The current kick violation level.
  * @param {string} check - The name of the check.
  * @param {string} checkType - The type of sub-check.
@@ -174,7 +174,7 @@ function handleKickPunishment(player, kickvl, check, checkType, themecolor) {
 
 /**
  * Handles ban punishment logic.
- * @param {object} player - The player to be banned.
+ * @param {Minecraft.Player} player - The player to be banned.
  * @param {string} check - The name of the check.
  * @param {string} checkType - The type of sub-check.
  * @param {string} themecolor - The theme color for messages.
@@ -234,7 +234,7 @@ function handleBanPunishment(player, check, checkType, themecolor, punishmentLen
 
 /**
  * Handles mute punishment logic.
- * @param {object} player - The player to be muted.
+ * @param {Minecraft.Player} player - The player to be muted.
  * @param {string} check - The name of the check.
  * @param {string} checkType - The type of sub-check.
  * @param {string} themecolor - The theme color for messages.
@@ -261,8 +261,7 @@ function handleMutePunishment(player, check, checkType, themecolor) {
 
 /**
  * Handles alerting staff and logging information when a player fails a check.
- * 
- * @param {object} player - The player who failed the check.
+ * @param {Minecraft.Player} player - The player who failed the check.
  * @param {string} check - The name of the check that was failed.
  * @param {string} checkType - The type of sub-check that was failed.
  * @param {number} currentVl - The current violation level.
@@ -350,8 +349,7 @@ function handleAlert(player, check, checkType, currentVl, debugName, debug, them
 
 /**
  * Bans a player from the game.
- * @name ban
- * @param {import("@minecraft/server").Player} player - The player object.
+ * @param {Minecraft.Player} player - The player object.
  * @example ban(rqosh);
  * @throws {TypeError} If player is not an object.
  */
@@ -451,8 +449,7 @@ export function ban(player) {
 
 /**
  * Executes an animation on the player.
- * @name animation
- * @param {import("@minecraft/server").Player} player - The player where the animation gets executed
+ * @param {Minecraft.Player} player - The player where the animation gets executed
  * @param {number} type - The type of the animation
  * @example animation(rqosh, 2); // Executes the totem particle animation
  * @throws {TypeError} If player is not an object or type is not a number
@@ -503,7 +500,6 @@ export function animation(player, type) {
 
 /**
  * Parses a time string into milliseconds.
- * @name parseTime
  * @param {string} str - The time value to convert to milliseconds
  * @example parseTime("24d"); // returns 2073600000
  * @returns {number | null} The converted time in milliseconds, or null if the input is invalid
@@ -552,7 +548,6 @@ export function parseTime(str) {
 
 /**
  * Converts milliseconds to a human-readable time string.
- * @name msToTime
  * @param {number} [milliseconds=0] - The number of milliseconds to convert
  * @returns {Object} An object containing the converted time in weeks, days, hours, minutes, and seconds
  * @throws {TypeError} Throws if the input is not a number or is negative
@@ -625,8 +620,7 @@ export function timeDisplay(format) {
 
 /**
  * Gets the scoreboard objective value for a player.
- * @name getScore
- * @param {import("@minecraft/server").Entity} player - The player to get the scoreboard value from
+ * @param {Minecraft.Player} player - The player to get the scoreboard value from
  * @param {string} objectiveName - The name of the scoreboard objective
  * @param {number} [defaultValue=0] - Default value to return if unable to get scoreboard score
  * @example getScore(player, "delay", 1); // Gets the scoreboard objective value for the player, returns 1 if unable to get scoreboard score
@@ -676,8 +670,7 @@ export function getScore(player, objectiveName, defaultValue = 0) {
 
 /**
  * Sets the scoreboard objective value for a player.
- * @name setScore
- * @param {import("@minecraft/server").Entity} player - The player to set the score for
+ * @param {Minecraft.Player} player - The player to set the score for
  * @param {string} objectiveName - The scoreboard objective
  * @param {number} value - The new value of the scoreboard objective
  * @example setScore(player, "delay", 2); // Sets the scoreboard objective "delay" to 2
@@ -723,7 +716,6 @@ export function setScore(player, objectiveName, value) {
 
 /**
  * Capitalizes the first letter of the given string.
- * @name uppercaseFirstLetter
  * @param {string} string - The string to modify
  * @returns {string} The updated string with the first letter capitalized
  * @example uppercaseFirstLetter('hello'); // returns 'Hello'
@@ -745,7 +737,6 @@ export function uppercaseFirstLetter(string) {
 
 /**
  * Lowercases the first letter of the given string.
- * @name lowercaseFirstLetter
  * @param {string} string - The string to modify
  * @returns {string} The updated string with the first letter lowercased
  * @example lowercaseFirstLetter('Hello'); // returns 'hello'
@@ -766,31 +757,31 @@ export function lowercaseFirstLetter(string) {
 
 
 /**
- * @name angleCalc
- * @param {import("@minecraft/server").Player} player - The Player to calculate the angle on
- * @param {object} entity - The Entity to calculate the angle to
- * @returns {number} - The angle between the player and the entity in degrees.
- * @remarks The `entity` input is just a placeholder, a block works just as fine.
+ * Calculates the angle between a player and a second position.
+ * @param {Minecraft.Player} player - The Player to calculate the angle on
+ * @param {object} position - The position to calculate the angle to
+ * @returns {number} - The angle between the player and the position in degrees.
+ * @remarks The param `position` both works with an entity or a block.
 */
-export function angleCalc(player, entity) {
+export function angleCalc(player, position) {
     // Validate the input
     if (typeof player !== 'object' || player === null) {
         throw new TypeError(`Error: player is type of ${typeof player}. Expected "object".`);
     }
 
-    if (typeof entity !== "object") {
-        throw new TypeError(`Error: entity is of type ${typeof entity}. Expected "object".`);
+    if (typeof position !== "object") {
+        throw new TypeError(`Error: position is of type ${typeof position}. Expected "object".`);
     }
 
-    // Get positions of player and entity
+    // Get positions of player and the second position
     const playerPos = player.location;
-    const entityPos = entity.location;
+    const secondPos = position.location;
 
     // Calculate differences in x and z coordinates
-    const deltaX = entityPos.x - playerPos.x;
-    const deltaZ = entityPos.z - playerPos.z;
+    const deltaX = secondPos.x - playerPos.x;
+    const deltaZ = secondPos.z - playerPos.z;
 
-    // Calculate the angle in radians between the player and entity
+    // Calculate the angle in radians between the player and the second position
     let angleRad = Math.atan2(deltaZ, deltaX);
 
     // Convert the angle from radians to degrees
@@ -815,7 +806,7 @@ export function angleCalc(player, entity) {
 
 /**
  * Returns a number representing the height on the y-axis of a player depending on their current action.
- * @param {Object} player - The player object.
+ * @param {Minecraft.Player} player - The player object.
  * @returns {number} - The eye height of the player.
  * @remarks
  * TODO: Once Mojang adds .isCrawling or something similar, account for it by 0.40625. (.isRiding needs to be accounted for too)
@@ -845,7 +836,6 @@ export function getEyeHeight(player) {
 
 /**
  * Find every possible coordinate between two sets of Vector3.
- * @name getBlocksBetween
  * @param {object} pos1 - First set of coordinates {x: number, y: number, z: number}
  * @param {object} pos2 - Second set of coordinates {x: number, y: number, z: number}
  * @returns {Array<object>} coordinates - Each possible coordinate within the given ranges [{x: number, y: number, z: number}]
@@ -886,8 +876,7 @@ export function getBlocksBetween({ x: x1, y: y1, z: z1 }, { x: x2, y: y2, z: z2 
 
 /**
  * Finds the nearest player to a given entity. [Unused]
- * @name getClosestPlayer
- * @param {object} entity - The entity to check.
+ * @param {Minecraft.Entity} entity - The entity to check.
  * @returns {object|null} - The closest player object, or null if no player is found.
  */
 export function getClosestPlayer(entity) {
@@ -930,10 +919,9 @@ export function getClosestPlayer(entity) {
 
 /**
  * Finds a player object by a player name.
- * @name findPlayerByName
  * @param {string} name - The player to look for.
  * @remarks Uses the lowercased name to search for the player object.
- * @returns {import("@minecraft/server").Player | null} - The player object, or null if not found.
+ * @returns {Minecraft.Player | null} - The player object, or null if not found.
  * @throws {TypeError} If name is not a string.
  */
 export function findPlayerByName(name) {
@@ -959,7 +947,6 @@ export function findPlayerByName(name) {
 
 /**
  * Checks if a string ends with a number enclosed in parentheses.
- *
  * @param {string} string - The string to check.
  * @returns {boolean} - Returns true if the string ends with a number inside parentheses, false otherwise.
  * @remarks This function is used to detect if a player's name has been modified by the game. (eg. "Player(2)" )
@@ -972,9 +959,8 @@ export function endsWithNumberInParentheses(string) {
 
 /**
  * Grants operator status to a specified player.
- * @name addOp
- * @param {import("@minecraft/server").Player} player - The player to grant the operator status to.
- * @param {import("@minecraft/server").Player} initiator - The player who initiated the action.
+ * @param {Minecraft.Player} player - The player to grant the operator status to.
+ * @param {Minecraft.Player} initiator - The player who initiated the action.
  * @example addOp(player, initiator); // Adds operator status to the player
  * @throws {TypeError} If player or initiator is not an object.
  */
@@ -1015,9 +1001,8 @@ export function addOp(player, initiator) {
 
 /**
  * Revokes a player's operator status.
- * @name removeOp
- * @param {import("@minecraft/server").Player} player - The player to be revoked of operator status.
- * @param {import("@minecraft/server").Player} initiator - The player who initiated the action.
+ * @param {Minecraft.Player} player - The player to be revoked of operator status.
+ * @param {inecraft.Player} initiator - The player who initiated the action.
  * @example removeOp(player, initiator); // Removes operator status from the player
  * @throws {TypeError} If player or initiator is not an object.
  */
@@ -1058,7 +1043,6 @@ export function removeOp(player, initiator) {
 
 /**
  * Sends a message to all staff members. (Operator status)
- * @name tellStaff
  * @param {string} message - The message to send.
  * @param {string|string[]} [tags] - An optional tag or array of tags to differentiate between staff members.
  * @param {string|string[]} [excludeTags] - An optional tag or array of tags to exclude certain staff members.
@@ -1120,9 +1104,8 @@ export function tellStaff(message, tags, excludeTags) {
 
 
 /**
- * Sends a message to a specific player.
- * @name tellPlayer
- * @param {import("@minecraft/server").Player} player - The player that should receive the message.
+ * Sends a message to a specific player. [Unused]
+ * @param {Minecraft.Player} player - The player that should receive the message.
  * @param {string} message - The message the player will be told.
  * @throws {TypeError} If player is not an object or message is not a string.
  */
@@ -1148,8 +1131,7 @@ export function tellPlayer(player, message) {
 
 /**
  * Gets a player's horizontal speed.
- * @name getSpeed
- * @param {import("@minecraft/server").Player} player - The player to get the speed from.
+ * @param {Minecraft.Player} player - The player to get the speed from.
  * @returns {number} The horizontal speed of the player.
  * @throws {TypeError} If player is not an object.
  */
@@ -1173,8 +1155,7 @@ export function getSpeed(player) {
 
 /**
  * Gets a player's total speed. [Unused]
- * @name getTotalSpeed
- * @param {import("@minecraft/server").Player} player - The player to get the speed from.
+ * @param {Minecraft.Player} player - The player to get the speed from.
  * @returns {number} The total speed of the player.
  * @throws {TypeError} If player is not an object.
  */
@@ -1198,8 +1179,7 @@ export function getTotalSpeed(player) {
 
 /**
  * Calculates a player's horizontal velocity.
- * @name hVelocity
- * @param {import("@minecraft/server").Player} player - The player to get the velocity from.
+ * @param {Minecraft.Player} player - The player to get the velocity from.
  * @returns {number} The horizontal velocity of the player.
  * @throws {TypeError} If player is not an object.
  * @example
@@ -1230,8 +1210,8 @@ export function hVelocity(player) {
 
 
 /**
- * @name aroundAir - Returns true if a player is surrounded by air
- * @param {object} player - The player that you are checking
+ * Returns true if a player is surrounded by air
+ * @param {Minecraft.Player} player - The player that you are checking
  * @example if(aroundAir(player)) flag(player, "Movement", "A")
  * @remarks Flags for Movement/A if a player is surrounded by air
  */
@@ -1266,8 +1246,8 @@ export function aroundAir(player) {
 
 
 /**
- * @name inAir - Returns true if a player is in air (Refactored Paradox Anticheat Code)
- * @param {object} player - The player that you are checking
+ * Returns true if a player is in air (Refactored Paradox Anticheat Code)
+ * @param {Minecraft.Player} player - The player that you are checking
  * @example if(inAir(player)) flag(player, "Movement', "A")
  * @remarks Flags for Movement/A if a player is in air
  */
@@ -1299,8 +1279,7 @@ export function inAir(player) {
 
 /**
  * Plays a sound for a player. [Unused]
- * @name setSound
- * @param {object} player - The player running the sound function. This should be an object with a `runCommandAsync` method.
+ * @param {Minecraft.Player} player - The player running the sound function. This should be an object with a `runCommandAsync` method.
  * @param {string} id - The id of the played sound. This should be a non-empty string.
  * @returns {Promise<void>} - A promise that resolves if the command is successful, and rejects with an error message if not.
  * @throws {TypeError} - Throws if the player object is invalid or if the id is not a string.
@@ -1331,8 +1310,7 @@ export async function setSound(player, id) {
 
 /**
  * Sends debug information to players with a specific tag.
- * @name debug
- * @param {import("@minecraft/server").Player} player - The player running the debug function.
+ * @param {Minecraft.Player} player - The player running the debug function.
  * @param {string} name - The type of information being debugged.
  * @param {string | number | object} debugInfo - The debug information.
  * @param {string} tag - The tag that players need to have to receive the debug information.
