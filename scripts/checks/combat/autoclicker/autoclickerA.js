@@ -1,46 +1,34 @@
+import * as Minecraft from "@minecraft/server";
 import config from "../../../data/config.js";
-import { flag, debug } from "../../../util";
-
-/**
- * @name autoclicker_a
- * @param {player} player - The player to check
- * @remarks Checks for too high cps (amount)
-*/
+import { flag } from "../../../util";
 
 const lastCPS = new Map();
 
+/**
+ * @param {Minecraft.Player} player - The player to check.
+ */
 export function autoclicker_a(player) {
-      
-    if(player.cps > 0 && Date.now() - player.firstAttack >= config.modules.autoclickerA.delay) {
 
-		player.cps = player.cps / ((Date.now() - player.firstAttack) / config.modules.autoclickerA.delay);
+	if (config.modules.autoclickerA.enabled) {
+		if (player.getCps() > config.modules.autoclickerA.cps) flag(player, "AutoClicker", "A", "cps", player.getCps());
+	}
 
-		debug(player, "Cps", player.cps, "cps");
+	if (lastCPS.has(player.name)) {
 
-		if(config.modules.autoclickerA.enabled) {
-			if(player.cps > config.modules.autoclickerA.cps) flag(player, "AutoClicker", "A", "cps", player.cps);
+        if (config.modules.autoclickerB.enabled) {
+			if (Math.abs(player.getCps() - lastCPS.get(player.name)?.b) < config.modules.autoclickerB.diff && player.getCps() > 12) flag(player, "AutoClicker", "B", "cps", `${player.getCps()},diff=${Math.abs(player.getCps() - lastCPS.get(player.name)?.b)}`);
 		}
 
-		if(lastCPS.has(player.name)) {
+        if (config.modules.autoclickerC.enabled) {
+			if (player.getCps() > 8 && (Number.isInteger(Math.abs(player.getCps() - lastCPS.get(player.name)?.b)))) flag(player, "AutoClicker", "C", "flat-diff", Math.abs(player.getCps() - lastCPS.get(player.name)?.b));              
+        }
+	}
 
-            if(config.modules.autoclickerB.enabled) {
-				if(Math.abs(player.cps - lastCPS.get(player.name)?.b) < config.modules.autoclickerB.diff && player.cps > 12) flag(player, "AutoClicker", "B", "cps", `${player.cps},diff=${Math.abs(player.cps - lastCPS.get(player.name)?.b)}`);
-			}
-
-            if(config.modules.autoclickerC.enabled) {
-				if(player.cps > 8 && (Number.isInteger(Math.abs(player.cps - lastCPS.get(player.name)?.b)))) flag(player, "AutoClicker", "C", "flat-diff", Math.abs(player.cps - lastCPS.get(player.name)?.b));              
-            }
-		}
-
-		if(config.modules.autoclickerC.enabled) {
-			if(player.cps > 8 && (Number.isInteger(player.cps))) flag(player, "AutoClicker", "C", "flat-cps", player.cps);
-		}
+	if (config.modules.autoclickerC.enabled) {
+		if (player.getCps() > 8 && (Number.isInteger(player.getCps()))) flag(player, "AutoClicker", "C", "flat-cps", player.getCps());
+	}
 		
-		lastCPS.set(player.name, {
-			b: player.cps
-		});
-		
-	    player.firstAttack = Date.now();
-	    player.cps = 0;
-	} 
+	lastCPS.set(player.name, {
+		b: player.getCps()
+	});
 }

@@ -25,13 +25,6 @@ declare module "@minecraft/server" {
          * @remarks This property is a placeholder until we get an official version in the API.
          */
         isOnIce: boolean,
-        
-        /**
-         * Wheter the player is moving on stairs. (upwards or downwards)
-         * @Rosh
-         * @remarks This property is a placeholder until we get an official version in the API.
-         */
-        isRunningStairs: boolean,
 
         /**
          * Wheter the block below the player is a sort of snow. (Snow layers are considered aswell)
@@ -48,6 +41,13 @@ declare module "@minecraft/server" {
         isOnSlime: boolean,
 
         /**
+         * Wheter the player is moving on stairs. (upwards or downwards)
+         * @Rosh
+         * @remarks This property is a placeholder until we get an official version in the API.
+         */
+        isRunningStairs: boolean,
+
+        /**
          * Whether the player has a trident in his selected slot.
          * @Rosh
          * @remarks This property is a placeholder until we get an official version in the API.
@@ -56,14 +56,42 @@ declare module "@minecraft/server" {
 
         flagAutotoolA: boolean,
 
-        autotoolSwitchDelay: number,
-        blocksBroken: number,
+        /**
+         * Gets a player's attacks per second. (This does not include regular arm swings/clicks, **only attacks**!)
+         * @Rosh
+         * @remarks This property is a placeholder until we get an official version in the API.
+         */
+        getCps(): number,
+
+        /**
+         * Sets a player's attacks per second.
+         * @param {number} cpsValue The value to assign to the player's attacks per second.
+         * @Rosh
+         * @remarks This property is a placeholder until we get an official version in the API.
+         */
+        setCps(cpsValue: number),
+
+        /**
+         * A helper variable for calculating the attacks per second of a player.
+         * (Use `getCps()` instead if you wish to use the player's actual attacks per second)
+         * @Rosh
+         * @remarks This property is a placeholder until we get an official version in the API.
+         */
         cps: number,
-        firstAttack: number,
+
+        /**
+         * A variable to track time intervals. This property gets updated every 20 ticks using Date.now().
+         * @Rosh
+         * @remarks This property is a placeholder until we get an official version in the API.
+         */
+        lastTime: number,
+
 		lastSelectedSlot: number,	
 		lastThrow: number,
 		lastMessageSent: number,
 		lastLeftClick: number,
+        autotoolSwitchDelay: number,
+        blocksBroken: number,
         pitch: number,
         selectedSlotIndex: number,
         startBreakTime: number,

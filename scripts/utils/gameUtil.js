@@ -24,7 +24,7 @@ export async function tag_system(player) {
 
 
 /**
- * Sets the title, subtitle, and actionbar for a player.
+ * Sets the title, subtitle, and actionbar for a player. [Unused]
  * @param {Object} player - The player object.
  * @param {string|null} [title=null] - The main title to display. If null, no title is displayed.
  * @param {string|null} [subtitle=null] - The subtitle to display. If null, no subtitle is displayed.
@@ -63,7 +63,7 @@ export async function setTitle(player, title = null, subtitle = null, actionbar 
 
 
 /**
- * Sets a particle effect at the player's location in Minecraft.
+ * Sets a particle effect at the player's location in Minecraft. [Unused]
  * @param {Object} player - The player object.
  * @param {string} particleName - The name of the particle effect to display.
  * @returns {Promise<void>} A promise that resolves when the command has been executed.
@@ -94,7 +94,7 @@ export function setParticle(player, particleName) {
 
 
 /**
- * Kicks a player from the game with a specified reason.
+ * Kicks a player from the game with a specified reason. [Unused]
  * @param {Object} player - The player object.
  * @param {string} reason - The reason for kicking the player.
  * @returns {Promise<void>} A promise that resolves when the command has been executed.

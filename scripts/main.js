@@ -1,8 +1,8 @@
 import * as Minecraft from "@minecraft/server";
-import { system, world, ItemTypes, ItemStack } from "@minecraft/server";
+import { Player, system, world, ItemTypes, ItemStack } from "@minecraft/server";
 import config from "./data/config.js";
 import data from "./data/data.js";
-import { tag_system, setTitle } from "./utils/gameUtil.js";
+import { tag_system } from "./utils/gameUtil.js";
 import { flag, ban, parseTime, timeDisplay, getScore, setScore, tellStaff, getSpeed, aroundAir, debug } from "./util.js";
 import { commandHandler } from "./commands/handler.js";
 import { mainMenu } from "./ui/mainMenu.js";
@@ -76,6 +76,7 @@ import { killaura_g } from "./checks/combat/killaura/killauraG.js";
 import { hitbox_a } from "./checks/combat/hitbox/hitboxA.js";
 import { hitbox_b } from "./checks/combat/hitbox/hitboxB.js";
 import { reach_a } from "./checks/combat/reach/reachA.js";
+import { cpsHandler } from "./checks/combat/autoclicker/cpsHandler.js";
 import { autoclicker_a } from "./checks/combat/autoclicker/autoclickerA.js";
 //import { aim_a } from "./checks/combat/aim/aimA.js";
 import { aim_b } from "./checks/combat/aim/aimB.js";
@@ -83,6 +84,17 @@ import { aim_c } from "./checks/combat/aim/aimC.js";
 // FIXME:
 //import { aim_d } from "./checks/combat/aim/aimD.js";
 //import { aim_e } from "./checks/combat/aim/aimE.js";
+
+
+// Adding methods to the prototype
+Player.prototype.getCps = function() {
+    return this.cps || 0;  // Return 0 if cps is undefined
+};
+
+Player.prototype.setCps = function(cpsValue) {
+    this.cps = cpsValue;
+};
+
 
 let tps = 20;
 let lagValue = 1;
@@ -382,7 +394,7 @@ system.runInterval(() => {
 			//aim_e(player);
 		}
 
-		if (config.generalModules.autoclicker) {
+		if (cpsHandler(player, tickValue)) {
 			autoclicker_a(player);
 		}
 
@@ -461,6 +473,8 @@ system.runInterval(() => {
         player.removeTag("itemUse");
 		
 		if (tickValue === 20) {
+            player.lastTime = Date.now();
+            player.cps = 0;
 			const currentCounter = getScore(player, "tick_counter", 0);
 			setScore(player, "tick_counter", currentCounter + 1);
 			setScore(player, "tick_counter2", getScore(player, "tick_counter2", 0) + 1);
@@ -688,13 +702,13 @@ world.afterEvents.playerSpawn.subscribe((playerJoin) => {
         }
     }
 
-	if (config.modules.spammerA.enabled) player.lastMessageSent = 0;
-	if (config.modules.nukerA.enabled) player.blocksBroken = 0;
-	if (config.modules.autoclickerA.enabled) player.firstAttack = Date.now();
-	if (config.modules.autoclickerA.enabled) player.cps = 0;
-	if (config.modules.killauraB.enabled) player.lastLeftClick = NaN;
-	if (config.modules.killauraC.enabled) player.entitiesHit = [];
-	if (config.customcommands.report.enabled) player.reports = [];
+	player.lastMessageSent = 0;
+	player.blocksBroken = 0;
+	player.lastTime = Date.now();
+    player.cps = 0;
+	player.lastLeftClick = NaN;
+	player.entitiesHit = [];
+	player.reports = [];
 	if (player.isOnGround) player.lastGoodPosition = player.location;
 
 	setScore(player, "tick_counter2", 0);
@@ -742,6 +756,8 @@ world.afterEvents.entityHitEntity.subscribe(({ hitEntity: entity, damagingEntity
 	if(!player.hasTag("attacking")) {
 		player.addTag("attacking");
 	}
+    
+    player.cps++;
 
     hitbox_a(player, entity);
     hitbox_b(player, entity);
@@ -773,11 +789,6 @@ world.afterEvents.entityHitEntity.subscribe(({ hitEntity: entity, damagingEntity
 		    playerMenuSelected(player, entity);
 		}
 	}
-
-	if(config.generalModules.autoclicker) {
-		player.cps++;
-	}
-
 });
 
 
@@ -856,14 +867,17 @@ if ([...world.getPlayers()].length >= 1) {
 
 	for (const player of world.getPlayers()) {
 
-		if (config.modules.spammerA.enabled) player.lastMessageSent = 0;
-		if (config.modules.nukerA.enabled) player.blocksBroken = 0;
-		if (config.modules.autoclickerA.enabled) player.firstAttack = Date.now();
-		if (config.modules.autoclickerA.enabled) player.cps = 0;
-		if (config.modules.killauraB.enabled) player.lastLeftClick = NaN;
-		if (config.modules.killauraC.enabled) player.entitiesHit = [];
-		if (config.customcommands.report.enabled) player.reports = [];
-		if (player.isOnGround) player.lastGoodPosition = player.location;
+		player.lastMessageSent = 0;
+		player.blocksBroken = 0;
+		player.lastTime = Date.now();
+        player.cps = 0;
+		player.lastLeftClick = NaN;
+		player.entitiesHit = [];
+		player.reports = [];
+        
+		if (player.isOnGround) {
+            player.lastGoodPosition = player.location;
+        }
 
         // Inform the player about the successfull reload
         if (player.isOp()) {
