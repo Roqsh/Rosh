@@ -9,7 +9,7 @@ import { debug } from "../../../util";
  * @param {number} tick - The current game tick within the range of 1 to 20 (1 tick = 1/20th of a second).
  * @returns {boolean} True if CPS calculation was performed and autoclicker checks can proceed, false otherwise.
  */
-export function cpsHandler(player, tick) {
+export function clicksHandler(player, tick) {
 
     // Perform CPS calculation at the end of a full second (i.e., 20 ticks) if the player has recorded any clicks
     if (tick === 20 && player.cps > 0) { 

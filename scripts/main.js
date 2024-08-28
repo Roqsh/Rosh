@@ -76,7 +76,7 @@ import { killaura_g } from "./checks/combat/killaura/killauraG.js";
 import { hitbox_a } from "./checks/combat/hitbox/hitboxA.js";
 import { hitbox_b } from "./checks/combat/hitbox/hitboxB.js";
 import { reach_a } from "./checks/combat/reach/reachA.js";
-import { cpsHandler } from "./checks/combat/autoclicker/cpsHandler.js";
+import { clicksHandler } from "./checks/combat/autoclicker/clicksHandler.js";
 import { autoclicker_a } from "./checks/combat/autoclicker/autoclickerA.js";
 //import { aim_a } from "./checks/combat/aim/aimA.js";
 import { aim_b } from "./checks/combat/aim/aimB.js";
@@ -289,8 +289,8 @@ system.runInterval(() => {
 
 		tag_system(player);	
 
-		const tickValue = getScore(player, "tickValue", 0);
-		setScore(player, "tickValue", tickValue + 1);
+		const tick = getScore(player, "tickValue", 0);
+		setScore(player, "tickValue", tick + 1);
 
 
         // Invmove/A delay
@@ -394,7 +394,7 @@ system.runInterval(() => {
 			//aim_e(player);
 		}
 
-		if (cpsHandler(player, tickValue)) {
+		if (clicksHandler(player, tick)) {
 			autoclicker_a(player);
 		}
 
@@ -466,13 +466,13 @@ system.runInterval(() => {
         }
 
         dependencies_e(player);
-		scaffold_f_dependency(player, tickValue);  
+		scaffold_f_dependency(player, tick);  
 
 		player.removeTag("attacking");
 		player.removeTag("breaking");
         player.removeTag("itemUse");
 		
-		if (tickValue === 20) {
+		if (tick === 20) {
             player.lastTime = Date.now();
             player.cps = 0;
 			const currentCounter = getScore(player, "tick_counter", 0);
@@ -765,7 +765,7 @@ world.afterEvents.entityHitEntity.subscribe(({ hitEntity: entity, damagingEntity
 	if(config.generalModules.killaura) {
 		killaura_a(player);
 		killaura_b(player, entity);
-		killaura_c(player, entity, player.entitiesHit);
+		killaura_c(player, entity);
 		killaura_d(player, entity);
 	    killaura_e(player, entity);
 	    //killaura_f(player, entity);
