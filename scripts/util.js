@@ -70,15 +70,15 @@ export function flag(player, check, checkType, debugName, debug, shouldTP = fals
 
     // Get check data
     const checkData = config.modules[`${check.toLowerCase()}${checkType.toUpperCase()}`];
-    if (!checkData) throw new Error(`No valid check data found for ${check}/${checkType}.`);
+    if (!checkData) throw new Error(`${player.name} flagged ${check}/${checkType} but no valid check data was found in config.js.`);
 
     // Ensure the check is enabled (However, all checks already check wheter the they are enabled, kinda making this useless)
-    if (!checkData.enabled) throw new Error(`${check}/${checkType} was flagged but the module was disabled.`);
+    if (!checkData.enabled) throw new Error(`${player.name} flagged ${check}/${checkType} but the module was disabled.`);
 
     // Handle punishment based on the check's configuration
     const punishment = checkData.punishment?.toLowerCase();
     if (typeof punishment !== "string") throw new TypeError(`Error: punishment is type of ${typeof punishment}. Expected "string"`);
-    if (punishment === "none" || currentVl < checkData.minVlbeforePunishment) return;
+    if (currentVl < checkData.minVlbeforePunishment) return;
 
     const kickvl = getScore(player, "kickvl", 0);
 
@@ -107,7 +107,7 @@ export function flag(player, check, checkType, debugName, debug, shouldTP = fals
 
 /**
  * Handles various types of punishments.
- * @param {string} punishment - The type of punishment (e.g., "kick", "ban", "mute").
+ * @param {string} punishment - The type of punishment (e.g., "kick", "ban", "mute", "none").
  * @param {Minecraft.Player} player - The player to be punished.
  * @param {string} check - The name of the check.
  * @param {string} checkType - The type of sub-check.
@@ -126,8 +126,11 @@ function handlePunishment(punishment, player, check, checkType, themecolor, kick
         case "mute":
             handleMutePunishment(player, check, checkType, themecolor);
             break;
+        case "none":
+            handleNoPunishment(player, check, checkType, themecolor);
+            break;
         default:
-            console.warn(`Unhandled punishment type: ${punishment}. Only "kick", "ban" and "mute" are supported.`);
+            console.warn(`Unhandled punishment type: ${punishment}. Only "kick", "ban", "mute" and "none" are supported.`);
             break;
     }
 }
@@ -223,13 +226,19 @@ function handleBanPunishment(player, check, checkType, themecolor, punishmentLen
             tellStaff(`§r${themecolor}Rosh §j> §8${player.name} §chas been banned for ${themecolor}${check}§j/${themecolor}${checkType.toUpperCase()} §c!`, "notify");
             if (config.console_debug) console.warn(`§r${themecolor}Rosh §j> §8${player.name} §chas been banned for ${themecolor}${check}§j/${themecolor}${checkType.toUpperCase()} §c!`);
 
-            resetWarns(player);
+        } else {
+            tellStaff(`${themecolor}Rosh §j> §8${player.name} §cshould have been banned for ${themecolor}${check}§j/${themecolor}${checkType.toUpperCase()}§c, but '§8config.autoban§c' was disabled!`, "notify");
+            if (config.console_debug) console.warn(`${themecolor}Rosh §j> §8${player.name} §cshould have been banned for ${themecolor}${check}§j/${themecolor}${checkType.toUpperCase()}§c, but '§8config.autoban§c' was disabled!`);
         }
     } catch (error) {
         // Fallback in case of an error
-        player.triggerEvent("rosh:kick");
+        if (config.autoban) {
+            player.triggerEvent("rosh:kick");
+        }
         console.error(`${new Date().toISOString()} | ${error}${error.stack}`);
     }
+
+    resetWarns(player);
 }
 
 /**
@@ -255,6 +264,26 @@ function handleMutePunishment(player, check, checkType, themecolor) {
 
     tellStaff(`§r${themecolor}Rosh §j> §8${player.name} §chas been muted for ${themecolor}${check}§j/${themecolor}${checkType.toUpperCase()} §c!`, "notify");
     if (config.console_debug) console.warn(`§r${themecolor}Rosh §j> §8${player.name} §chas been muted for ${themecolor}${check}§j/${themecolor}${checkType.toUpperCase()} §c!`);
+    
+    resetWarns(player);
+}
+
+/**
+ * Handles punishment logic if no direct punishment should be applied to the player.
+ * @param {Minecraft.Player} player - The player who exceeded a checks volume.
+ * @param {string} check - The name of the check.
+ * @param {string} checkType - The type of sub-check.
+ * @param {string} themecolor - The theme color for messages.
+ */
+function handleNoPunishment(player, check, checkType, themecolor) {
+
+    // Notify staff and reset warnings
+    const logMessage = `${timeDisplay()}§8${player.name} §cfailed ${themecolor}${check}§j/${themecolor}${checkType.toUpperCase()} §cmultiple times!`;
+    data.recentLogs.push(logMessage);
+
+    const staffMessage = `${themecolor}Rosh §j> §8${player.name} §chas reached the threshold for ${themecolor}${check}§j/${themecolor}${checkType.toUpperCase()} §c! (No punishment was applied)`;
+    tellStaff(staffMessage, "notify");
+    if (config.console_debug) console.warn(staffMessage);
     
     resetWarns(player);
 }

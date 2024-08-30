@@ -538,28 +538,48 @@ export default
 
         "autoclickerA": {
             "enabled": true,
-            "description":"Checks for too high cps (amount)",
-            "punishment": "kick",
-            "delay": 1000,
+            "description":"Checks if a player's CPS exceeds the allowed threshold multiple times.",
+            "samples": 8,
             "cps": 17,
+            "threshold": 2,
+            "maxTimeDiff": 8000,
+            "punishment": "kick",
+            "punishmentLength": "2d",
             "minVlbeforePunishment": 6
         },
 
         "autoclickerB": {
             "enabled": true,
-            "description": "Checks for too little cps differences (constant)",   
+            "description": "Checks for suspiciously low deviation or duplicate CPS.",   
+            "samples": 8,
+            "maxDuplicates": 2,
+            "minStdDev": 0.5,
+            "minAverageCps": 6,
             "punishment": "kick",
-            "delay": 1000,
-            "diff": 0.28,
+            "punishmentLength": "2d",
             "minVlbeforePunishment": 4,
         },
 
         "autoclickerC": {
             "enabled": true,
-            "description": "Checks for integer cps (flat)",   
+            "description": "Checks for a variety of suspicious integer CPS value changes.",
+            "samples": 12,
+            "minIntChanges": 3,
+            "minAverageCps": 6,
             "punishment": "kick",
-            "delay": 1000,
-            "minVlbeforePunishment": 4,
+            "punishmentLength": "2d",
+            "minVlbeforePunishment": 5,
+        },
+
+        "autoclickerD": {
+            "enabled": true,
+            "description": "Detects suspicious periodic spikes in CPS.",
+            "samples": 5,
+            "spikeThreshold": 5,
+            "minAverageCps": 6,
+            "punishment": "kick",
+            "punishmentLength": "2d",
+            "minVlbeforePunishment": 5,
         },
 
         "killauraA": {

@@ -80,20 +80,25 @@ declare module "@minecraft/server" {
         cps: number,
 
         /**
-         * A variable to track time intervals. This property gets updated every 20 ticks using Date.now().
+         * A variable to track time intervals in ms. This property gets updated every 20 ticks using `Date.now()`.
          * @Rosh
          * @remarks This property is a placeholder until we get an official version in the API.
          */
         lastTime: number,
 
-		lastSelectedSlot: number,	
+        /**
+         * Saves a players selected slot of the last tick using `selectedSlotIndex`.
+         * @Rosh
+         * @remarks This property is a placeholder until we get an official version in the API.
+         */
+		lastSelectedSlot: number,
+        
 		lastThrow: number,
 		lastMessageSent: number,
 		lastLeftClick: number,
         autotoolSwitchDelay: number,
         blocksBroken: number,
         pitch: number,
-        selectedSlotIndex: number,
         startBreakTime: number,
 
         /**
@@ -110,6 +115,12 @@ declare module "@minecraft/server" {
          */
 		reports: Array<String>,
 		
+        /**
+         * Saves a safe position to teleport the player back to when flagging a certain check.
+         * Positions where the player is on ground are considered safe.
+         * @Rosh
+         * @remarks This property is a placeholder until we get an official version in the API.
+         */
 		lastGoodPosition: Vector3
 	}
 

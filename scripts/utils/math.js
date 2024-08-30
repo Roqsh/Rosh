@@ -371,6 +371,32 @@ export class BoundingBox {
 export class Statistics {
 
     /**
+     * Calculates the mean (average) of an array of numbers.
+     * @param {number[]} values - The array of numbers.
+     * @returns {number} The mean of the array.
+     */
+    static getMean(values) {
+        if (values.length === 0) return 0;
+        const sum = values.reduce((acc, val) => acc + val, 0);
+        return sum / values.length;
+    }
+
+    /**
+     * Calculates the median of a dataset.
+     * @param {number[]} data - The dataset to calculate the median from.
+     * @returns {number} The median value.
+     */
+    static getMedian(data) {
+
+        const sortedData = [...data].sort((a, b) => a - b);
+        const midIndex = Math.floor(sortedData.length / 2);
+
+        return sortedData.length % 2 === 0
+            ? (sortedData[midIndex - 1] + sortedData[midIndex]) / 2
+            : sortedData[midIndex];
+    }
+
+    /**
      * Calculates the standard deviation of a dataset, which is the square root of the variance.
      * @param {number[]} data - The dataset to calculate the standard deviation for.
      * @returns {number} The standard deviation value.
@@ -416,21 +442,6 @@ export class Statistics {
         const outliers = data.filter((_, i) => Math.abs(zScores[i]) > 2); // Z-score > 2 as a threshold
         
         return { zScores, outliers };
-    }
-
-    /**
-     * Calculates the median of a dataset.
-     * @param {number[]} data - The dataset to calculate the median from.
-     * @returns {number} The median value.
-     */
-    static getMedian(data) {
-
-        const sortedData = [...data].sort((a, b) => a - b);
-        const midIndex = Math.floor(sortedData.length / 2);
-
-        return sortedData.length % 2 === 0
-            ? (sortedData[midIndex - 1] + sortedData[midIndex]) / 2
-            : sortedData[midIndex];
     }
 
     /**
@@ -515,10 +526,49 @@ export class Statistics {
             denominator: denominator / gcd
         };
     }
+
+    /**
+     * Compares two arrays to see if they are similar within a specified tolerance.
+     * @param {number[]} arrayA - The first array to compare.
+     * @param {number[]} arrayB - The second array to compare.
+     * @param {number} tolerance - The allowable difference between corresponding elements in the arrays.
+     * @returns {boolean} - True if the arrays are similar, false otherwise.
+     */
+    static areArraysSimilar(arrayA, arrayB, tolerance = 0.7) {
+
+        if (arrayA.length !== arrayB.length) return false;
+
+        for (let i = 0; i < arrayA.length; i++) {
+            if (Math.abs(arrayA[i] - arrayB[i]) > tolerance) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Checks if there are more than a specified number of consecutive duplicate values in an array.
+     * @param {number[]} arr - The array of numbers to check.
+     * @param {number} threshold - The maximum number of consecutive duplicates allowed.
+     * @returns {boolean} True if the number of consecutive duplicates exceeds the threshold, false otherwise.
+     */
+    static checkConsecutiveDuplicates(arr, threshold) {
+        let duplicateCount = 0;
+        for (let i = 1; i < arr.length; i++) {
+            if (arr[i] === arr[i - 1]) {
+                duplicateCount++;
+                if (duplicateCount >= threshold) return true;
+            } else {
+                duplicateCount = 0;
+            }
+        }
+        return false;
+    }
 }
 
 /**
- * EvictingList class implements a FIFO (First In, First Out) cache.
+ * Implements a FIFO (First In, First Out) cache.
  * Once the capacity is reached, the oldest element (first added) will be evicted.
  */
 export class EvictingList {

@@ -187,7 +187,6 @@
 						"ground": "query.is_on_ground"
 					}],
 					"on_entry": [
-						"/tag @s remove ground",
 						"/tellraw @a[tag=eventlogger] {\"rawtext\":[{\"text\":\"§r§uRosh §j> Received §uGround§j-§uPacket§j from §8\"},{\"selector\":\"@s\"},{\"text\":\" §j- {stop}\"}]}",
                         "/scoreboard players add @s packets 1"
 					]
@@ -197,7 +196,6 @@
 						"default": "!query.is_on_ground"
 					}],
 					"on_entry": [
-						"/tag @s add ground",
 						"/tellraw @a[tag=eventlogger] {\"rawtext\":[{\"text\":\"§r§uRosh §j> Received §uGround§j-§uPacket§j from §8\"},{\"selector\":\"@s\"},{\"text\":\" §j- {start}\"}]}",
                         "/scoreboard players add @s packets 1"
 					]

@@ -78,6 +78,9 @@ import { hitbox_b } from "./checks/combat/hitbox/hitboxB.js";
 import { reach_a } from "./checks/combat/reach/reachA.js";
 import { clicksHandler } from "./checks/combat/autoclicker/clicksHandler.js";
 import { autoclicker_a } from "./checks/combat/autoclicker/autoclickerA.js";
+import { autoclicker_b } from "./checks/combat/autoclicker/autoclickerB.js";
+import { autoclicker_c } from "./checks/combat/autoclicker/autoclickerC.js";
+import { autoclicker_d } from "./checks/combat/autoclicker/autoclickerD.js";
 //import { aim_a } from "./checks/combat/aim/aimA.js";
 import { aim_b } from "./checks/combat/aim/aimB.js";
 import { aim_c } from "./checks/combat/aim/aimC.js";
@@ -307,13 +310,13 @@ system.runInterval(() => {
 		} else setScore(player, "airTime", 0);
 
         // Debug utilities
-		debug(player, "Speed", speed, "devspeed");
-		debug(player, "FallDistance", `${player.isOnGround ? `§a` : `§c`}${player.fallDistance}`, "devfalldistance");
+		debug(player, "Speed", speed, "speed");
+		debug(player, "Ticks", `${tick <= 20 ? `§a` : `§c`}${tick}`, "ticks");
         debug(player, "YVelocity", velocity.y, "devvelocity");
 		debug(player, "XRotation", rotation.x, "devrotationx");
 		debug(player, "YRotation", rotation.y, "devrotationy");
 
-        if (player.hasTag("devtps")) {
+        if (player.hasTag("tps")) {
             player.onScreenDisplay.setActionBar(`${themecolor}Debug §j> Tps: §8${tps}`);
         }
 
@@ -396,6 +399,9 @@ system.runInterval(() => {
 
 		if (clicksHandler(player, tick)) {
 			autoclicker_a(player);
+            autoclicker_b(player);
+            autoclicker_c(player);
+            autoclicker_d(player);
 		}
 
 		//TODO: Move them into their own category [Patched, it will be disabled by default]
@@ -472,15 +478,15 @@ system.runInterval(() => {
 		player.removeTag("breaking");
         player.removeTag("itemUse");
 		
-		if (tick === 20) {
+		if (tick >= 20) {
             player.lastTime = Date.now();
             player.cps = 0;
+            setScore(player, "tickValue", 0);
 			const currentCounter = getScore(player, "tick_counter", 0);
 			setScore(player, "tick_counter", currentCounter + 1);
 			setScore(player, "tick_counter2", getScore(player, "tick_counter2", 0) + 1);
 			setScore(player, "tag_reset", getScore(player, "tag_reset", 0) + 1);
             setScore(player, "packets", 0);
-            setScore(player, "tickValue", 0);
             player.removeTag("placing");
 		}
 
@@ -729,7 +735,6 @@ world.afterEvents.playerSpawn.subscribe((playerJoin) => {
 	player.removeTag("left");
 	player.removeTag("gliding");
 	player.removeTag("moving");
-	player.removeTag("sleeping");
 	
 	const { mainColor, borderColor, playerNameColor } = config.customcommands.tag;
 
@@ -751,7 +756,7 @@ world.afterEvents.playerSpawn.subscribe((playerJoin) => {
 
 world.afterEvents.entityHitEntity.subscribe(({ hitEntity: entity, damagingEntity: player}) => {
 	
-	if (player.typeId !== "minecraft:player" || !entity.isValid()) return;
+	if (player.typeId !== "minecraft:player" || !entity.isValid() || player.isHoldingTrident) return;
 
 	if(!player.hasTag("attacking")) {
 		player.addTag("attacking");

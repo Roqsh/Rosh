@@ -18,9 +18,9 @@ export function debugMenu(player) {
         .title("Debug Tools")
         .button(`Checks\n${player.hasTag("debug") ? "§8[§a+§8]" : "§8[§c-§8]"}`)
         .button(`Events\n${player.hasTag("eventlogger") ? "§8[§a+§8]" : "§8[§c-§8]"}`)
-        .button(`Speed\n${player.hasTag("devspeed") ? "§8[§a+§8]" : "§8[§c-§8]"}`)
-        .button(`FallDistance\n${player.hasTag("devfalldistance") ? "§8[§a+§8]" : "§8[§c-§8]"}`)
-        .button(`Tps\n${player.hasTag("devtps") ? "§8[§a+§8]" : "§8[§c-§8]"}`)
+        .button(`Speed\n${player.hasTag("speed") ? "§8[§a+§8]" : "§8[§c-§8]"}`)
+        .button(`Ticks\n${player.hasTag("ticks") ? "§8[§a+§8]" : "§8[§c-§8]"}`)
+        .button(`Tps\n${player.hasTag("tps") ? "§8[§a+§8]" : "§8[§c-§8]"}`)
         .button(`XRotation\n${player.hasTag("devrotationx") ? "§8[§a+§8]" : "§8[§c-§8]"}`)
         .button(`YRotation\n${player.hasTag("devrotationy") ? "§8[§a+§8]" : "§8[§c-§8]"}`)
         .button(`Cps\n${player.hasTag("cps") ? "§8[§a+§8]" : "§8[§c-§8]"}`)
@@ -40,9 +40,9 @@ export function debugMenu(player) {
         switch (response.selection) {
             case 0: toggleTag(player, "debug", "Check-Debug"); break;
             case 1: toggleTag(player, "eventlogger", "Events"); break;
-            case 2: toggleTag(player, "devspeed", "Speed"); break;
-            case 3: toggleTag(player, "devfalldistance", "FallDistance"); break;
-            case 4: toggleTag(player, "devtps", "Tps"); break;
+            case 2: toggleTag(player, "speed", "Speed"); break;
+            case 3: toggleTag(player, "ticks", "Ticks"); break;
+            case 4: toggleTag(player, "tps", "Tps"); break;
             case 5: toggleTag(player, "devrotationx", "XRotation"); break;
             case 6: toggleTag(player, "devrotationy", "YRotation"); break;
             case 7: toggleTag(player, "cps", "Cps"); break;
