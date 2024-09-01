@@ -273,6 +273,10 @@ system.runInterval(() => {
                 player.isOnSlime = true;
                 break;
 
+            case blockUnderPlayer.typeId.includes("shulker"):
+                player.isOnShulker = true;
+                break;
+
             case blockUnderPlayer.typeId.includes("stairs"):
                 player.isRunningStairs = true;
                 break;
@@ -506,6 +510,7 @@ system.runInterval(() => {
         player.isOnIce = false;
         player.isOnSnow = false;
         player.isOnSlime = false;
+        player.isOnShulker = false;
 	}
 });
 
@@ -689,6 +694,10 @@ world.afterEvents.playerSpawn.subscribe((playerJoin) => {
 
     if (player.name in data.banList) {
 
+        if (config.banJoin_debug) {
+            tellStaff(`§r${themecolor}Rosh §j> §8${player.name} §ctried to join but was blocked due to his ban.`);
+        }
+
         if (!player.hasTag("isBanned")) {
             player.addTag("isBanned");
         }
@@ -702,17 +711,15 @@ world.afterEvents.playerSpawn.subscribe((playerJoin) => {
             const time = parseTime(banDuration.split(' ')[0]);
             player.addTag(`Length:${Date.now() + time}`);
         }
-
-        if (config.banJoin_debug) {
-            tellStaff(`§r${themecolor}Rosh §j> §8${player.name} §ctried to join but was blocked due to his ban.`);
-        }
     }
 
-	player.lastMessageSent = 0;
+    if (player.name in data.reports && !player.hasTag("reported")) {
+        player.addTag("reported");
+    }
+
 	player.blocksBroken = 0;
 	player.lastTime = Date.now();
     player.cps = 0;
-	player.lastLeftClick = NaN;
 	player.entitiesHit = [];
 	player.reports = [];
 	if (player.isOnGround) player.lastGoodPosition = player.location;
@@ -735,6 +742,14 @@ world.afterEvents.playerSpawn.subscribe((playerJoin) => {
 	player.removeTag("left");
 	player.removeTag("gliding");
 	player.removeTag("moving");
+    player.removeTag("jump");
+    player.removeTag("sprint");
+    player.removeTag("levitating");
+    player.removeTag("sneak");
+    player.removeTag("swimming");
+    player.removeTag("dead");
+    player.removeTag("riding");
+    player.removeTag("sleeping");
 	
 	const { mainColor, borderColor, playerNameColor } = config.customcommands.tag;
 
@@ -801,11 +816,12 @@ world.afterEvents.entityHitBlock.subscribe((entityHit) => {
 
 	const { damagingEntity: player} = entityHit;
 
+    if (player.typeId !== "minecraft:player") return;
+
+    player.startBreakTime = Date.now();
 	player.flagAutotoolA = false;
 	player.lastSelectedSlot = player.selectedSlotIndex;
-	player.startBreakTime = Date.now();
 	player.autotoolSwitchDelay = 0;
-
 });
 
 
@@ -872,11 +888,9 @@ if ([...world.getPlayers()].length >= 1) {
 
 	for (const player of world.getPlayers()) {
 
-		player.lastMessageSent = 0;
 		player.blocksBroken = 0;
 		player.lastTime = Date.now();
         player.cps = 0;
-		player.lastLeftClick = NaN;
 		player.entitiesHit = [];
 		player.reports = [];
         

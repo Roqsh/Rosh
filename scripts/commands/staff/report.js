@@ -21,7 +21,7 @@ export function report(message, args) {
 
     // Check if target player name is provided
     if (!args.length) {
-        player.sendMessage(`§r${themecolor}Rosh §j> §cYou need to provide who to report.`);
+        player.sendMessage(`${themecolor}Rosh §j> §cYou need to provide who to report.`);
         return;
     }
 
@@ -34,7 +34,7 @@ export function report(message, args) {
 
     // Check if target player name is valid
     if (targetName.length < minNameLength || targetName.length > maxNameLength) {
-        player.sendMessage(`§r${themecolor}Rosh §j> §cYou need to provide a valid player to report.`);
+        player.sendMessage(`${themecolor}Rosh §j> §cYou need to provide a valid player to report.`);
         return;
     }
 
@@ -43,19 +43,44 @@ export function report(message, args) {
 
     // Handle case where the target player is not found
     if (!member) {
-        player.sendMessage(`§r${themecolor}Rosh §j> §cCouldn't find that player.`);
+
+        // Prevent double reporting
+        if (player.reports.includes(targetName)) {
+            player.sendMessage(`${themecolor}Rosh §j> §cYou have already reported this player.`);
+            return;
+        }
+
+        // Add the player to the reported players list to prevent double reporting
+        player.reports.push(targetName);
+
+        // Inform the player about their report
+        player.sendMessage(`${themecolor}Rosh §j> §aYou have reported §8${targetName} §afor: §8${reason}§a.`);
+
+        // Notify other staff members about the report
+        tellStaff(`${themecolor}Rosh §j> §8${player.name} §ahas reported §8${targetName} §afor: §8${reason}§a.`);
+
+        // Log the report
+        data.recentLogs.push(`${timeDisplay()}§8${targetName} §chas been reported by §8${player.name}§c!`);
+
+        // Save all important aspects of the report
+        data.reports[targetName] = {
+            reportedBy: player.name,
+            date: new Date().toLocaleString(),
+            reason: reason
+        };
+
         return;
     }
 
     // Prevent reporting oneself
     if (member.id === player.id) {
-        player.sendMessage(`§r${themecolor}Rosh §j> §cYou cannot report yourself.`);
+        player.sendMessage(`${themecolor}Rosh §j> §cYou cannot report yourself.`);
         return;
     }
-    
+
     // Prevent double reporting
     if (player.reports.includes(member.name)) {
-        player.sendMessage(`§r${themecolor}Rosh §j> §cYou have already reported this player.`);
+        player.sendMessage(`${themecolor}Rosh §j> §cYou have already reported this player.`);
         return;
     }
 
@@ -66,11 +91,18 @@ export function report(message, args) {
     member.addTag("reported");
 
     // Inform the player about their report
-    player.sendMessage(`§r${themecolor}Rosh §j> §aYou have reported §8${member.name} §afor §8${reason}§a.`);
+    player.sendMessage(`${themecolor}Rosh §j> §aYou have reported §8${member.name} §afor: §8${reason}§a.`);
 
     // Notify other staff members about the report
-    tellStaff(`§r${themecolor}Rosh §j> §8${player.name} §ahas reported §8${member.name} §afor §8${reason}§a.`);
+    tellStaff(`${themecolor}Rosh §j> §8${player.name} §ahas reported §8${member.name} §afor: §8${reason}§a.`);
 
     // Log the report
     data.recentLogs.push(`${timeDisplay()}§8${member.name} §chas been reported by §8${player.name}§c!`);
+
+    // Save all important aspects of the report
+    data.reports[targetName] = {
+        reportedBy: player.name,
+        date: new Date().toLocaleString(),
+        reason: reason
+    };
 }

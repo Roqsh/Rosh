@@ -6,14 +6,13 @@ import { resetWarns } from "./commands/staff/resetwarns.js";
 
 /**
  * Alerts staff if a player fails a check.
- * @param {Minecraft.Player} player - The player object.
+ * @param {Minecraft.Player} player - The player who should be flagged.
  * @param {string} check - The name of the check that was failed.
  * @param {string} checkType - The type of sub-check that was failed.
  * @param {string | undefined} [debugName] - The name of the debug value.
- * @param {string | number | object | undefined} [debug] - Debug information.
+ * @param {string | number | object | undefined} [debug] - The debug information.
  * @param {boolean} [shouldTP=false] - Whether to teleport the player to their last good position.
  * @param {object | undefined} [cancelObject] - Object with property "cancel" to cancel the event.
- * @remarks Dependend on handler functions such as resetWarns, handlePunishment etc.
  * @example flag(player, "Spammer", "B", "Delay", `${delay}ms`, false, Minecraft.ChatSendBeforeEvent);
  */
 export function flag(player, check, checkType, debugName, debug, shouldTP = false, cancelObject) {
@@ -70,6 +69,8 @@ export function flag(player, check, checkType, debugName, debug, shouldTP = fals
 
     // Get check data
     const checkData = config.modules[`${check.toLowerCase()}${checkType.toUpperCase()}`];
+
+    // Ensure the check data exists in the config.js file
     if (!checkData) throw new Error(`${player.name} flagged ${check}/${checkType} but no valid check data was found in config.js.`);
 
     // Ensure the check is enabled (However, all checks already check wheter the they are enabled, kinda making this useless)
@@ -77,7 +78,11 @@ export function flag(player, check, checkType, debugName, debug, shouldTP = fals
 
     // Handle punishment based on the check's configuration
     const punishment = checkData.punishment?.toLowerCase();
+
+    // Ensure the punishment has valid properties
     if (typeof punishment !== "string") throw new TypeError(`Error: punishment is type of ${typeof punishment}. Expected "string"`);
+
+    // If the volume does not meet the requirements for a punishment, return early
     if (currentVl < checkData.minVlbeforePunishment) return;
 
     const kickvl = getScore(player, "kickvl", 0);

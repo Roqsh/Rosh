@@ -41,6 +41,14 @@ declare module "@minecraft/server" {
         isOnSlime: boolean,
 
         /**
+         * Wheter the player is on a shulker.
+         * (Both shulker entities and shulker shells will work aswell as standing on top of it while the shulker is open.)
+         * @Rosh
+         * @remarks This property is a placeholder until we get an official version in the API.
+         */
+        isOnShulker: boolean,
+
+        /**
          * Wheter the player is moving on stairs. (upwards or downwards)
          * @Rosh
          * @remarks This property is a placeholder until we get an official version in the API.
@@ -93,12 +101,8 @@ declare module "@minecraft/server" {
          */
 		lastSelectedSlot: number,
         
-		lastThrow: number,
-		lastMessageSent: number,
-		lastLeftClick: number,
         autotoolSwitchDelay: number,
         blocksBroken: number,
-        pitch: number,
         startBreakTime: number,
 
         /**
@@ -116,6 +120,13 @@ declare module "@minecraft/server" {
 		reports: Array<String>,
 		
         /**
+         * Stores a player's location of the last tick.
+         * @Rosh
+         * @remarks This property is a placeholder until we get an official version in the API.
+         */
+        lastPosition: Vector3,
+
+        /**
          * Saves a safe position to teleport the player back to when flagging a certain check.
          * Positions where the player is on ground are considered safe.
          * @Rosh
@@ -125,17 +136,13 @@ declare module "@minecraft/server" {
 	}
 
 	interface Entity {
-		
-		flagAutotoolA: boolean,
+        
+        flagAutotoolA: boolean,
 
         autotoolSwitchDelay: number,
-		cps: number,
-		lastThrow: number,
 		lastSelectedSlot: number,
-		lastMessageSent: number,
-		lastLeftClick: number,
-        selectedSlotIndex: number,
         startBreakTime: number,
+        cps: number,
 
 		entitiesHit: Array<String>
 	}

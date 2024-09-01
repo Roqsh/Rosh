@@ -8,7 +8,6 @@ const playerCpsHistoryC = new Map();
 
 /**
  * Checks for a variety of suspicious integer CPS value changes.
- * Only proceeds if the player's average CPS is above the configured threshold.
  * @param {Minecraft.Player} player - The player to check.
  */
 export function autoclicker_c(player) {
@@ -43,30 +42,30 @@ export function autoclicker_c(player) {
     // Filter out integer CPS values and calculate the differences between consecutive values
     let integerCount = 0;
     let integerChangeCount = 0;
-    let cpsDifferences = [];
+    let integerCpsValues = [];
+    let integerCpsDifferences = [];
 
     for (let i = 1; i < cpsValues.length; i++) {
         if (Number.isInteger(cpsValues[i])) {
             integerCount++;
+            integerCpsValues.push(cpsValues[i]);
         }
         const difference = Math.abs(cpsValues[i] - cpsValues[i - 1]);
-        if (difference !== 0) {
-            cpsDifferences.push(difference);
-            if (Number.isInteger(difference)) {
-                integerChangeCount++;
-            }
+        if (difference !== 0 && Number.isInteger(difference)) {
+            integerChangeCount++;
+            integerCpsDifferences.push(difference);
         }
     }
 
     // Flag if there are too many integer CPS values
     if (integerCount >= MIN_INT_CHANGES) {
-        flag(player, "AutoClicker", "C", "integers", `Count: ${integerCount}, Values: ${cpsValues.join(', ')}`);
+        flag(player, "AutoClicker", "C", "integers", integerCpsValues.join(', '));
         return;
     }
 
     // Flag if there are too many integer CPS differences
     if (integerChangeCount >= MIN_INT_CHANGES) {
-        flag(player, "AutoClicker", "C", "integer-changes", `Count: ${integerChangeCount}, Differences: ${cpsDifferences.join(', ')}`);
+        flag(player, "AutoClicker", "C", "integer-changes", integerCpsDifferences.join(', '));
         return;
     }
 

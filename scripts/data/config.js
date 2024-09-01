@@ -443,17 +443,20 @@ export default
             "enabled": true,
             "description": "Patches a disabler on Prax Client (Sending glide packets without an elytra)",
             "punishment": "kick",
-            "minVlbeforePunishment": 8
+            "punishmentLength": "7d",
+            "minVlbeforePunishment": 6
         },
 
         "timerA": {
             "enabled": true,
             "description": "Checks for Timer",
-            "timer_level": 22.5,
-            "timer_level_low": 17.5,
+            "requiredSamples": 20,
+            "timer_level": 21.5,
+            "timer_level_low": 18.5,
             "strict": true,
             "punishment": "kick",
-            "minVlbeforePunishment": 3
+            "punishmentLength": "7d",
+            "minVlbeforePunishment": 5
         },
 
         "badenchantsA": {
@@ -554,7 +557,7 @@ export default
             "samples": 8,
             "maxDuplicates": 2,
             "minStdDev": 0.5,
-            "minAverageCps": 6,
+            "minAverageCps": 7,
             "punishment": "kick",
             "punishmentLength": "2d",
             "minVlbeforePunishment": 4,
