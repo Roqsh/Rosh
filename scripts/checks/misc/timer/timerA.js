@@ -46,7 +46,7 @@ export function timer_a(player, lastPosition, value) {
     if (!config.modules.timerA.enabled) return;
 
     // Early return if player has specific tags that should bypass the timer check
-    const bypassTags = ["riding"];
+    const bypassTags = ["riding", "placing"];
     if (bypassTags.some(tag => player.hasTag(tag))) return;
 
     // Calculate the velocity and speed

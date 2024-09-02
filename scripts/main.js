@@ -71,8 +71,6 @@ import { killaura_b } from "./checks/combat/killaura/killauraB.js";
 import { killaura_c } from "./checks/combat/killaura/killauraC.js";
 import { killaura_d } from "./checks/combat/killaura/killauraD.js";
 import { killaura_e, dependencies_e } from "./checks/combat/killaura/killauraE.js";
-import { killaura_f } from "./checks/combat/killaura/killauraF.js";
-import { killaura_g } from "./checks/combat/killaura/killauraG.js";
 import { hitbox_a } from "./checks/combat/hitbox/hitboxA.js";
 import { hitbox_b } from "./checks/combat/hitbox/hitboxB.js";
 import { reach_a } from "./checks/combat/reach/reachA.js";
@@ -232,7 +230,6 @@ system.runInterval(() => {
         }
         
 		if(player.blocksBroken >= 1 && config.modules.nukerA.enabled) player.blocksBroken = 0;
-		if(player.entitiesHit?.length >= 1 && config.modules.killauraC.enabled) player.entitiesHit = [];
 
 		if (Date.now() - player.startBreakTime < config.modules.autotoolA.startBreakDelay && player.lastSelectedSlot !== selectedSlot) {
 			player.flagAutotoolA = true;
@@ -402,78 +399,88 @@ system.runInterval(() => {
 		}
 
 		if (clicksHandler(player, tick)) {
-			autoclicker_a(player);
+            autoclicker_a(player);
             autoclicker_b(player);
             autoclicker_c(player);
             autoclicker_d(player);
 		}
 
 		//TODO: Move them into their own category [Patched, it will be disabled by default]
+        
+        function handleBadEnchantments(player, enchantment, itemTypeId, i, type) {
+            flag(player, "BadEnchants", type, "enchantment", `${enchantment.type.id},level=${enchantment.level},slot=${i}`);
+        }
+        
+        function isInvalidEnchantment(enchantment, item2Enchants, i, player, itemTypeId, enchantments, config) {
+            const { type, level } = enchantment;
+            const typeId = type.id;
+        
+            // Check for enchantments that are higher than what is vanilla possible
+            if (config.modules.badenchantsA.enabled) {
+                const maxLevel = config.modules.badenchantsA.levelExclusions[type] ?? type.maxLevel;
+                if (level > maxLevel) {
+                    handleBadEnchantments(player, enchantment, itemTypeId, i, "A");
+                    return true;
+                }
+            }
+        
+            // Check for negative/null enchantments
+            if (config.modules.badenchantsB.enabled && level <= 0) {
+                handleBadEnchantments(player, enchantment, itemTypeId, i, "B");
+                return true;
+            }
+        
+            // Check for enchantments that should not be allowed on specific items
+            if (config.modules.badenchantsC.enabled && item2Enchants) {
+                if (!item2Enchants.canAddEnchantment({ type, level: 1 })) {
+                    handleBadEnchantments(player, enchantment, itemTypeId, i, "C");
+                    return true;
+                }
+                if (config.modules.badenchantsC.multi_protection) {
+                    item2Enchants.addEnchantment({ type, level: 1 });
+                }
+            }
+        
+            // Check for duplicate enchantments
+            if (config.modules.badenchantsD.enabled) {
+                if (enchantments.includes(typeId)) {
+                    flag(player, "BadEnchants", "D", "enchantments", `${enchantments.join(", ")},slot=${i}`);
+                    return true;
+                }
+                enchantments.push(typeId);
+            }
+        
+            return false;
+        }
+        
         for (let i = 0; i < 36; i++) {
             const item = container.getItem(i);
             if (!item) continue;
-
+        
             const itemType = item.type ?? ItemTypes.get("minecraft:book");
             const item2 = new ItemStack(itemType, item.amount);
             const itemEnchants = item.getComponent("enchantable")?.getEnchantments() ?? [];
             const item2Enchants = item2.getComponent("enchantable");
             const enchantments = [];
-
+        
             let hasBadEnchantments = false;
-
-            for (const enchantData of itemEnchants) {
-                const enchantTypeId = enchantData.type.id;
-
-                // Checks for enchantments that are higher than what is vanilla possible
-                if (config.modules.badenchantsA.enabled) {
-                    const maxLevel = config.modules.badenchantsA.levelExclusions[enchantData.type] ?? enchantData.type.maxLevel;
-                    if (enchantData.level > maxLevel) {
-                        flag(player, "BadEnchants", "A", "enchantment", `${enchantTypeId},level=${enchantData.level},slot=${i}`);
-                        hasBadEnchantments = true;
-                        continue;
-                    }
-                }
-
-                // Checks for negative/null enchantments
-                if (config.modules.badenchantsB.enabled && enchantData.level <= 0) {
-                    flag(player, "BadEnchants", "B", "enchantment", `${enchantTypeId},level=${enchantData.level},slot=${i}`);
+        
+            for (const enchantment of itemEnchants) {
+                if (isInvalidEnchantment(enchantment, item2Enchants, i, player, item.typeId, enchantments, config)) {
                     hasBadEnchantments = true;
                     continue;
                 }
-
-                // Checks for enchantments that should not be allowed on specific items
-                if (config.modules.badenchantsC.enabled && item2Enchants) {
-                    if (!item2Enchants.canAddEnchantment({ type: enchantData.type, level: 1 })) {
-                        flag(player, "BadEnchants", "C", "item", `${item.typeId},enchantment=${enchantTypeId},level=${enchantData.level},slot=${i}`);
-                        hasBadEnchantments = true;
-                        continue;
-                    }
-
-                    if (config.modules.badenchantsC.multi_protection) {
-                        item2Enchants.addEnchantment({ type: enchantData.type, level: 1 });
-                    }
-                }
-
-                // Checks for duplicate enchantments
-                if (config.modules.badenchantsD.enabled) {
-                    if (enchantments.includes(enchantTypeId)) {
-                        flag(player, "BadEnchants", "D", "enchantments", `${enchantments.join(", ")},slot=${i}`);
-                        hasBadEnchantments = true;
-                        continue;
-                    }
-
-                    enchantments.push(enchantTypeId);
-                }
-
+        
                 // Add valid enchantment to the item2Enchants
-                item2Enchants.addEnchantment(enchantData);
+                item2Enchants.addEnchantment(enchantment);
             }
-
+        
             // If the item had any bad enchantments, replace it with the modified item
             if (hasBadEnchantments) {
                 container.setItem(i, item2);
             }
         }
+        
 
         dependencies_e(player);
 		scaffold_f_dependency(player, tick);  
@@ -720,7 +727,6 @@ world.afterEvents.playerSpawn.subscribe((playerJoin) => {
 	player.blocksBroken = 0;
 	player.lastTime = Date.now();
     player.cps = 0;
-	player.entitiesHit = [];
 	player.reports = [];
 	if (player.isOnGround) player.lastGoodPosition = player.location;
 
@@ -788,8 +794,6 @@ world.afterEvents.entityHitEntity.subscribe(({ hitEntity: entity, damagingEntity
 		killaura_c(player, entity);
 		killaura_d(player, entity);
 	    killaura_e(player, entity);
-	    //killaura_f(player, entity);
-		//killaura_g(player, entity);
 	}
 
 	reach_a(player, entity);
@@ -891,7 +895,6 @@ if ([...world.getPlayers()].length >= 1) {
 		player.blocksBroken = 0;
 		player.lastTime = Date.now();
         player.cps = 0;
-		player.entitiesHit = [];
 		player.reports = [];
         
 		if (player.isOnGround) {

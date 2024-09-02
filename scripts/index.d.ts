@@ -106,13 +106,6 @@ declare module "@minecraft/server" {
         startBreakTime: number,
 
         /**
-         * Stores a list of entity ids that a player has attacked.
-         * @Rosh
-         * @remarks This property is a placeholder until we get an official version in the API.
-         */
-		entitiesHit: Array<String>,
-
-        /**
          * Stores a list of (potential malicious) player names a player has reported.
          * @Rosh
          * @remarks This property is a placeholder until we get an official version in the API.
@@ -143,7 +136,5 @@ declare module "@minecraft/server" {
 		lastSelectedSlot: number,
         startBreakTime: number,
         cps: number,
-
-		entitiesHit: Array<String>
 	}
 }

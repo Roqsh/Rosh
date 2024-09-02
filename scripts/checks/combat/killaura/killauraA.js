@@ -1,25 +1,24 @@
+import * as Minecraft from "@minecraft/server";
 import config from "../../../data/config.js";
 import { flag } from "../../../util";
 
 /**
- * Checks for attacking with an integer x/y rotation
- * @name killaura_a
- * @param {player} player - The player to check
+ * Checks for attacking with an integer x/y rotation.
+ * @param {Minecraft.Player} player - The player to check.
  */
 export function killaura_a(player) {
-	
-    if (config.modules.killauraA.enabled) {
+    
+    if (!config.modules.killauraA.enabled) return;
 
-        if (!player.hasTag("riding")) {
+    // Get the player's current rotation.
+    const rotation = player.getRotation();
 
-            const rotation = player.getRotation();
+    // Check if the player is not riding and has a non-zero x-axis rotation.
+    if (!player.hasTag("riding") && rotation.x !== 0) {
 
-            if (
-                (Number.isInteger(rotation.x)) && rotation.x !== 0 || 
-                (Number.isInteger(rotation.y)) && rotation.y !== 0
-            ) {
-                flag(player, "Killaura", "A", "xRot", `${rotation.x},yRot=${rotation.y}`);
-            }   
-        } 
-    }	
+        // If either the x or y rotation is an integer, flag for potential Killaura behavior.
+        if (Number.isInteger(rotation.x) || Number.isInteger(rotation.y)) {
+            flag(player, "Killaura", "A", "xRot", `x=${rotation.x}, y=${rotation.y}`);
+        }
+    }
 }

@@ -124,6 +124,10 @@ export class Vector3D {
 
         const length = this.getVectorLength(vector);
 
+        if (length === 0) {
+            throw new Error("Cannot normalize a vector with a length of zero.");
+        }
+
         return {
             x: vector.x / length,
             y: vector.y / length,
@@ -554,8 +558,11 @@ export class Statistics {
      * @returns {boolean} True if the number of consecutive duplicates exceeds the threshold, false otherwise.
      */
     static checkConsecutiveDuplicates(arr, threshold) {
+
         let duplicateCount = 0;
+
         for (let i = 1; i < arr.length; i++) {
+            // If the current element is equal to the previous one, increment the duplicate count
             if (arr[i] === arr[i - 1]) {
                 duplicateCount++;
                 if (duplicateCount >= threshold) return true;
@@ -563,6 +570,7 @@ export class Statistics {
                 duplicateCount = 0;
             }
         }
+
         return false;
     }
 }

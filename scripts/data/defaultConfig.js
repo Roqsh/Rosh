@@ -293,34 +293,37 @@ export default
 
         "killauraA": {
             "enabled": true,
-            "description": "Checks for attacking with an integer x/y rotation",
+            "description": "Checks for attacking with an integer x/y rotation.",
             "punishment": "kick",
-            "minVlbeforePunishment": 4
+            "punishmentLength": "7d",
+            "minVlbeforePunishment": 5
         },
 
         "killauraB": {
-            "enabled": false,
-            "description": "Checks for no-swing",
+            "enabled": true,
+            "description": "Checks for invalid attacks.",
             "punishment": "kick",
-			"wait_ticks": 20,
-			"max_swing_delay": 2000,
-            "minVlbeforePunishment": 3
+            "punishmentLength": "7d",
+            "minVlbeforePunishment": 4
         },
 
         "killauraC": {
             "enabled": true,
-            "description": "Checks for hitting multiple entities at once",
+            "description": "Checks for hitting multiple entities at once.",
             "punishment": "kick",
             "entities": 2,
-            "minVlbeforePunishment": 5
+            "timeWindow": 50,
+            "punishmentLength": "1d",
+            "minVlbeforePunishment": 7
         },
 
         "killauraD": {
             "enabled": true,
-            "description": "Checks for not looking at the attacked entity",
+            "description": "Checks if a player hits through a solid wall.",
+            "y_increment": 0.1,
             "punishment": "kick",
-            "punishmentLength": "3d",
-            "minVlbeforePunishment": 4
+            "punishmentLength": "7d",
+            "minVlbeforePunishment": 9
         },
 
         "killauraE": {
@@ -328,21 +331,6 @@ export default
             "description": "Killaura Bot check (Spawns a fake player and if it gets attacked it flags)",
             "punishment": "kick",
             "minVlbeforePunishment": 2
-        },
-
-        "killauraF": {
-            "enabled": false,
-            "description": "Checks for looking at the exact center of a player",
-            "punishment": "kick",
-            "minVlbeforePunishment": 2
-        },
-
-        "killauraG": {
-			"enabled": false,
-            "description": "Checks for attacking while using an item",
-			"punishment": "kick",
-            "rightTicks": 4,
-			"minVlbeforePunishment": 5
         },
 
         "hitboxA": {
@@ -594,9 +582,10 @@ export default
 
         "scaffoldB": {
             "enabled": true,
-            "description": "Checks for placing with an integer x/y rotation",
+            "description": "Checks for placing with an integer x/y rotation.",
             "punishment": "kick",
-            "minVlbeforePunishment": 3
+            "punishmentLength": "7d",
+            "minVlbeforePunishment": 5
         },
 
         "scaffoldC": {
