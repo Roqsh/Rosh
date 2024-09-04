@@ -2,114 +2,217 @@ import * as Minecraft from "@minecraft/server";
 import * as MinecraftUI from "@minecraft/server-ui";
 import { world } from "@minecraft/server";
 import config from "../data/config.js";
+import data from "../data/data.js";
+import { timeDisplay, findPlayerByName, endsWithNumberInParentheses, tellStaff } from "../util.js";
 
 /**
- * Opens the report menu to select the malicious user.
- * @param {Minecraft.Player} player - The player to whom the menu is shown.
+ * Opens the report menu to select a malicious user.
+ * @param {Minecraft.Player} player - The player who initiated the report.
  */
 export function reportMenu(player) {
-    
-    // Play a sound to indicate the menu has been opened
+
+    // Play a sound to indicate that the menu has been opened
     player.playSound("mob.chicken.plop");
 
     const themecolor = config.themecolor;
-
     const allPlayers = world.getAllPlayers();
+    const onlinePlayerCount = allPlayers.length;
 
+    // Create the initial menu with the option to select an offline player
     const menu = new MinecraftUI.ActionFormData()
-		.title("Report Menu")
+        .title("Report Menu")
+        .body(`§aOnline (§8${onlinePlayerCount}§a)`)
+        .button("Select offline player");
 
-        // Gets all available players
-        for (const plr of allPlayers) {
+    // Add a button for each online player
+    allPlayers.forEach((plr) => {
+        
+        let playerName = `${plr.name}`;
 
-            let playerName = `${plr.name}`;
-
-            // Check if the player name matches the initiator's name and mark it with "You"
-            if (plr.id === player.id) {
-                playerName += " - You";
-            }
-
-            // Check if the player is an operator and mark it with "Op"
-            if (plr.isOp()) {
-                playerName += `\n§8[${themecolor}Op§8]`;
-            }
-
-            // Display the player and his (modified) name
-            menu.button(playerName);
-        }
-		
-    // Show the menu to the player and handle the response based on the player's selection
-    menu.show(player).then((response) => {
-       
-        if (!response.canceled) {
-            // The player selected a player, so open the cheat type menu
-            cheatType(player, [...allPlayers][response.selection]);
+        // Mark the player themselves with "You"
+        if (plr.id === player.id) {
+            playerName += " - You";
         }
 
-    }).catch((error) => {
-        // Handle promise rejection
-        console.error(`${new Date().toISOString()} | ${error}${error.stack}`);
-        player.sendMessage(`${themecolor}Rosh §j> §cAn error occurred:\n§8${error}\n${error.stack}`);
+        // Mark operators with "Op"
+        if (plr.isOp()) {
+            playerName += `\n§8[${themecolor}Op§8]`;
+        }
+
+        menu.button(playerName);
     });
+
+    // Show the menu and handle the player's selection
+    menu.show(player).then((response) => {
+
+        if (!response.canceled) {
+
+            if (response.selection === 0) {
+                // Offline player selected
+                openOfflinePlayerMenu(player);
+            } else {
+                // Online player selected
+                const selectedPlayer = allPlayers[response.selection - 1];
+                cheatType(player, selectedPlayer);
+            }
+        }
+
+    }).catch(handleMenuError(player, themecolor));
 }
 
-
-
 /**
- * Lets the player select the cheat type.
- * @param {Minecraft.Player} player - The player to whom the menu is shown.
- * @param {Minecraft.Player} selectedPlayer - The malicous user to report.
+ * Opens a menu to report an offline player by entering their name.
+ * @param {Minecraft.Player} player - The player who initiated the report.
  */
-function cheatType(player, selectedPlayer) {
-    
-    // Play a sound to indicate the menu has been opened
+function openOfflinePlayerMenu(player) {
+
+    // Play a sound to indicate that the menu has been opened
     player.playSound("mob.chicken.plop");
 
     const themecolor = config.themecolor;
 
-    const menu = new MinecraftUI.ActionFormData()
-        .title(`Cheat Type - ${selectedPlayer.name}`)
-        .button("Combat")
-        .button("Movement")
-        .button("Placement")
-        .button("Other")
-        .button("Back");
-    
+    // Create a modal form to enter the name of the offline player
+    const menu = new MinecraftUI.ModalFormData()
+        .title("Offline Report")
+        .textField("Player:", "§o§7Enter name here")
+        .submitButton("Report Player");
+
+    // Show the modal form and handle the player's input
     menu.show(player).then((response) => {
 
-        // Open the sub-category menu based on the selection
+        if (response.canceled) {
+            // If the menu is closed, re-open the report menu
+            return reportMenu(player);
+        }
+
+        const offlinePlayer = response.formValues[0]?.trim();
+
+        // Ensure the player entered a name
+        if (!offlinePlayer) {
+            return player.sendMessage(`${themecolor}Rosh §j> §cYou must enter a player name to report!`);
+        }
+
+        // Sanitize and validate the player name
+        const targetName = sanitizeName(offlinePlayer, player.name);
+
+        if (!isValidPlayerName(targetName)) {
+            return player.sendMessage(`${themecolor}Rosh §j> §cYou need to provide a valid player name.`);
+        }
+
+        // Prevent the player from reporting themselves
+        if (targetName === player.name) {
+            return player.sendMessage(`${themecolor}Rosh §j> §cYou cannot report yourself.`);
+        }
+
+        // Prevent duplicate reports of the same player
+        if (player.reports?.includes(targetName)) {
+            return player.sendMessage(`${themecolor}Rosh §j> §cYou have already reported this player.`);
+        }
+
+        // Proceed to the cheat type selection
+        cheatType(player, targetName);
+
+    }).catch(handleMenuError(player, themecolor));
+}
+
+/**
+ * Opens a menu to select the type of cheat the player is reporting.
+ * @param {Minecraft.Player} player - The player who initiated the report.
+ * @param {Minecraft.Player | string} selectedPlayer - The player being reported, either online or offline.
+ */
+function cheatType(player, selectedPlayer) {
+
+    // Play a sound to indicate that the menu has been opened
+    player.playSound("mob.chicken.plop");
+
+    const themecolor = config.themecolor;
+    const targetName = typeof selectedPlayer === "string" ? selectedPlayer : selectedPlayer.name;
+
+    // Create a menu for selecting the type of cheat
+    const menu = new MinecraftUI.ActionFormData()
+        .title(`Cheat Type - ${targetName}`)
+        .button("Combat")
+        .button("Movement")
+        .button("Block")
+        .button("Other")
+        .button("Back");
+
+    // Show the menu and handle the player's selection
+    menu.show(player).then((response) => {
+
+        if (response.canceled) return;
+
+        // Open the corresponding sub-menu based on the player's selection
         switch (response.selection) {
             case 0: combatType(player, selectedPlayer); break;
             case 1: movementType(player, selectedPlayer); break;
-            case 2: placementType(player, selectedPlayer); break;
+            case 2: blockType(player, selectedPlayer); break;
             case 3: otherType(player, selectedPlayer); break;
-            case 4: reportMenu(player); break;
+            case 4: reportMenu(player); break;  // Go back to the previous menu
+            default: player.sendMessage(`${themecolor}Rosh §j> §cInvalid selection. (§8${response.selection}§c)`);
         }
-        
-    }).catch((error) => {
-        // Handle promise rejection
-        console.error(`${new Date().toISOString()} | ${error}${error.stack}`);
+
+    }).catch(handleMenuError(player, themecolor));
+}
+jk
+/**
+ * Handles any errors that occur during menu interactions.
+ * @param {Minecraft.Player} player - The player interacting with the menu.
+ * @param {string} themecolor - The theme color used for error messages.
+ * @returns {Function} A function to handle errors.
+ */
+function handleMenuError(player, themecolor) {
+    return (error) => {
+        // Log the error to the console
+        console.error(`${new Date().toISOString()} | ${error.stack}`);
+
+        // Send an error message to the player
         player.sendMessage(`${themecolor}Rosh §j> §cAn error occurred:\n§8${error}\n${error.stack}`);
-    });
+    };
 }
 
-
+/**
+ * Sanitizes a player name by removing invalid characters and replacing '@s' with the reporter's name.
+ * @param {string} name - The name to sanitize.
+ * @param {string} playerName - The name of the reporting player.
+ * @returns {string} The sanitized player name.
+ */
+function sanitizeName(name, playerName) {
+    // Remove potentially harmful characters and replace @s with the player's name
+    const filteredName = name.replace(/["'`\\]/g, "");
+    return filteredName.replace(/@s/g, playerName);
+}
 
 /**
- * Lets the player select the desired combat type cheat.
- * @param {Minecraft.Player} player - The player to whom the menu is shown.
- * @param {Minecraft.Player} selectedPlayer - The malicous user to report.
+ * Validates the player name to ensure it meets the necessary criteria.
+ * @param {string} name - The name to validate.
+ * @returns {boolean} True if the name is valid, otherwise false.
+ */
+function isValidPlayerName(name) {
+    const minNameLength = 3;
+    const maxNameLength = endsWithNumberInParentheses(name) ? 15 : 12;
+
+    // Check if the name length is within valid bounds
+    return name.length >= minNameLength && name.length <= maxNameLength;
+}
+
+/**
+ * Displays a menu for the player to select the type of combat-related cheat to report.
+ * @param {Minecraft.Player} player - The player who initiated the report.
+ * @param {Minecraft.Player | string} selectedPlayer - The player being reported, either online or offline.
  */
 function combatType(player, selectedPlayer) {
 
-    // Play a sound to indicate the menu has been opened
+    // Play a sound to indicate that the menu has been opened
     player.playSound("mob.chicken.plop");
 
     const themecolor = config.themecolor;
+    const targetName = typeof selectedPlayer === "string" ? selectedPlayer : selectedPlayer.name;
 
+    // Create a menu for selecting the specific type of combat cheat
     const menu = new MinecraftUI.ActionFormData()
-        .title(`Combat - ${selectedPlayer.name}`)
-        .button("KillAura")
+        .title(`Combat - ${targetName}`)
+        .button("Killaura")
         .button("Reach")
         .button("Hitbox")
         .button("Aim")
@@ -117,41 +220,42 @@ function combatType(player, selectedPlayer) {
         .button("AutoClicker")
         .button("Back");
 
+    // Show the menu and handle the player's selection
     menu.show(player).then((response) => {
 
+        if (response.canceled) return;
+
+        // Handle the selection, directing back to the previous menu if "Back" is chosen
         switch (response.selection) {
-            case 0: break;
-            case 1: break;
-            case 2: break;
-            case 3: break;
-            case 4: break;
-            case 5: break;
-            case 6: cheatType(player, selectedPlayer); break;
+            case 0: confirmReportMenu(player, selectedPlayer, "Killaura"); break; // Handle Killaura
+            case 1: confirmReportMenu(player, selectedPlayer, "Reach"); break; // Handle Reach
+            case 2: confirmReportMenu(player, selectedPlayer, "Hitbox"); break; // Handle Hitbox
+            case 3: confirmReportMenu(player, selectedPlayer, "Aim"); break; // Handle Aim
+            case 4: confirmReportMenu(player, selectedPlayer, "Velocity"); break; // Handle Velocity
+            case 5: confirmReportMenu(player, selectedPlayer, "AutoClicker"); break; // Handle AutoClicker
+            case 6: cheatType(player, selectedPlayer); break; // Go back to the previous menu
+            default: player.sendMessage(`${themecolor}Rosh §j> §cInvalid selection. (§8${response.selection}§c)`);
         }
 
-    }).catch((error) => {
-        // Handle promise rejection
-        console.error(`${new Date().toISOString()} | ${error}${error.stack}`);
-        player.sendMessage(`${themecolor}Rosh §j> §cAn error occurred:\n§8${error}\n${error.stack}`);
-    });
+    }).catch(handleMenuError(player, themecolor));
 }
 
-
-
 /**
- * Lets the player select the desired movement type cheat.
- * @param {Minecraft.Player} player - The player to whom the menu is shown.
- * @param {Minecraft.Player} selectedPlayer - The malicous user to report.
+ * Displays a menu for the player to select the type of movement-related cheat to report.
+ * @param {Minecraft.Player} player - The player who initiated the report.
+ * @param {Minecraft.Player | string} selectedPlayer - The player being reported, either online or offline.
  */
 function movementType(player, selectedPlayer) {
 
-    // Play a sound to indicate the menu has been opened
+    // Play a sound to indicate that the menu has been opened
     player.playSound("mob.chicken.plop");
 
     const themecolor = config.themecolor;
+    const targetName = typeof selectedPlayer === "string" ? selectedPlayer : selectedPlayer.name;
 
+    // Create a menu for selecting the specific type of movement cheat
     const menu = new MinecraftUI.ActionFormData()
-        .title(`Movement - ${selectedPlayer.name}`)
+        .title(`Movement - ${targetName}`)
         .button("Fly")
         .button("Speed")
         .button("Teleport")
@@ -161,104 +265,169 @@ function movementType(player, selectedPlayer) {
         .button("NoSlowDown")
         .button("Back");
 
+    // Show the menu and handle the player's selection
     menu.show(player).then((response) => {
 
+        if (response.canceled) return;
+
+        // Handle the selection, directing back to the previous menu if "Back" is chosen
         switch (response.selection) {
-            case 0: break;
-            case 1: break;
-            case 2: break;
-            case 3: break;
-            case 4: break;
-            case 5: break;
-            case 6: break;
-            case 7: cheatType(player, selectedPlayer); break;
+            case 0: confirmReportMenu(player, selectedPlayer, "Fly"); break; // Handle Fly
+            case 1: confirmReportMenu(player, selectedPlayer, "Speed"); break; // Handle Speed
+            case 2: confirmReportMenu(player, selectedPlayer, "Teleport"); break; // Handle Teleport
+            case 3: confirmReportMenu(player, selectedPlayer, "Timer"); break; // Handle Timer
+            case 4: confirmReportMenu(player, selectedPlayer, "Strafe"); break; // Handle Strafe
+            case 5: confirmReportMenu(player, selectedPlayer, "Phase"); break; // Handle Phase
+            case 6: confirmReportMenu(player, selectedPlayer, "NoSlowDown"); break; // Handle NoSlowDown
+            case 7: cheatType(player, selectedPlayer); break; // Go back to the previous menu
+            default: player.sendMessage(`${themecolor}Rosh §j> §cInvalid selection. (§8${response.selection}§c)`);
         }
-        
-    }).catch((error) => {
-        // Handle promise rejection
-        console.error(`${new Date().toISOString()} | ${error}${error.stack}`);
-        player.sendMessage(`${themecolor}Rosh §j> §cAn error occurred:\n§8${error}\n${error.stack}`);
-    });
+
+    }).catch(handleMenuError(player, themecolor));
 }
 
-
-
 /**
- * Lets the player select the desired placement type cheat.
- * @param {Minecraft.Player} player - The player to whom the menu is shown.
- * @param {Minecraft.Player} selectedPlayer - The malicous user to report.
+ * Displays a menu for the player to select the type of placement-related cheat to report.
+ * @param {Minecraft.Player} player - The player who initiated the report.
+ * @param {Minecraft.Player | string} selectedPlayer - The player being reported, either online or offline.
  */
-function placementType(player, selectedPlayer) {
-
-    // Play a sound to indicate the menu has been opened
+function blockType(player, selectedPlayer) {
+    // Play a sound to indicate that the menu has been opened
     player.playSound("mob.chicken.plop");
 
     const themecolor = config.themecolor;
+    const targetName = typeof selectedPlayer === "string" ? selectedPlayer : selectedPlayer.name;
 
+    // Create a menu for selecting the specific type of placement cheat
     const menu = new MinecraftUI.ActionFormData()
-        .title(`Placement - ${selectedPlayer.name}`)
+        .title(`Block - ${targetName}`)
         .button("Scaffold")
         .button("Tower")
         .button("Nuker")
+        .button("Xray")
         .button("Inappropriate Build")
         .button("Back");
 
+    // Show the menu and handle the player's selection
     menu.show(player).then((response) => {
 
+        if (response.canceled) return;
+
+        // Handle the selection, directing back to the previous menu if "Back" is chosen
         switch (response.selection) {
-            case 0: break;
-            case 1: break;
-            case 2: break;
-            case 3: break;
-            case 4: cheatType(player, selectedPlayer); break;
+            case 0: confirmReportMenu(player, selectedPlayer, "Scaffold"); break; // Handle Scaffold
+            case 1: confirmReportMenu(player, selectedPlayer, "Tower"); break; // Handle Tower
+            case 2: confirmReportMenu(player, selectedPlayer, "Nuker"); break; // Handle Nuker
+            case 3: confirmReportMenu(player, selectedPlayer, "Xray"); break; // Handle Xray
+            case 4: confirmReportMenu(player, selectedPlayer, "Inappropriate Build"); break; // Handle Inappropriate Build
+            case 5: cheatType(player, selectedPlayer); break; // Go back to the previous menu
+            default: player.sendMessage(`${themecolor}Rosh §j> §cInvalid selection. (§8${response.selection}§c)`);
         }
 
-    }).catch((error) => {
-        // Handle promise rejection
-        console.error(`${new Date().toISOString()} | ${error}${error.stack}`);
-        player.sendMessage(`${themecolor}Rosh §j> §cAn error occurred:\n§8${error}\n${error.stack}`);
-    });
+    }).catch(handleMenuError(player, themecolor));
 }
 
-
-
 /**
- * Lets the player select the desired other type cheat.
- * @param {Minecraft.Player} player - The player to whom the menu is shown.
- * @param {Minecraft.Player} selectedPlayer - The malicous user to report.
+ * Displays a menu for the player to select the type of "other" cheat to report.
+ * @param {Minecraft.Player} player - The player who initiated the report.
+ * @param {Minecraft.Player | string} selectedPlayer - The player being reported, either online or offline.
  */
 function otherType(player, selectedPlayer) {
 
-    // Play a sound to indicate the menu has been opened
+    // Play a sound to indicate that the menu has been opened
     player.playSound("mob.chicken.plop");
 
     const themecolor = config.themecolor;
+    const targetName = typeof selectedPlayer === "string" ? selectedPlayer : selectedPlayer.name;
 
+    // Create a menu for selecting the specific type of "other" cheat
     const menu = new MinecraftUI.ActionFormData()
-        .title(`Other - ${selectedPlayer.name}`)
+        .title(`Other - ${targetName}`)
         .button("Spam")
-        .button("Inappropriate Chat")
         .button("Teaming")
+        .button("Duping")
+        .button("Exploiting")
+        .button("Inappropriate Chat")
         .button("Inappropriate Skin")
         .button("Inappropriate Name")
-        .button("Xray")
         .button("Back");
 
+    // Show the menu and handle the player's selection
     menu.show(player).then((response) => {
         
+        if (response.canceled) return;
+
+        // Handle the selection, directing back to the previous menu if "Back" is chosen
         switch (response.selection) {
-            case 0: break;
-            case 1: break;
-            case 2: break;
-            case 3: break;
-            case 4: break;
-            case 5: break;
-            case 6: cheatType(player, selectedPlayer); break;
+            case 0: confirmReportMenu(player, selectedPlayer, "Spam"); break; // Handle Spam
+            case 1: confirmReportMenu(player, selectedPlayer, "Teaming"); break; // Handle Teaming
+            case 2: confirmReportMenu(player, selectedPlayer, "Duping"); break; // Handle Duping
+            case 3: confirmReportMenu(player, selectedPlayer, "Exploiting"); break; // Handle Exploiting
+            case 4: confirmReportMenu(player, selectedPlayer, "Inappropriate Chat"); break; // Handle Inappropriate Chat
+            case 5: confirmReportMenu(player, selectedPlayer, "Inappropriate Skin"); break; // Handle Inappropriate Skin
+            case 6: confirmReportMenu(player, selectedPlayer, "Inappropriate Name"); break; // Handle Inappropriate Name
+            case 7: cheatType(player, selectedPlayer); break; // Go back to the previous menu
+            default: player.sendMessage(`${themecolor}Rosh §j> §cInvalid selection. (§8${response.selection}§c)`);
         }
-        
-    }).catch((error) => {
-        // Handle promise rejection
-        console.error(`${new Date().toISOString()} | ${error}${error.stack}`);
-        player.sendMessage(`${themecolor}Rosh §j> §cAn error occurred:\n§8${error}\n${error.stack}`);
-    });
+
+    }).catch(handleMenuError(player, themecolor));
+}
+
+/**
+ * Displays a confirmation menu showing the selected player, the chosen cheat, and provides a text field for additional reasoning.
+ * @param {Minecraft.Player} player - The player who is submitting the report.
+ * @param {Minecraft.Player | string} selectedPlayer - The player being reported, either online or offline.
+ * @param {string} cheatType - The type of cheat the player selected.
+ */
+function confirmReportMenu(player, selectedPlayer, cheatType) {
+
+    // Play a sound to indicate that the menu has been opened
+    player.playSound("mob.chicken.plop");
+
+    const themecolor = config.themecolor;
+    const targetName = typeof selectedPlayer === "string" ? selectedPlayer : selectedPlayer.name;
+
+    // Create a menu to confirm the selected cheat and gather additional information
+    const menu = new MinecraftUI.ModalFormData()
+        .title(`Confirm Report - ${targetName}`)
+        .textField(`§aCheat: §8${cheatType}\n\n§rAdditional Reasoning (Optional):`, "§o§7Enter additional details here")
+        .submitButton("Submit Report");
+
+    // Show the menu and handle the player's input
+    menu.show(player).then((response) => {
+
+        // Process the report submission
+        const additionalReasoning = response.formValues[0];
+
+        // Add the player to the reported players list to prevent double reporting
+        player.reports.push(targetName);
+
+        const playerIsOnline = findPlayerByName(targetName);
+
+        if (playerIsOnline) {
+            // Mark the player as reported
+            member.addTag("reported");
+        }
+
+        // Log the report for the staff to review
+        tellStaff(`${themecolor}Rosh §j> §8${player.name} §ahas reported §8${targetName} §afor: §8${cheatType}§a. Additional Details: §8${additionalReasoning || "None"}§a.`);
+
+        // Notify the player that their report has been submitted
+        player.sendMessage(`${themecolor}Rosh §j> §aThank you for your report! Our staff will review it shortly. (§8${targetName}§a, §8${cheatType}${additionalReasoning ? `§a/§8${additionalReasoning}` : ""}§a)`);
+
+        // Log the report
+        data.recentLogs.push(`${timeDisplay()}§8${targetName} §chas been reported by §8${player.name}§c!`);
+
+        const reason = `${cheatType} / ${additionalReasoning}`
+
+        // Save all important aspects of the report
+        data.reports[targetName] = {
+            reportedBy: player.name,
+            date: new Date().toLocaleString(),
+            ms: Date.now(),
+            reason: reason,
+            status: "unresolved"
+        };
+
+    }).catch(handleMenuError(player, themecolor));
 }

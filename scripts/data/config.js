@@ -254,7 +254,7 @@ export default
 
         "report": {
             "enabled": true,
-            "description": "!report <player> - Notifies staff to inspect a player",
+            "description": "!report <player> <reason> - Notifies staff to inspect a player",
             "operator": false,
             "aliases": ["r", "rr", "roshreport", "rosh-report", "rep"]
         },

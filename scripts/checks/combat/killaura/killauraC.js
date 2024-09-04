@@ -11,6 +11,7 @@ export function killaura_c(player, entity) {
 
     if (!config.modules.killauraC.enabled) return;
 
+    const TIME_WINDOW = config.modules.killauraC.timeWindow;
     let THRESHOLD = config.modules.killauraC.entities || 2;
     if (THRESHOLD < 2) THRESHOLD = 2;
 
@@ -34,14 +35,14 @@ export function killaura_c(player, entity) {
 
     // Check if the number of unique hit entities exceeds the configured threshold within the time window.
     if (entitiesHit.size >= THRESHOLD) {
-        if (elapsedTime <= config.modules.killauraC.timeWindow) {
+        if (elapsedTime <= TIME_WINDOW) {
             // Flag the player if the threshold is met within the time window.
             flag(player, "Killaura", "C", "entities", `${entitiesHit.size}, ${elapsedTime}ms`);
         }
     }
 
     // Only reset the tracking data if 50 ms (1 tick) have passed.
-    if (elapsedTime > 50) { 
+    if (elapsedTime > TIME_WINDOW) { 
         player.killauraData = {
             startTime: now,
             entitiesHit: new Set()

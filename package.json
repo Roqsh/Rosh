@@ -1,0 +1,14 @@
+{
+  "dependencies": {
+    "@minecraft/common": "^1.2.0",
+    "@minecraft/debug-utilities": "^1.0.0-beta.1.21.30-preview.24",
+    "@minecraft/math": "^1.4.0",
+    "@minecraft/server": "^1.15.0-beta.1.21.30-preview.24",
+    "@minecraft/server-admin": "^1.0.0-beta.1.21.30-preview.24",
+    "@minecraft/server-gametest": "^1.0.0-beta.1.21.30-preview.24",
+    "@minecraft/server-net": "^1.0.0-beta.1.21.30-preview.24",
+    "@minecraft/server-ui": "^1.4.0-beta.1.21.30-preview.24",
+    "crypto-js": "^4.2.0",
+    "@types/crypto-js": "^4.2.2"
+  }
+}

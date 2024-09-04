@@ -54,7 +54,7 @@ export function report(message, args) {
         player.reports.push(targetName);
 
         // Inform the player about their report
-        player.sendMessage(`${themecolor}Rosh §j> §aYou have reported §8${targetName} §afor: §8${reason}§a.`);
+        player.sendMessage(`${themecolor}Rosh §j> §aThank you for your report! Our staff will review it shortly. (§8${targetName}§a, §8${reason}§a)`);
 
         // Notify other staff members about the report
         tellStaff(`${themecolor}Rosh §j> §8${player.name} §ahas reported §8${targetName} §afor: §8${reason}§a.`);
@@ -66,7 +66,9 @@ export function report(message, args) {
         data.reports[targetName] = {
             reportedBy: player.name,
             date: new Date().toLocaleString(),
-            reason: reason
+            ms: Date.now(),
+            reason: reason,
+            status: "unresolved"
         };
 
         return;
@@ -91,7 +93,7 @@ export function report(message, args) {
     member.addTag("reported");
 
     // Inform the player about their report
-    player.sendMessage(`${themecolor}Rosh §j> §aYou have reported §8${member.name} §afor: §8${reason}§a.`);
+    player.sendMessage(`${themecolor}Rosh §j> §aThank you for your report! Our staff will review it shortly. (§8${member.name}§a, §8${reason}§a)`);
 
     // Notify other staff members about the report
     tellStaff(`${themecolor}Rosh §j> §8${player.name} §ahas reported §8${member.name} §afor: §8${reason}§a.`);
@@ -103,6 +105,8 @@ export function report(message, args) {
     data.reports[targetName] = {
         reportedBy: player.name,
         date: new Date().toLocaleString(),
-        reason: reason
+        ms: Date.now(),
+        reason: reason,
+        status: "unresolved"
     };
 }

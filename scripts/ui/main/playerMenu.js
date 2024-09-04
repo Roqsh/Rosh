@@ -96,6 +96,7 @@ export function playerMenuSelected(player, selectedPlayer) {
             `Fly Mode: ${selectedPlayer.hasTag("flying") ? "§8[§a+§8]" : "§8[§c-§8]"}`
         )
         .button("Clear EnderChest")
+        .button("Report Player")
         .button("Kick Player")
         .button("Ban Player")
         .button(`${selectedPlayer.hasTag("flying") ? "Disable Fly Mode" : "Enable Fly Mode"}`)
@@ -121,10 +122,11 @@ export function playerMenuSelected(player, selectedPlayer) {
                 playerMenuSelected(player, selectedPlayer);
                 break;
 
-            case 1: kickPlayerMenu(player, selectedPlayer, 1); break;
-            case 2: banPlayerMenu(player, selectedPlayer, 1); break;
+            case 1: player.sendMessage(`${themecolor}Rosh §j> §o§aSoon... !`); break;
+            case 2: kickPlayerMenu(player, selectedPlayer, 1); break;
+            case 3: banPlayerMenu(player, selectedPlayer, 1); break;
 
-            case 3:
+            case 4:
                 if (selectedPlayer.hasTag("flying")) {
                     selectedPlayer.removeTag("flying");
                     selectedPlayer.runCommandAsync("ability @s mayfly false");
@@ -139,7 +141,7 @@ export function playerMenuSelected(player, selectedPlayer) {
                 playerMenuSelected(player, selectedPlayer);
                 break;
 
-            case 4:
+            case 5:
                 if (selectedPlayer.hasTag("frozen")) {
                     selectedPlayer.removeTag("frozen");
                     selectedPlayer.sendMessage(`§r${themecolor}Rosh §j> §aYou are no longer frozen.`);
@@ -163,7 +165,7 @@ export function playerMenuSelected(player, selectedPlayer) {
                 playerMenuSelected(player, selectedPlayer);
                 break;
 
-            case 5:
+            case 6:
                 if (selectedPlayer.hasTag("isMuted")) {
                     selectedPlayer.removeTag("isMuted");
                     selectedPlayer.sendMessage(`${themecolor}Rosh §j> §aYou are no longer muted.`);
@@ -181,7 +183,7 @@ export function playerMenuSelected(player, selectedPlayer) {
                 playerMenuSelected(player, selectedPlayer);
                 break;
 
-            case 6:
+            case 7:
                 if (selectedPlayer.isOp()) {
                     // Prevent deopping oneself
                     if (selectedPlayer.id === player.id) {
@@ -197,7 +199,7 @@ export function playerMenuSelected(player, selectedPlayer) {
                 }
                 break;
 
-            case 7:
+            case 8:
                 if (selectedPlayer.hasTag("vanish")) {
                     removeVanish(selectedPlayer, themecolor);
                 } else {
@@ -206,11 +208,11 @@ export function playerMenuSelected(player, selectedPlayer) {
                 playerMenuSelected(player, selectedPlayer);
                 break;
 
-            case 8: playerMenuTeleport(player, selectedPlayer); break;
-            case 9: playerMenuGamemode(player, selectedPlayer); break;
-            case 10: getStats(player, selectedPlayer); break;
-            case 11: summonAuraBot(player, selectedPlayer); break;
-            case 12: playerMenu(player); break;
+            case 9: playerMenuTeleport(player, selectedPlayer); break;
+            case 10: playerMenuGamemode(player, selectedPlayer); break;
+            case 11: getStats(player, selectedPlayer); break;
+            case 12: summonAuraBot(player, selectedPlayer); break;
+            case 13: playerMenu(player); break;
         }
 
     }).catch((error) => {

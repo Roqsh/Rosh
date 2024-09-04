@@ -8,6 +8,7 @@ import { punishMenu } from "./main/punishMenu.js";
 import { settingsMenu } from "./main/settingsMenu.js";
 import { checksMenu } from "./main/checksMenu.js";
 import { playerMenu, playerMenuSelected } from "./main/playerMenu.js";
+//import { reportMenu } from "./main/reportMenu.js"
 import { worldMenu } from "./main/worldMenu.js";
 import { logsMenu } from "./main/logsMenu.js";
 import { debugMenu } from "./main/debugMenu.js";
@@ -22,6 +23,8 @@ export function mainMenu(player) {
     player.playSound("mob.chicken.plop");
 
     const themecolor = config.themecolor;
+    const onlinePlayers = [...world.getAllPlayers()].length;
+    const pendingReports = Object.values(data.reports).filter(report => report.status === "unresolved").length;
 
     // Create the main menu with all sub-menus
     const menu = new MinecraftUI.ActionFormData()
@@ -29,7 +32,8 @@ export function mainMenu(player) {
         .button("Punish Menu")
         .button("Settings")
         .button("Checks")
-        .button(`Manage Players\n§8§o${[...world.getAllPlayers()].length} online`)
+        .button(`Manage Players\n§8§o${onlinePlayers} online`)
+        .button(`Manage Reports\n§8§o${pendingReports} pending`)
         .button("Server Options")
         .button("Logs")
         .button("Debug Tools");
@@ -37,14 +41,18 @@ export function mainMenu(player) {
     // Show the menu to the player and handle the response based on the player's selection
     menu.show(player).then((response) => {
 
+        if (response.canceled) return;
+
         switch (response.selection) {
             case 0: punishMenu(player); break;
             case 1: settingsMenu(player); break;
             case 2: checksMenu(player); break;
             case 3: playerMenu(player); break;
-            case 4: worldMenu(player); break;
-            case 5: logsMenu(player); break;
-            case 6: debugMenu(player); break;
+            case 4: player.sendMessage(`${themecolor}Rosh §j> §o§aSoon... !`); break; // reportMenu(player); break;
+            case 5: worldMenu(player); break;
+            case 6: logsMenu(player); break;
+            case 7: debugMenu(player); break;
+            default: player.sendMessage(`${themecolor}Rosh §j> §cInvalid selection. (§8${response.selection}§c)`);
         }
 
     }).catch((error) => {

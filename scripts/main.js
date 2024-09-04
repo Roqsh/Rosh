@@ -724,6 +724,10 @@ world.afterEvents.playerSpawn.subscribe((playerJoin) => {
         player.addTag("reported");
     }
 
+    if (!player.name in data.reports && player.hasTag("reported")) {
+        player.removeTag("reported");
+    }
+
 	player.blocksBroken = 0;
 	player.lastTime = Date.now();
     player.cps = 0;
