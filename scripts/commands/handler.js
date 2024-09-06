@@ -15,6 +15,7 @@ import { unfreeze } from "./punishments/unfreeze.js";
 
 // Importing Tools
 import { spectate } from "./tools/spectate.js";
+import { report } from "./tools/report.js";
 import { vanish } from "./tools/vanish.js";
 import { fly } from "./tools/fly.js";
 import { invsee } from "./tools/invsee.js";
@@ -34,7 +35,6 @@ import { stats } from "./staff/stats.js";
 import { logs } from "./staff/logs.js";
 import { banlist } from "./staff/banlist.js";
 import { resetwarns } from "./staff/resetwarns.js";
-import { report } from "./staff/report.js";
 import { tag } from "./staff/tag.js";
 
 // Importing Information Commands
@@ -140,6 +140,7 @@ function runCommand(msg, commandName, args) {
                 case "freeze": freeze(message, args); break;
                 case "unfreeze": unfreeze(message, args); break;
                 case "spectate": spectate(message, args); break;
+                case "report": report(message, args); break;
                 case "vanish": vanish(message); break;
                 case "fly": fly(message, args); break;
                 case "invsee": invsee(message, args); break;
@@ -157,7 +158,6 @@ function runCommand(msg, commandName, args) {
                 case "logs": logs(message, args); break;
                 case "banlist": banlist(message, args); break;
                 case "resetwarns": resetwarns(message, args); break;
-                case "report": report(message, args); break;
                 case "tag": tag(message, args); break;
                 case "help": help(message); break;
                 case "about": about(message, args); break;

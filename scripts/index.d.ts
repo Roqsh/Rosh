@@ -77,7 +77,7 @@ declare module "@minecraft/server" {
          * @Rosh
          * @remarks This property is a placeholder until we get an official version in the API.
          */
-        setCps(cpsValue: number),
+        setCps(cpsValue: number): void,
 
         /**
          * A helper variable for calculating the attacks per second of a player.
@@ -85,7 +85,11 @@ declare module "@minecraft/server" {
          * @Rosh
          * @remarks This property is a placeholder until we get an official version in the API.
          */
-        cps: number,
+        clicks: number,
+        
+        autotoolSwitchDelay: number,
+        blocksBroken: number,
+        startBreakTime: number,
 
         /**
          * A variable to track time intervals in ms. This property gets updated every 20 ticks using `Date.now()`.
@@ -100,17 +104,6 @@ declare module "@minecraft/server" {
          * @remarks This property is a placeholder until we get an official version in the API.
          */
 		lastSelectedSlot: number,
-        
-        autotoolSwitchDelay: number,
-        blocksBroken: number,
-        startBreakTime: number,
-
-        /**
-         * Stores a list of (potential malicious) player names a player has reported.
-         * @Rosh
-         * @remarks This property is a placeholder until we get an official version in the API.
-         */
-		reports: Array<String>,
 		
         /**
          * Stores a player's location of the last tick.
@@ -126,6 +119,13 @@ declare module "@minecraft/server" {
          * @remarks This property is a placeholder until we get an official version in the API.
          */
 		lastGoodPosition: Vector3
+
+        /**
+         * Stores a list of (potential malicious) player names a player has reported.
+         * @Rosh
+         * @remarks This property is a placeholder until we get an official version in the API.
+         */
+		reports: Array<String>,
 	}
 
 	interface Entity {

@@ -3,7 +3,7 @@ import { EvictingList } from "../../../utils/math.js";
 import config from "../../../data/config.js";
 import { flag } from "../../../util.js";
 
-// Map to store each player's CPS history
+// Map to store each player's CPS history for AutoClicker/A
 const playerCpsHistory = new Map();
 
 /**
@@ -14,20 +14,21 @@ export function autoclicker_a(player) {
     
     if (!config.modules.autoclickerA.enabled) return;
 
-    const SAMPLES = config.modules.autoclickerA.samples;
-    const MAX_CPS = config.modules.autoclickerA.cps;
-    const MIN_HIGH_CPS_EVENTS = config.modules.autoclickerA.threshold;
-    const MAX_TIME_DIFF = config.modules.autoclickerA.maxTimeDiff;
+    const SAMPLES = config.modules.autoclickerA.samples; // Number of CPS samples to store
+    const MAX_CPS = config.modules.autoclickerA.cps; // Number of CPS values to consider as cheating
+    const MIN_HIGH_CPS_EVENTS = config.modules.autoclickerA.threshold; // Maximum amount of exceeding the allowed CPS threshold before punishment
+    const MAX_TIME_DIFF = config.modules.autoclickerA.maxTimeDiff; // Time difference between two CPS values that exceeded the theshold to consider legitamite
 
-    // Get or create the player's EvictingList for CPS history
+    // Initialize CPS history for the player if not already present
     if (!playerCpsHistory.has(player.name)) {
         playerCpsHistory.set(player.name, new EvictingList(SAMPLES));
     }
     const cpsHistory = playerCpsHistory.get(player.name);
 
-    // Add the current CPS to the history with the current timestamp
+    // Add the current CPS with its timestamp to the player's history
     const currentTime = Date.now();
-    cpsHistory.add(currentTime, player.getCps());
+    const currentCps = player.getCps();
+    cpsHistory.add(currentTime, currentCps);
 
     // Retrieve all the stored CPS values along with their timestamps
     const cpsValues = cpsHistory.getAll();

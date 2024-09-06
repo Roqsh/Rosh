@@ -167,9 +167,7 @@ export class Vector3D {
 
 /**
  * The BoundingBox class represents a three-dimensional rectangular area in space, 
- * defined by minimum and maximum coordinates. It provides methods for checking 
- * whether points or other bounding boxes intersect with it, and includes functionality 
- * to dynamically adjust its size and check player positions based on their current state.
+ * defined by minimum and maximum coordinates.
  */
 export class BoundingBox {
 
@@ -405,7 +403,7 @@ export class Statistics {
      * @param {number[]} data - The dataset to calculate the standard deviation for.
      * @returns {number} The standard deviation value.
      */
-    static getStandardDeviation(data) {
+    static getDeviation(data) {
         const variance = this.getVariance(data);
         return Math.sqrt(variance);
     }
@@ -440,7 +438,7 @@ export class Statistics {
      */
     static getZScoreOutliers(data) {
         const mean = data.reduce((sum, val) => sum + val, 0) / data.length;
-        const stdDev = this.getStandardDeviation(data);
+        const stdDev = this.getDeviation(data);
         
         const zScores = data.map(value => (value - mean) / stdDev);
         const outliers = data.filter((_, i) => Math.abs(zScores[i]) > 2); // Z-score > 2 as a threshold
@@ -495,6 +493,31 @@ export class Statistics {
     }
 
     /**
+     * Calculates the Pearson correlation coefficient between two datasets.
+     * @param {number[]} x - The first dataset.
+     * @param {number[]} y - The second dataset.
+     * @returns {number} The Pearson correlation coefficient, or NaN if it cannot be computed.
+     */
+    static getCorrelation(x, y) {
+        // Check for equal length and non-empty arrays
+        if (x.length !== y.length || x.length === 0) {
+            return NaN;
+        }
+
+        const n = x.length;
+        const sumX = x.reduce((sum, val) => sum + val, 0);
+        const sumY = y.reduce((sum, val) => sum + val, 0);
+        const sumXY = x.reduce((sum, val, i) => sum + val * y[i], 0);
+        const sumXSquare = x.reduce((sum, val) => sum + val * val, 0);
+        const sumYSquare = y.reduce((sum, val) => sum + val * val, 0);
+
+        const numerator = n * sumXY - sumX * sumY;
+        const denominator = Math.sqrt((n * sumXSquare - sumX * sumX) * (n * sumYSquare - sumY * sumY));
+
+        return denominator === 0 ? 0 : numerator / denominator;
+    }
+    
+    /**
      * Calculates the Greatest Common Divisor (GCD) of two integers.
      * This function returns the absolute value of the GCD to ensure the result is non-negative.
      * @param {number} a - The first integer.
@@ -521,7 +544,7 @@ export class Statistics {
      * @param {number} denominator - The denominator of the fraction.
      * @returns {{numerator: number, denominator: number}} - The simplified fraction.
      */
-    static simplifyFraction(numerator, denominator) {
+    static getSimplifiedFraction(numerator, denominator) {
 
         const gcd = this.getAbsoluteGcd(numerator, denominator);
 
@@ -552,10 +575,10 @@ export class Statistics {
     }
 
     /**
-     * Checks if there are more than a specified number of consecutive duplicate values in an array.
+     * Checks if there are more than a specified number of consecutive duplicate values in an array
      * @param {number[]} arr - The array of numbers to check.
      * @param {number} threshold - The maximum number of consecutive duplicates allowed.
-     * @returns {boolean} True if the number of consecutive duplicates exceeds the threshold, false otherwise.
+     * @returns {number} The index where the threshold is met, or NaN if not met.
      */
     static checkConsecutiveDuplicates(arr, threshold) {
 
@@ -565,13 +588,16 @@ export class Statistics {
             // If the current element is equal to the previous one, increment the duplicate count
             if (arr[i] === arr[i - 1]) {
                 duplicateCount++;
-                if (duplicateCount >= threshold) return true;
+                if (duplicateCount >= threshold) {
+                    // Return the index where duplicates start
+                    return i - duplicateCount;
+                }
             } else {
                 duplicateCount = 0;
             }
         }
 
-        return false;
+        return NaN;
     }
 }
 

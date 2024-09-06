@@ -34,6 +34,7 @@ function calculateSpeed(velocity) {
  * @param {Minecraft.Player} player - The player to check.
  * @param {Object} lastPosition - The player's last recorded position.
  * @param {Number} value - The value used for lag adjustment. (1=normal)
+ * @helper Thank you '@yellowworld777' for the original detection idea! <3
  */
 export function timer_a(player, lastPosition, value) {
 

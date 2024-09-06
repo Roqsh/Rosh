@@ -2,16 +2,16 @@
 	"format_version": 2,
 	"header": {
 		"name": "§r§uRosh§r",
-		"description": "\n§r§8v1.24",
+		"description": "\n§r§8v1.25 Dev",
 		"uuid": "2d5cff7f-cd1a-4b18-87f7-4f73b8198404",
-		"version": [1, 2, 4],
+		"version": [1, 2, 5],
 		"min_engine_version": [1, 21, 0]
 	},
 	"metadata": {
 		"authors": [
 			"Rosh / rqosh",
 			"NT AUTHORITY/hpwd / MrDiamond64",
-			"Dream23322 / 4urxra",
+			"4urxra / Dream23322",
 			"yellowworld777"
 		],
 		"url": "https://discord.gg/FNrJDvG95r"

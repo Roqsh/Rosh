@@ -131,6 +131,13 @@ export default
             "aliases": ["spec"]
         },
 
+        "report": {
+            "enabled": true,
+            "description": "!report <player> <reason> - Notifies staff to inspect a player",
+            "operator": false,
+            "aliases": ["r", "rr", "roshreport", "rosh-report", "rep"]
+        },
+
         "vanish": {
             "enabled": true,
             "description": "!vanish - Sets you in spectator mode",
@@ -250,13 +257,6 @@ export default
             "description": "!resetwarns <player> - Resets all flags of a player",
             "operator": true,
             "aliases": ["rw"]
-        },
-
-        "report": {
-            "enabled": true,
-            "description": "!report <player> <reason> - Notifies staff to inspect a player",
-            "operator": false,
-            "aliases": ["r", "rr", "roshreport", "rosh-report", "rep"]
         },
 
         "tag": {
@@ -555,7 +555,7 @@ export default
             "enabled": true,
             "description": "Checks for suspiciously low deviation or duplicate CPS.",   
             "samples": 8,
-            "maxDuplicates": 2,
+            "maxDuplicates": 1,
             "minStdDev": 0.5,
             "minAverageCps": 7,
             "punishment": "kick",
@@ -565,7 +565,7 @@ export default
 
         "autoclickerC": {
             "enabled": true,
-            "description": "Checks for a variety of suspicious integer CPS value changes.",
+            "description": "Checks for a variety of suspicious integer CPS values.",
             "samples": 12,
             "minIntChanges": 3,
             "minAverageCps": 6,
@@ -579,9 +579,21 @@ export default
             "description": "Detects suspicious periodic spikes in CPS.",
             "samples": 5,
             "spikeThreshold": 5,
-            "minAverageCps": 6,
+            "minAverageCps": 7,
             "punishment": "kick",
             "punishmentLength": "2d",
+            "minVlbeforePunishment": 5,
+        },
+
+        "autoclickerE": {
+            "enabled": true,
+            "description": "Detects oscillating CPS patterns.",
+            "samples": 10,
+            "minimumPatternFrequency": 0.75,
+            "oscillationThreshold": 1.5,
+            "minAverageCps": 9,
+            "punishment": "kick",
+            "punishmentLength": "7d",
             "minVlbeforePunishment": 5,
         },
 

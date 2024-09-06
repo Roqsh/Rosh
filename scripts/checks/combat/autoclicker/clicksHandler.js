@@ -12,10 +12,10 @@ import { debug } from "../../../util";
 export function clicksHandler(player, tick) {
 
     // Perform CPS calculation at the end of a full second (i.e., 20 ticks) if the player has recorded any clicks
-    if (tick === 20 && player.cps > 0) { 
+    if (tick === 20 && player.clicks > 0) { 
 
         // Calculate CPS as the number of clicks divided by the elapsed time in seconds
-        const cps = player.cps / ((Date.now() - player.lastTime) / 1000); // 1000ms = 1 second = 20 ticks
+        const cps = player.clicks / ((Date.now() - player.lastTime) / 1000); // 1000ms = 1 second = 20 ticks
 
         // Output the calculated CPS for debugging purposes
         debug(player, "Cps", cps, "cps");

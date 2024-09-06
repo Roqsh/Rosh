@@ -1,9 +1,9 @@
 import * as Minecraft from "@minecraft/server";
-import { Statistics, EvictingList } from "../../../utils/math.js";
+import { EvictingList, Statistics } from "../../../utils/math.js";
 import config from "../../../data/config.js";
 import { flag } from "../../../util.js";
 
-// Map to store each player's CPS history
+// Map to store each player's CPS history for AutoClicker/D
 const playerCpsHistoryD = new Map();
 
 /**
@@ -14,31 +14,31 @@ export function autoclicker_d(player) {
 
     if (!config.modules.autoclickerD.enabled) return;
 
-    const SAMPLES = config.modules.autoclickerD.samples; // Number of CPS samples to consider
+    const SAMPLES = config.modules.autoclickerD.samples; // Number of CPS samples to store
     const SPIKE_THRESHOLD = config.modules.autoclickerD.spikeThreshold; // Threshold for detecting CPS spikes
     const MIN_AVERAGE_CPS = config.modules.autoclickerD.minAverageCps; // Minimum average CPS to proceed with checks
 
-    // Initialize history if it doesn't exist for this player
+    // Initialize CPS history for the player if not already present
     if (!playerCpsHistoryD.has(player.name)) {
         playerCpsHistoryD.set(player.name, new EvictingList(SAMPLES));
     }
-
     const cpsHistory = playerCpsHistoryD.get(player.name);
 
-    // Retrieve current CPS
+    // Add the current CPS with its timestamp to the player's history
+    const currentTime = Date.now();
     const currentCps = player.getCps();
-    cpsHistory.add(Date.now(), currentCps);
+    cpsHistory.add(currentTime, currentCps);
 
-    // Retrieve all stored entries (timestamps and CPS values)
+    // Retrieve all stored entries (CPS values and timestamps)
     const allEntries = cpsHistory.getAll();
     const cpsValues = allEntries.map(entry => entry.value);
     const timestamps = allEntries.map(entry => entry.key);
     const averageCps = Statistics.getMean(cpsValues);
 
-    // If we don't have enough data yet, return early
+    // Ensure we have enough samples before performing checks
     if (cpsValues.length < 3) return;
 
-    // If the average CPS is below the minimum threshold, return early
+    // Check if the average CPS meets the minimum threshold
     if (averageCps < MIN_AVERAGE_CPS) return;
 
     for (let i = 0; i < cpsValues.length; i++) {

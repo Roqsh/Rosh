@@ -1,5 +1,5 @@
 import * as Minecraft from "@minecraft/server";
-import { Statistics, EvictingList } from "../../../utils/math.js";
+import { EvictingList, Statistics } from "../../../utils/math.js";
 import config from "../../../data/config.js";
 import { flag } from "../../../util.js";
 
@@ -7,36 +7,38 @@ import { flag } from "../../../util.js";
 const playerCpsHistoryC = new Map();
 
 /**
- * Checks for a variety of suspicious integer CPS value changes.
+ * Checks for a variety of suspicious integer CPS values.
  * @param {Minecraft.Player} player - The player to check.
  */
 export function autoclicker_c(player) {
     
     if (!config.modules.autoclickerC.enabled) return;
 
-    const SAMPLES = config.modules.autoclickerC.samples; // Number of CPS samples to consider
+    const SAMPLES = config.modules.autoclickerC.samples; // Number of CPS samples to store
     const MIN_INT_CHANGES = config.modules.autoclickerC.minIntChanges; // The minimum number of integer changes to flag
     const MIN_AVERAGE_CPS = config.modules.autoclickerC.minAverageCps; // Minimum average CPS to proceed with checks
 
-    // Get or create the player's EvictingList for CPS history
+    // Initialize CPS history for the player if not already present
     if (!playerCpsHistoryC.has(player.name)) {
         playerCpsHistoryC.set(player.name, new EvictingList(SAMPLES));
     }
     const cpsHistory = playerCpsHistoryC.get(player.name);
 
-    // Add the current CPS to the history
-    cpsHistory.add(Date.now(), player.getCps());
+    // Add the current CPS with its timestamp to the player's history
+    const currentTime = Date.now();
+    const currentCps = player.getCps();
+    cpsHistory.add(currentTime, currentCps);
 
-    // Retrieve all stored CPS values
+    // Retrieve all stored CPS entries (CPS values)
     const cpsValues = cpsHistory.getAll().map(entry => entry.value);
 
-    // If we don't have enough data yet, return early
+    // Ensure we have enough samples before performing checks
     if (cpsValues.length < SAMPLES) return;
 
     // Calculate the average CPS
     const averageCps = Statistics.getMean(cpsValues);
 
-    // If the average CPS is below the minimum threshold, return early
+    // Check if the average CPS meets the minimum threshold
     if (averageCps < MIN_AVERAGE_CPS) return;
 
     // Filter out integer CPS values and calculate the differences between consecutive values
@@ -60,18 +62,21 @@ export function autoclicker_c(player) {
     // Flag if there are too many integer CPS values
     if (integerCount >= MIN_INT_CHANGES) {
         flag(player, "AutoClicker", "C", "integers", integerCpsValues.join(', '));
+        cpsHistory.clear();
         return;
     }
 
     // Flag if there are too many integer CPS differences
     if (integerChangeCount >= MIN_INT_CHANGES) {
         flag(player, "AutoClicker", "C", "integer-changes", integerCpsDifferences.join(', '));
+        cpsHistory.clear();
         return;
     }
 
     // Check if the standard deviation is an integer and flag if so
-    const stdDev = Statistics.getStandardDeviation(cpsValues);
+    const stdDev = Statistics.getDeviation(cpsValues);
     if (Number.isInteger(stdDev)) {
         flag(player, "AutoClicker", "C", "integer-deviation", stdDev);
+        cpsHistory.clear();
     }
 }

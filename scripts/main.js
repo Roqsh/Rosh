@@ -79,6 +79,8 @@ import { autoclicker_a } from "./checks/combat/autoclicker/autoclickerA.js";
 import { autoclicker_b } from "./checks/combat/autoclicker/autoclickerB.js";
 import { autoclicker_c } from "./checks/combat/autoclicker/autoclickerC.js";
 import { autoclicker_d } from "./checks/combat/autoclicker/autoclickerD.js";
+import { autoclicker_e } from "./checks/combat/autoclicker/autoclickerE.js";
+import { autoclicker_f } from "./checks/combat/autoclicker/autoclickerF.js";
 //import { aim_a } from "./checks/combat/aim/aimA.js";
 import { aim_b } from "./checks/combat/aim/aimB.js";
 import { aim_c } from "./checks/combat/aim/aimC.js";
@@ -397,13 +399,14 @@ system.runInterval(() => {
 			//aim_d(player);
 			//aim_e(player);
 		}
-
-		if (clicksHandler(player, tick)) {
+        
+        if (clicksHandler(player, tick)) {
             autoclicker_a(player);
             autoclicker_b(player);
             autoclicker_c(player);
             autoclicker_d(player);
-		}
+            autoclicker_e(player);
+        }
 
 		//TODO: Move them into their own category [Patched, it will be disabled by default]
         
@@ -491,7 +494,7 @@ system.runInterval(() => {
 		
 		if (tick >= 20) {
             player.lastTime = Date.now();
-            player.cps = 0;
+            player.clicks = 0;
             setScore(player, "tickValue", 0);
 			const currentCounter = getScore(player, "tick_counter", 0);
 			setScore(player, "tick_counter", currentCounter + 1);
@@ -730,7 +733,7 @@ world.afterEvents.playerSpawn.subscribe((playerJoin) => {
 
 	player.blocksBroken = 0;
 	player.lastTime = Date.now();
-    player.cps = 0;
+    player.clicks = 0;
 	player.reports = [];
 	if (player.isOnGround) player.lastGoodPosition = player.location;
 
@@ -787,7 +790,7 @@ world.afterEvents.entityHitEntity.subscribe(({ hitEntity: entity, damagingEntity
 		player.addTag("attacking");
 	}
     
-    player.cps++;
+    player.clicks++;
 
     hitbox_a(player, entity);
     hitbox_b(player, entity);
@@ -898,7 +901,7 @@ if ([...world.getPlayers()].length >= 1) {
 
 		player.blocksBroken = 0;
 		player.lastTime = Date.now();
-        player.cps = 0;
+        player.clicks = 0;
 		player.reports = [];
         
 		if (player.isOnGround) {

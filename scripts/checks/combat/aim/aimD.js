@@ -1,6 +1,6 @@
 import config from "../../../data/config.js";
 import { flag, debug } from "../../../util";
-import { getAverage, getStandardDeviation } from "../../../utils/math";
+import { Statistics } from "../../../utils/math";
 import EvictingList from "../../../utils/data/evlist.js";
 
 const data = new Map();
@@ -41,11 +41,11 @@ export function aim_d(player) {
 
             if (yASamples.isFull() && pASamples.isFull()) {
 
-                const yawAccelAverage = getAverage(yASamples);
-                const pitchAccelAverage = getAverage(pASamples);
+                const yawAccelAverage = Statistics.getMean(yASamples);
+                const pitchAccelAverage = Statistics.getMean(pASamples);
 
-                const yawAccelDeviation = getStandardDeviation(yASamples);
-                const pitchAccelDeviation = getStandardDeviation(pASamples);
+                const yawAccelDeviation = Statistics.getDeviation(yASamples);
+                const pitchAccelDeviation = Statistics.getDeviation(pASamples);
 
                 debug(player, `Yaw: ${yawAccelAverage.toFixed(4)} Pitch: ${pitchAccelAverage.toFixed(5)}`, "aim-d");
 
