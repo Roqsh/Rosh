@@ -1,45 +1,41 @@
+import * as Minecraft from "@minecraft/server";
 import config from "../../../data/config.js";
-import { flag, aroundAir, hVelocity } from "../../../util";
+import { flag, aroundAir, inAir } from "../../../util.js";
 
-const fly_b_map = new Map();
+const flyDetectionCounter = new Map();
 
 /**
- * Checks not going in the predicted direction. (same y lvl)
- * @name fly_b
- * @param {player} player - The player to check
- * @remarks FIXME: When having the fly ability it false flags (`ability <player> mayfly true`)
+ * Checks for no vertical movement.
+ * @param {Minecraft.Player} player - The player to check.
+ * @remarks 
+ * - May produce false positives if the player has the fly ability in Education Edition (`ability <player> mayfly true`).
+ * - May produce false positives if the player is repeatedly teleported to the same y-level mid-air.
  */
 export function fly_b(player) {
 
-    if(config.modules.flyB.enabled && aroundAir(player)) {
+    if (!config.modules.flyB.enabled) return;
 
-        if (
-            player.getGameMode() === "creative" || 
-            player.getGameMode() === "spectator" ||
-            player.hasTag("elytra") || 
-            player.hasTag("flying") ||
-            player.hasTag("placing") ||
-            player.isFlying ||
-            player.isOnGround
-        ) return;
+    // Exit early if the player is not in a state that warrants flight detection
+    if (
+        !aroundAir(player) ||
+        !inAir(player) ||
+        player.isDead() ||
+        player.isGliding ||
+        player.isFlying ||
+        player.isOnGround
+    ) return;
 
-        const velocityY = player.getVelocity().y;
+    const verticalVelocity = player.getVelocity().y;
 
-        if(fly_b_map.has(player)) {
+    // Retrieve the current counter value or initialize it
+    const counter = flyDetectionCounter.get(player) || 0;
 
-            const count = fly_b_map.get(player);
-            
-            if(count >= config.modules.flyB.amount && velocityY == 0) {
-                flag(player, "Fly", "B", "yVel", velocityY);
-            }
-
-            if(velocityY == 0) {
-                fly_b_map.set(player, count + 1);
-            } else {
-                fly_b_map.set(player, 0);
-            }
-        } else {
-            fly_b_map.set(player, velocityY == 0 ? 1 : 0);
+    if (verticalVelocity === 0) {
+        if (counter >= config.modules.flyB.threshold) {
+            flag(player, "Fly", "B", "yVel", verticalVelocity);
         }
+        flyDetectionCounter.set(player, counter + 1);
+    } else {
+        flyDetectionCounter.set(player, 0);
     }
 }

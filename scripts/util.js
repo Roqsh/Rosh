@@ -1280,10 +1280,12 @@ export function aroundAir(player) {
 
 
 /**
- * Returns true if a player is in air (Refactored Paradox Anticheat Code)
- * @param {Minecraft.Player} player - The player that you are checking
- * @example if(inAir(player)) flag(player, "Movement', "A")
- * @remarks Flags for Movement/A if a player is in air
+ * Returns true if a player is in air. (Refactored Paradox Anticheat Code)
+ * @param {Minecraft.Player} player - The player to check.
+ * @returns {boolean} True if the player is in air, false otherwise.
+ * @example 
+ * if (inAir(player)) flag(player, "Movement", "A")
+ * // Flags for Movement/A if a player is in air
  */
 export function inAir(player) {
     // Check if player is an object

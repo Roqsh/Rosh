@@ -386,9 +386,20 @@ export default
 
         "invalidsprintA": {
             "enabled": true,
-            "description": "Checks for sprinting while having the blindness effect",
+            "description": "Checks for sprinting in invalid directions. (Omni-Sprint)",
+            "angle_threshold": 75,
+            "buffer_threshold": 6,
             "punishment": "kick",
-            "minVlbeforePunishment": 4
+            "punishmentLength": "1d",
+            "minVlbeforePunishment": 7
+        },
+
+        "invalidsprintB": {
+            "enabled": true,
+            "description": "Checks for sprinting while having the blindness effect.",
+            "punishment": "kick",
+            "punishmentLength": "7d",
+            "minVlbeforePunishment": 6
         },
 
         "invalidjumpA": {
@@ -448,20 +459,19 @@ export default
 
         "flyB": {
             "enabled": true,
-            "description": "Checks for a player not going into the predicted location (y)",
+            "description": "Checks for no vertical movement.",
+            "threshold": 8,
             "punishment": "kick",
-            "amount": 4,
-            "punishmentLength": "5m",
-            "minVlbeforePunishment": 5
+            "punishmentLength": "7d",
+            "minVlbeforePunishment": 8
         },
 
         "flyC": {
             "enabled": true,
             "description": "Checks for invalid Y movements",
-            "fallDistance": -1,
             "punishment": "kick",
-            "punishmentLength": "1m",
-            "minVlbeforePunishment": 3
+            "punishmentLength": "7d",
+            "minVlbeforePunishment": 8
         },
 
         "flyD": {

@@ -44,7 +44,7 @@ export function timer_a(player, lastPosition, value) {
         return;  // Return early since we can't perform the check yet
     }
 
-    if (!config.modules.timerA.enabled) return;
+    if (!config.modules.timerA.enabled || player.isDead()) return;
 
     // Early return if player has specific tags that should bypass the timer check
     const bypassTags = ["riding", "placing"];

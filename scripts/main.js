@@ -1,14 +1,15 @@
 import * as Minecraft from "@minecraft/server";
-import { Player, system, world, ItemTypes, ItemStack } from "@minecraft/server";
+import { system, world, ItemTypes, ItemStack } from "@minecraft/server";
 import config from "./data/config.js";
 import data from "./data/data.js";
+import { initializePlayerPrototypes } from "./data/prototype.js";
 import { tag_system } from "./utils/gameUtil.js";
-import { flag, ban, parseTime, timeDisplay, getScore, setScore, tellStaff, getSpeed, aroundAir, debug } from "./util.js";
+import { flag, ban, parseTime, timeDisplay, getScore, setScore, tellStaff, getSpeed, aroundAir, inAir, debug } from "./util.js";
 import { commandHandler } from "./commands/handler.js";
-import { mainMenu } from "./ui/mainMenu.js";
+import { mainMenu, rateLimit } from "./ui/mainMenu.js";
 import { playerMenuSelected } from "./ui/main/playerMenu.js";
 
-// Misc
+// Import Miscellaneous checks
 import { badpackets_a } from "./checks/misc/badpackets/badpacketsA.js";
 import { badpackets_b } from "./checks/misc/badpackets/badpacketsB.js";
 import { badpackets_c } from "./checks/misc/badpackets/badpacketsC.js";
@@ -24,7 +25,7 @@ import { namespoof_a } from "./checks/misc/namespoof/namespoofA.js";
 import { namespoof_b } from "./checks/misc/namespoof/namespoofB.js";
 import { timer_a } from "./checks/misc/timer/timerA.js";
 
-// Movement
+// Import Movement related checks
 import { speed_a } from "./checks/movement/speed/speedA.js";
 import { speed_b } from "./checks/movement/speed/speedB.js";
 import { motion_a } from "./checks/movement/motion/motionA.js";
@@ -41,11 +42,12 @@ import { strafe_b } from "./checks/movement/strafe/strafeB.js";
 import { noslow_a } from "./checks/movement/noslow/noslowA.js";
 import { noslow_b } from "./checks/movement/noslow/noslowB.js";
 import { sprint_a } from "./checks/movement/sprint/sprintA.js";
+import { sprint_b } from "./checks/movement/sprint/sprintB.js";
 import { invmove_a } from "./checks/movement/invmove/invmoveA.js";
 import { jump_a } from "./checks/movement/jump/jumpA.js";
 import { jump_b } from "./checks/movement/jump/jumpB.js";
 
-// World
+// Import World related checks
 import { nuker_a } from "./checks/world/nuker/nukerA.js";
 import { nuker_b } from "./checks/world/nuker/nukerB.js";
 import { nuker_c } from "./checks/world/nuker/nukerC.js";
@@ -59,13 +61,13 @@ import { scaffold_e } from "./checks/world/scaffold/scaffoldE.js";
 import { scaffold_f, scaffold_f_dependency } from "./checks/world/scaffold/scaffoldF.js";
 import { scaffold_g } from "./checks/world/scaffold/scaffoldG.js";
 import { scaffold_h, dependencies_h } from "./checks/world/scaffold/scaffoldH.js";
-//import { scaffold_i } from "./checks/world/scaffold/scaffoldI.js";
+// import { scaffold_i } from "./checks/world/scaffold/scaffoldI.js";
 import { scaffold_j } from "./checks/world/scaffold/scaffoldJ.js";
 import { scaffold_k } from "./checks/world/scaffold/scaffoldK.js";
 import { tower_a } from "./checks/world/tower/towerA.js";
 import { tower_b } from "./checks/world/tower/towerB.js";
 
-// Combat
+// Import Combat related checks
 import { killaura_a } from "./checks/combat/killaura/killauraA.js";
 import { killaura_b } from "./checks/combat/killaura/killauraB.js";
 import { killaura_c } from "./checks/combat/killaura/killauraC.js";
@@ -80,24 +82,14 @@ import { autoclicker_b } from "./checks/combat/autoclicker/autoclickerB.js";
 import { autoclicker_c } from "./checks/combat/autoclicker/autoclickerC.js";
 import { autoclicker_d } from "./checks/combat/autoclicker/autoclickerD.js";
 import { autoclicker_e } from "./checks/combat/autoclicker/autoclickerE.js";
-import { autoclicker_f } from "./checks/combat/autoclicker/autoclickerF.js";
-//import { aim_a } from "./checks/combat/aim/aimA.js";
-import { aim_b } from "./checks/combat/aim/aimB.js";
-import { aim_c } from "./checks/combat/aim/aimC.js";
-// FIXME:
-//import { aim_d } from "./checks/combat/aim/aimD.js";
-//import { aim_e } from "./checks/combat/aim/aimE.js";
+import { rotationHandler } from "./checks/combat/aim/rotationHandler.js";
+// import { aim_a } from "./checks/combat/aim/aimA.js";
+// import { aim_b } from "./checks/combat/aim/aimB.js";
+// import { aim_c } from "./checks/combat/aim/aimC.js";
+// import { aim_d } from "./checks/combat/aim/aimD.js";
+// import { aim_e } from "./checks/combat/aim/aimE.js";
 
-
-// Adding methods to the prototype
-Player.prototype.getCps = function() {
-    return this.cps || 0;  // Return 0 if cps is undefined
-};
-
-Player.prototype.setCps = function(cpsValue) {
-    this.cps = cpsValue;
-};
-
+initializePlayerPrototypes();
 
 let tps = 20;
 let lagValue = 1;
@@ -316,8 +308,6 @@ system.runInterval(() => {
 		debug(player, "Speed", speed, "speed");
 		debug(player, "Ticks", `${tick <= 20 ? `§a` : `§c`}${tick}`, "ticks");
         debug(player, "YVelocity", velocity.y, "devvelocity");
-		debug(player, "XRotation", rotation.x, "devrotationx");
-		debug(player, "YRotation", rotation.y, "devrotationy");
 
         if (player.hasTag("tps")) {
             player.onScreenDisplay.setActionBar(`${themecolor}Debug §j> Tps: §8${tps}`);
@@ -347,6 +337,8 @@ system.runInterval(() => {
 		if (player.isOnGround) {			
 		    player.lastGoodPosition = player.location;			
 		}
+
+        // player.onScreenDisplay.setActionBar(`${themecolor}Debug §j> §8In Air: ${inAir(player) ? "§aTrue" : "§cFalse"}§8, §8Surrounded: ${aroundAir(player) ? "§aTrue" : "§cFalse"}`);
 
 		if (config.generalModules.fly) {
 			fly_a(player);
@@ -387,18 +379,19 @@ system.runInterval(() => {
 			noslow_a(player);
 			noslow_b(player);
 			sprint_a(player);
+            sprint_b(player);
 			invmove_a(player);
 			jump_a(player);
 			jump_b(player);
 		}
 
-		if (config.generalModules.aim) {
-			//aim_a(player);
-			aim_b(player);
-			aim_c(player);
-			//aim_d(player);
-			//aim_e(player);
-		}
+		if (rotationHandler(player)) {
+            //aim_a(player);
+            //aim_b(player);
+            //aim_c(player);
+            //aim_d(player);
+            //aim_e(player);
+        }
         
         if (clicksHandler(player, tick)) {
             autoclicker_a(player);
@@ -835,23 +828,6 @@ world.afterEvents.entityHitBlock.subscribe((entityHit) => {
 	player.autotoolSwitchDelay = 0;
 });
 
-
-const accessAttempts = new Map();
-
-function rateLimit(player) {
-
-    const now = Date.now();
-    const lastAttempt = accessAttempts.get(player.name) || 0;
-    const timeDiff = now - lastAttempt;
-
-    // Allow access if more than the configured time has passed since the last attempt
-    if (timeDiff > config.customcommands.ui.rate_limit) {
-        accessAttempts.set(player.name, now);
-        return true;
-    }
-
-    return false;
-}
 
 world.afterEvents.itemUse.subscribe((itemUse) => {
 

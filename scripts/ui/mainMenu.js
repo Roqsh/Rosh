@@ -61,3 +61,30 @@ export function mainMenu(player) {
         player.sendMessage(`${themecolor}Rosh §j> §cAn error occurred:\n§8${error}\n${error.stack}`);
     });
 }
+
+const accessAttempts = new Map();
+
+/**
+ * Checks whether the player can access the menu based on a rate limit.
+ * @param {Player} player - The player object attempting to access the feature.
+ * @returns {boolean} - Returns `true` if the player is allowed access, otherwise `false`.
+ */
+export function rateLimit(player) {
+    const now = Date.now(); // Get the current timestamp in milliseconds.
+    
+    // Retrieve the last access attempt time for the player. 
+    // If there's no previous attempt, use 0 as the default value.
+    const lastAttempt = accessAttempts.get(player.name) || 0;
+    
+    // Calculate the time difference between now and the last access attempt.
+    const timeDiff = now - lastAttempt;
+
+    // Allow access if more time than the configured rate limit has passed since the last attempt.
+    if (timeDiff > config.customcommands.ui.rate_limit) {
+        // Update the last attempt time to the current time.
+        accessAttempts.set(player.name, now);
+        return true; // Player is allowed access.
+    }
+
+    return false; // Player is not allowed access yet.
+}

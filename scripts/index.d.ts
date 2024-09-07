@@ -2,72 +2,78 @@ import { Vector3 } from "@minecraft/server";
 
 declare module "@minecraft/server" {
 	
-	interface Player {
+    interface Player {
 
         /**
-         * Wheter the player is crawling. For example: Getting pushed down by a trapdoor.
+         * Whether the player is crawling. For example: Getting pushed down by a trapdoor.
          * @Rosh
          * @beta **This property cannot be used yet!**
-         * @remarks This property is a placeholder until we get an official version in the API.
          */
         isCrawling: boolean,
 
         /**
-         * Wheter the player is riding another entity. For example: Riding a horse, pig or a strider is considered true.
+         * Whether the player is riding another entity. For example: Riding a horse, pig, or a strider is considered true.
          * @Rosh
-         * @remarks This property is a placeholder until we get an official version in the API.
          */
         isRiding: boolean,
 
         /**
-         * Wheter the block below the player is a sort of ice.
+         * Whether the block below the player is a sort of ice.
          * @Rosh
-         * @remarks This property is a placeholder until we get an official version in the API.
          */
         isOnIce: boolean,
 
         /**
-         * Wheter the block below the player is a sort of snow. (Snow layers are considered as blocks aswell)
+         * Whether the block below the player is a sort of snow. (Snow layers are considered blocks as well.)
          * @Rosh
-         * @remarks This property is a placeholder until we get an official version in the API.
          */
         isOnSnow: boolean,
 
         /**
-         * Wheter the block below the player is slime.
+         * Whether the block below the player is slime.
          * @Rosh
-         * @remarks This property is a placeholder until we get an official version in the API.
          */
         isOnSlime: boolean,
 
         /**
-         * Wheter the player is on a shulker.
-         * (Both shulker entities and shulker shells will work aswell as standing on top of it while the shulker is open.)
+         * Whether the player is on a shulker.
+         * (Both shulker entities and shulker shells will work as well as standing on top of it while the shulker is open.)
          * @Rosh
-         * @remarks This property is a placeholder until we get an official version in the API.
          */
         isOnShulker: boolean,
 
         /**
-         * Wheter the player is moving on stairs. (upwards or downwards)
+         * Whether the player is moving on stairs. (upwards or downwards)
          * @Rosh
-         * @remarks This property is a placeholder until we get an official version in the API.
          */
         isRunningStairs: boolean,
 
         /**
-         * Whether the player has a trident in his selected slot.
+         * Whether the player has a trident in their selected slot.
          * @Rosh
-         * @remarks This property is a placeholder until we get an official version in the API.
          */
         isHoldingTrident: boolean,
 
         flagAutotoolA: boolean,
 
         /**
-         * Gets a player's attacks per second. (This does not include regular arm swings/clicks, **only attacks**!)
+         * Whether the player is currently dead. (Health = 0)
+         * @returns {boolean} True if the player is dead, false otherwise.
          * @Rosh
-         * @remarks This property is a placeholder until we get an official version in the API.
+         */
+        isDead(): boolean,
+
+        /**
+         * Whether the player is currently alive. (Health > 0)
+         * @returns {boolean} True if the player is alive, false otherwise.
+         * @Rosh
+         */
+        isAlive(): boolean,
+
+        /**
+         * Gets a player's attacks per second. (This does not include regular arm swings/clicks, **only attacks**!)
+         * @returns {number} The player's attacks per second.
+         * @Rosh
          */
         getCps(): number,
 
@@ -75,17 +81,99 @@ declare module "@minecraft/server" {
          * Sets a player's attacks per second.
          * @param {number} cpsValue The value to assign to the player's attacks per second.
          * @Rosh
-         * @remarks This property is a placeholder until we get an official version in the API.
          */
         setCps(cpsValue: number): void,
 
         /**
-         * A helper variable for calculating the attacks per second of a player.
-         * (Use `getCps()` instead if you wish to use the player's actual attacks per second)
+         * Gets the player's current yaw (horizontal rotation).
+         * @returns {number} The player's current yaw.
          * @Rosh
-         * @remarks This property is a placeholder until we get an official version in the API.
+         */
+        getYaw(): number,
+
+        /**
+         * Gets the change in the player's yaw since the last update.
+         * @returns {number} The change in the player's yaw.
+         * @Rosh
+         */
+        getDeltaYaw(): number,
+
+        /**
+         * Sets the player's yaw (horizontal rotation).
+         * @param {number} yawValue The value to set for the player's yaw.
+         * @Rosh
+         */
+        setYaw(yawValue: number): void,
+
+        /**
+         * Sets the change in the player's yaw since the last update.
+         * @param {number} deltaYawValue The value to set for the change in the player's yaw.
+         * @Rosh
+         */
+        setDeltaYaw(deltaYawValue: number): void,
+
+        /**
+         * Gets the player's current pitch (vertical rotation).
+         * @returns {number} The player's current pitch.
+         * @Rosh
+         */
+        getPitch(): number,
+
+        /**
+         * Gets the change in the player's pitch since the last update.
+         * @returns {number} The change in the player's pitch.
+         * @Rosh
+         */
+        getDeltaPitch(): number,
+
+        /**
+         * Sets the player's pitch (vertical rotation).
+         * @param {number} pitchValue The value to set for the player's pitch.
+         * @Rosh
+         */
+        setPitch(pitchValue: number): void,
+
+        /**
+         * Sets the change in the player's pitch since the last update.
+         * @param {number} deltaPitchValue The value to set for the change in the player's pitch.
+         * @Rosh
+         */
+        setDeltaPitch(deltaPitchValue: number): void,
+
+        /**
+         * A helper variable for calculating the attacks per second of a player.
+         * (Use `getCps()` instead if you wish to use the player's actual attacks per second!)
+         * @Rosh
          */
         clicks: number,
+
+        /**
+         * A variable to track the player's current yaw (horizontal rotation).
+         * (Use `getYaw()` instead if you wish to use the player's actual yaw!)
+         * @Rosh
+         */
+        yaw: number,
+
+        /**
+         * A variable to track the change in the player's yaw since the last update.
+         * (Use `getDeltaYaw()` instead if you wish to use the player's actual change in yaw!)
+         * @Rosh
+         */
+        deltaYaw: number,
+
+        /**
+         * A variable to track the player's current pitch (vertical rotation).
+         * (Use `getPitch()` instead if you wish to use the player's actual pitch!)
+         * @Rosh
+         */
+        pitch: number,
+
+        /**
+         * A variable to track the change in the player's pitch since the last update.
+         * (Use `getDeltaPitch()` instead if you wish to use the player's actual change in pitch!)
+         * @Rosh
+         */
+        deltaPitch: number,
         
         autotoolSwitchDelay: number,
         blocksBroken: number,
@@ -94,21 +182,18 @@ declare module "@minecraft/server" {
         /**
          * A variable to track time intervals in ms. This property gets updated every 20 ticks using `Date.now()`.
          * @Rosh
-         * @remarks This property is a placeholder until we get an official version in the API.
          */
         lastTime: number,
 
         /**
-         * Saves a players selected slot of the last tick using `selectedSlotIndex`.
+         * Saves a player's selected slot of the last tick using `selectedSlotIndex`.
          * @Rosh
-         * @remarks This property is a placeholder until we get an official version in the API.
          */
-		lastSelectedSlot: number,
+        lastSelectedSlot: number,
 		
         /**
          * Stores a player's location of the last tick.
          * @Rosh
-         * @remarks This property is a placeholder until we get an official version in the API.
          */
         lastPosition: Vector3,
 
@@ -116,25 +201,23 @@ declare module "@minecraft/server" {
          * Saves a safe position to teleport the player back to when flagging a certain check.
          * Positions where the player is on ground are considered safe.
          * @Rosh
-         * @remarks This property is a placeholder until we get an official version in the API.
          */
-		lastGoodPosition: Vector3
+        lastGoodPosition: Vector3,
 
         /**
          * Stores a list of (potential malicious) player names a player has reported.
          * @Rosh
-         * @remarks This property is a placeholder until we get an official version in the API.
          */
-		reports: Array<String>,
-	}
+        reports: Array<String>,
+    }
 
-	interface Entity {
+    interface Entity {
         
         flagAutotoolA: boolean,
 
         autotoolSwitchDelay: number,
-		lastSelectedSlot: number,
+        lastSelectedSlot: number,
         startBreakTime: number,
         cps: number,
-	}
+    }
 }

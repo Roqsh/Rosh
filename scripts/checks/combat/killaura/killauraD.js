@@ -3,6 +3,8 @@ import config from "../../../data/config.js";
 import { flag } from "../../../util.js";
 import { Vector3D } from "../../../utils/math.js";
 
+//TODO: Implement Bounding Box system to prevent false positives (Hitboxes can be outside of Corner positions)
+
 /**
  * Checks if a player hits through a solid wall.
  * @param {Minecraft.Player} player - The player to check.

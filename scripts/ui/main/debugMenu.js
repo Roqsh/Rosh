@@ -21,8 +21,10 @@ export function debugMenu(player) {
         .button(`Speed\n${player.hasTag("speed") ? "§8[§a+§8]" : "§8[§c-§8]"}`)
         .button(`Ticks\n${player.hasTag("ticks") ? "§8[§a+§8]" : "§8[§c-§8]"}`)
         .button(`Tps\n${player.hasTag("tps") ? "§8[§a+§8]" : "§8[§c-§8]"}`)
-        .button(`X-Rotation\n${player.hasTag("devrotationx") ? "§8[§a+§8]" : "§8[§c-§8]"}`)
-        .button(`Y-Rotation\n${player.hasTag("devrotationy") ? "§8[§a+§8]" : "§8[§c-§8]"}`)
+        .button(`Yaw\n${player.hasTag("yaw") ? "§8[§a+§8]" : "§8[§c-§8]"}`)
+        .button(`Delta Yaw\n${player.hasTag("deltaYaw") ? "§8[§a+§8]" : "§8[§c-§8]"}`)
+        .button(`Pitch\n${player.hasTag("pitch") ? "§8[§a+§8]" : "§8[§c-§8]"}`)
+        .button(`Delta Pitch\n${player.hasTag("deltaPitch") ? "§8[§a+§8]" : "§8[§c-§8]"}`)
         .button(`Cps\n${player.hasTag("cps") ? "§8[§a+§8]" : "§8[§c-§8]"}`)
         .button(`Health\n${player.hasTag("health") ? "§8[§a+§8]" : "§8[§c-§8]"}`)
         .button(`BlockRaycasts\n${player.hasTag("devblockray") ? "§8[§a+§8]" : "§8[§c-§8]"}`)
@@ -43,12 +45,14 @@ export function debugMenu(player) {
             case 2: toggleTag(player, "speed", "Speed"); break;
             case 3: toggleTag(player, "ticks", "Ticks"); break;
             case 4: toggleTag(player, "tps", "Tps"); break;
-            case 5: toggleTag(player, "devrotationx", "XRotation"); break;
-            case 6: toggleTag(player, "devrotationy", "YRotation"); break;
-            case 7: toggleTag(player, "cps", "Cps"); break;
-            case 8: toggleTag(player, "health", "Health"); break;
-            case 9: toggleTag(player, "devblockray", "Block-Raycasts"); break;
-            case 10: mainMenu(player); break;
+            case 5: toggleTag(player, "yaw", "Yaw"); break;
+            case 6: toggleTag(player, "deltaYaw", "Delta Yaw"); break;
+            case 7: toggleTag(player, "pitch", "Pitch"); break;
+            case 8: toggleTag(player, "deltaPitch", "Delta Pitch"); break;
+            case 9: toggleTag(player, "cps", "Cps"); break;
+            case 10: toggleTag(player, "health", "Health"); break;
+            case 11: toggleTag(player, "devblockray", "Block-Raycasts"); break;
+            case 12: mainMenu(player); break;
         }
 
     }).catch((error) => {
