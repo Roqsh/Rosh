@@ -14,11 +14,11 @@ const playerInvalidSprintBuffer = new Map();
  */
 export function sprint_a(player) {
 
-    if (!config.modules.invalidsprintA.enabled || !player.isSprinting) return;
+    if (!config.modules.invalidsprintA.enabled || !player.isSprinting || player.isInWater) return;
 
-    // Define the threshold angle (e.g., 75 degrees) and buffer threshold (e.g., 6 events)
+    // Define the threshold angle (e.g., 75 degrees) and buffer threshold (e.g., 8 events)
     const ANGLE_THRESHOLD = config.modules.invalidsprintA.angle_threshold || 75;
-    const BUFFER_THRESHOLD = config.modules.invalidsprintA.buffer_threshold || 6;
+    const BUFFER_THRESHOLD = config.modules.invalidsprintA.buffer_threshold || 8;
 
     // Get the player's current position
     const currentPosition = player.location;
@@ -70,7 +70,7 @@ export function sprint_a(player) {
         
         // Check if the buffer count exceeds the threshold
         if (bufferCount >= BUFFER_THRESHOLD) {
-            flag(player, "InvalidSprint", "A", "direction-diff", `${angle}°`);
+            flag(player, "InvalidSprint", "A", "direction-diff", `${angle}°`, true);
             // Reset buffer count after flagging
             playerInvalidSprintBuffer.set(player.id, 0);
         } else {

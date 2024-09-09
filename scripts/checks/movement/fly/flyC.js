@@ -7,6 +7,9 @@ const lastPosition = new Map();
 /**
  * Checks for ground spoof
  * @param {Minecraft.Player} player - The player to check.
+ * @remarks
+ * **Note:**
+ * - False flags when jumping with a horse.
  */
 export function fly_c(player) {
   

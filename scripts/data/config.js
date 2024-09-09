@@ -665,24 +665,27 @@ export default
 
         "noslowA": {
             "enabled": true,
-            "description": "Checks for moving to fast while using an item",
-            "speed": 0.21,
+            "description": "Checks for not slowing down when using an item.",
+            "max_speed": 0.1,
+            "item_use_time": 10,
+            "buffer": 4,
             "punishment": "kick",
-            "minVlbeforePunishment": 5
+            "minVlbeforePunishment": 8
         },
 
         "noslowB": {
             "enabled": true,
-            "description": "Checks for moving to fast while being in cobwebs",
+            "description": "Checks if the player is not slowing down when inside a cobweb.",
             "punishment": "kick",
-            "minVlbeforePunishment": 2
+            "punishmentLength": "1d",
+            "minVlbeforePunishment": 3
         },
 
         "invalidsprintA": {
             "enabled": true,
             "description": "Checks for sprinting in invalid directions. (Omni-Sprint)",
             "angle_threshold": 75,
-            "buffer_threshold": 6,
+            "buffer_threshold": 8,
             "punishment": "kick",
             "punishmentLength": "1d",
             "minVlbeforePunishment": 7
@@ -694,6 +697,14 @@ export default
             "punishment": "kick",
             "punishmentLength": "7d",
             "minVlbeforePunishment": 6
+        },
+
+        "invalidsprintC": {
+            "enabled": true,
+            "description": "Checks for sprinting while using an item.",
+            "punishment": "kick",
+            "punishmentLength": "7d",
+            "minVlbeforePunishment": 8
         },
 
         "invalidjumpA": {

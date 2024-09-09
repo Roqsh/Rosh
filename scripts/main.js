@@ -43,6 +43,7 @@ import { noslow_a } from "./checks/movement/noslow/noslowA.js";
 import { noslow_b } from "./checks/movement/noslow/noslowB.js";
 import { sprint_a } from "./checks/movement/sprint/sprintA.js";
 import { sprint_b } from "./checks/movement/sprint/sprintB.js";
+import { sprint_c } from "./checks/movement/sprint/sprintC.js";
 import { invmove_a } from "./checks/movement/invmove/invmoveA.js";
 import { jump_a } from "./checks/movement/jump/jumpA.js";
 import { jump_b } from "./checks/movement/jump/jumpB.js";
@@ -99,21 +100,19 @@ world.beforeEvents.chatSend.subscribe((msg) => {
 
     const themecolor = config.themecolor;
 	const { sender: player, message } = msg;
-
-    let cancelEvent = false;
     
     badpackets_e(player, message, msg);
 
 	if (message.includes("horion") || message.includes("borion") || message.includes("packet") || message.includes("vector") || message.includes("prax") || message.includes("zephyr") || message.includes("nuvola")  || message.includes("aelous") || message.includes("disepi") || message.includes("ambrosial") || message.includes("utility mod") || message.includes("nigga") || message.includes("niger")) {	
-		cancelEvent = true;
+		msg.cancel = true;
 	}
 
 	if (message.includes("Horion") || message.includes("Borion") || message.includes("Packet") || message.includes("Vector") || message.includes("Prax") || message.includes("Zephyr") || message.includes("Nuvola") || message.includes("Aelous") || message.includes("Disepi") || message.includes("Ambrosial") || message.includes("Lunaris") || message.includes("Nigga") || message.includes("Niger")) {
-		cancelEvent = true;
+		msg.cancel = true;
 	}
 
 	if (player.hasTag("isMuted")) {
-		cancelEvent = true;
+		msg.cancel = true;
 		player.sendMessage(`§r${themecolor}Rosh §j> §cUnable to send that message - You are muted!`);
 	}
 
@@ -126,17 +125,12 @@ world.beforeEvents.chatSend.subscribe((msg) => {
 	if (!msg.cancel) {
 		if (player.name !== player.nameTag) {
 			world.sendMessage(`§r<${player.nameTag}> ${message}`);
-			cancelEvent = true;
+			msg.cancel = true;
 		} else {
 			world.sendMessage(`<${player.nameTag}> ${message.replace(/[^\x00-\xFF]/g, "")}`);
-			cancelEvent = true;
+			msg.cancel = true;
 		}
 	}
-
-    // Prevent the message from being sent
-    if (cancelEvent) {
-        msg.cancel = true;
-    }
 });
 
 
@@ -333,7 +327,7 @@ system.runInterval(() => {
             const health = player.getComponent("health");
             player.onScreenDisplay.setActionBar(`${themecolor}Debug §j> §8Health: ${health.currentValue < health.effectiveMax ? "§c" : "§a"}${health.currentValue}§8/§a${health.effectiveMax}`);
         }
-        
+
 		if (player.isOnGround) {			
 		    player.lastGoodPosition = player.location;			
 		}
@@ -380,12 +374,13 @@ system.runInterval(() => {
 			noslow_b(player);
 			sprint_a(player);
             sprint_b(player);
+            sprint_c(player);
 			invmove_a(player);
 			jump_a(player);
 			jump_b(player);
 		}
-
-		if (rotationHandler(player)) {
+        
+        if (rotationHandler(player)) {
             //aim_a(player);
             //aim_b(player);
             //aim_c(player);

@@ -49,8 +49,8 @@ export function unmute(message, args) {
         return;
     }
 
-    // Remove the "isMuted" tag and notify the player
-    member.removeTag("isMuted");
+    // Unmute and notify the player
+    member.unmute();
     member.sendMessage(`§r${themecolor}Rosh §j> §aYou have been unmuted.`);
 
     // Notify other staff members about the unmute

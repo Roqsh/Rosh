@@ -1,38 +1,58 @@
+import { Player } from "@minecraft/server";
 import config from "../../../data/config.js";
 import { flag, getSpeed, getScore } from "../../../util";
 
+// Stores the buffer values for each player.
+const playerBuffer = new Map();
+
 /**
- * Checks for moving too fast while eating. (using right hand)
- * @name noslow_a
- * @param {player} player - The player to check
+ * Checks if the player is not slowing down when using an item.
+ * @param {Player} player - The player to check.
  */
 export function noslow_a(player) {
 
-    const preset = config.preset?.toLowerCase();
-    if (preset === "stable") return;
+    // Exit early if the NoSlow A module is disabled or the player isn't using an item.
+    if (!config.modules.noslowA.enabled || !player.hasTag("right")) return;
 
-    if (config.modules.noslowA.enabled) {
+    // Retrieve configuration settings with fallback defaults.
+    const MAX_SPEED = config.modules.noslowA.max_speed || 0.1;
+    const ITEM_USE_TIME = config.modules.noslowA.item_use_time || 10; // In ticks
+    const BUFFER_LIMIT = config.modules.noslowA.buffer || 4;
 
-        const speed = getSpeed(player);
+    // Get the current speed of the player.
+    const speed = getSpeed(player);
+    if (speed === 0) return; // No need to check further if the player isn't moving.
 
-        let maxSpeed = config.modules.noslowA.speed;
+    // Get the player's id and current buffer value.
+    const playerId = player.id;
+    const buffer = playerBuffer.get(playerId) || 0;
 
-        if (player.getEffect("speed")) maxSpeed += 0.2;
+    // Object containing all conditions for flagging the player.
+    const conditions = {
+        isNotDamaged: !player.hasTag("damaged"),
+        isNotUsingTrident: !player.isHoldingTrident,
+        isNotOnSpecialBlocks: !player.isOnIce && !player.isOnSlime,
+        isNotInAirOrWater: !player.isGliding && !player.isFlying && !player.isInWater,
+        isOnGroundAndUsingItem: player.isOnGround && getScore(player, "right", 0) >= ITEM_USE_TIME,
+        isExceedingMaxSpeed: speed > MAX_SPEED,
+    };
 
-        if (
-            player.hasTag("right") &&
-            !player.getEffect("speed") && 
-            !player.hasTag("damaged") &&
-            !player.isHoldingTrident &&
-            !player.isGliding &&
-            !player.isInWater &&
-            !player.isOnIce &&
-            !player.isOnSlime &&
-            player.isOnGround &&
-            getScore(player, "right", 0) >= 15 &&
-            speed > maxSpeed
-        ) {
+    // Determine if all conditions are met.
+    const canFlag = Object.values(conditions).every(Boolean);
+
+    if (canFlag) {
+        
+        // If the buffer exceeds the limit, flag the player and reset the buffer.
+        if (buffer >= BUFFER_LIMIT) {
             flag(player, "NoSlow", "A", "speed", speed, true);
+            playerBuffer.set(playerId, 0);
+        } else {
+            // Otherwise, increment the buffer.
+            playerBuffer.set(playerId, buffer + 1);
         }
+
+    } else {
+        // Decrease the buffer if conditions are not met, but not below 0.
+        playerBuffer.set(playerId, Math.max(buffer - 1, 0));
     }
 }

@@ -61,8 +61,8 @@ export function mute(message, args) {
         return;
     }
 
-    // Add "isMuted" tag and notify the muted player
-    member.addTag("isMuted");
+    // Mute and notify the player
+    member.mute();
     member.sendMessage(`§r${themecolor}Rosh §j> §cYou have been muted for: §8${reason}§c.`);
 
     // Run the animation

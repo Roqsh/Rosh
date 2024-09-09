@@ -147,7 +147,7 @@ export function kickPlayerMenu(player, playerSelected, lastMenu = 0) {
         if (!isSilent) {
             tellStaff(`${themecolor}Rosh §j> §8${player.name} §chas kicked §8${playerSelected.name} §cfor: §8${reason}§c.`);
             data.recentLogs.push(`${timeDisplay()}§8${playerSelected.name} §chas been kicked by §8${player.name}§c!`);
-            player.runCommandAsync(`kick "${playerSelected.name}" ${kickMessage}`);
+            playerSelected.kick(kickMessage);
         } else {
             tellStaff(`${themecolor}Rosh §j> §8${player.name} §chas kicked §8${playerSelected.name} §c(Silent) for: §8${reason}§c.`);
             data.recentLogs.push(`${timeDisplay()}§8${playerSelected.name} §chas been kicked (Silent) by §8${player.name}§c!`);

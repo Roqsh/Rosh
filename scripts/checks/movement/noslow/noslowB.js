@@ -1,65 +1,65 @@
+import * as Minecraft from "@minecraft/server";
 import config from "../../../data/config.js";
 import { flag } from "../../../util";
 
+const lastPositions = new Map();
+
 /**
- * @name noslow_b
- * @param {player} player - The player to check
- * @remarks Checks for moving too fast while being in cobwebs
-*/
-
-const lastPos = new Map();
-
+ * Checks if the player is not slowing down when inside a cobweb.
+ * @param {Minecraft.Player} player - The player to check.
+ */
 export function noslow_b(player) {
 
-    if(!config.modules.noslowB.enabled || player.getGameMode() === "spectator" || player.isFlying) return;
-    
-    const playerLocation = player.location;
-    const playerLastPos = lastPos.get(player.name) ?? player.location;
+    // Return early if the module is disabled or the player is flying.
+    if (!config.modules.noslowB.enabled || player.isFlying) return;
+
+    const currentLocation = player.location;
+    const lastLocation = lastPositions.get(player.name) ?? currentLocation;
     const { x: velocityX, z: velocityZ } = player.getVelocity();
 
-    const headWeb = player.dimension.getBlock({
-        x: Math.floor(player.location.x),
-        y: Math.floor(player.location.y) + 1,
-        z: Math.floor(player.location.z)
-    })?.typeId === "minecraft:web";
+    // Return early if the player is not moving.
+    if (velocityX === 0 && velocityZ === 0) return;
 
-    const bodyWeb = player.dimension.getBlock({
-        x: Math.floor(player.location.x),
-        y: Math.floor(player.location.y),
-        z: Math.floor(player.location.z)
-    })?.typeId === "minecraft:web";
+    const { x, y, z } = currentLocation;
 
-    if(!headWeb && !bodyWeb) {
-        lastPos.set(player.name, playerLocation);
+    // Check if the player's head or body is in a cobweb.
+    const isInWeb = ["minecraft:web"].includes(
+        player.dimension.getBlock({ x: Math.floor(x), y: Math.floor(y) + 1, z: Math.floor(z) })?.typeId ||
+        player.dimension.getBlock({ x: Math.floor(x), y: Math.floor(y), z: Math.floor(z) })?.typeId
+    );
+
+    // If the player is not in a cobweb, update the last known position and return.
+    if (!isInWeb) {
+        lastPositions.set(player.name, currentLocation);
+        return;
     }
 
-    const playerSpeed = Math.hypot(velocityX, velocityZ);
-    const limitIncrease = getSpeedIncrease(player.getEffect("speed"));
+    const currentSpeed = Math.hypot(velocityX, velocityZ);
+    const speedLimitIncrease = calculateSpeedIncrease(player.getEffect("speed"));
 
-    if(headWeb === true || bodyWeb === true) {
+    // If the player is in a cobweb and moving faster than allowed, flag them.
+    if (currentSpeed > (0.45 + speedLimitIncrease)) {
+        flag(player, "NoSlow", "B", "speed", currentSpeed);
 
-        if(playerSpeed <= (0.45 + limitIncrease)) {
-            lastPos.set(player.name, playerLocation);
+        // Optionally teleport the player back to the last known position.
+        if (!config.silent) {
+            player.teleport(lastLocation, {
+                checkForBlocks: false,
+                dimension: player.dimension
+            });
         }
-
-        else {
-
-            if(!(player.lastExplosionTime && Date.now() - player.lastExplosionTime < 1000)) {
-                flag(player, "NoSlow", "B", "speed", playerSpeed);
-                if(!config.silent) {
-                    player.teleport(playerLastPos, {
-                        checkForBlocks: false,
-                        dimension: player.dimension
-                    });
-
-                }
-            }
-        }
+    } else {
+        // Update the last known position if the speed is within the limit.
+        lastPositions.set(player.name, currentLocation);
     }
 }
 
-function getSpeedIncrease(speedEffect) {
-    if(speedEffect === undefined)
-        return 0;
-    return(speedEffect?.amplifier + 1) * 0.0476;
+/**
+ * Calculates the increase in speed limit based on the player's Speed effect.
+ * @param {Minecraft.Effect} speedEffect - The Speed effect applied to the player.
+ * @returns {number} The additional speed limit allowed by the Speed effect.
+ */
+function calculateSpeedIncrease(speedEffect) {
+    if (!speedEffect) return 0;
+    return (speedEffect.amplifier + 1) * 0.0476;
 }

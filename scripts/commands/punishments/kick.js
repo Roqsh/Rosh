@@ -84,7 +84,7 @@ export function kick(message, args) {
 
     // Perform the kick command if not silent
     if (!isSilent) {
-        player.runCommandAsync(`kick "${member.name}" §r${themecolor}Rosh §j> §cYou have been kicked for §8${reason}§c!`);
+        member.kick(`${themecolor}Rosh §j> §cYou have been kicked for §8${reason}§c!`);
         return;
     } else {
         // Trigger the silent kick event without notifying the kicked user (Default disconnect message).

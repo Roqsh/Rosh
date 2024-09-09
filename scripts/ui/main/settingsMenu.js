@@ -20,6 +20,7 @@ export function settingsMenu(player) {
         .title("Settings")
         .button(`Notifications\n${player.hasTag("notify") ? "§8[§a+§8]" : "§8[§c-§8]"}`)
         .button(`Autoban\n${config.autoban ? "§8[§a+§8]" : "§8[§c-§8]"}`)
+        .button(`Silent\n${config.silent ? "§8[§a+§8]" : "§8[§c-§8]"}`)
         .button(`Preset\n${config.preset === "stable" ? "§8Stable" : "§8Beta"}`)
         .button(`Themecolor\n${config.themecolor}Color`)
         .button(`Thememode\n§8${config.thememode}`)
@@ -36,10 +37,11 @@ export function settingsMenu(player) {
         switch (response.selection) {
             case 0: handleNotification(player, themecolor); break;
             case 1: autobanMenu(player); break;
-            case 2: presetMenu(player); break;
-            case 3: themecolorMenu(player); break;
-            case 4: thememodeMenu(player); break; 
-            case 5: mainMenu(player); break;
+            case 2: silentMenu(player); break;
+            case 3: presetMenu(player); break;
+            case 4: themecolorMenu(player); break;
+            case 5: thememodeMenu(player); break; 
+            case 6: mainMenu(player); break;
         }
     }).catch((error) => {
         // Handle promise rejection
@@ -73,9 +75,41 @@ function autobanMenu(player) {
         }
 
         config.autoban = response.formValues[0];
-        world.setDynamicProperty("config", JSON.stringify(config));
+        player.sendMessage(`${themecolor}Rosh §j> ${config.autoban ? "§a" : "§c"}AutoBan is now ${config.autoban ? "enabled" : "disabled"}!`);
 
-        player.sendMessage(`§r${themecolor}Rosh §j> ${config.autoban ? "§a" : "§c"}AutoBan is now ${config.autoban ? "enabled" : "disabled"}!`);
+    }).catch((error) => {
+        // Handle promise rejection
+        console.error(`${new Date().toISOString()} | ${error}${error.stack}`);
+        player.sendMessage(`${themecolor}Rosh §j> §cAn error occurred:\n§8${error}\n${error.stack}`);
+    });
+}
+
+/**
+ * Displays a toggle to enable or disable silent mode for Rosh flags.
+ * @param {import("@minecraft/server").Player} player  - The player to whom the menu is shown.
+ */
+function silentMenu(player) {
+
+    // Play a sound to indicate the menu has been opened
+    player.playSound("mob.chicken.plop");
+
+    const themecolor = config.themecolor;
+
+    // Create a menu to enable or disable reverting a player's action back after getting flagged
+    const menu = new MinecraftUI.ModalFormData()
+        .title("Silent Mode")
+        .toggle(`${config.silent ? "Disable Silent Flags" : "Enable Silent Flags"}`, config.silent);
+
+    // Show the menu to the player and handle the response based on the player's selection
+    menu.show(player).then((response) => {
+        
+        // Check if the menu was cancelled and back to the settings menu
+        if (response.canceled) {
+            return settingsMenu(player);
+        }
+
+        config.silent = response.formValues[0];
+        player.sendMessage(`${themecolor}Rosh §j> ${config.silent ? "§a" : "§c"}Silent Flagging is now ${config.silent ? "enabled" : "disabled"}!`);
 
     }).catch((error) => {
         // Handle promise rejection
@@ -114,23 +148,13 @@ function presetMenu(player) {
 
         // Check if the preset is already set to the selected preset
         if ((selectedPreset === 0 && config.preset === "stable") || (selectedPreset === 1 && config.preset === "beta")) {
-            player.sendMessage(`§r${themecolor}Rosh §j> §cPreset is already set to §8${selectedPreset === 0 ? "Stable" : "Beta"}§c!`);
+            player.sendMessage(`${themecolor}Rosh §j> §cPreset is already set to §8${selectedPreset === 0 ? "Stable" : "Beta"}§c!`);
             return;
         }
 
-        if (selectedPreset === 0) {
-            config.preset = "stable";
-        } else if (selectedPreset === 1) {
-            config.preset = "beta";
-        }
+        config.preset = selectedPreset === 0 ? "stable" : "beta";
+        player.sendMessage(`${themecolor}Rosh §j> §aSet the preset to §8${selectedPreset === 0 ? "Stable" : "Beta"}§a.`);
 
-        try {
-            world.setDynamicProperty("config", JSON.stringify(config));
-            player.sendMessage(`§r${themecolor}Rosh §j> §aSet the preset to §8${selectedPreset === 0 ? "Stable" : "Beta"}§a.`);
-        } catch (error) {
-            player.sendMessage(`§r${themecolor}Rosh §j> §cFailed to set the preset. Please try again.`);
-            console.error("Failed to set dynamic property 'config':", error);
-        }
     }).catch((error) => {
         // Handle promise rejection
         console.error(`${new Date().toISOString()} | ${error}${error.stack}`);
@@ -172,13 +196,12 @@ function themecolorMenu(player) {
 
         // Check if the selected color matches the current theme color
         if (selectedColor.substring(0, 2) === config.themecolor) {
-            player.sendMessage(`§r${selectedColor.substring(0, 2)}Rosh §j> §cThemecolor is already set to ${selectedColor.substring(0, 2)}Color§c!`);
+            player.sendMessage(`${selectedColor.substring(0, 2)}Rosh §j> §cThemecolor is already set to ${selectedColor.substring(0, 2)}Color§c!`);
             return;
         }
 
         config.themecolor = selectedColor.substring(0, 2);
-        world.setDynamicProperty("config", JSON.stringify(config)); // Extracting the color code without "Color"
-        player.sendMessage(`§r${selectedColor.substring(0, 2)}Rosh §j> §aThemecolor set to ${selectedColor.substring(0, 2)}Color§a!`);
+        player.sendMessage(`${selectedColor.substring(0, 2)}Rosh §j> §aThemecolor set to ${selectedColor.substring(0, 2)}Color§a!`);
 
     }).catch((error) => {
         // Handle promise rejection
@@ -224,7 +247,6 @@ function thememodeMenu(player) {
         }
 
         config.thememode = selectedMode;
-        world.setDynamicProperty("config", JSON.stringify(config));
         player.sendMessage(`§r${themecolor}Rosh §j> §aThememode set to §8${selectedMode}§a!`);
 
     }).catch((error) => {

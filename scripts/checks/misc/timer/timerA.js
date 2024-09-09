@@ -38,17 +38,13 @@ function calculateSpeed(velocity) {
  */
 export function timer_a(player, lastPosition, value) {
 
+    if (!config.modules.timerA.enabled || player.isDead()) return;
+    
     // Ensure that lastPosition is always set after the first execution
     if (!player.lastPosition) {
         player.lastPosition = { ...player.location };
         return;  // Return early since we can't perform the check yet
     }
-
-    if (!config.modules.timerA.enabled || player.isDead()) return;
-
-    // Early return if player has specific tags that should bypass the timer check
-    const bypassTags = ["riding", "placing"];
-    if (bypassTags.some(tag => player.hasTag(tag))) return;
 
     // Calculate the velocity and speed
     const velocity = player.getVelocity();
@@ -104,7 +100,7 @@ export function timer_a(player, lastPosition, value) {
         if (outOfBounds) {
             
             // Account for potential false positives
-            if (player.isOnShulker || Math.abs(player.lastPosition.y - player.location.y) > 10 || player.hasTag("ender_pearl")) {
+            if (player.isOnShulker || player.isRiding || player.hasTag("ender_pearl")) {
                 player.addTag("timer_bypass");
             }
 

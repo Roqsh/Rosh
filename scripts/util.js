@@ -11,18 +11,18 @@ import { resetWarns } from "./commands/staff/resetwarns.js";
  * @param {string} checkType - The type of sub-check that was failed.
  * @param {string | undefined} [debugName] - The name of the debug value.
  * @param {string | number | object | undefined} [debug] - The debug information.
- * @param {boolean} [shouldTP=false] - Whether to teleport the player to their last good position.
- * @param {object | undefined} [cancelObject] - Object with property "cancel" to cancel the event.
+ * @param {boolean} [revertAction=false] - Whether to teleport the player to their last good position.
+ * @param {object | undefined} [cancelObject] - Object with property "cancel" to cancel the event. (Usually a before event)
  * @example flag(player, "Spammer", "B", "Delay", `${delay}ms`, false, Minecraft.ChatSendBeforeEvent);
  */
-export function flag(player, check, checkType, debugName, debug, shouldTP = false, cancelObject) {
+export function flag(player, check, checkType, debugName, debug, revertAction = false, cancelObject) {
     // Input validation
     if (typeof player !== "object") throw new TypeError(`Error: player is type of ${typeof player}. Expected "object"`);
     if (typeof check !== "string") throw new TypeError(`Error: check is type of ${typeof check}. Expected "string"`);
     if (typeof checkType !== "string") throw new TypeError(`Error: checkType is type of ${typeof checkType}. Expected "string"`);
     if (typeof debugName !== "string" && typeof debugName !== "undefined") throw new TypeError(`Error: debugName is type of ${typeof debugName}. Expected "string" or "undefined"`);
     if (typeof debug !== "string" && typeof debug !== "number" && typeof debug !== "object" && typeof debug !== "undefined") throw new TypeError(`Error: debug is type of ${typeof debug}. Expected "string", "number", "object", or "undefined"`);
-    if (typeof shouldTP !== "boolean") throw new TypeError(`Error: shouldTP is type of ${typeof shouldTP}. Expected "boolean"`);
+    if (typeof revertAction !== "boolean") throw new TypeError(`Error: revertAction is type of ${typeof revertAction}. Expected "boolean"`);
     if (typeof cancelObject !== "object" && typeof cancelObject !== "undefined") throw new TypeError(`Error: cancelObject is type of ${typeof cancelObject}. Expected "object" or "undefined"`);
 
     // Exclude staff or whitelisted players if configured
@@ -32,17 +32,16 @@ export function flag(player, check, checkType, debugName, debug, shouldTP = fals
     debug = String(debug).replace(/"|\\|\n/gm, "");
     if (debug.length > 256) {
         const extraLength = debug.length - 256;
-        debug = debug.slice(0, 256) + `(+${extraLength} additional characters)`;
+        debug = debug.slice(0, 256) + `(+${extraLength} more)`;
     }
 
     const rotation = player.getRotation();
 
     // Teleport player if needed
-    if (shouldTP && !config.silent) {
+    if (revertAction && !config.silent) {
         player.teleport(player.lastGoodPosition, {
             dimension: player.dimension,
             rotation: {x: rotation.x, y: rotation.y},
-            keepVelocity: true
         });
     }
 
@@ -171,7 +170,7 @@ function handleKickPunishment(player, kickvl, check, checkType, themecolor) {
 
             resetWarns(player);
 
-            player.runCommandAsync(`kick "${player.name}" §r${themecolor}Rosh §j> §cKicked for ${themecolor}${check} §c!`);
+            player.kick(`${themecolor}Rosh §j> §cKicked for ${themecolor}${check} §c!`);
         }
     } catch (error) {
         // Fallback in case of an error
@@ -260,8 +259,8 @@ function handleMutePunishment(player, check, checkType, themecolor) {
         player.sendMessage(`§r${themecolor}Rosh §j> §cYou have been muted!`);
     }
 
-    // Tag the player as muted which prevents messages from being sent
-    player.addTag("isMuted");
+    // Tags the player as muted which prevents messages from being sent in Minecraft.ChatSendBeforeEvent
+    player.mute();
 
     // Notify about the mute and reset warnings
     const message = `${timeDisplay()}§8${player.name} §chas been muted!`;
@@ -383,7 +382,7 @@ function handleAlert(player, check, checkType, currentVl, debugName, debug, them
 
 /**
  * Bans a player from the game.
- * @param {Minecraft.Player} player - The player object.
+ * @param {Minecraft.Player} player - The player to be banned.
  * @example ban(rqosh);
  * @throws {TypeError} If player is not an object.
  */
@@ -476,7 +475,7 @@ export function ban(player) {
     }
 
     // Kick the player with the ban message
-    player.runCommandAsync(`kick "${player.name}" ${banMessage}`);
+    player.kick(banMessage);
 }
 
 

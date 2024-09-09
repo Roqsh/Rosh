@@ -209,6 +209,26 @@ declare module "@minecraft/server" {
          * @Rosh
          */
         reports: Array<String>,
+
+        /**
+         * Kicks a player from the game.
+         * @Rosh
+         * @param {string | undefined} reason - The reason for kicking the player.
+         */
+        kick(reason: string | undefined): Promise<boolean>
+
+        /**
+         * Prevents a player from sending messages. (Adds tag `isMuted`)
+         * @Rosh
+         * @remarks Messages from players with an `isMuted` tag will be canceled in `Minecraft.ChatSendBeforeEvent`.
+         */
+        mute(): Promise<boolean>,
+
+        /**
+         * Allows a player to send messages again. (Removes tag `isMuted`)
+         * @Rosh
+         */
+        unmute(): Promise<boolean>
     }
 
     interface Entity {

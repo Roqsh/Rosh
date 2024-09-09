@@ -63,4 +63,49 @@ export function initializePlayerPrototypes() {
     Player.prototype.isAlive = function() {
         return this.getComponent("health").currentValue > 0;
     }
+
+
+    // Adding punishmnet methods to the Player prototype
+
+    Player.prototype.kick = async function(reason) {
+        try {
+            if (reason) {
+                await this.runCommandAsync(`kick "${this.name}" ${reason}`);
+            } else {
+                await this.runCommandAsync(`kick "${this.name}"`);
+            }
+            return true;
+        } catch (e) {
+            console.error(`Failed to kick player ${this.name}:`, e);
+            return false;
+        }
+    }
+
+    Player.prototype.mute = async function() {
+        try {
+            if (this.hasTag("isMuted")) {
+                return true;
+            } else {
+                this.addTag("isMuted");
+                return true;
+            }
+        } catch (e) {
+            console.error(`Failed to mute player ${this.name}:`, e);
+            return false;
+        }
+    }
+
+    Player.prototype.unmute = async function() {
+        try {
+            if (this.hasTag("isMuted")) {
+                this.removeTag("isMuted");
+                return true;
+            } else {
+                return true;
+            }
+        } catch (e) {
+            console.error(`Failed to unmute player ${this.name}:`, e);
+            return false;
+        }
+    }
 }

@@ -28,7 +28,7 @@ export function kickall(message) {
     // Kick every player except the player who initiated the kickall event and staff members
     world.getPlayers().forEach(pl => {
         if (pl.name !== player.name && !pl.isOp()) {
-            player.runCommandAsync(`kick "${pl.name}" §r${themecolor}Rosh §j> §cYou have been kicked for §8Mass Kick§c!`);
+            pl.kick(`${themecolor}Rosh §j> §cYou have been kicked for §8Mass Kick§c!`);
         }
     });
 

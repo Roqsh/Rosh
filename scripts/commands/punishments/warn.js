@@ -85,7 +85,7 @@ export function warn(message, args) {
         case 3:
             // Kick the player after third warning
             delete data.warnings[member.id]; // Remove the player from warnings data
-            player.runCommandAsync(`kick "${member.name}" §r${themecolor}Rosh §j> §cYou have been kicked for §8Accumulating of 3 warnings§c.`);
+            member.kick(`${themecolor}Rosh §j> §cYou have been kicked for §8Accumulating of 3 warnings§c.`);
             break;
         default:
             // In case of any unexpected value, reset the warning count

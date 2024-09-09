@@ -167,7 +167,7 @@ export function playerMenuSelected(player, selectedPlayer) {
 
             case 6:
                 if (selectedPlayer.hasTag("isMuted")) {
-                    selectedPlayer.removeTag("isMuted");
+                    selectedPlayer.unmute();
                     selectedPlayer.sendMessage(`${themecolor}Rosh §j> §aYou are no longer muted.`);
                     player.sendMessage(`${themecolor}Rosh §j> §aYou have unmuted §8${selectedPlayer.id === player.id ? "§ayourself" : `${selectedPlayer.name}`}§a.`);
                 } else {
@@ -176,7 +176,7 @@ export function playerMenuSelected(player, selectedPlayer) {
                         player.sendMessage(`${themecolor}Rosh §j> §cYou can't mute yourself.`);
                         return;
                     }
-                    selectedPlayer.addTag("isMuted");
+                    selectedPlayer.mute();
                     selectedPlayer.sendMessage(`${themecolor}Rosh §j> §cYou are now muted.`);
                     player.sendMessage(`${themecolor}Rosh §j> §cYou have muted §8${selectedPlayer.name}§c.`);
                 }
