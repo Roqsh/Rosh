@@ -1,6 +1,6 @@
 import * as Minecraft from "@minecraft/server";
 import config from "../../../data/config.js";
-import { flag, angleCalc, debug } from "../../../util";
+import { flag, getAngle, debug } from "../../../util";
 
 /**
  * Checks for not looking at the placed block. (angle)
@@ -20,7 +20,7 @@ export function scaffold_d(player, block) {
         Math.pow(block.location.z - player.location.z, 2)
     );
 
-    const angle = angleCalc(player, block);
+    const angle = getAngle(player, block);
 
     debug(player, "Angle", `${angle}, Distance: ${distance}`, "angleblock");
 

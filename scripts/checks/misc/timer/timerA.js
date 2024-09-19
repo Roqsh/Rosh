@@ -32,23 +32,21 @@ function calculateSpeed(velocity) {
 /**
  * Analyze and flag players based on abnormal timer behavior.
  * @param {Minecraft.Player} player - The player to check.
- * @param {Object} lastPosition - The player's last recorded position.
- * @param {Number} value - The value used for lag adjustment. (1=normal)
- * @helper Thank you '@yellowworld777' for the original detection idea! <3
+ * @param {Number} lagValue - The value used for lag adjustment. (1=normal)
+ * @helper
+ * - Thank you **@yellowworld777** (Github) for the original detection idea! <3
+ * - Github: https://github.com/yellowworld777/Timer-Calculator
  */
-export function timer_a(player, lastPosition, value) {
+export function timer_a(player, lagValue) {
 
     if (!config.modules.timerA.enabled || player.isDead()) return;
-    
-    // Ensure that lastPosition is always set after the first execution
-    if (!player.lastPosition) {
-        player.lastPosition = { ...player.location };
-        return;  // Return early since we can't perform the check yet
-    }
+
+    const previousPosition = player.getLastPosition();
+    const currentPosition = player.location;
 
     // Calculate the velocity and speed
     const velocity = player.getVelocity();
-    const calcVelocity = calculateVelocity(player.location, player.lastPosition);
+    const calcVelocity = calculateVelocity(currentPosition, previousPosition);
 
     const serverSpeed = calculateSpeed(calcVelocity);
     const clientSpeed = calculateSpeed(velocity);
@@ -56,7 +54,7 @@ export function timer_a(player, lastPosition, value) {
     if (clientSpeed === 0) return; // Avoid division by zero
 
     const speedRatio = serverSpeed / clientSpeed;
-    const adjustedTimer = (speedRatio * 20) / value;
+    const adjustedTimer = (speedRatio * 20) / lagValue;
 
     // Initialize timerHold if it doesn't exist
     player.timerHold = player.timerHold || [];
@@ -65,19 +63,13 @@ export function timer_a(player, lastPosition, value) {
     // Check if sufficient samples are collected
     const requiredSamples = config.modules.timerA.requiredSamples || 20;
     if (player.timerHold.length < requiredSamples) {
-        player.lastPosition = { ...player.location }; // Update lastPosition
         return;
     }
 
     // Calculate average timer value
     const averageTimer = Statistics.getMean(player.timerHold);
 
-    let timerValue = averageTimer;
-    if (player.timerHold.length >= 24) {
-        timerValue += 2; // Additional adjustment for larger sample sizes
-    }
-
-    debug(player, "Timer", `${timerValue} §j(§8V:${value}§j)`, "timer-debug");
+    debug(player, "Timer", `${averageTimer} §j(§8V:${lagValue}§j)`, "timer-debug");
 
     // Retrieve previous timer data
     const previousTimerData = timerData.get(player.name);
@@ -94,29 +86,26 @@ export function timer_a(player, lastPosition, value) {
 
         // Flag player if the timer value is outside acceptable bounds
         const outOfBounds =
-            (previousTimerData.t > timerLevel && timerValue > timerLevel) ||
-            (previousTimerData.t < timerLevelLow && timerValue < timerLevelLow);
+            (previousTimerData.t > timerLevel && averageTimer > timerLevel) ||
+            (previousTimerData.t < timerLevelLow && averageTimer < timerLevelLow);
 
         if (outOfBounds) {
             
             // Account for potential false positives
             if (player.isOnShulker || player.isRiding || player.hasTag("ender_pearl")) {
-                player.addTag("timer_bypass");
+                player.addTag("rosh:timer_bypass");
             }
 
-            if (!player.hasTag("timer_bypass")) {
-                flag(player, "Timer", "A", "timer", timerValue);
+            if (!player.hasTag("rosh:timer_bypass")) {
+                flag(player, "Timer", "A", "timer", averageTimer);
             }
         }
     }
 
-    if (!player.hasTag("timer_bypass")) {
-        timerData.set(player.name, { t: timerValue });
+    if (!player.hasTag("rosh:timer_bypass")) {
+        timerData.set(player.name, { t: averageTimer });
     }
 
     // Clear the timerHold array for the next round of samples
     player.timerHold = [];
-
-    // Update the last position
-    player.lastPosition = { ...player.location };
 }

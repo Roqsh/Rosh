@@ -2,7 +2,7 @@ import * as MinecraftUI from "@minecraft/server-ui";
 import { world } from "@minecraft/server";
 import config from "../../data/config.js";
 import data from "../../data/data.js";
-import { parseTime, timeDisplay, tellStaff } from "../../util.js";
+import { convertToMs, timeDisplay, tellStaff } from "../../util.js";
 import { mainMenu } from "../mainMenu.js";
 import { playerMenuSelected } from "./playerMenu.js";
 
@@ -188,7 +188,7 @@ export function banPlayerMenu(player, playerSelected, lastMenu = 0) {
 
         const input = response.formValues;
         const reason = input[0];
-        const banLength = input[1] ? parseTime(`${input[1]}d`) : 0;
+        const banLength = input[1] ? convertToMs(`${input[1]}d`) : 0;
         const shouldPermBan = input[2];
         
         // Adjust untilDate and duration based on shouldPermBan

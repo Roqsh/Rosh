@@ -1,5 +1,5 @@
 import config from "../../../data/config.js";
-import { flag, angleCalc, getSpeed } from "../../../util.js";
+import { flag, getAngle, getSpeed } from "../../../util.js";
 
 /**
  * Checks for breaking with a too high angle (behind) or too low angle (precise)
@@ -14,7 +14,7 @@ export function nuker_b(player, block, blockBreak, Minecraft) {
 
 	if(config.modules.nukerB.enabled) {
 
-        const angle = angleCalc(player, block);
+        const angle = getAngle(player, block);
         
         if(angle > config.modules.nukerB.angle) {
 

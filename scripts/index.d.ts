@@ -92,6 +92,13 @@ declare module "@minecraft/server" {
         getYaw(): number,
 
         /**
+         * Gets the player's last yaw (horizontal rotation).
+         * @returns {number} The player's last yaw.
+         * @Rosh
+         */
+        getLastYaw(): number,
+
+        /**
          * Gets the change in the player's yaw since the last update.
          * @returns {number} The change in the player's yaw.
          * @Rosh
@@ -104,6 +111,13 @@ declare module "@minecraft/server" {
          * @Rosh
          */
         setYaw(yawValue: number): void,
+
+        /**
+         * Sets the player's last yaw (horizontal rotation).
+         * @param {number} lastYawValue The last yaw value.
+         * @Rosh
+         */
+        setLastYaw(lastYawValue: number): void,
 
         /**
          * Sets the change in the player's yaw since the last update.
@@ -120,6 +134,13 @@ declare module "@minecraft/server" {
         getPitch(): number,
 
         /**
+         * Gets the player's last pitch (vertical rotation).
+         * @returns {number} The player's last pitch.
+         * @Rosh
+         */
+        getLastPitch(): number,
+
+        /**
          * Gets the change in the player's pitch since the last update.
          * @returns {number} The change in the player's pitch.
          * @Rosh
@@ -132,6 +153,13 @@ declare module "@minecraft/server" {
          * @Rosh
          */
         setPitch(pitchValue: number): void,
+
+        /**
+         * Sets the player's last pitch (vertical rotation).
+         * @param {number} lastPitchValue The last pitch value.
+         * @Rosh
+         */
+        setLastPitch(lastPitchValue): void,
 
         /**
          * Sets the change in the player's pitch since the last update.
@@ -155,6 +183,13 @@ declare module "@minecraft/server" {
         yaw: number,
 
         /**
+         * A variable to track the player's last yaw (horizontal rotation).
+         * (Use `getLastYaw()` instead if you wish to use the player's actual last yaw!)
+         * @Rosh
+         */
+        lastYaw: number,
+
+        /**
          * A variable to track the change in the player's yaw since the last update.
          * (Use `getDeltaYaw()` instead if you wish to use the player's actual change in yaw!)
          * @Rosh
@@ -167,6 +202,13 @@ declare module "@minecraft/server" {
          * @Rosh
          */
         pitch: number,
+
+        /**
+         * A variable to track the player's last pitch (vertical rotation).
+         * (Use `getLastPitch()` instead if you wish to use the player's actual last pitch!)
+         * @Rosh
+         */
+        lastPitch: number,
 
         /**
          * A variable to track the change in the player's pitch since the last update.
@@ -190,9 +232,17 @@ declare module "@minecraft/server" {
          * @Rosh
          */
         lastSelectedSlot: number,
+
+        /**
+         * Stores a player's velocity of the last tick.
+         * (Use `getLastVelocity()` instead if you wish to use the player's actual last velocity!)
+         * @Rosh
+         */
+        lastVelocity: Vector3,
 		
         /**
          * Stores a player's location of the last tick.
+         * (Use `getLastPosition()` instead if you wish to use the player's actual last position!)
          * @Rosh
          */
         lastPosition: Vector3,
@@ -203,6 +253,41 @@ declare module "@minecraft/server" {
          * @Rosh
          */
         lastGoodPosition: Vector3,
+
+        /**
+         * Gets a player's position of the last tick.
+         * @returns {Vector3} A vector representing the player's position on the x, y and z coordinates.
+         * @Rosh
+         */
+        getLastPosition(): Vector3,
+
+        /**
+         * Sets the change in the player's position.
+         * @param {Vector3} Position
+         * @Rosh
+         */
+        setLastPosition(Position: Vector3): void,
+
+        /**
+         * Gets a player's velocity of the last tick.
+         * @returns {Vector3} A vector representing the player's velocity on the x, y and z coordinates.
+         * @Rosh
+         */
+        getLastVelocity(): Vector3,
+
+        /**
+         * Sets the change in the player's velocity.
+         * @param {Vector3} Velocity
+         * @Rosh
+         */
+        setLastVelocity(Velocity: Vector3): void,
+
+        /**
+         * Gets the player's current move direction.
+         * @returns {Vector3} A vector representing the player's current move direction on the x, y and z axis.
+         * @Rosh
+         */
+        getMoveDirection(): Vector3,
 
         /**
          * Stores a list of (potential malicious) player names a player has reported.

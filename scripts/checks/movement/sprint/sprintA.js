@@ -3,8 +3,6 @@ import config from "../../../data/config.js";
 import { flag, debug } from "../../../util";
 import { Vector3D } from "../../../utils/math.js";
 
-// Map to store the previous position of players
-const playerPreviousPosition = new Map();
 // Map to store the buffer count of invalid sprinting events for players
 const playerInvalidSprintBuffer = new Map();
 
@@ -20,21 +18,8 @@ export function sprint_a(player) {
     const ANGLE_THRESHOLD = config.modules.invalidsprintA.angle_threshold || 75;
     const BUFFER_THRESHOLD = config.modules.invalidsprintA.buffer_threshold || 8;
 
-    // Get the player's current position
-    const currentPosition = player.location;
-
-    // Retrieve or initialize the previous position for the player
-    let previousPosition = playerPreviousPosition.get(player.id);
-
-    if (!previousPosition) {
-        // If there's no previous position, initialize it with the current position
-        previousPosition = currentPosition;
-        playerPreviousPosition.set(player.id, previousPosition);
-        return; // No movement to check yet
-    }
-
-    // Calculate the move direction vector
-    const moveDirection = Vector3D.getVectorBetweenPositions(previousPosition, currentPosition);
+    // Get the player's current move direction vector
+    const moveDirection = player.getMoveDirection();
 
     if (Vector3D.getVectorLength(moveDirection) < 0.1) return;
 
@@ -81,7 +66,4 @@ export function sprint_a(player) {
         // Reset buffer count if angle is valid
         playerInvalidSprintBuffer.set(player.id, 0);
     }
-
-    // Update the previous position with the current position
-    playerPreviousPosition.set(player.id, currentPosition);
 }

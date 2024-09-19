@@ -1,10 +1,10 @@
+import * as Minecraft from "@minecraft/server";
 import config from "../../../data/config.js";
 import { flag } from "../../../util";
 
 /**
  * Checks for exceeding the maximum reach when attacking.
- * @name reach_a
- * @param {player} player - The player to check.
+ * @param {Minecraft.Player} player - The player to check.
  * @param {entity} entity - The hit entity.
  */
 export function reach_a(player, entity) {
@@ -59,7 +59,13 @@ export function reach_a(player, entity) {
                 entity.id === id &&
                 adjustedDistance > DISTANCE
             ) {
-                flag(player, "Reach", "A", "distance", `${adjustedDistance},player=${entity.nameTag},entity=${typeId}`);
+                let hitPlayerName = "";
+                if (entity instanceof Minecraft.Player) {
+                    hitPlayerName = `player=${entity.name}`;
+                } else if (entity instanceof Minecraft.Entity) {
+                    hitPlayerName = `entity=${entity.typeId}`;
+                }
+                flag(player, "Reach", "A", "distance", `${adjustedDistance}, ${hitPlayerName}`);
             }
         }
 

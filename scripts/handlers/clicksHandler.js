@@ -1,5 +1,5 @@
 import * as Minecraft from "@minecraft/server";
-import { debug } from "../../../util";
+import { debug } from "../util";
 
 /**
  * Calculates and assigns the player's clicks per second (CPS) if conditions are met.

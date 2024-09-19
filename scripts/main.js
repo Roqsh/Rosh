@@ -4,7 +4,7 @@ import config from "./data/config.js";
 import data from "./data/data.js";
 import { initializePlayerPrototypes } from "./data/prototype.js";
 import { tag_system } from "./utils/gameUtil.js";
-import { flag, ban, parseTime, timeDisplay, getScore, setScore, tellStaff, getSpeed, aroundAir, inAir, debug } from "./util.js";
+import { flag, ban, convertToMs, timeDisplay, getScore, setScore, tellStaff, getSpeed, aroundAir, inAir, debug } from "./util.js";
 import { commandHandler } from "./commands/handler.js";
 import { mainMenu, rateLimit } from "./ui/mainMenu.js";
 import { playerMenuSelected } from "./ui/main/playerMenu.js";
@@ -77,18 +77,20 @@ import { killaura_e, dependencies_e } from "./checks/combat/killaura/killauraE.j
 import { hitbox_a } from "./checks/combat/hitbox/hitboxA.js";
 import { hitbox_b } from "./checks/combat/hitbox/hitboxB.js";
 import { reach_a } from "./checks/combat/reach/reachA.js";
-import { clicksHandler } from "./checks/combat/autoclicker/clicksHandler.js";
 import { autoclicker_a } from "./checks/combat/autoclicker/autoclickerA.js";
 import { autoclicker_b } from "./checks/combat/autoclicker/autoclickerB.js";
 import { autoclicker_c } from "./checks/combat/autoclicker/autoclickerC.js";
 import { autoclicker_d } from "./checks/combat/autoclicker/autoclickerD.js";
 import { autoclicker_e } from "./checks/combat/autoclicker/autoclickerE.js";
-import { rotationHandler } from "./checks/combat/aim/rotationHandler.js";
 // import { aim_a } from "./checks/combat/aim/aimA.js";
 // import { aim_b } from "./checks/combat/aim/aimB.js";
 // import { aim_c } from "./checks/combat/aim/aimC.js";
 // import { aim_d } from "./checks/combat/aim/aimD.js";
 // import { aim_e } from "./checks/combat/aim/aimE.js";
+
+import { clicksHandler } from "./handlers/clicksHandler.js";
+import { movementHandler } from "./handlers/movementHandler.js";
+import { rotationHandler } from "./handlers/rotationHandler.js";
 
 initializePlayerPrototypes();
 
@@ -333,60 +335,73 @@ system.runInterval(() => {
 		}
 
         // player.onScreenDisplay.setActionBar(`${themecolor}Debug §j> §8In Air: ${inAir(player) ? "§aTrue" : "§cFalse"}§8, §8Surrounded: ${aroundAir(player) ? "§aTrue" : "§cFalse"}`);
+        
 
-		if (config.generalModules.fly) {
-			fly_a(player);
-			fly_b(player);
-			fly_c(player);
-			fly_d(player);
-		}
+        const movementData = movementHandler(player);
+        
+        if (movementData) {
+            fly_a(player);
+            fly_b(player);
+            fly_c(player);
+            fly_d(player);
 
-		if (config.generalModules.speed) {
-			speed_a(player);
-			speed_b(player);
-		}
+            motion_a(player);
+            motion_b(player);
+            motion_c(player);
+            motion_d(player);
+            motion_e(player);
 
-		if (config.generalModules.motion) {
-			motion_a(player);
-			motion_b(player);
-			motion_c(player);
-			motion_d(player);
-			motion_e(player);
-		}
-
-		if (config.generalModules.misc) {
-            badpackets_a(player);
-            badpackets_b(player);
-			badpackets_d(player);			
-			badpackets_f(player);
-            badpackets_g(player);
-			badpackets_h(player);
-            badpackets_i(player);
-			badpackets_j(player);
-			exploit_a(player);
-			timer_a(player, player.lastPosition, lagValue);
-		}
-
-		if (config.generalModules.movement) {
-			strafe_a(player);
-			strafe_b(player);
-			noslow_a(player);
-			noslow_b(player);
-			sprint_a(player);
+            timer_a(player, lagValue);
+    
+            speed_a(player);
+            speed_b(player);
+            
+            strafe_a(player);
+            strafe_b(player);
+            
+            noslow_a(player);
+            noslow_b(player);
+            
+            sprint_a(player);
             sprint_b(player);
             sprint_c(player);
-			invmove_a(player);
-			jump_a(player);
-			jump_b(player);
-		}
+            
+            jump_a(player);
+            jump_b(player);
+
+            invmove_a(player);
+            
+            // Update the player's last position and velocity using the returned value
+            player.setLastPosition(movementData.currentPosition);
+            player.setLastVelocity(movementData.currentVelocity);
+        }
+
         
-        if (rotationHandler(player)) {
+        badpackets_a(player);
+        badpackets_b(player);
+        badpackets_d(player);
+        badpackets_f(player);
+        badpackets_g(player);
+        badpackets_h(player);
+        badpackets_i(player);
+        badpackets_j(player);
+        
+        exploit_a(player);
+
+        
+        const rotationData = rotationHandler(player);
+        
+        if (rotationData) {
             //aim_a(player);
             //aim_b(player);
             //aim_c(player);
             //aim_d(player);
             //aim_e(player);
+            
+            player.setLastYaw(rotationData.currentYaw);
+            player.setLastPitch(rotationData.currentPitch);
         }
+
         
         if (clicksHandler(player, tick)) {
             autoclicker_a(player);
@@ -686,8 +701,8 @@ world.afterEvents.playerSpawn.subscribe((playerJoin) => {
 		data.recentLogs.push(`${timeDisplay()}§8${player.name} §jjoined the server`)
 	}
 
-    if (thememode !== "Rosh" && thememode !== "Alice") {
-        tellStaff(`§r${themecolor}Rosh §j> §cNo valid thememode entered in config! The thememode has been set back to default.`);
+    if (player.isOp() && thememode !== "Rosh" && thememode !== "Alice") {
+        player.sendMessage(`${themecolor}Rosh §j> §cNo valid thememode entered in config! The thememode has been set back to default.`);
     }
 
     if (player.name in data.banList) {
@@ -706,7 +721,7 @@ world.afterEvents.playerSpawn.subscribe((playerJoin) => {
         const banDuration = data.banList[player.name].duration;
         
         if (banDuration !== "Permanent") {
-            const time = parseTime(banDuration.split(' ')[0]);
+            const time = convertToMs(banDuration.split(' ')[0]);
             player.addTag(`Length:${Date.now() + time}`);
         }
     }

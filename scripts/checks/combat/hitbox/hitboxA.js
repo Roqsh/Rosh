@@ -1,5 +1,5 @@
 import config from "../../../data/config.js";
-import { flag, angleCalc, debug } from "../../../util";
+import { flag, getAngle, debug } from "../../../util";
 
 /**
  * Checks for attacking with a too high angle.
@@ -14,7 +14,7 @@ export function hitbox_a(player, entity) {
 
     if (!config.modules.hitboxA.enabled) return;
 
-    const angle = angleCalc(player, entity);
+    const angle = getAngle(player, entity);
     const colour = angle >= 80 ? '§c' : (angle >= 30 ? '§n' : (angle >= 10 ? '§2' : '§a'));
 
     debug(player, "Angle", `${colour}${angle}°`, "angle");

@@ -1,5 +1,5 @@
 import * as Minecraft from "@minecraft/server";
-import { timeDisplay, parseTime, findPlayerByName, endsWithNumberInParentheses, tellStaff } from "../../util.js";
+import { timeDisplay, convertToMs, findPlayerByName, endsWithNumberInParentheses, tellStaff } from "../../util.js";
 import data from "../../data/data.js";
 import config from "../../data/config.js";
 
@@ -38,7 +38,7 @@ export function ban(message, args) {
     }
 
     // Parse the ban duration if provided
-    const time = args[1] ? parseTime(args[1]) : undefined;
+    const time = args[1] ? convertToMs(args[1]) : undefined;
     const untilDate = time ? new Date(Date.now() + time) : null;
     const duration = untilDate ? `${args[1]} (Until ${untilDate.toLocaleString()})` : "Permanent";
     args.splice(1, 1); // Remove time argument

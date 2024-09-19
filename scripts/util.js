@@ -206,7 +206,7 @@ function handleBanPunishment(player, check, checkType, themecolor, punishmentLen
 
             if (punishmentLength !== "Permanent") {
                 try {
-                    banLength = parseTime(punishmentLength);
+                    banLength = convertToMs(punishmentLength);
                     player.addTag(`Length:${Date.now() + banLength}`);
                     untilDate = new Date(Date.now() + banLength);
                     duration = `${punishmentLength} (Until ${untilDate.toLocaleString()})`;
@@ -455,7 +455,7 @@ export function ban(player) {
         }
 
         // Calculate the remaining ban time
-        const remainingTime = msToTime(banEndTime - currentTime);
+        const remainingTime = convertToTime(banEndTime - currentTime);
         time = `§nYou have §8${remainingTime.weeks} §nweek${remainingTime.weeks > 1 ? "s" : ""}, §8${remainingTime.days} §nday${remainingTime.days > 1 ? "s" : ""}, §8${remainingTime.hours} §nhour${remainingTime.hours > 1 ? "s" : ""}, §8${remainingTime.minutes} §nminute${remainingTime.minutes > 1 ? "s" : ""} and §8${remainingTime.seconds} §nsecond${remainingTime.seconds > 1 ? "s" : ""} left!`;
     }
 
@@ -534,11 +534,11 @@ export function animation(player, type) {
 /**
  * Parses a time string into milliseconds.
  * @param {string} str - The time value to convert to milliseconds
- * @example parseTime("24d"); // returns 2073600000
+ * @example convertToMs("24d"); // returns 2073600000
  * @returns {number | null} The converted time in milliseconds, or null if the input is invalid
  * @throws {TypeError} If the input is not a string
  */
-export function parseTime(str) {
+export function convertToMs(str) {
     // Validate the input
     if (typeof str !== "string") {
         throw new TypeError(`Error: str is type of ${typeof str}. Expected "string"`);
@@ -584,9 +584,9 @@ export function parseTime(str) {
  * @param {number} [milliseconds=0] - The number of milliseconds to convert
  * @returns {Object} An object containing the converted time in weeks, days, hours, minutes, and seconds
  * @throws {TypeError} Throws if the input is not a number or is negative
- * @example msToTime(88200000); // Returns { weeks: 0, days: 1, hours: 0, minutes: 30, seconds: 0 }
+ * @example convertToTime(88200000); // Returns { weeks: 0, days: 1, hours: 0, minutes: 30, seconds: 0 }
  */
-export function msToTime(milliseconds = 0) {
+export function convertToTime(milliseconds = 0) {
     // Validate the input
     if (typeof milliseconds !== 'number' || milliseconds < 0) {
         throw new TypeError(`Error: milliseconds must be a non-negative number. Received: ${milliseconds}`);
@@ -796,7 +796,7 @@ export function lowercaseFirstLetter(string) {
  * @returns {number} - The angle between the player and the position in degrees.
  * @remarks The param `position` both works with an entity or a block.
 */
-export function angleCalc(player, position) {
+export function getAngle(player, position) {
     // Validate the input
     if (typeof player !== 'object' || player === null) {
         throw new TypeError(`Error: player is type of ${typeof player}. Expected "object".`);
