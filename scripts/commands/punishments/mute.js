@@ -1,5 +1,5 @@
 import * as Minecraft from "@minecraft/server";
-import { animation, timeDisplay, findPlayerByName, endsWithNumberInParentheses, tellStaff } from "../../util.js";
+import { animation, timeDisplay, getPlayerByName, endsWithNumberInParentheses, tellStaff } from "../../util.js";
 import data from "../../data/data.js";
 import config from "../../data/config.js";
 
@@ -41,7 +41,7 @@ export function mute(message, args) {
     const reason = args.slice(1).join(" ").replace(/"|\\/g, "") || "No reason specified";
 
     // Find the target player by name
-    const member = findPlayerByName(targetName);
+    const member = getPlayerByName(targetName);
 
     // Handle case where the target player is not found
     if (!member) {

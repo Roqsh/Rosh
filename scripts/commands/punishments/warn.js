@@ -1,7 +1,7 @@
 import * as Minecraft from "@minecraft/server";
 import config from "../../data/config.js";
 import data from "../../data/data.js";
-import { timeDisplay, findPlayerByName, endsWithNumberInParentheses } from "../../util.js";
+import { timeDisplay, getPlayerByName, endsWithNumberInParentheses } from "../../util.js";
 
 /**
  * Warns a player for a specified reason and kicks them if they reach the warning limit.
@@ -41,7 +41,7 @@ export function warn(message, args) {
     const reason = args.slice(1).join(" ") || "No reason specified";
 
     // Find the target player by name
-    const member = findPlayerByName(targetName);
+    const member = getPlayerByName(targetName);
 
     // Handle case where the target player is not found
     if (!member) {

@@ -1,6 +1,6 @@
 import * as Minecraft from "@minecraft/server";
 import config from "../../data/config.js";
-import { findPlayerByName, endsWithNumberInParentheses, tellStaff } from "../../util.js";
+import { getPlayerByName, endsWithNumberInParentheses, tellStaff } from "../../util.js";
 
 /**
  * Freezes the players movement, camera and hud until he gets unfrozen.
@@ -41,7 +41,7 @@ export function freeze(message, args) {
     }
 
     // Find the target player by name
-    const member = findPlayerByName(targetName);
+    const member = getPlayerByName(targetName);
 
     // Handle case where the target player is not found
     if (!member) {

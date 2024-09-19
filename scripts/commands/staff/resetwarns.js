@@ -1,7 +1,7 @@
 import * as Minecraft from "@minecraft/server";
 import data from "../../data/data.js";
 import config from "../../data/config.js";
-import { timeDisplay, setScore, findPlayerByName, endsWithNumberInParentheses, tellStaff } from "../../util";
+import { timeDisplay, setScore, getPlayerByName, endsWithNumberInParentheses, tellStaff } from "../../util";
 
 /**
  * Resets the warning count for a specified player.
@@ -38,7 +38,7 @@ export function resetwarns(message, args) {
     }
 
     // Find the target player by name
-    const member = findPlayerByName(targetName);
+    const member = getPlayerByName(targetName);
 
     // Handle case where the target player is not found
     if (!member) {

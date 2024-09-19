@@ -1,7 +1,7 @@
 import * as Minecraft from "@minecraft/server";
 import data from "../../data/data.js";
 import config from "../../data/config.js";
-import { timeDisplay, findPlayerByName, endsWithNumberInParentheses, tellStaff } from "../../util.js";
+import { timeDisplay, getPlayerByName, endsWithNumberInParentheses, tellStaff } from "../../util.js";
 
 /**
  * Reports a player for a given reason.
@@ -39,7 +39,7 @@ export function report(message, args) {
     }
 
     // Find the target player by name
-    const member = findPlayerByName(targetName);
+    const member = getPlayerByName(targetName);
 
     // Handle case where the target player is not found
     if (!member) {

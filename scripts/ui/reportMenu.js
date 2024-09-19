@@ -3,7 +3,7 @@ import * as MinecraftUI from "@minecraft/server-ui";
 import { world } from "@minecraft/server";
 import config from "../data/config.js";
 import data from "../data/data.js";
-import { timeDisplay, findPlayerByName, endsWithNumberInParentheses, tellStaff } from "../util.js";
+import { timeDisplay, getPlayerByName, endsWithNumberInParentheses, tellStaff } from "../util.js";
 
 /**
  * Opens the report menu to select a malicious user.
@@ -402,7 +402,7 @@ function confirmReportMenu(player, selectedPlayer, cheatType) {
         // Add the player to the reported players list to prevent double reporting
         player.reports.push(targetName);
 
-        const playerIsOnline = findPlayerByName(targetName);
+        const playerIsOnline = getPlayerByName(targetName);
 
         if (playerIsOnline) {
             // Mark the player as reported

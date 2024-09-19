@@ -951,13 +951,12 @@ export function getClosestPlayer(entity) {
 
 
 /**
- * Finds a player object by a player name.
+ * Finds a player object by their name.
  * @param {string} name - The player to look for.
- * @remarks Uses the lowercased name to search for the player object.
  * @returns {Minecraft.Player | null} - The player object, or null if not found.
  * @throws {TypeError} If name is not a string.
  */
-export function findPlayerByName(name) {
+export function getPlayerByName(name) {
     // Validate the input
     if (typeof name !== "string") {
         throw new TypeError(`Error: name is type of ${typeof name}. Expected "string".`);
@@ -969,6 +968,33 @@ export function findPlayerByName(name) {
     // Find the player with the matching name
     for (const player of players) {
         if (player.name === name) {
+            return player;
+        }
+    }
+
+    return null;
+}
+
+
+
+/**
+ * Finds a player object by their id.
+ * @param {string} id - The player to look for.
+ * @returns {Minecraft.Player | null} - The player object, or null if not found.
+ * @throws {TypeError} If id is not a number.
+ */
+export function getPlayerById(id) {
+    // Validate the input
+    if (typeof id !== "number") {
+        throw new TypeError(`Error: id is type of ${typeof id}. Expected "number".`);
+    }
+
+    // Get all players in the world
+    const players = world.getPlayers();
+
+    // Find the player with the matching id
+    for (const player of players) {
+        if (player.id === id) {
             return player;
         }
     }

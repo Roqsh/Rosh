@@ -1,5 +1,5 @@
 import * as Minecraft from "@minecraft/server";
-import { timeDisplay, convertToMs, findPlayerByName, endsWithNumberInParentheses, tellStaff } from "../../util.js";
+import { timeDisplay, convertToMs, getPlayerByName, endsWithNumberInParentheses, tellStaff } from "../../util.js";
 import data from "../../data/data.js";
 import config from "../../data/config.js";
 
@@ -47,7 +47,7 @@ export function ban(message, args) {
     const reason = args.slice(1).join(" ").replace(/"|\\/g, "") || "No reason specified";
 
     // Find the target player by name
-    const member = findPlayerByName(targetName);
+    const member = getPlayerByName(targetName);
 
     // Queue the player for a ban if he is not online
     if (!member) {

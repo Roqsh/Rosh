@@ -1,6 +1,6 @@
 import * as Minecraft from "@minecraft/server";
 import config from "../../data/config.js";
-import { getScore, findPlayerByName, endsWithNumberInParentheses } from "../../util";
+import { getScore, getPlayerByName, endsWithNumberInParentheses } from "../../util";
 
 /**
  * Gets stats from a player (such as kicks, flags, etc.).
@@ -41,7 +41,7 @@ export function stats(message, args) {
     }
 
     // Find the target player by name
-    const member = findPlayerByName(targetName);
+    const member = getPlayerByName(targetName);
 
     // Handle case where the target player is not found
     if (!member) {
