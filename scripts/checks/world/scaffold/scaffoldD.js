@@ -10,7 +10,7 @@ import { flag, getAngle, debug } from "../../../util";
  */
 export function scaffold_d(player, block) {
 
-    if (!config.modules.scaffoldD.enabled || player.isFlying) return;
+    if (!config.modules.scaffoldD.enabled || player.isFlying || player.isMobile()) return;
 
     const MAX_ANGLE = config.modules.scaffoldD.angle;
     const DISTANCE_THRESHOLD = config.modules.scaffoldD.distance;

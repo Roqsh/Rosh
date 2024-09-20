@@ -12,7 +12,7 @@ import { flag, getAngle, getSpeed } from "../../../util.js";
  */
 export function nuker_b(player, block, blockBreak, Minecraft) {
 
-	if(config.modules.nukerB.enabled) {
+	if(config.modules.nukerB.enabled && !player.isMobile()) {
 
         const angle = getAngle(player, block);
         

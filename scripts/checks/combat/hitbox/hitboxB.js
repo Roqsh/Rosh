@@ -55,7 +55,7 @@ function distance3D(x1, y1, z1, x2, y2, z2) {
  */
 export function hitbox_b(player, entity) {
 
-    if (!config.modules.hitboxB.enabled) return;
+    if (!config.modules.hitboxB.enabled || player.isMobile()) return;
 
     const LOOK_THRESHOLD = config.modules.hitboxB.threshold; 
     const ENTITY_HEIGHT = config.modules.hitboxB.height;

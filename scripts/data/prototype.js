@@ -127,6 +127,10 @@ export function initializePlayerPrototypes() {
         }
     };
 
+    Player.prototype.isMuted = function() {
+        return this.hasTag("isMuted");
+    }
+
 
     // Adding movement methods to the Player prototype
 
@@ -157,4 +161,40 @@ export function initializePlayerPrototypes() {
             z: currentPos.z - lastPos.z,
         }
     };
+
+
+    // Adding operating system specific methods to the Player prototype
+
+    Player.prototype.isMobile = function() {
+
+        const isMobile = this.clientSystemInfo.platformType === "Mobile";
+
+        if (isMobile) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    Player.prototype.isConsole = function() {
+        
+        const isConsole = this.clientSystemInfo.platformType === "Console";
+
+        if (isConsole) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    Player.prototype.isDesktop = function() {
+        
+        const isDesktop = this.clientSystemInfo.platformType === "Desktop";
+        
+        if (isDesktop) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 }

@@ -69,6 +69,34 @@ declare module "@minecraft/server" {
         isAlive(): boolean,
 
         /**
+         * Whether the player is currently muted/can't chat. (Has tag `isMuted`)
+         * @returns {boolean} True if the player is muted, false otherwise.
+         * @Rosh
+         */
+        isMuted(): boolean,
+
+        /**
+         * Whether the player's device on which minecraft is running is a mobile device. (Phones with iOS or Android etc.)
+         * @returns {boolean} Whether the player's platform is a mobile device.
+         * @Rosh
+         */
+        isMobile(): boolean,
+
+        /**
+         * Wheter the player's device on which minecraft is running is a console. (Xbox, Playstation etc.)
+         * @returns {boolean} Whether the player's platform is a console.
+         * @Rosh
+         */
+        isConsole(): boolean,
+
+        /**
+         * Whether the player's device on which minecraft is running is a desktop. (Pc's with Windows or Linux etc.)
+         * @returns {boolean} Wheter the player's platform is a Pc.
+         * @Rosh
+         */
+        isDesktop(): boolean,
+
+        /**
          * Gets a player's attacks per second. (This does not include regular arm swings/clicks, **only attacks**!)
          * @returns {number} The player's attacks per second.
          * @Rosh
