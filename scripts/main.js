@@ -334,7 +334,7 @@ system.runInterval(() => {
 		    player.lastGoodPosition = player.location;			
 		}
 
-        // player.onScreenDisplay.setActionBar(`${themecolor}Debug §j> §8In Air: ${inAir(player) ? "§aTrue" : "§cFalse"}§8, §8Surrounded: ${aroundAir(player) ? "§aTrue" : "§cFalse"}`);
+        // player.onScreenDisplay.setActionBar(`${themecolor}Debug §j> §8Falling: ${player.isFalling ? "§aTrue" : "§cFalse"}`);
         
 
         const movementData = movementHandler(player);

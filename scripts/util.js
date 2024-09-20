@@ -1163,32 +1163,6 @@ export function tellStaff(message, tags, excludeTags) {
 
 
 /**
- * Sends a message to a specific player. [Unused]
- * @param {Minecraft.Player} player - The player that should receive the message.
- * @param {string} message - The message the player will be told.
- * @throws {TypeError} If player is not an object or message is not a string.
- */
-export function tellPlayer(player, message) {
-    // Validate the input
-    if (typeof player !== "object" || player === null) {
-        throw new TypeError(`Error: player is type of ${typeof player}. Expected "object".`);
-    }
-
-    if (typeof message !== "string") {
-        throw new TypeError(`Error: message is type of ${typeof message}. Expected "string".`);
-    }
-
-    // Send the message to the player
-    try {
-        player.sendMessage(message);
-    } catch (error) {
-        console.error(`Error: Failed to send message to player. ${error.message}`);
-    }
-}
-
-
-
-/**
  * Gets a player's horizontal speed.
  * @param {Minecraft.Player} player - The player to get the speed from.
  * @returns {number} The horizontal speed of the player.

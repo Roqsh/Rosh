@@ -44,7 +44,7 @@ export function sprint_a(player) {
     const angle = Vector3D.getVectorAngle(normalizedViewDirection, normalizedMoveDirection);
 
     // Debug the angle between the view direction and move direction
-    debug(player, "Angle-Diff", angle, "move-angle");
+    debug(player, "Angle-Diff", angle, "sprint-angle");
 
     // Retrieve or initialize the invalid sprint buffer count for the player
     let bufferCount = playerInvalidSprintBuffer.get(player.id) || 0;

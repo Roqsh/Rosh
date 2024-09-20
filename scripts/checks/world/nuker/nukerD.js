@@ -12,7 +12,7 @@ import { flag } from "../../../util.js";
  */
 export function nuker_d(player, block, blockBreak, Minecraft) {
 
-    if (config.modules.nukerD.enabled && !player.isMobile()) {
+    if (config.modules.nukerD.enabled) {
 
         const distance = Math.sqrt(
             Math.pow(block.location.x - player.location.x, 2) + 

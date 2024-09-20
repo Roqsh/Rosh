@@ -9,7 +9,7 @@ import { flag } from "../../../util";
  */
 export function scaffold_c(player, block) {
 
-    if (!config.modules.scaffoldC.enabled || player.isMobile()) return;
+    if (!config.modules.scaffoldC.enabled) return;
 
     let isChecked = false;
 

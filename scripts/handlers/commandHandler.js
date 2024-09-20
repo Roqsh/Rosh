@@ -3,45 +3,45 @@ import { world, system } from "@minecraft/server";
 import config from "../data/config.js";
 
 // Importing Punishments
-import { ban } from "./punishments/ban.js";
-import { unban } from "./punishments/unban.js";
-import { kick } from "./punishments/kick.js";
-import { kickall } from "./punishments/kickall.js";
-import { mute } from "./punishments/mute.js";
-import { unmute } from "./punishments/unmute.js";
-import { warn } from "./punishments/warn.js";
-import { freeze } from "./punishments/freeze.js";
-import { unfreeze } from "./punishments/unfreeze.js";
+import { ban } from "../commands/punishments/ban.js";
+import { unban } from "../commands/punishments/unban.js";
+import { kick } from "../commands/punishments/kick.js";
+import { kickall } from "../commands/punishments/kickall.js";
+import { mute } from "../commands/punishments/mute.js";
+import { unmute } from "../commands/punishments/unmute.js";
+import { warn } from "../commands/punishments/warn.js";
+import { freeze } from "../commands/punishments/freeze.js";
+import { unfreeze } from "../commands/punishments/unfreeze.js";
 
 // Importing Tools
-import { spectate } from "./tools/spectate.js";
-import { report } from "./tools/report.js";
-import { vanish } from "./tools/vanish.js";
-import { fly } from "./tools/fly.js";
-import { invsee } from "./tools/invsee.js";
-import { cloneinv } from "./tools/cloneinv.js";
-import { ecwipe } from "./tools/ecwipe.js";
-import { testaura } from "./tools/testaura.js";
+import { spectate } from "../commands/tools/spectate.js";
+import { report } from "../commands/tools/report.js";
+import { vanish } from "../commands/tools/vanish.js";
+import { fly } from "../commands/tools/fly.js";
+import { invsee } from "../commands/tools/invsee.js";
+import { cloneinv } from "../commands/tools/cloneinv.js";
+import { ecwipe } from "../commands/tools/ecwipe.js";
+import { testaura } from "../commands/tools/testaura.js";
 
 // Importing Staff Functions
-import { ui } from "./staff/ui.js";
-import { op } from "./staff/op.js";
-import { deop } from "./staff/deop.js";
-import { tellstaff } from "./staff/tellstaff.js";
-import { notify } from "./staff/notify.js";
-import { autoban } from "./staff/autoban.js";
-import { module } from "./staff/module.js";
-import { stats } from "./staff/stats.js";
-import { logs } from "./staff/logs.js";
-import { banlist } from "./staff/banlist.js";
-import { resetwarns } from "./staff/resetwarns.js";
-import { tag } from "./staff/tag.js";
+import { ui } from "../commands/staff/ui.js";
+import { op } from "../commands/staff/op.js";
+import { deop } from "../commands/staff/deop.js";
+import { tellstaff } from "../commands/staff/tellstaff.js";
+import { notify } from "../commands/staff/notify.js";
+import { autoban } from "../commands/staff/autoban.js";
+import { module } from "../commands/staff/module.js";
+import { stats } from "../commands/staff/stats.js";
+import { logs } from "../commands/staff/logs.js";
+import { banlist } from "../commands/staff/banlist.js";
+import { resetwarns } from "../commands/staff/resetwarns.js";
+import { tag } from "../commands/staff/tag.js";
 
 // Importing Information Commands
-import { help } from "./info/help.js";
-import { about } from "./info/about.js";
-import { version } from "./info/version.js";
-import { credits } from "./info/credits.js";
+import { help } from "../commands/info/help.js";
+import { about } from "../commands/info/about.js";
+import { version } from "../commands/info/version.js";
+import { credits } from "../commands/info/credits.js";
 
 /**
  * Handles incoming commands from players.

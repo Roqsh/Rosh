@@ -71,7 +71,7 @@ export function resetWarns(player) {
         "killauravl", "reachvl", "hitboxvl", "aimvl", "autoclickervl", "autoshieldvl", 
         "autototemvl", "badpacketsvl", "badenchantsvl", "crashervl", "cbevl", "exploitvl", "illegalitemsvl", 
         "spammervl", "fastusevl", "autotoolvl", "namespoofvl", "timervl", 
-        "motionvl", "strafevl", "flyvl", "speedvl", "noslowvl", "invalidsprintvl", "invalidjumpvl", 
+        "motionvl", "strafevl", "flyvl", "speedvl", "noslowvl", "invalidsprintvl", "invalidjumpvl", "elytravl", 
         "invmovevl", "scaffoldvl", "nukervl", "towervl"
     ];
 
