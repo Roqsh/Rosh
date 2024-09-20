@@ -1339,37 +1339,6 @@ export function inAir(player) {
 
 
 /**
- * Plays a sound for a player. [Unused]
- * @param {Minecraft.Player} player - The player running the sound function. This should be an object with a `runCommandAsync` method.
- * @param {string} id - The id of the played sound. This should be a non-empty string.
- * @returns {Promise<void>} - A promise that resolves if the command is successful, and rejects with an error message if not.
- * @throws {TypeError} - Throws if the player object is invalid or if the id is not a string.
- * @example
- * setSound(player, "mob.goat.death.screamer")
- *   .then(() => console.log("Sound played successfully"))
- *   .catch(error => console.error("Failed to play sound:", error));
- */
-export async function setSound(player, id) {
-    // Validate the input
-    if (typeof player !== 'object' || typeof player.runCommandAsync !== 'function') {
-        throw new TypeError("Invalid player object. It must have a runCommandAsync method.");
-    }
-
-    if (typeof id !== 'string' || id.trim() === '') {
-        throw new TypeError("Invalid id. It must be a non-empty string.");
-    }
-
-    // Play the requested sound
-    try {
-        await player.runCommandAsync(`playsound ${id} @s`);
-    } catch (error) {
-        throw new Error(`Failed to play sound: ${error.message}`);
-    }
-}
-
-
-
-/**
  * Sends debug information to players with a specific tag.
  * @param {Minecraft.Player} player - The player running the debug function.
  * @param {string} name - The type of information being debugged.

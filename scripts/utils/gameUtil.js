@@ -7,7 +7,6 @@ export async function tag_system(player) {
         // Add tags based on held items
         await Promise.all([
             player.runCommandAsync(`tag @a[hasitem={item=ender_pearl,location=slot.weapon.mainhand}] add ender_pearl`),
-            player.runCommandAsync(`tag @a[hasitem={item=trident,location=slot.weapon.mainhand}] add trident`),
             player.runCommandAsync(`tag @a[hasitem={item=bow,location=slot.weapon.mainhand}] add bow`)
         ]);
 

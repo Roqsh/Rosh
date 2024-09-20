@@ -5,7 +5,6 @@ import data from "./data/data.js";
 import { initializePlayerPrototypes } from "./data/prototype.js";
 import { tag_system } from "./utils/gameUtil.js";
 import { flag, ban, convertToMs, timeDisplay, getScore, setScore, tellStaff, getSpeed, aroundAir, inAir, debug } from "./util.js";
-import { commandHandler } from "./commands/handler.js";
 import { mainMenu, rateLimit } from "./ui/mainMenu.js";
 import { playerMenuSelected } from "./ui/main/playerMenu.js";
 
@@ -89,6 +88,7 @@ import { autoclicker_e } from "./checks/combat/autoclicker/autoclickerE.js";
 // import { aim_e } from "./checks/combat/aim/aimE.js";
 
 import { clicksHandler } from "./handlers/clicksHandler.js";
+import { commandHandler } from "./handlers/commandHandler.js";
 import { movementHandler } from "./handlers/movementHandler.js";
 import { rotationHandler } from "./handlers/rotationHandler.js";
 
@@ -410,9 +410,8 @@ system.runInterval(() => {
             autoclicker_d(player);
             autoclicker_e(player);
         }
-
-		//TODO: Move them into their own category [Patched, it will be disabled by default]
         
+        //TODO: Move checks into their own folder + create handler [Patched, it should be disabled by default]
         function handleBadEnchantments(player, enchantment, itemTypeId, i, type) {
             flag(player, "BadEnchants", type, "enchantment", `${enchantment.type.id},level=${enchantment.level},slot=${i}`);
         }
@@ -694,7 +693,7 @@ world.afterEvents.playerSpawn.subscribe((playerJoin) => {
 	if (!initialSpawn || !player.isValid()) return;
 
 	if (player.isOp() || player.name === "rqosh") {
-		player.sendMessage(`§r${themecolor}Rosh §j> §aWelcome §8${player.name}§a!`);
+		player.sendMessage(`${themecolor}Rosh §j> §aWelcome §8${player.name}§a!`);
 	}
 
 	if (config.logSettings.showJoinLeave) {
@@ -708,7 +707,7 @@ world.afterEvents.playerSpawn.subscribe((playerJoin) => {
     if (player.name in data.banList) {
 
         if (config.banJoin_debug) {
-            tellStaff(`§r${themecolor}Rosh §j> §8${player.name} §ctried to join but was blocked due to his ban.`);
+            tellStaff(`${themecolor}Rosh §j> §8${player.name} §ctried to join but was blocked due to his ban.`);
         }
 
         if (!player.hasTag("isBanned")) {
@@ -738,7 +737,10 @@ world.afterEvents.playerSpawn.subscribe((playerJoin) => {
 	player.lastTime = Date.now();
     player.clicks = 0;
 	player.reports = [];
-	if (player.isOnGround) player.lastGoodPosition = player.location;
+
+	if (player.isOnGround) {
+        player.lastGoodPosition = player.location;
+    }
 
 	setScore(player, "tick_counter2", 0);
 
