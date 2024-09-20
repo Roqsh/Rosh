@@ -54,8 +54,6 @@ declare module "@minecraft/server" {
          */
         isHoldingTrident: boolean,
 
-        flagAutotoolA: boolean,
-
         /**
          * Whether the player is currently dead. (Health = 0)
          * @returns {boolean} True if the player is dead, false otherwise.

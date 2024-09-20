@@ -909,7 +909,7 @@ export function getBlocksBetween({ x: x1, y: y1, z: z1 }, { x: x2, y: y2, z: z2 
 
 /**
  * Finds the nearest player to a given entity. [Unused]
- * @param {Minecraft.Entity} entity - The entity to check.
+ * @param {Minecraft.Entity} entity - The entity used to determine what player is the closest to that entity.
  * @returns {object|null} - The closest player object, or null if no player is found.
  */
 export function getClosestPlayer(entity) {
