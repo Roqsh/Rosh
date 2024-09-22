@@ -1,7 +1,7 @@
 import * as Minecraft from "@minecraft/server";
 import config from "../../../data/config.js";
 import { flag, debug } from "../../../util";
-import { Vector3D } from "../../../utils/math.js";
+import { Vector3D } from "../../../utils/Vector3D.js";
 
 // Map to store the buffer count of invalid sprinting events for players
 const playerInvalidSprintBuffer = new Map();

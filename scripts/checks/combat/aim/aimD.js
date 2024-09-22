@@ -1,7 +1,7 @@
 import config from "../../../data/config.js";
 import { flag, debug } from "../../../util";
-import { Statistics } from "../../../utils/math";
-import EvictingList from "../../../utils/data/evlist.js";
+import { Statistics } from "../../../utils/Statistics.js";
+import { EvictingList } from "../../../utils/EvictingList.js";
 
 const data = new Map();
 const buffer = new Map();

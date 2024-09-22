@@ -1,5 +1,6 @@
 import * as Minecraft from "@minecraft/server";
-import { EvictingList, Statistics } from "../../../utils/math.js";
+import { EvictingList } from "../../../utils/EvictingList.js";
+import { Statistics } from "../../../utils/Statistics.js";
 import config from "../../../data/config.js";
 import { flag } from "../../../util.js";
 

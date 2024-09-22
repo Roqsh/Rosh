@@ -1,6 +1,6 @@
 import config from "../../../data/config.js";
 import { flag } from "../../../util";
-import { Statistics } from "../../../utils/math.js";
+import { Statistics } from "../../../utils/Statistics.js";
 
 /**
  * @name aim_b

@@ -1,7 +1,7 @@
 import * as Minecraft from "@minecraft/server";
 import config from "../../../data/config.js";
 import { flag } from "../../../util.js";
-import { Vector3D } from "../../../utils/math.js";
+import { Vector3D } from "../../../utils/Vector3D.js";
 
 //TODO: Implement Bounding Box system to prevent false positives (Hitboxes can be outside of Corner positions)
 

@@ -1,7 +1,7 @@
 import * as Minecraft from "@minecraft/server";
 import config from "../../../data/config.js";
 import { flag, debug } from "../../../util";
-import { Statistics } from "../../../utils/math.js";
+import { Statistics } from "../../../utils/Statistics.js";
 
 // Map to store timer data for each player
 const timerData = new Map();
