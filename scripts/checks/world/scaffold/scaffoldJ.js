@@ -1,9 +1,9 @@
 import config from "../../../data/config.js";
 import { flag, getEyeHeight } from "../../../util";
+import { Block } from "../../../utils/Block.js";
 
 /**
  * Checks for looking at the exact center of the placed block.
- * @name scaffold_j
  * @param {import("@minecraft/server").Player} player - The player to check.
  * @param {import("@minecraft/server").Block} block - The placed block.
  */
@@ -14,40 +14,16 @@ export function scaffold_j(player, block) {
     // Define the threshold for how close the view direction must be to consider it as looking directly at the center
     const THRESHOLD = config.modules.scaffoldJ.threshold;
 
-    // Define all possible center locations on the block-faces
+    // Define all possible center locations on the block-faces (API methods)
     const center = block.center();
     const bottomCenter = block.bottomCenter();
 
     // Calculate the center positions for each block face (as we don't have an API implementation yet)
-    const topCenter = {
-        x: block.location.x + 0.5,
-        y: block.location.y + 1.0,
-        z: block.location.z + 0.5
-    };
-
-    const northCenter = {
-        x: block.location.x + 0.5,
-        y: block.location.y + 0.5,
-        z: block.location.z
-    };
-
-    const eastCenter = {
-        x: block.location.x + 1.0,
-        y: block.location.y + 0.5,
-        z: block.location.z + 0.5
-    };
-
-    const southCenter = {
-        x: block.location.x + 0.5,
-        y: block.location.y + 0.5,
-        z: block.location.z + 1.0
-    };
-
-    const westCenter = {
-        x: block.location.x,
-        y: block.location.y + 0.5,
-        z: block.location.z + 0.5
-    };   
+    const topCenter = Block.topCenter(block);
+    const northCenter = Block.northCenter(block);
+    const eastCenter = Block.eastCenter(block);
+    const southCenter = Block.southCenter(block);
+    const westCenter = Block.westCenter(block);   
 
     // Get the player's position and view direction
     const viewDirection = player.getViewDirection();

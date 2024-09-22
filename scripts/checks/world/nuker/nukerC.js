@@ -1,9 +1,9 @@
 import config from "../../../data/config.js";
-import { flag, getBlocksBetween } from "../../../util.js";
+import { flag } from "../../../util.js";
+import { Block } from "../../../utils/Block.js";
 
 /**
  * Checks for breaking a covered block. [Beta]
- * @name nuker_c
  * @param {player} player - The player to check
  * @param {block} block - The broken block
  * @param {object} blockBreak - The event object for block breaking
@@ -36,11 +36,11 @@ export function nuker_c(player, block, blockBreak, Minecraft) {
                 z: block.location.z + dir.z
             };
             
-            if (!getBlocksBetween(pos, pos).some((blk) => player.dimension.getBlock(blk)?.typeId !== "minecraft:air")) {
+            if (!Block.getBlocksBetween(pos, pos).some((blk) => player.dimension.getBlock(blk)?.typeId !== "minecraft:air")) {
                 score++;
             }
             
-            if (getBlocksBetween(pos, pos).some((blk) => player.dimension.getBlock(blk)?.typeId === "minecraft:bed")) {
+            if (Block.getBlocksBetween(pos, pos).some((blk) => player.dimension.getBlock(blk)?.typeId === "minecraft:bed")) {
 
                 let score2 = 0;
                 
@@ -51,7 +51,7 @@ export function nuker_c(player, block, blockBreak, Minecraft) {
                         z: pos.z + dir.z                    
                     };
                     
-                    if (getBlocksBetween(newPos, newPos).some((blk) => player.dimension.getBlock(blk)?.typeId === "minecraft:air")) {
+                    if (Block.getBlocksBetween(newPos, newPos).some((blk) => player.dimension.getBlock(blk)?.typeId === "minecraft:air")) {
                         score2++;
                     }
                 }

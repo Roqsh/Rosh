@@ -868,46 +868,6 @@ export function getEyeHeight(player) {
 
 
 /**
- * Find every possible coordinate between two sets of Vector3.
- * @param {object} pos1 - First set of coordinates {x: number, y: number, z: number}
- * @param {object} pos2 - Second set of coordinates {x: number, y: number, z: number}
- * @returns {Array<object>} coordinates - Each possible coordinate within the given ranges [{x: number, y: number, z: number}]
- * @remarks If the input is not a number it will return an empty array
- */
-export function getBlocksBetween({ x: x1, y: y1, z: z1 }, { x: x2, y: y2, z: z2 }) {
-    // Validate inputs
-    if (
-        typeof x1 !== 'number' || typeof y1 !== 'number' || typeof z1 !== 'number' ||
-        typeof x2 !== 'number' || typeof y2 !== 'number' || typeof z2 !== 'number'
-    ) {
-        return [];
-    }
-
-    // Ensure min and max coordinates are correctly assigned
-    const minX = Math.min(x1, x2);
-    const maxX = Math.max(x1, x2);
-    const minY = Math.min(y1, y2);
-    const maxY = Math.max(y1, y2);
-    const minZ = Math.min(z1, z2);
-    const maxZ = Math.max(z1, z2);
-
-    const coordinates = [];
-
-    // Iterating z innermost can be beneficial for cache locality
-    for (let x = minX; x <= maxX; x++) {
-        for (let y = minY; y <= maxY; y++) {
-            for (let z = minZ; z <= maxZ; z++) {
-                coordinates.push({ x, y, z });
-            }
-        }
-    }
-
-    return coordinates;
-}
-
-
-
-/**
  * Finds the nearest player to a given entity. [Unused]
  * @param {Minecraft.Entity} entity - The entity used to determine what player is the closest to that entity.
  * @returns {object|null} - The closest player object, or null if no player is found.
