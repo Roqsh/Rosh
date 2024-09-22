@@ -17,7 +17,7 @@ export function motion_e(player) {
             player.hasTag("placing") ||
             player.hasTag("damaged") ||
             player.hasTag("elytra") ||
-            player.isOnSlime ||
+            player.isSlimeBouncing() ||
             player.isJumping || 
             player.isGliding
         ) return;

@@ -63,125 +63,125 @@ export default
 
         "ban": {
             "enabled": true,
-            "description": "!ban <player> <length> <reason> - Ban a player",
+            "description": "§r!ban <player> <length> <reason> §8- Ban a player",
             "operator": true,
             "aliases": ["b"]
         },
 
         "unban": {
             "enabled": true,
-            "description": "!unban <player> <reason> - Unban a player",
+            "description": "§r!unban <player> <reason> §8- Unban a player",
             "operator": true,
             "aliases": ["ub"]
         },
 
         "kick": {
             "enabled": true,
-            "description": "!kick <player> <reason> - Kicks a player\nOr: !kick <player> -silent - Kicks a player without notifying them",
+            "description": "§r!kick <player> <reason> §8- Kicks a player\nOr: §r!kick <player> -silent §8- Kicks a player without notifying them",
             "operator": true,
             "aliases": ["k"]
         },
 
         "kickall": {
             "enabled": true,
-            "description": "!kickall - Kicks all players except you and staff members",
+            "description": "§r!kickall §8- Kicks all players except you and staff members",
             "operator": true,
             "aliases": ["ka"]
         },
 
         "mute": {
             "enabled": true,
-            "description": "!mute <player> - Removes the ability to chat from a player",
+            "description": "§r!mute <player> §8- Removes the ability to chat from a player",
             "operator": true,
             "aliases": ["m"]
         },
 
         "unmute": {
             "enabled": true,
-            "description": "!unmute <player> - Lets a player chat again",
+            "description": "§r!unmute <player> §8- Lets a player chat again",
             "operator": true,
             "aliases": ["um"]
         },
 
         "warn": {
             "enabled": true,
-            "description": "!warn <player> <reason> - Warns a player for a specified reason\nRemarks: When getting warned too often, the player gets kicked",
+            "description": "§r!warn <player> <reason> §8- Warns a player for a specified reason\nRemarks: When getting warned too often, the player gets kicked",
             "operator": true,
             "aliases": ["w"]
         },
 
         "freeze": {
             "enabled": true,
-            "description": "!freeze <player> - Disables movement, camera and hud for a player",
+            "description": "§r!freeze <player> §8- Disables movement, camera and hud for a player",
             "operator": true,
             "aliases": ["f"]
         },
 
         "unfreeze": {
             "enabled": true,
-            "description": "!unfreeze <player> - Reenables movement, camera and hud for a player",
+            "description": "§r!unfreeze <player> §8- Reenables movement, camera and hud for a player",
             "operator": true,
             "aliases": ["uf"]
         },
 
         "spectate": {
             "enabled": true,
-            "description": "!spectate <player> - Spectate a player",
+            "description": "§r!spectate <player> §8- Spectate a player",
             "operator": true,
             "aliases": ["spec"]
         },
 
         "report": {
             "enabled": true,
-            "description": "!report <player> <reason> - Notifies staff to inspect a player",
+            "description": "§r!report <player> <reason> §8- Notifies staff to inspect a player",
             "operator": false,
             "aliases": ["r", "rr", "roshreport", "rosh-report", "rep"]
         },
 
         "vanish": {
             "enabled": true,
-            "description": "!vanish - Sets you in spectator mode",
+            "description": "§r!vanish §8- Sets you in spectator mode",
             "operator": true,
             "aliases": ["v"]
         },
 
         "fly": {
             "enabled": true,
-            "description": "!fly <player> - Lets a player fly",
+            "description": "§r!fly <player> §8- Lets a player fly",
             "operator": true
         },
 
         "invsee": {
             "enabled": true,
-            "description": "!invsee <player> - See the contents of a players inventory",
+            "description": "§r!invsee <player> §8- See the contents of a players inventory",
             "operator": true,
             "aliases": ["inv"]
         },
 
         "cloneinv": {
             "enabled": true,
-            "description": "!cloneinv <player> - Set your inventory to someone elses",
+            "description": "§r!cloneinv <player> §8- Set your inventory to someone elses",
             "operator": true,
             "aliases": ["invclone", "invc"]
         },
 
         "ecwipe": {
             "enabled": true,
-            "description": "!ecwipe <player> - Clears an enderchest of a player",
+            "description": "§r!ecwipe <player> §8- Clears an enderchest of a player",
             "operator": true,
             "aliases": ["enderchestwipe", "ecw"]
         },
 
         "testaura": {
             "enabled": true,
-            "description": "!testaura <player> - Lets you test players for killaura",
+            "description": "§r!testaura <player> §8- Lets you test players for killaura",
             "operator": true,
             "aliases": ["ta", "killaura"]
         },
 
         "ui": {
             "enabled": true,
-            "description": "!ui - Gives you the UI item",
+            "description": "§r!ui §8- Gives you the UI item",
             "ui_item_name": "§r§uRosh§r",
             "ui_item": "minecraft:stone_axe",
             "rate_limit": 500, // (1000=1s)
@@ -191,77 +191,77 @@ export default
 
         "op": {
             "enabled": true,
-            "description": "!op <player> - Grants a player Operator status",
+            "description": "§r!op <player> §8- Grants a player Operator status",
             "operator": true,
             "aliases": ["staff", "operator"]
         },
 
         "deop": {
             "enabled": true,
-            "description": "!deop <player> - Revokes Operator status of a player",
+            "description": "§r!deop <player> §8- Revokes Operator status of a player",
             "operator": true,
             "aliases": ["destaff", "demote", "do"]
         },
 
         "tellstaff": {
             "enabled": true,
-            "description": "!tellstaff <message> - Sends a message to all staff members",
+            "description": "§r!tellstaff <message> §8- Sends a message to all staff members",
             "operator": true,
             "aliases": ["irc"]
         },
 
         "notify": {
             "enabled": true,
-            "description": "!notify - Lets you recieve flags",
+            "description": "§r!notify §8- Lets you recieve flags",
             "operator": true,
             "aliases": ["not", "notifications", "alerts"]
         },
 
         "autoban": {
             "enabled": true,
-            "description": "!autoban - Enables or disables auto-baning players by Rosh",
+            "description": "§r!autoban §8- Enables or disables auto-baning players by Rosh",
             "operator": true,
             "aliases": ["ab"]
         },
 
         "module": {
             "enabled": true,
-            "description": "!module <modulename> <setting> <value> - Lets you customize a check\nOr: !module <modulename> reset - Resets the values back to default",
+            "description": "§r!module <modulename> <setting> <value> §8- Lets you customize a check\nOr: §r!module <modulename> reset §8- Resets the values back to default",
             "operator": true,
             "aliases": ["setting", "check"]
         },
 
         "stats": {
             "enabled": true,
-            "description": "!stats <player> - Lets you see flags and punishments of a player",
+            "description": "§r!stats <player> §8- Lets you see flags and punishments of a player",
             "operator": true,
             "aliases": ["info"]
         },
 
         "logs": {
             "enabled": true,
-            "description": "!logs <page> - View all logged information",
+            "description": "§r!logs <page> §8- View all logged information",
             "operator": true,
             "aliases": ["log", "logged", "recentlogs", "rl"]
         },
 
         "banlist": {
             "enabled": true,
-            "description": "!banlist - Displays information of all banned players\nOr: !banlist <player> - View ban-related information of a specific player",
+            "description": "§r!banlist §8- Displays information of all banned players\nOr: §r!banlist <player> §8- View ban-related information of a specific player",
             "operator": true,
             "aliases": ["bl"]
         },
 
         "resetwarns": {
             "enabled": true,
-            "description": "!resetwarns <player> - Resets all flags of a player",
+            "description": "§r!resetwarns <player> §8- Resets all flags of a player",
             "operator": true,
             "aliases": ["rw"]
         },
 
         "tag": {
             "enabled": true,
-            "description": "!tag <player> <tag> - Adds a custom tag to a player\nOr: !tag <player> reset - Removes a custom tag from a player",
+            "description": "§r!tag <player> <tag> §8- Adds a custom tag to a player\nOr: §r!tag <player> reset §8- Removes a custom tag from a player",
             "mainColor": "§u",
             "borderColor": "§8",
             "playerNameColor": "§r",
@@ -271,28 +271,28 @@ export default
 
         "help": {
             "enabled": true,
-            "description": "!help - See all available commands",
+            "description": "§r!help §8- See all available commands",
             "operator": true,
             "aliases": ["support", "commands"]
         },
 
         "about": {
             "enabled": true,
-            "description": "!about <modulname> - Lets you view the description of a check",
+            "description": "§r!about <modulename> §8- Lets you view the description of a check",
             "operator": true,
             "aliases": ["description"]
         },
 
         "version": {
             "enabled": true,
-            "description": "!version - See the current Rosh version",
+            "description": "§r!version §8- See the current Rosh version",
             "operator": false,
             "aliases": ["ver", "rosh"]
         },
 
         "credits": {
             "enabled": true,
-            "description": "!credits - See the team behind Rosh",
+            "description": "§r!credits §8- See the team behind Rosh",
             "operator": false,
             "aliases": ["team", "developers", "authors"]
         }
@@ -451,8 +451,8 @@ export default
             "enabled": true,
             "description": "Checks for Timer",
             "requiredSamples": 20,
-            "timer_level": 21.5,
-            "timer_level_low": 18.5,
+            "timer_level": 22,
+            "timer_level_low": 18,
             "strict": true,
             "punishment": "kick",
             "punishmentLength": "7d",
@@ -708,18 +708,10 @@ export default
         },
 
         "invalidjumpA": {
-            "enabled": false,
-            "description": "Checks for jumping too high",
+            "enabled": true,
+            "description": "Checks for jumping while in the air.",
             "punishment": "kick",
-            "maxheight": 1.25,
-            "minVlbeforePunishment": 6
-        },
-
-        "invalidjumpB": {
-            "enabled": false,
-            "description": "Checks for jumping in air",
-            "punishment": "kick",
-            "minheightDiff": 0.35,
+            "punishmentLength": "1d",
             "minVlbeforePunishment": 4
         },
 
@@ -754,18 +746,16 @@ export default
 
         "flyA": {
             "enabled": true,
-            "description": "In air velocity check",
-            "punishment": "kick", 
-            "diff": 0.1,
-            "speed": 2.45,
-            "punishmentLength": "3d",
-            "minVlbeforePunishment": 3
+            "description": "Checks for excessive vertical movement while in air.",
+            "punishment": "kick",
+            "punishmentLength": "7d",
+            "minVlbeforePunishment": 4
         }, 
 
         "flyB": {
             "enabled": true,
             "description": "Checks for no vertical movement.",
-            "threshold": 8,
+            "threshold": 9,
             "punishment": "kick",
             "punishmentLength": "7d",
             "minVlbeforePunishment": 8
@@ -781,10 +771,20 @@ export default
 
         "flyD": {
             "enabled": true,
-            "description": "Checks for non BDS based fly (Only use if ur server doesnt use BDS Prediction - Not a realm)",
+            "description": "Checks for not falling after being in the air for too long.",
+            "in_air_ticks": 10,
             "punishment": "kick",
-            "dist": 2,
-            "minVlbeforePunishment": 9
+            "punishmentLength": "7d",
+            "minVlbeforePunishment": 8
+        },
+
+        "flyE": {
+            "enabled": true,
+            "description": "Predicts the change in a player's vertical velocity.",
+            "threshold": 2,
+            "punishment": "kick",
+            "punishmentLength": "7d",
+            "minVlbeforePunishment": 6
         },
 
         "motionA": {

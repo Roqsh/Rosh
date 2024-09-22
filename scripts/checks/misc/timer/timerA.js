@@ -76,10 +76,11 @@ export function timer_a(player, lagValue) {
 
     if (previousTimerData) {
 
+        const { strict, timer_level: TimerLevel, timer_level_low: TimerLevelLow } = config.modules.timerA;
         let { timer_level: timerLevel, timer_level_low: timerLevelLow } = config.modules.timerA;
 
         // Adjust levels based on "strict" mode
-        if (config.modules.timerA.strict && player.hasTag("strict")) {
+        if (strict && player.hasTag("strict") && TimerLevel >= 21 && TimerLevelLow <= 19) {
             timerLevel - 0.25;
             timerLevelLow + 0.25;
         }
@@ -92,7 +93,7 @@ export function timer_a(player, lagValue) {
         if (outOfBounds) {
             
             // Account for potential false positives
-            if (player.isOnShulker || player.isRiding || player.hasTag("ender_pearl")) {
+            if (player.isOnShulker || player.isRiding() || player.hasTag("ender_pearl")) {
                 player.addTag("rosh:timer_bypass");
             }
 

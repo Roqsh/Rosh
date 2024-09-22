@@ -5,345 +5,368 @@ declare module "@minecraft/server" {
     interface Player {
 
         /**
-         * Whether the player is crawling. For example: Getting pushed down by a trapdoor.
+         * Whether the player is crawling (e.g., pushed down by a trapdoor).
          * @Rosh
          * @beta **This property cannot be used yet!**
          */
-        isCrawling: boolean,
+        isCrawling: boolean;
 
         /**
-         * Whether the player is riding another entity. For example: Riding a horse, pig, or a strider is considered true.
+         * Whether the player is riding another entity (e.g., a horse, a pig, or a strider).
          * @Rosh
          */
-        isRiding: boolean,
+        isRiding(): boolean;
 
         /**
-         * Whether the block below the player is a sort of ice.
+         * Whether the block below the player is a type of ice.
          * @Rosh
          */
-        isOnIce: boolean,
+        isOnIce: boolean;
 
         /**
-         * Whether the block below the player is a sort of snow. (Snow layers are considered blocks as well.)
+         * Whether the block below the player is a type of snow (including snow layers).
          * @Rosh
          */
-        isOnSnow: boolean,
+        isOnSnow: boolean;
 
         /**
-         * Whether the block below the player is slime.
+         * Whether the player is on a shulker entity or shulker shell (works for both closed and open shulkers).
          * @Rosh
          */
-        isOnSlime: boolean,
+        isOnShulker: boolean;
 
         /**
-         * Whether the player is on a shulker.
-         * (Both shulker entities and shulker shells will work as well as standing on top of it while the shulker is open.)
+         * Returns true if at least one web block is found in a 3x4x3 cube around the player.
          * @Rosh
          */
-        isOnShulker: boolean,
+        isInWeb(): boolean;
 
         /**
-         * Whether the player is moving on stairs. (upwards or downwards)
+         * Whether the player is currently bouncing off of a slime block. (Returns false as soon as he starts falling again)
          * @Rosh
          */
-        isRunningStairs: boolean,
+        isSlimeBouncing(): boolean;
 
         /**
-         * Whether the player has a trident in their selected slot.
          * @Rosh
          */
-        isHoldingTrident: boolean,
+        isTridentHovering(): boolean;
 
         /**
-         * Whether the player is currently dead. (Health = 0)
+         * Whether the player is moving on stairs (upwards or downwards).
+         * @Rosh
+         */
+        isRunningStairs: boolean;
+
+        /**
+         * Whether the player has a trident equipped in their selected slot.
+         * @Rosh
+         */
+        isHoldingTrident: boolean;
+
+        /**
+         * Whether the player is dead (Health = 0).
          * @returns {boolean} True if the player is dead, false otherwise.
          * @Rosh
          */
-        isDead(): boolean,
+        isDead(): boolean;
 
         /**
-         * Whether the player is currently alive. (Health > 0)
+         * Whether the player is alive (Health > 0).
          * @returns {boolean} True if the player is alive, false otherwise.
          * @Rosh
          */
-        isAlive(): boolean,
+        isAlive(): boolean;
 
         /**
-         * Whether the player is currently muted/can't chat. (Has tag `isMuted`)
+         * Whether the player is muted (tagged with `isMuted`).
          * @returns {boolean} True if the player is muted, false otherwise.
          * @Rosh
          */
-        isMuted(): boolean,
+        isMuted(): boolean;
 
         /**
-         * Whether the player's device on which minecraft is running is a mobile device. (Phones with iOS or Android etc.)
-         * @returns {boolean} Whether the player's platform is a mobile device.
+         * Whether the player is logged in for the specified number of ticks.
+         * @param {number} ticks The number of ticks to check for. Defaults to 5.
          * @Rosh
          */
-        isMobile(): boolean,
+        isLoggedIn(ticks: number): boolean;
 
         /**
-         * Wheter the player's device on which minecraft is running is a console. (Xbox, Playstation etc.)
-         * @returns {boolean} Whether the player's platform is a console.
+         * Whether the player is using a mobile device (iOS, Android, etc.).
+         * @returns {boolean} True if the player is on a mobile platform, false otherwise.
          * @Rosh
          */
-        isConsole(): boolean,
+        isMobile(): boolean;
 
         /**
-         * Whether the player's device on which minecraft is running is a desktop. (Pc's with Windows or Linux etc.)
-         * @returns {boolean} Wheter the player's platform is a Pc.
+         * Whether the player is using a console (Xbox, PlayStation, etc.).
+         * @returns {boolean} True if the player is on a console, false otherwise.
          * @Rosh
          */
-        isDesktop(): boolean,
+        isConsole(): boolean;
 
         /**
-         * Gets a player's attacks per second. (This does not include regular arm swings/clicks, **only attacks**!)
-         * @returns {number} The player's attacks per second.
+         * Whether the player is using a desktop computer (Windows, Linux, etc.).
+         * @returns {boolean} True if the player is on a desktop platform, false otherwise.
          * @Rosh
          */
-        getCps(): number,
+        isDesktop(): boolean;
 
         /**
-         * Sets a player's attacks per second.
-         * @param {number} cpsValue The value to assign to the player's attacks per second.
+         * Gets the player's attacks per second (only counts actual attacks, not arm swings).
+         * @returns {number} The player's attacks per second (CPS).
          * @Rosh
          */
-        setCps(cpsValue: number): void,
+        getCps(): number;
+
+        /**
+         * Sets the player's attacks per second.
+         * @param {number} cpsValue The CPS value to assign to the player.
+         * @Rosh
+         */
+        setCps(cpsValue: number): void;
 
         /**
          * Gets the player's current yaw (horizontal rotation).
          * @returns {number} The player's current yaw.
          * @Rosh
          */
-        getYaw(): number,
+        getYaw(): number;
 
         /**
          * Gets the player's last yaw (horizontal rotation).
          * @returns {number} The player's last yaw.
          * @Rosh
          */
-        getLastYaw(): number,
+        getLastYaw(): number;
 
         /**
          * Gets the change in the player's yaw since the last update.
          * @returns {number} The change in the player's yaw.
          * @Rosh
          */
-        getDeltaYaw(): number,
+        getDeltaYaw(): number;
 
         /**
          * Sets the player's yaw (horizontal rotation).
-         * @param {number} yawValue The value to set for the player's yaw.
+         * @param {number} yawValue The yaw value to set for the player.
          * @Rosh
          */
-        setYaw(yawValue: number): void,
+        setYaw(yawValue: number): void;
 
         /**
          * Sets the player's last yaw (horizontal rotation).
-         * @param {number} lastYawValue The last yaw value.
+         * @param {number} lastYawValue The last yaw value to set.
          * @Rosh
          */
-        setLastYaw(lastYawValue: number): void,
+        setLastYaw(lastYawValue: number): void;
 
         /**
          * Sets the change in the player's yaw since the last update.
-         * @param {number} deltaYawValue The value to set for the change in the player's yaw.
+         * @param {number} deltaYawValue The value to set for the change in yaw.
          * @Rosh
          */
-        setDeltaYaw(deltaYawValue: number): void,
+        setDeltaYaw(deltaYawValue: number): void;
 
         /**
          * Gets the player's current pitch (vertical rotation).
          * @returns {number} The player's current pitch.
          * @Rosh
          */
-        getPitch(): number,
+        getPitch(): number;
 
         /**
          * Gets the player's last pitch (vertical rotation).
          * @returns {number} The player's last pitch.
          * @Rosh
          */
-        getLastPitch(): number,
+        getLastPitch(): number;
 
         /**
          * Gets the change in the player's pitch since the last update.
          * @returns {number} The change in the player's pitch.
          * @Rosh
          */
-        getDeltaPitch(): number,
+        getDeltaPitch(): number;
 
         /**
          * Sets the player's pitch (vertical rotation).
-         * @param {number} pitchValue The value to set for the player's pitch.
+         * @param {number} pitchValue The pitch value to set for the player.
          * @Rosh
          */
-        setPitch(pitchValue: number): void,
+        setPitch(pitchValue: number): void;
 
         /**
          * Sets the player's last pitch (vertical rotation).
-         * @param {number} lastPitchValue The last pitch value.
+         * @param {number} lastPitchValue The last pitch value to set.
          * @Rosh
          */
-        setLastPitch(lastPitchValue): void,
+        setLastPitch(lastPitchValue: number): void;
 
         /**
          * Sets the change in the player's pitch since the last update.
-         * @param {number} deltaPitchValue The value to set for the change in the player's pitch.
+         * @param {number} deltaPitchValue The value to set for the change in pitch.
          * @Rosh
          */
-        setDeltaPitch(deltaPitchValue: number): void,
+        setDeltaPitch(deltaPitchValue: number): void;
 
         /**
-         * A helper variable for calculating the attacks per second of a player.
-         * (Use `getCps()` instead if you wish to use the player's actual attacks per second!)
+         * A helper variable for calculating the player's attacks per second.
          * @Rosh
          */
-        clicks: number,
+        clicks: number;
 
         /**
          * A variable to track the player's current yaw (horizontal rotation).
-         * (Use `getYaw()` instead if you wish to use the player's actual yaw!)
+         * @note (Use `getYaw()` instead if you wish to use the player's actual yaw!)
          * @Rosh
          */
-        yaw: number,
+        yaw: number;
 
         /**
          * A variable to track the player's last yaw (horizontal rotation).
-         * (Use `getLastYaw()` instead if you wish to use the player's actual last yaw!)
+         * @note (Use `getLastYaw()` instead if you wish to use the player's actual last yaw!)
          * @Rosh
          */
-        lastYaw: number,
+        lastYaw: number;
 
         /**
          * A variable to track the change in the player's yaw since the last update.
-         * (Use `getDeltaYaw()` instead if you wish to use the player's actual change in yaw!)
+         * @note (Use `getDeltaYaw()` instead if you wish to use the player's actual change in yaw!)
          * @Rosh
          */
-        deltaYaw: number,
+        deltaYaw: number;
 
         /**
          * A variable to track the player's current pitch (vertical rotation).
-         * (Use `getPitch()` instead if you wish to use the player's actual pitch!)
+         * @note (Use `getPitch()` instead if you wish to use the player's actual pitch!)
          * @Rosh
          */
-        pitch: number,
+        pitch: number;
 
         /**
          * A variable to track the player's last pitch (vertical rotation).
-         * (Use `getLastPitch()` instead if you wish to use the player's actual last pitch!)
+         * @note (Use `getLastPitch()` instead if you wish to use the player's actual last pitch!)
          * @Rosh
          */
-        lastPitch: number,
+        lastPitch: number;
 
         /**
          * A variable to track the change in the player's pitch since the last update.
-         * (Use `getDeltaPitch()` instead if you wish to use the player's actual change in pitch!)
+         * @note (Use `getDeltaPitch()` instead if you wish to use the player's actual change in pitch!)
          * @Rosh
          */
-        deltaPitch: number,
+        deltaPitch: number;
         
-        autotoolSwitchDelay: number,
-        blocksBroken: number,
-        startBreakTime: number,
+        autotoolSwitchDelay: number;
+        blocksBroken: number;
+        startBreakTime: number;
 
         /**
-         * A variable to track time intervals in ms. This property gets updated every 20 ticks using `Date.now()`.
+         * A variable to track time intervals in milliseconds (updated every 20 ticks using `Date.now()`).
          * @Rosh
          */
-        lastTime: number,
+        lastTime: number;
 
         /**
-         * Saves a player's selected slot of the last tick using `selectedSlotIndex`.
+         * Saves the player's selected slot from the last tick.
          * @Rosh
          */
-        lastSelectedSlot: number,
+        lastSelectedSlot: number;
 
         /**
-         * Stores a player's velocity of the last tick.
-         * (Use `getLastVelocity()` instead if you wish to use the player's actual last velocity!)
+         * Stores the player's velocity from the last tick.
          * @Rosh
          */
-        lastVelocity: Vector3,
-		
-        /**
-         * Stores a player's location of the last tick.
-         * (Use `getLastPosition()` instead if you wish to use the player's actual last position!)
-         * @Rosh
-         */
-        lastPosition: Vector3,
+        lastVelocity: Vector3;
 
         /**
-         * Saves a safe position to teleport the player back to when flagging a certain check.
-         * Positions where the player is on ground are considered safe.
+         * Stores the player's position from the last tick.
          * @Rosh
          */
-        lastGoodPosition: Vector3,
+        lastPosition: Vector3;
 
         /**
-         * Gets a player's position of the last tick.
-         * @returns {Vector3} A vector representing the player's position on the x, y and z coordinates.
+         * Saves a safe position to teleport the player to when flagging a check. Safe positions are those where the player is on the ground.
          * @Rosh
          */
-        getLastPosition(): Vector3,
+        lastGoodPosition: Vector3;
 
         /**
-         * Sets the change in the player's position.
-         * @param {Vector3} Position
+         * Gets the player's position.
+         * @returns {Vector3} The player's position on the x, y, and z axes.
          * @Rosh
          */
-        setLastPosition(Position: Vector3): void,
+        getPosition(): Vector3;
 
         /**
-         * Gets a player's velocity of the last tick.
-         * @returns {Vector3} A vector representing the player's velocity on the x, y and z coordinates.
+         * Gets the player's position from the last tick.
+         * @returns {Vector3} The player's last position on the x, y, and z axes.
          * @Rosh
          */
-        getLastVelocity(): Vector3,
+        getLastPosition(): Vector3;
 
         /**
-         * Sets the change in the player's velocity.
-         * @param {Vector3} Velocity
+         * Sets the player's position from the last tick.
+         * @param {Vector3} Position The player's position to set.
          * @Rosh
          */
-        setLastVelocity(Velocity: Vector3): void,
+        setLastPosition(Position: Vector3): void;
+
+        /**
+         * Gets the player's velocity from the last tick.
+         * @returns {Vector3} The player's velocity on the x, y, and z axes.
+         * @Rosh
+         */
+        getLastVelocity(): Vector3;
+
+        /**
+         * Sets the player's velocity from the last tick.
+         * @param {Vector3} Velocity The player's velocity to set.
+         * @Rosh
+         */
+        setLastVelocity(Velocity: Vector3): void;
 
         /**
          * Gets the player's current move direction.
-         * @returns {Vector3} A vector representing the player's current move direction on the x, y and z axis.
+         * @returns {Vector3} The player's current move direction on the x, y, and z axes.
          * @Rosh
          */
-        getMoveDirection(): Vector3,
+        getMoveDirection(): Vector3;
 
         /**
-         * Stores a list of (potential malicious) player names a player has reported.
+         * Stores a list of player names the player has reported for potentially malicious behavior.
          * @Rosh
          */
-        reports: Array<String>,
+        reports: Array<string>;
 
         /**
-         * Kicks a player from the game.
-         * @Rosh
+         * Kicks the player from the game.
          * @param {string | undefined} reason - The reason for kicking the player.
+         * @returns {Promise<boolean>} A promise that resolves to true if the player was successfully kicked, false otherwise.
+         * @Rosh
          */
-        kick(reason: string | undefined): Promise<boolean>
+        kick(reason: string | undefined): Promise<boolean>;
 
         /**
-         * Prevents a player from sending messages. (Adds tag `isMuted`)
-         * @Rosh
-         * @remarks Messages from players with an `isMuted` tag will be canceled in `Minecraft.ChatSendBeforeEvent`.
+         * Mutes the player, preventing them from sending chat messages. Adds the `isMuted` tag.
+         * @returns {Promise<boolean>} A promise that resolves when the player is muted.
          */
         mute(): Promise<boolean>,
 
         /**
-         * Allows a player to send messages again. (Removes tag `isMuted`)
-         * @Rosh
+         * Unmutes the player, allowing them to send chat messages again. Removes the `isMuted` tag.
+         * @returns {Promise<boolean>} A promise that resolves when the player is unmuted.
          */
         unmute(): Promise<boolean>
     }
 
     interface Entity {
-        
+
+        /**
+         * Whether the autotool check flagged this entity.
+         */
         flagAutotoolA: boolean,
 
         autotoolSwitchDelay: number,

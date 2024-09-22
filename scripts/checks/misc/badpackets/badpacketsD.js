@@ -13,7 +13,7 @@ export function badpackets_d(player) {
 
     if (!config.modules.badpacketsD.enabled) return;
 
-    if (player.hasTag("riding")) return;
+    if (player.isRiding()) return;
 
     const rotation = player.getRotation();
 

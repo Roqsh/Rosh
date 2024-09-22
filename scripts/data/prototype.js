@@ -1,4 +1,5 @@
 import { Player } from "@minecraft/server";
+import { Memory } from "../utils/Memory.js";    
 
 /**
  * Initializes and enhances the Player prototype with custom methods.
@@ -134,6 +135,10 @@ export function initializePlayerPrototypes() {
 
     // Adding movement methods to the Player prototype
 
+    Player.prototype.getPosition = function() {
+        return this.location;
+    }
+
     Player.prototype.getLastPosition = function() {
         return this.lastPosition ?? this.location;
     };
@@ -197,4 +202,87 @@ export function initializePlayerPrototypes() {
             return false;
         }
     }
+
+
+    // Adding utility methods
+
+    Player.prototype.isRiding = function() {
+        // The tag `isRiding` is added when the riding animation controller is triggered
+        if (this.hasTag("isRiding")) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    Player.prototype.isInWeb = function() {
+
+        const { x, y, z } = this.location;
+        const dimension = this.dimension;
+        
+        // Iterate through the surrounding blocks (3x4x3 cube centered on the player)
+        for (let dx = -1; dx <= 1; dx++) {
+            for (let dy = -1; dy <= 2; dy++) {  // -1 below, 0 at feet, 1 at head, 2 above head
+                for (let dz = -1; dz <= 1; dz++) {
+                    
+                    // Skip the player's current location (feet position)
+                    if (dx === 0 && dy === 0 && dz === 0) continue;
+                    
+                    const block = dimension.getBlock({ x: x + dx, y: y + dy, z: z + dz });
+                    
+                    // If at least one web block is found, return true
+                    if (block.typeId === "minecraft:web") {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        // No web blocks found
+        return false;
+    }
+
+    Player.prototype.isSlimeBouncing = function() {
+        
+        if (this.isFalling || this.isFlying) {
+            return false;
+        }
+
+        // Check if the player touched a slime block and has a positive velocity (being repelled upwards)
+        if (this.touchedSlimeBlock && this.getVelocity().y > 0) {
+            return true;
+        }
+    
+        return false; // Default return false when not bouncing
+    };
+
+    Player.prototype.isTridentHovering = function() {
+
+        if (this.isFalling || this.isFlying) {
+            return false;
+        }
+
+        if (this.usedRiptideTrident && this.getVelocity().y > 0) {
+            return true;
+        }
+
+        return false;
+    }
+
+    Player.prototype.isLoggedIn = function(ticks) {
+
+        const playerInfo = Memory.get(this.id);  // Retrieve player info from Memory
+    
+        if (!playerInfo) {
+            return false;
+        }
+    
+        const loginMs = playerInfo.loginMs;
+        const currentMs = Date.now();
+    
+        const delayTicks = ticks ?? 100; // Default to 100 ticks (5 seconds)
+        const ticksInMs = delayTicks * 50; // Convert ticks to milliseconds
+    
+        return (currentMs - loginMs > ticksInMs);
+    };
 }

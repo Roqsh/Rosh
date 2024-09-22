@@ -10,7 +10,7 @@ const lastUpdateTime = new Map();
  */
 export function motion_d(player) {
 
-    if (!config.modules.motionD.enabled || player.hasTag("riding")) return;
+    if (!config.modules.motionD.enabled || player.isRiding()) return;
 
     const playerVelocity = player.getVelocity();
     const playerSpeed = getSpeed(player);
@@ -53,7 +53,7 @@ export function motion_d(player) {
             playerSpeed !== 0 && 
             !player.getEffect("speed") &&
             !player.hasTag("placing") && 
-            !player.isOnSlime &&
+            !player.isSlimeBouncing() &&
             !player.isDead()
         ) {
             if (distanceSquared > maxDistanceSquared) {

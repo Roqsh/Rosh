@@ -1,29 +1,49 @@
+import * as Minecraft from "@minecraft/server";
 import config from "../../../data/config.js";
-import { flag, aroundAir } from "../../../util";
+import { flag, aroundAir, inAir, debug } from "../../../util";
 
 /**
- * Checks for going up more than whats possible in vanilla.
- * @name fly_a
- * @param {player} player - The player to check
- * @remarks Some scenarios are not handled yet (crystals, tnt, etc.)
+ * Checks for excessive vertical movement while in air.
+ * @param {Minecraft.Player} player - The player to check.
  */
 export function fly_a(player) {
 
-    if (config.modules.flyA.enabled) {
+    if (!config.modules.flyA.enabled) return;
 
-        const velocity = player.getVelocity();
-        
-        if (aroundAir(player) && !player.isGliding) {
-            
-            let max_v_up = 0.62;
+    const velocity = player.getVelocity();
 
-            if (player.isJumping) max_v_up = 0.8;
-            if (player.getEffect("jump_boost")) max_v_up += player.getEffect("jump_boost").amplifier * 1.5 + 0.1;
-            if (player.hasTag("placing")) max_v_up += 6;
-            if (player.hasTag("damaged")) max_v_up += 4;
-            if (player.hasTag("elytra")) max_v_up += 20;
+    // Check if the player is in air and exempt certain situations
+    if (
+        aroundAir(player) &&
+        inAir(player) &&
+        player.isLoggedIn() &&
+        !player.isDead() &&
+        !player.isSlimeBouncing() &&
+        !player.isTridentHovering() &&
+        !player.isGliding &&
+        !player.isFlying
+    ) {
 
-            if (velocity.y > max_v_up) flag(player, "Fly", "A", "yVelocity", `${velocity.y},maxup=${max_v_up}`);
-        }  
+        // Get the maximum vertical change allowed
+        let maxVerticalChange = 0.42000008;
+
+        // Check if the player has a jump boost effect
+        const jumpBoost = player.getEffect("jump_boost");
+        if (jumpBoost) {
+
+            // Calculate the maximum vertical change allowed with the jump boost effect
+            maxVerticalChange = (jumpBoost.amplifier * (0.5 * 0.42000008)) + 0.42000008;
+        }
+
+        if (player.hasTag("damaged")) {
+            maxVerticalChange += 0.37;
+        }
+
+        // Check if the player's vertical velocity exceeds the maximum allowed
+        if (velocity.y > maxVerticalChange) {
+
+            // Flag the player for excessive vertical movement
+            flag(player, "Fly", "A", "yVel", `${velocity.y}, max=${maxVerticalChange}`, true);
+        }
     }
 }

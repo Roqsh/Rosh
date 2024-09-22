@@ -36,7 +36,7 @@ export function scaffold_c(player, block) {
         !isChecked && 
         (player.location.y - 0.6) > block.location.y && 
         rotation.x < 0 && 
-        !player.hasTag("riding") && 
+        !player.isRiding() && 
         !player.isSwimming
     ) {           
         flag(player, "Scaffold", "C", "xRot", rotation.x);

@@ -31,7 +31,7 @@ export function noslow_a(player) {
     const conditions = {
         isNotDamaged: !player.hasTag("damaged"),
         isNotUsingTrident: !player.isHoldingTrident,
-        isNotOnSpecialBlocks: !player.isOnIce && !player.isOnSlime,
+        isNotOnSpecialBlocks: !player.isOnIce && !player.isSlimeBouncing(),
         isNotInAirOrWater: !player.isGliding && !player.isFlying && !player.isInWater,
         isOnGroundAndUsingItem: player.isOnGround && getScore(player, "right", 0) >= ITEM_USE_TIME,
         isExceedingMaxSpeed: speed > MAX_SPEED,

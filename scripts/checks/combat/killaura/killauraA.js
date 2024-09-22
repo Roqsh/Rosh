@@ -14,7 +14,7 @@ export function killaura_a(player) {
     const rotation = player.getRotation();
 
     // Check if the player is not riding and has a non-zero x-axis rotation.
-    if (!player.hasTag("riding") && rotation.x !== 0) {
+    if (!player.isRiding() && rotation.x !== 0) {
 
         // If either the x or y rotation is an integer, flag for potential Killaura behavior.
         if (Number.isInteger(rotation.x) || Number.isInteger(rotation.y)) {

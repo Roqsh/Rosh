@@ -14,7 +14,7 @@ export function badpackets_f(player) {
     const preset = config.preset?.toLowerCase();
     if(preset === "stable") return;
 
-    if (player.hasTag("riding")) return;
+    if (player.isRiding()) return;
         
     const rotation = player.getRotation();
 

@@ -9,7 +9,8 @@ const flyDetectionCounter = new Map();
  * @param {Minecraft.Player} player - The player to check.
  * @remarks 
  * - May produce false positives if the player has the fly ability in Education Edition (`ability <player> mayfly true`).
- * - May produce false positives if the player is repeatedly teleported to the same y-level mid-air.
+ * - May produce false positives if the player is repeatedly teleported to the same y-level mid-air. (No API method yet to detect that)
+ * - May produce false positives if the player is not completely logged in when joining.
  */
 export function fly_b(player) {
 
@@ -19,23 +20,25 @@ export function fly_b(player) {
     if (
         !aroundAir(player) ||
         !inAir(player) ||
+        !player.isLoggedIn() ||
         player.isDead() ||
         player.isGliding ||
         player.isFlying ||
-        player.isOnGround
+        player.isOnGround ||
+        player.getEffect("slow_falling")
     ) return;
 
     const verticalVelocity = player.getVelocity().y;
 
     // Retrieve the current counter value or initialize it
-    const counter = flyDetectionCounter.get(player) || 0;
+    const counter = flyDetectionCounter.get(player.id) || 0;
 
     if (verticalVelocity === 0) {
         if (counter >= config.modules.flyB.threshold) {
             flag(player, "Fly", "B", "yVel", verticalVelocity);
         }
-        flyDetectionCounter.set(player, counter + 1);
+        flyDetectionCounter.set(player.id, counter + 1);
     } else {
-        flyDetectionCounter.set(player, 0);
+        flyDetectionCounter.set(player.id, 0);
     }
 }

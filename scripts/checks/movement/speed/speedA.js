@@ -29,11 +29,11 @@ export function speed_a(player) {
                 modifiedSpeed += 0.3; 
             }
     
-            if(player.hasTag("riding")) {
+            if(player.isRiding()) {
                 modifiedSpeed += 0.9;
             }
 
-            if(playerSpeed > modifiedSpeed && !player.hasTag("damaged") && !player.isHoldingTrident && !player.isOnIce && !player.isOnSlime) {
+            if(playerSpeed > modifiedSpeed && !player.hasTag("damaged") && !player.isHoldingTrident && !player.isOnIce && !player.isSlimeBouncing()) {
                 flag(player, "Speed", "A", "speed", playerSpeed, true);
             }
     
@@ -41,17 +41,17 @@ export function speed_a(player) {
         
             let maxSpeed2 = config.modules.speedA.speed;
             
-            if(player.hasTag("riding")) {
+            if(player.isRiding()) {
                 maxSpeed2 += 0.9;
             }
     
             if(!player.hasTag("strict")) {
-                if(playerSpeed > maxSpeed2 + 0.1 && !player.hasTag("strict") && !player.hasTag("damaged") && !player.isFlying && !player.isHoldingTrident && !player.isOnIce && !player.isOnSlime) {
+                if(playerSpeed > maxSpeed2 + 0.1 && !player.hasTag("strict") && !player.hasTag("damaged") && !player.isFlying && !player.isHoldingTrident && !player.isOnIce && !player.isSlimeBouncing()) {
                     flag(player, "Speed", "A", "speed", playerSpeed, true);
                 }
             
             } else {
-                if(playerSpeed > maxSpeed2 && !player.hasTag("damaged") && !player.isFlying && !player.isHoldingTrident && !player.isOnIce && !player.isOnSlime) {
+                if(playerSpeed > maxSpeed2 && !player.hasTag("damaged") && !player.isFlying && !player.isHoldingTrident && !player.isOnIce && !player.isSlimeBouncing()) {
                     flag(player, "Speed", "A", "speed", playerSpeed, true);
                 }
             }

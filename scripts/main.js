@@ -3,6 +3,7 @@ import { system, world, ItemTypes, ItemStack } from "@minecraft/server";
 import config from "./data/config.js";
 import data from "./data/data.js";
 import { initializePlayerPrototypes } from "./data/prototype.js";
+import { Memory } from "./utils/Memory.js";
 import { tag_system } from "./utils/gameUtil.js";
 import { flag, ban, convertToMs, timeDisplay, getScore, setScore, tellStaff, getSpeed, aroundAir, inAir, debug } from "./util.js";
 import { mainMenu, rateLimit } from "./ui/mainMenu.js";
@@ -36,6 +37,7 @@ import { fly_a } from "./checks/movement/fly/flyA.js";
 import { fly_b } from "./checks/movement/fly/flyB.js";
 import { fly_c } from "./checks/movement/fly/flyC.js";
 import { fly_d } from "./checks/movement/fly/flyD.js";
+import { fly_e } from "./checks/movement/fly/flyE.js";
 import { strafe_a } from "./checks/movement/strafe/strafeA.js";
 import { strafe_b } from "./checks/movement/strafe/strafeB.js";
 import { noslow_a } from "./checks/movement/noslow/noslowA.js";
@@ -43,9 +45,8 @@ import { noslow_b } from "./checks/movement/noslow/noslowB.js";
 import { sprint_a } from "./checks/movement/sprint/sprintA.js";
 import { sprint_b } from "./checks/movement/sprint/sprintB.js";
 import { sprint_c } from "./checks/movement/sprint/sprintC.js";
-import { invmove_a } from "./checks/movement/invmove/invmoveA.js";
 import { jump_a } from "./checks/movement/jump/jumpA.js";
-import { jump_b } from "./checks/movement/jump/jumpB.js";
+import { invmove_a } from "./checks/movement/invmove/invmoveA.js";
 
 // Import World related checks
 import { nuker_a } from "./checks/world/nuker/nukerA.js";
@@ -206,17 +207,20 @@ system.runInterval(() => {
             ban(player);
         }
 
-        // Whacky solution for missing riding property in Minecraft.Entity
-        if (player.hasTag("riding")) {
-            player.isRiding = true;
-        } else {
-            player.isRiding = false;
-        }
-
         if (selectedItem?.typeId === "minecraft:trident") {
-            player.isHoldingTrident = true; 
+            player.isHoldingTrident = true;
+
+            const itemEnchants = selectedItem.getComponent("enchantable")?.getEnchantments() ?? [];
+            for (const enchantData of itemEnchants) {
+                const enchantTypeId = enchantData.type.id;
+                if (enchantTypeId === "riptide") {
+                    player.isHoldingRiptideTrident = true;
+                }
+            }
+            
         } else {
             player.isHoldingTrident = false;
+            player.isHoldingRiptideTrident = false;
         }
         
 		if(player.blocksBroken >= 1 && config.modules.nukerA.enabled) player.blocksBroken = 0;
@@ -257,7 +261,7 @@ system.runInterval(() => {
                 break;
 
             case blockUnderPlayer.typeId.includes("slime"):
-                player.isOnSlime = true;
+                player.touchedSlimeBlock = true;
                 break;
 
             case blockUnderPlayer.typeId.includes("shulker"):
@@ -273,13 +277,6 @@ system.runInterval(() => {
                 // Optional: Handle the case where no match is found
                 break;
         }
-        
-		if (player.isOnSlime) {
-			setScore(player, "tick_counter2", 0);
-		}
-        if (player.isHoldingTrident) {
-			setScore(player, "right", 0);
-		}
 
 		tag_system(player);	
 
@@ -334,7 +331,10 @@ system.runInterval(() => {
 		    player.lastGoodPosition = player.location;			
 		}
 
-        // player.onScreenDisplay.setActionBar(`${themecolor}Debug §j> §8Falling: ${player.isFalling ? "§aTrue" : "§cFalse"}`);
+        //player.onScreenDisplay.setActionBar(`${themecolor}Debug §j> §8Falling: ${player.isFalling ? "§aTrue" : "§cFalse"}`);
+        //player.onScreenDisplay.setActionBar(`${themecolor}Debug §j> §8Bouncing: ${player.isSlimeBouncing() ? "§aTrue" : "§cFalse"}`);
+        //player.onScreenDisplay.setActionBar(`${themecolor}Debug §j> §8Hovering: ${player.isTridentHovering() ? "§aTrue" : "§cFalse"}`);
+        //if (player.getVelocity().y != 0) player.sendMessage(`${themecolor}Debug §j> §8yVelocity: ${player.getVelocity().y < 0 ? "§c" : "§a"}${player.getVelocity().y}`);
         
 
         const movementData = movementHandler(player);
@@ -344,7 +344,8 @@ system.runInterval(() => {
             fly_b(player);
             fly_c(player);
             fly_d(player);
-
+            fly_e(player);
+            
             motion_a(player);
             motion_b(player);
             motion_c(player);
@@ -367,7 +368,6 @@ system.runInterval(() => {
             sprint_c(player);
             
             jump_a(player);
-            jump_b(player);
 
             invmove_a(player);
             
@@ -506,7 +506,7 @@ system.runInterval(() => {
             player.removeTag("placing");
 		}
 
-		if (getScore(player, "tag_reset", 0) > 5) {
+		if (getScore(player, "tag_reset", 0) >= 5) {
 			player.removeTag("damaged");
 			player.removeTag("fall_damage");
 			player.removeTag("end_portal");
@@ -521,15 +521,22 @@ system.runInterval(() => {
 
         player.isOnIce = false;
         player.isOnSnow = false;
-        player.isOnSlime = false;
         player.isOnShulker = false;
+
+        if (player.isFalling) {
+            player.touchedSlimeBlock = false;
+        }
+
+        if (player.isFalling && !player.isHoldingRiptideTrident) {
+            player.usedRiptideTrident = false;
+        }
 	}
 });
 
 
 world.beforeEvents.itemUse.subscribe((itemUse) => {
 
-	const { source: player } = itemUse;
+	const { source: player, itemStack: item } = itemUse;
 
 	if (player.typeId !== "minecraft:player") return;
 
@@ -538,7 +545,6 @@ world.beforeEvents.itemUse.subscribe((itemUse) => {
 	}
 
 	if (player.hasTag("frozen")) itemUse.cancel = true;
-
 });
 
 
@@ -680,6 +686,8 @@ world.beforeEvents.playerLeave.subscribe((playerLeave) => {
     if (blockPlaceCounts[player.id]) {
         delete blockPlaceCounts[player.id];
     }
+
+    Memory.unregister(player);
 });
 
 
@@ -691,6 +699,8 @@ world.afterEvents.playerSpawn.subscribe((playerJoin) => {
     const thememode = config.thememode;
 
 	if (!initialSpawn || !player.isValid()) return;
+
+    Memory.register(player);
 
 	if (player.isOp() || player.name === "rqosh") {
 		player.sendMessage(`${themecolor}Rosh §j> §aWelcome §8${player.name}§a!`);
@@ -766,7 +776,7 @@ world.afterEvents.playerSpawn.subscribe((playerJoin) => {
     player.removeTag("sneak");
     player.removeTag("swimming");
     player.removeTag("dead");
-    player.removeTag("riding");
+    player.removeTag("isRiding");
     player.removeTag("sleeping");
 	
 	const { mainColor, borderColor, playerNameColor } = config.customcommands.tag;
@@ -868,6 +878,13 @@ world.afterEvents.itemUse.subscribe((itemUse) => {
 			} else {
 				player.sendMessage(`${themecolor}Rosh §j> §cYou are trying to access the UI too frequently!`);
 			}
+        }
+
+        if (
+            item.typeId === "minecraft:trident" &&
+            enchantTypeId === "riptide"
+        ) {
+            player.usedRiptideTrident = true;
         }
     }
 });

@@ -12,7 +12,7 @@ export function scaffold_b(player) {
     if (!config.modules.scaffoldB.enabled) return;
 
     // While riding, your rotation will occasionally change to an integer value
-    if (player.hasTag("riding")) return;
+    if (player.isRiding()) return;
 
     const rotation = player.getRotation();
     

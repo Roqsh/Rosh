@@ -157,8 +157,8 @@ export default
             "enabled": true,
             "description": "Checks for Timer",
             "requiredSamples": 20,
-            "timer_level": 21.5,
-            "timer_level_low": 18.5,
+            "timer_level": 22,
+            "timer_level_low": 18,
             "strict": true,
             "punishment": "kick",
             "punishmentLength": "7d",
@@ -414,18 +414,10 @@ export default
         },
 
         "invalidjumpA": {
-            "enabled": false,
-            "description": "Checks for jumping too high",
+            "enabled": true,
+            "description": "Checks for jumping while in the air.",
             "punishment": "kick",
-            "maxheight": 1.25,
-            "minVlbeforePunishment": 6
-        },
-
-        "invalidjumpB": {
-            "enabled": false,
-            "description": "Checks for jumping in air",
-            "punishment": "kick",
-            "minheightDiff": 0.35,
+            "punishmentLength": "1d",
             "minVlbeforePunishment": 4
         },
 
@@ -460,18 +452,16 @@ export default
 
         "flyA": {
             "enabled": true,
-            "description": "In air velocity check",
-            "punishment": "kick", 
-            "diff": 0.1,
-            "speed": 2.45,
-            "punishmentLength": "3d",
-            "minVlbeforePunishment": 3
+            "description": "Checks for excessive vertical movement while in air.",
+            "punishment": "kick",
+            "punishmentLength": "7d",
+            "minVlbeforePunishment": 4
         }, 
 
         "flyB": {
             "enabled": true,
             "description": "Checks for no vertical movement.",
-            "threshold": 8,
+            "threshold": 9,
             "punishment": "kick",
             "punishmentLength": "7d",
             "minVlbeforePunishment": 8
@@ -487,10 +477,20 @@ export default
 
         "flyD": {
             "enabled": true,
-            "description": "Checks for non BDS based fly (Only use if ur server doesnt use BDS Prediction - Not a realm)",
+            "description": "Checks for not falling after being in the air for too long.",
+            "in_air_ticks": 10,
             "punishment": "kick",
-            "dist": 2,
-            "minVlbeforePunishment": 9
+            "punishmentLength": "7d",
+            "minVlbeforePunishment": 8
+        },
+
+        "flyE": {
+            "enabled": true,
+            "description": "Predicts the change in a player's vertical velocity.",
+            "threshold": 2,
+            "punishment": "kick",
+            "punishmentLength": "7d",
+            "minVlbeforePunishment": 6
         },
 
         "motionA": {

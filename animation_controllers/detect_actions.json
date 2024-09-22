@@ -234,7 +234,7 @@
 						"ride": "query.is_riding"
 					}],
 					"on_entry": [
-						"/tag @s remove riding",
+						"/tag @s remove isRiding",
 						"/tellraw @a[tag=eventlogger] {\"rawtext\":[{\"text\":\"§r§uRosh §j> Received §uRide§j-§uEvent §jfrom §8\"},{\"selector\":\"@s\"},{\"text\":\" §j- {stop}\"}]}",
                         "/scoreboard players add @s packets 1"
 					]
@@ -244,7 +244,7 @@
 						"default": "!query.is_riding"
 					}],
 					"on_entry": [
-						"/tag @s add riding",
+						"/tag @s add isRiding",
                         "/tag @s remove moving",
 						"/tellraw @a[tag=eventlogger] {\"rawtext\":[{\"text\":\"§r§uRosh §j> Received §uRide§j-§uEvent §jfrom §8\"},{\"selector\":\"@s\"},{\"text\":\" §j- {start}\"}]}",
                         "/scoreboard players add @s packets 1"

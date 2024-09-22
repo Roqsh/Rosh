@@ -17,7 +17,7 @@ export function help(message) {
     const themecolor = config.themecolor;
 
     // Set the start of the help message
-    let helpMessage = `§r${themecolor}Rosh §j> §aAvailable commands:\n\n`;
+    let helpMessage = `§r${themecolor}Rosh §j> §aAvailable commands:\n`;
 
     // Convert the customcommands object to an array of keys
     const commandKeys = Object.keys(config.customcommands);

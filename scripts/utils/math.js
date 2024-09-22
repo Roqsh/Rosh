@@ -149,6 +149,41 @@ export class Vector3D {
     }
 
     /**
+     * Adds two vectors together in 3D space.
+     * @param {{x: number, y: number, z: number}} vectorA - The first vector.
+     * @param {{x: number, y: number, z: number}} vectorB - The second vector.
+     * @returns {{x: number, y: number, z: number}} - The resulting vector.
+     */
+    static getVectorAddition(vectorA, vectorB) {
+        return {
+            x: vectorA.x + vectorB.x,
+            y: vectorA.y + vectorB.y,
+            z: vectorA.z + vectorB.z
+        };
+    }
+
+    /**
+     * Divides two vectors together in 3D space.
+     * @param {{x: number, y: number, z: number}} vectorA - The first vector.
+     * @param {{x: number, y: number, z: number}} vectorB - The second vector.
+     * @returns {{x: number, y: number, z: number}} - The resulting vector.
+     * @throws {Error} If any of the components of vectorB are zero.
+     */
+    static getVectorDivision(vectorA, vectorB) {
+
+        if (vectorB.x === 0 || vectorB.y === 0 || vectorB.z === 0) {
+            throw new Error("Cannot divide by a vector with any zero components.");
+        }
+
+        return {
+            x: vectorA.x / vectorB.x,
+            y: vectorA.y / vectorB.y,
+            z: vectorA.z / vectorB.z
+        };
+    }
+
+
+    /**
      * Calculates the eye position of the player.
      * @param {Minecraft.Player} player - The player object.
      * @returns {{x: number, y: number, z: number}} - The eye position.
@@ -322,7 +357,7 @@ export class BoundingBox {
         } else if (player.isGliding) {
             height = 0.6;
             yOffset = 0.4 - eyeHeight; // Adjust for gliding
-        } else if (player.isRiding) {
+        } else if (player.isRiding()) {
             height = 0.75; // Approximate height when riding
             yOffset = 0.75 - eyeHeight; // Adjust based on riding position
         } else if (player.isSleeping) {
