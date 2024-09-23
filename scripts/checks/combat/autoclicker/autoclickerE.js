@@ -11,7 +11,7 @@ const playerCpsHistoryE = new Map();
  * Detects oscillating CPS patterns.
  * @param {Minecraft.Player} player - The player to check.
  */
-export function autoclicker_e(player) {
+export function autoclickerE(player) {
 
     if (!config.modules.autoclickerE.enabled) return;
 

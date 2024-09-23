@@ -10,7 +10,7 @@ const playerCpsHistory = new Map();
  * Checks if a player's CPS exceeds the allowed threshold multiple times.
  * @param {Minecraft.Player} player - The player to check.
  */
-export function autoclicker_a(player) {
+export function autoclickerA(player) {
     
     if (!config.modules.autoclickerA.enabled) return;
 

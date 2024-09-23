@@ -11,7 +11,7 @@ const playerCpsHistoryC = new Map();
  * Checks for a variety of suspicious integer CPS values.
  * @param {Minecraft.Player} player - The player to check.
  */
-export function autoclicker_c(player) {
+export function autoclickerC(player) {
     
     if (!config.modules.autoclickerC.enabled) return;
 

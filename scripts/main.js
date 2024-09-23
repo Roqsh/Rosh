@@ -10,10 +10,10 @@ import { mainMenu, rateLimit } from "./ui/mainMenu.js";
 import { playerMenuSelected } from "./ui/main/playerMenu.js";
 
 // Import Miscellaneous checks
-import { badpackets_a } from "./checks/misc/badpackets/badpacketsA.js";
+//import { badpackets_a } from "./checks/misc/badpackets/badpacketsA.js";
 import { badpackets_b } from "./checks/misc/badpackets/badpacketsB.js";
 import { badpackets_c } from "./checks/misc/badpackets/badpacketsC.js";
-import { badpackets_d } from "./checks/misc/badpackets/badpacketsD.js";
+//import { badpackets_d } from "./checks/misc/badpackets/badpacketsD.js";
 import { badpackets_e } from "./checks/misc/badpackets/badpacketsE.js";
 import { badpackets_f } from "./checks/misc/badpackets/badpacketsF.js";
 import { badpackets_g } from "./checks/misc/badpackets/badpacketsG.js";
@@ -77,16 +77,13 @@ import { killaura_e, dependencies_e } from "./checks/combat/killaura/killauraE.j
 import { hitbox_a } from "./checks/combat/hitbox/hitboxA.js";
 import { hitbox_b } from "./checks/combat/hitbox/hitboxB.js";
 import { reach_a } from "./checks/combat/reach/reachA.js";
-import { autoclicker_a } from "./checks/combat/autoclicker/autoclickerA.js";
-import { autoclicker_b } from "./checks/combat/autoclicker/autoclickerB.js";
-import { autoclicker_c } from "./checks/combat/autoclicker/autoclickerC.js";
-import { autoclicker_d } from "./checks/combat/autoclicker/autoclickerD.js";
-import { autoclicker_e } from "./checks/combat/autoclicker/autoclickerE.js";
-// import { aim_a } from "./checks/combat/aim/aimA.js";
-// import { aim_b } from "./checks/combat/aim/aimB.js";
-// import { aim_c } from "./checks/combat/aim/aimC.js";
-// import { aim_d } from "./checks/combat/aim/aimD.js";
-// import { aim_e } from "./checks/combat/aim/aimE.js";
+import { autoclickerA } from "./checks/combat/autoclicker/autoclickerA.js";
+import { autoclickerB } from "./checks/combat/autoclicker/autoclickerB.js";
+import { autoclickerC } from "./checks/combat/autoclicker/autoclickerC.js";
+import { autoclickerD } from "./checks/combat/autoclicker/autoclickerD.js";
+import { autoclickerE } from "./checks/combat/autoclicker/autoclickerE.js";
+import { aimA } from "./checks/combat/aim/aimA.js";
+import { aimB } from "./checks/combat/aim/aimB.js";
 
 import { clicksHandler } from "./handlers/clicksHandler.js";
 import { commandHandler } from "./handlers/commandHandler.js";
@@ -377,9 +374,9 @@ system.runInterval(() => {
         }
 
         
-        badpackets_a(player);
+        //badpackets_a(player);
         badpackets_b(player);
-        badpackets_d(player);
+        //badpackets_d(player);
         badpackets_f(player);
         badpackets_g(player);
         badpackets_h(player);
@@ -392,11 +389,8 @@ system.runInterval(() => {
         const rotationData = rotationHandler(player);
         
         if (rotationData) {
-            //aim_a(player);
-            //aim_b(player);
-            //aim_c(player);
-            //aim_d(player);
-            //aim_e(player);
+            aimA(player);
+            aimB(player);
             
             player.setLastYaw(rotationData.currentYaw);
             player.setLastPitch(rotationData.currentPitch);
@@ -404,11 +398,11 @@ system.runInterval(() => {
 
         
         if (clicksHandler(player, tick)) {
-            autoclicker_a(player);
-            autoclicker_b(player);
-            autoclicker_c(player);
-            autoclicker_d(player);
-            autoclicker_e(player);
+            autoclickerA(player);
+            autoclickerB(player);
+            autoclickerC(player);
+            autoclickerD(player);
+            autoclickerE(player);
         }
         
         //TODO: Move checks into their own folder + create handler [Patched, it should be disabled by default]

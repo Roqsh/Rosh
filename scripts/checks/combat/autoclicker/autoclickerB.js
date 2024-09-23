@@ -13,7 +13,7 @@ const lastFlaggedTimeB = new Map();
  * Checks for suspiciously low deviation or duplicate CPS.
  * @param {Minecraft.Player} player - The player to check.
  */
-export function autoclicker_b(player) {
+export function autoclickerB(player) {
 
     if (!config.modules.autoclickerB.enabled) return;
 

@@ -11,7 +11,7 @@ const playerCpsHistoryD = new Map();
  * Detects suspicious periodic spikes in CPS.
  * @param {Minecraft.Player} player - The player to check.
  */
-export function autoclicker_d(player) {
+export function autoclickerD(player) {
 
     if (!config.modules.autoclickerD.enabled) return;
 

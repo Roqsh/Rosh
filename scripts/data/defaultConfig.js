@@ -75,11 +75,11 @@ export default
         },
 
         "badpacketsA": {
-            "enabled": true,
-            "description": "Checks if a players rotation exceeds the vanilla rotation limit.",
-            "punishment": "kick",
-            "punishmentLength": "7d",
-            "minVlbeforePunishment": 2
+            "enabled": false,
+            "description": "",
+            "punishment": "",
+            "punishmentLength": "",
+            "minVlbeforePunishment": 0
         },
 
         "badpacketsB": {
@@ -99,11 +99,11 @@ export default
         },
 
         "badpacketsD": {
-            "enabled": true,
-            "description": "Checks for smooth yaw and pitch movements",
-            "punishment": "kick",
-            "punishmentLength": "1h",
-            "minVlbeforePunishment": 12
+            "enabled": false,
+            "description": "",
+            "punishment": "",
+            "punishmentLength": "",
+            "minVlbeforePunishment": 0
         },
 
         "badpacketsE": {
@@ -208,41 +208,21 @@ export default
         },  
 
         "aimA": {
-            "enabled": false,
-            "description":"Simple delta check",
+            "enabled": true,
+            "description":"Checks if a player's rotation exceeds the vanilla rotation limit.",
             "punishment": "kick",
-            "minVlbeforePunishment": 8
+            "punishmentLength": "7d",
+            "minVlbeforePunishment": 3
         },
 
         "aimB": {
             "enabled": true,
-            "description":"Checks for invalid rotations",
+            "description":"Checks for smoothed yaw or pitch movements.",
+            "samples": 20,
+            "integerFrequency": 0.4,
             "punishment": "kick",
-            "minVlbeforePunishment": 8
-        },
-
-        "aimC": {
-            "enabled": false,
-            "description": "Checks for head snaps",
-            "punishment": "kick",
-            "buffer": 10,
-            "minVlbeforePunishment": 8
-        },
-
-        "aimD": {
-            "enabled": false,
-            "description": "Checks for extrememly smooth rotation",
-            "punishment": "kick",
-            "buffer": 8,
-            "minVlbeforePunishment": 8
-        },
-
-        "aimE": {
-            "enabled": false,
-            "description": "Checks for a valid sensitivity in the rotation",
-            "punishment": "kick",
-            "buffer": 10,
-            "minVlbeforePunishment": 8
+            "punishmentLength": "7d",
+            "minVlbeforePunishment": 6
         },
 
         "autoclickerA": {

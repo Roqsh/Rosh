@@ -1,97 +1,92 @@
+import * as Minecraft from "@minecraft/server";
 import config from "../../../data/config.js";
-import { flag } from "../../../util";
-import { Statistics } from "../../../utils/Statistics.js";
+import { flag, debug } from "../../../util";
+import { EvictingList } from "../../../utils/EvictingList.js";
+
+const yawSamples = new Map();
+const pitchSamples = new Map();
 
 /**
- * @name aim_b
- * @param {player} player - The player to check
- * @remarks Checks for invalid rotations
-*/
+ * Checks for smoothed yaw or pitch movements.
+ * @param {Minecraft.Player} player - The player to check.
+ */
+export function aimB(player) {
 
-const data = new Map();
+    // Exit early if the module is disabled or the player is riding an entity
+    if (!config.modules.aimB.enabled || player.isRiding()) return;
 
-export function aim_b(player) {
+    const SAMPLES = config.modules.aimB.samples || 40; // Number of samples to store (default: 40)
+    const FREQUENCY = config.modules.aimB.integerFrequency || 0.5;
 
-    if(config.modules.aimB.enabled) {
+    // Initialize EvictingLists for storing delta yaw and pitch values if not present
+    if (!yawSamples.has(player.name)) {
+        yawSamples.set(player.name, new EvictingList(SAMPLES));
+    }
+    
+    if (!pitchSamples.has(player.name)) {
+        pitchSamples.set(player.name, new EvictingList(SAMPLES));
+    }
 
-        const rotation = player.getRotation();
+    // Retrieve the delta yaw and pitch samples for the player
+    const deltaYawList = yawSamples.get(player.name);
+    const deltaPitchList = pitchSamples.get(player.name);
 
-        if(data.has(player.name)) {
+    // Calculate the current delta yaw and delta pitch values
+    const deltaYaw = player.getYaw() - player.getLastYaw();
+    const deltaPitch = player.getPitch() - player.getLastPitch();
 
-            const pitchDat = data.get(player.name).pitch;
-            const yawDat = data.get(player.name).yaw;
+    // Add the current delta values to the EvictingLists, only if non-zero
+    if (deltaYaw !== 0) deltaYawList.add(Date.now(), deltaYaw);
+    if (deltaPitch !== 0) deltaPitchList.add(Date.now(), deltaPitch);
 
-            if(pitchDat && yawDat) {
-                
-                const deltaPitch = Math.abs(rotation.x - pitchDat.one);
-                const deltaYaw = Math.abs(rotation.y - yawDat.one);
+    // Perform checks if the number of samples has reached the specified amount
+    if (deltaYawList.getCurrentSize() >= SAMPLES) {
+        checkForSmoothing(player, deltaYawList, 'yaw', deltaYaw, FREQUENCY);
+    }
 
-                const deltaPitch2 = Math.abs(pitchDat.one - pitchDat.two);
-                const deltaYaw2 = Math.abs(yawDat.one - yawDat.two);
+    if (deltaPitchList.getCurrentSize() >= SAMPLES) {
+        checkForSmoothing(player, deltaPitchList, 'pitch', deltaPitch, FREQUENCY);
+    }
+}
 
-                const constantYaw = Statistics.getAbsoluteGcd(deltaYaw, deltaYaw2);
-                const constantPitch = Statistics.getAbsoluteGcd(deltaPitch, deltaPitch2);
+/**
+ * Checks for integer frequency in the given sample list and flags the player if needed.
+ * @param {Minecraft.Player} player - The player being checked.
+ * @param {EvictingList} sampleList - The list of delta values (yaw or pitch).
+ * @param {string} type - The type of movement being checked ('yaw' or 'pitch').
+ * @param {number} currentDelta - The current delta value.
+ * @param {number} frequencyThreshold - The threshold for flagging based on integer frequency.
+ */
+function checkForSmoothing(player, sampleList, type, currentDelta, frequencyThreshold) {
+    // Count how many delta values are integers
+    const integerCount = sampleList.getAll().filter(item => Number.isInteger(item.value)).length;
+    const integerFrequency = integerCount / sampleList.getCurrentSize();
 
-                if(player.hasTag("aim_debug2")) player.sendMessage("constantYaw" + constantYaw + "constantPitch" + constantPitch);
-                
-                if((deltaPitch % 1 == 0 || deltaYaw % 360 % 1 == 0) && deltaPitch !== 0 && deltaYaw !== 0 ) flag(player, "Aim", "B", "rounded", `${deltaYaw},${deltaPitch}`);
-                
-                const divisorX = deltaYaw % constantYaw;
-                const divisorY = deltaPitch % constantPitch;
+    // Get the most recent integer delta value
+    const recentIntegerEntry = sampleList.getAll().reverse().find(item => Number.isInteger(item.value));
+    
+    // Only proceed if a recent integer value exists
+    if (recentIntegerEntry) {
+        const recentIntegerValue = recentIntegerEntry.value;
 
-                const invalidX = deltaYaw > 0 && !Number.isFinite(divisorX);
-                const invalidY = deltaPitch > 0 && !Number.isFinite(divisorY);
-
-                if(invalidX || invalidY) flag(player, "Aim", "B", "divX", `${divisorX},divY=${divisorY}`);
-
-                const currentYaw = deltaYaw / constantYaw;
-                const currentPitch = deltaPitch / constantPitch;
-
-                const floorYaw = Math.floor(currentYaw);
-                const floorPitch = Math.floor(currentPitch);
-
-                const moduloX = Math.abs(currentYaw - floorYaw);
-                const moduloY = Math.abs(currentPitch - floorPitch);
-
-                const invalidX2 = moduloX > 0.5 && !Number.isFinite(moduloX);
-                const invalidY2 = moduloY > 0.5 && !Number.isFinite(moduloY);
-
-                if(invalidX2 || invalidY2) flag(player, "Aim", "B", "modX", `${moduloX},modY=${moduloY}`);
-
-
-                const currentY = deltaYaw / constantYaw;
-                const currentX = deltaPitch / constantPitch;
-
-                const previousY = deltaYaw2 / constantYaw;
-                const previousX = deltaPitch2 / constantPitch;
-
-                if(deltaYaw > 0 && deltaPitch > 0 && deltaYaw < 20 && deltaPitch < 20) {
-                    
-                    const moduloY = currentY % previousY;
-                    const moduloX = currentX % previousX;
-
-                    const floorModuloY = Math.abs(Math.floor(moduloY) - moduloY);
-                    const floorModuloX = Math.abs(Math.floor(moduloX) - moduloX);
-
-                    const invalidY3 = moduloY > 90 && floorModuloY > 0.1;
-                    const invalidX3 = moduloX > 90 && floorModuloX > 0.1;
-
-                    if(invalidX3 && invalidY3) flag(player, "Aim", "B", "Combat", "modulo", `y=${moduloY},x=${moduloX}`)
-                }
-            }
+        // Debug information if not zero
+        if (currentDelta != 0) {
+            debug(player, `Delta ${capitalize(type)}`, `${currentDelta}, frequency=${integerFrequency}, (${integerCount} of ${sampleList.getCurrentSize()})`, `aimB${type}`);
         }
 
-        data.set(player.name, {
-            pitch: {
-                one: rotation.x,
-                two: data.get(player.name)?.pitch?.one || 0,
-                three: data.get(player.name)?.pitch?.two || 0
-            },
-            yaw: {
-                one: rotation.y,
-                two: data.get(player.name)?.yaw?.one || 0,
-                three: data.get(player.name)?.yaw?.two || 0
-            }
-        });
+        // Flag the player if the integer frequency exceeds the threshold
+        if (integerFrequency > frequencyThreshold) {
+            flag(player, "Aim", "B", `delta${capitalize(type)}`, `${recentIntegerValue}, frequency=${integerFrequency}, (${integerCount} of ${sampleList.getCurrentSize()})`);
+            sampleList.clear();
+        }
     }
+}
+
+/**
+ * Capitalizes the first letter of a string.
+ * @param {string} str - The string to capitalize.
+ * @returns {string} - The capitalized string.
+ */
+function capitalize(str) {
+    return str.charAt(0).toUpperCase() + str.slice(1);
 }
