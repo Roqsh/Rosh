@@ -16,6 +16,13 @@ export function initializePlayerPrototypes() {
         this.clicks = cpsValue || 0;
     };
 
+    Player.prototype.getLastCps = function() {
+        return this.lastClicks ?? 0;  // Use nullish coalescing operator
+    };
+
+    Player.prototype.setLastCps = function(lastCpsValue) {
+        this.lastClicks = lastCpsValue || 0;
+    };
 
     // Adding yaw methods to the Player prototype
 

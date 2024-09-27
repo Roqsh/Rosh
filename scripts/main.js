@@ -396,14 +396,18 @@ system.runInterval(() => {
             player.setLastPitch(rotationData.currentPitch);
         }
 
+        const clicksData = clicksHandler(player, tick);
         
-        if (clicksHandler(player, tick)) {
+        if (clicksData) {
             autoclickerA(player);
             autoclickerB(player);
             autoclickerC(player);
             autoclickerD(player);
             autoclickerE(player);
+
+            player.setLastCps(clicksData.currentCps);
         }
+        
         
         //TODO: Move checks into their own folder + create handler [Patched, it should be disabled by default]
         function handleBadEnchantments(player, enchantment, itemTypeId, i, type) {

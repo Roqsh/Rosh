@@ -7,7 +7,7 @@ import { debug } from "../util";
  * 
  * @param {Minecraft.Player} player - The player whose CPS is being checked and calculated.
  * @param {number} tick - The current game tick within the range of 1 to 20 (1 tick = 1/20th of a second).
- * @returns {boolean} True if CPS calculation was performed and autoclicker checks can proceed, false otherwise.
+ * @returns { { currentCps: number } | false } Returns the current calculated cps for further processing, or false if conditions are not met.
  */
 export function clicksHandler(player, tick) {
 
@@ -15,16 +15,16 @@ export function clicksHandler(player, tick) {
     if (tick === 20 && player.clicks > 0) { 
 
         // Calculate CPS as the number of clicks divided by the elapsed time in seconds
-        const cps = player.clicks / ((Date.now() - player.lastTime) / 1000); // 1000ms = 1 second = 20 ticks
+        const currentCps = player.clicks / ((Date.now() - player.lastTime) / 1000); // 1000ms = 1 second = 20 ticks
 
         // Output the calculated CPS for debugging purposes
-        debug(player, "Cps", cps, "cps");
+        debug(player, "Cps", currentCps, "cps");
 
         // Update the player's CPS value
-        player.setCps(cps);
+        player.setCps(currentCps);
 
-        // CPS calculation successful, autoclicker checks can proceed
-        return true;
+        // Return the current CPS value to update getLastCps() after checks have run
+        return { currentCps };
     }
 
     // Conditions for CPS calculation were not met, so autoclicker checks should not proceed

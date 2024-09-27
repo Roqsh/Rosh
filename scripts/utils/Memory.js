@@ -39,6 +39,15 @@ export class Memory {
     }
 
     /**
+     * Checks if a player is registered.
+     * @param {string} playerId - The ID of the player to check.
+     * @returns {boolean} - True if the player is registered, false otherwise.
+     */
+    static isRegistered(playerId) {
+        return this.playerData.has(playerId);
+    }
+
+    /**
      * Retrieves the stored information for a player by their ID.
      * @param {string} playerId - The ID of the player to retrieve information for.
      * @returns {Object|null} - The player information object or null if not found.

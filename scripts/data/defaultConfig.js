@@ -219,7 +219,7 @@ export default
             "enabled": true,
             "description":"Checks for smoothed yaw or pitch movements.",
             "samples": 20,
-            "integerFrequency": 0.4,
+            "integer_frequency": 0.4,
             "punishment": "kick",
             "punishmentLength": "7d",
             "minVlbeforePunishment": 6

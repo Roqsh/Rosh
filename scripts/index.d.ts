@@ -121,11 +121,25 @@ declare module "@minecraft/server" {
         getCps(): number;
 
         /**
+         * Gets the player's last attacks per second (only counts actual attacks, not arm swings).
+         * @returns {number} The player's last attacks per second (CPS).
+         * @Rosh
+         */
+        getLastCps(): number;
+
+        /**
          * Sets the player's attacks per second.
          * @param {number} cpsValue The CPS value to assign to the player.
          * @Rosh
          */
         setCps(cpsValue: number): void;
+
+        /**
+         * Sets the player's last attacks per second.
+         * @param lastCpsValue The last CPS value to assign to the player.
+         * @Rosh
+         */
+        setLastCps(lastCpsValue: number): void;
 
         /**
          * Gets the player's current yaw (horizontal rotation).

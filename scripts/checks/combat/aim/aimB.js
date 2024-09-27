@@ -16,7 +16,7 @@ export function aimB(player) {
     if (!config.modules.aimB.enabled || player.isRiding()) return;
 
     const SAMPLES = config.modules.aimB.samples || 40; // Number of samples to store (default: 40)
-    const FREQUENCY = config.modules.aimB.integerFrequency || 0.5;
+    const FREQUENCY = config.modules.aimB.integer_frequency || 0.5;
 
     // Initialize EvictingLists for storing delta yaw and pitch values if not present
     if (!yawSamples.has(player.name)) {

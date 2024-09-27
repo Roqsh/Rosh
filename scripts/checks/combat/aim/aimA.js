@@ -26,4 +26,3 @@ export function aimA(player) {
         flag(player, "Aim", "A", "yaw", yaw);
     }
 }
-
