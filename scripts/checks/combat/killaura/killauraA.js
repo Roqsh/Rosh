@@ -2,11 +2,13 @@ import * as Minecraft from "@minecraft/server";
 import config from "../../../data/config.js";
 import { flag } from "../../../util";
 
+// TODO: Implement buffer system
+
 /**
  * Checks for attacking with an integer x/y rotation.
  * @param {Minecraft.Player} player - The player to check.
  */
-export function killaura_a(player) {
+export function killauraA(player) {
     
     if (!config.modules.killauraA.enabled) return;
 

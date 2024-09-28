@@ -2,7 +2,7 @@ import * as Minecraft from "@minecraft/server";
 import { system, world, ItemTypes, ItemStack } from "@minecraft/server";
 import config from "./data/config.js";
 import data from "./data/data.js";
-import { initializePlayerPrototypes } from "./data/prototype.js";
+import { loadPlayerPrototypes, loadEntityPrototypes } from "./data/prototype.js";
 import { Memory } from "./utils/Memory.js";
 import { tag_system } from "./utils/gameUtil.js";
 import { flag, ban, convertToMs, timeDisplay, getScore, setScore, tellStaff, getSpeed, aroundAir, inAir, debug } from "./util.js";
@@ -69,11 +69,11 @@ import { tower_a } from "./checks/world/tower/towerA.js";
 import { tower_b } from "./checks/world/tower/towerB.js";
 
 // Import Combat related checks
-import { killaura_a } from "./checks/combat/killaura/killauraA.js";
-import { killaura_b } from "./checks/combat/killaura/killauraB.js";
-import { killaura_c } from "./checks/combat/killaura/killauraC.js";
-import { killaura_d } from "./checks/combat/killaura/killauraD.js";
-import { killaura_e, dependencies_e } from "./checks/combat/killaura/killauraE.js";
+import { killauraA } from "./checks/combat/killaura/killauraA.js";
+import { killauraB } from "./checks/combat/killaura/killauraB.js";
+import { killauraC } from "./checks/combat/killaura/killauraC.js";
+import { killauraD } from "./checks/combat/killaura/killauraD.js";
+import { killauraE, dependencies_e } from "./checks/combat/killaura/killauraE.js";
 import { hitbox_a } from "./checks/combat/hitbox/hitboxA.js";
 import { hitbox_b } from "./checks/combat/hitbox/hitboxB.js";
 import { reach_a } from "./checks/combat/reach/reachA.js";
@@ -90,7 +90,8 @@ import { commandHandler } from "./handlers/commandHandler.js";
 import { movementHandler } from "./handlers/movementHandler.js";
 import { rotationHandler } from "./handlers/rotationHandler.js";
 
-initializePlayerPrototypes();
+loadPlayerPrototypes();
+loadEntityPrototypes();
 
 let tps = 20;
 let lagValue = 1;
@@ -797,9 +798,9 @@ world.afterEvents.playerSpawn.subscribe((playerJoin) => {
 
 world.afterEvents.entityHitEntity.subscribe(({ hitEntity: entity, damagingEntity: player}) => {
 	
-	if (player.typeId !== "minecraft:player" || !entity.isValid() || player.isHoldingTrident) return;
+	if (!player.isPlayer() || !entity.isValid() || player.isHoldingTrident) return;
 
-	if(!player.hasTag("attacking")) {
+	if (!player.hasTag("attacking")) {
 		player.addTag("attacking");
 	}
     
@@ -807,14 +808,14 @@ world.afterEvents.entityHitEntity.subscribe(({ hitEntity: entity, damagingEntity
 
     hitbox_a(player, entity);
     hitbox_b(player, entity);
-
-	if(config.generalModules.killaura) {
-		killaura_a(player);
-		killaura_b(player, entity);
-		killaura_c(player, entity);
-		killaura_d(player, entity);
-	    killaura_e(player, entity);
-	}
+    
+    if (config.generalModules.killaura) {
+        killauraA(player);
+        killauraB(player, entity);
+        killauraC(player, entity);
+        killauraD(player, entity);
+        killauraE(player, entity);
+    }
 
 	reach_a(player, entity);
 

@@ -1,14 +1,15 @@
 import config from "../../../data/config.js";
 import { flag } from "../../../util";
 
+// TODO: Recode
+
 /**
- * @name killaura_e
  * @param {player} player - The player to check
  * @param {entity} entity - The bot
  * @remarks Checks for attacking the bot [Beta]
 */
 
-export function killaura_e(player, entity) {
+export function killauraE(player, entity) {
 
     if(config.modules.killauraE.enabled) {
 

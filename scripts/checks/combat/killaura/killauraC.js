@@ -7,7 +7,7 @@ import { flag } from "../../../util";
  * @param {Minecraft.Player} player - The player to check.
  * @param {Minecraft.Entity} entity - The attacked entity.
  */
-export function killaura_c(player, entity) {
+export function killauraC(player, entity) {
 
     if (!config.modules.killauraC.enabled) return;
 

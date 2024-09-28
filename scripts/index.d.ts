@@ -379,6 +379,12 @@ declare module "@minecraft/server" {
     interface Entity {
 
         /**
+         * Whether the entity is a player. (Type-id is `minecraft:player`.)
+         * @Rosh
+         */
+        isPlayer(): boolean,
+
+        /**
          * Whether the autotool check flagged this entity.
          */
         flagAutotoolA: boolean,

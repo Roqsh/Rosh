@@ -3,14 +3,14 @@ import config from "../../../data/config.js";
 import { flag } from "../../../util.js";
 import { Vector3D } from "../../../utils/Vector3D.js";
 
-//TODO: Implement Bounding Box system to prevent false positives (Hitboxes can be outside of Corner positions)
+// TODO: Implement Bounding Box system to prevent false positives (Hitboxes can be outside of corner positions)
 
 /**
  * Checks if a player hits through a solid wall.
  * @param {Minecraft.Player} player - The player to check.
  * @param {Minecraft.Entity} target - The attacked player.
  */
-export function killaura_d(player, target) {
+export function killauraD(player, target) {
     
     if (!config.modules.killauraD.enabled) return;
 

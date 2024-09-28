@@ -7,7 +7,7 @@ import { flag, getScore, debug } from "../../../util";
  * @param {Minecraft.Player} player - The player being monitored.
  * @param {Minecraft.Entity} entity - The entity being attacked by the player.
  */
-export function killaura_b(player, entity) {
+export function killauraB(player, entity) {
 
     if (!config.modules.killauraB.enabled) return;
 
@@ -51,5 +51,13 @@ export function killaura_b(player, entity) {
     // Flag the player if they attacked an invalid entity
     if (invalidEntities.has(entityId)) {
         flag(player, "Killaura", "B", "invalid-entity", entityId);
+    }
+
+    if (player.isSleeping) {
+        flag(player, "Killaura", "B", "sleeping", "true");
+    }
+
+    if (player.isDead()) {
+        flag(player, "Killaura", "B", "dead", "true");
     }
 }

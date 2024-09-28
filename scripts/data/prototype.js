@@ -1,10 +1,10 @@
-import { Player } from "@minecraft/server";
+import { Player, Entity } from "@minecraft/server";
 import { Memory } from "../utils/Memory.js";    
 
 /**
  * Initializes and enhances the Player prototype with custom methods.
  */
-export function initializePlayerPrototypes() {
+export function loadPlayerPrototypes() {
 
     // Adding CPS methods to the Player prototype
 
@@ -292,4 +292,14 @@ export function initializePlayerPrototypes() {
     
         return (currentMs - loginMs > ticksInMs);
     };
+}
+
+/**
+ * Initializes and enhances the Entity prototype with custom methods.
+ */
+export function loadEntityPrototypes() {
+
+    Entity.prototype.isPlayer = function() {
+        return this.typeId === "minecraft:player";
+    }
 }
