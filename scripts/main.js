@@ -21,8 +21,8 @@ import { badpackets_h } from "./checks/misc/badpackets/badpacketsH.js";
 import { badpackets_i } from "./checks/misc/badpackets/badpacketsI.js";
 import { badpackets_j } from "./checks/misc/badpackets/badpacketsJ.js";
 import { exploit_a } from "./checks/misc/exploit/exploitA.js";
-import { namespoof_a } from "./checks/misc/namespoof/namespoofA.js";
-import { namespoof_b } from "./checks/misc/namespoof/namespoofB.js";
+import { namespoofA } from "./checks/misc/namespoof/namespoofA.js";
+import { namespoofB } from "./checks/misc/namespoof/namespoofB.js";
 import { timer_a } from "./checks/misc/timer/timerA.js";
 
 // Import Movement related checks
@@ -173,7 +173,6 @@ world.afterEvents.entityHurt.subscribe((data) => {
 system.runInterval(() => {
 
     if (system.currentTick % 20 == 0) {
-
 	   const deltaDate = Date.now() - lastDate;
 	   const lag = deltaDate / 1000;
 
@@ -182,11 +181,15 @@ system.runInterval(() => {
 	   lastDate = Date.now();
     }
 
-	for (const player of world.getPlayers()) {
+	for (const player of world.getAllPlayers()) {
+
+        if (player.hasTag("isBanned")) {
+            ban(player);
+        }
 
 		const rotation = player.getRotation();
 		const velocity = player.getVelocity();
-        const xp = player.getTotalXp();
+        const totalXp = player.getTotalXp();
 
         const xpForNextLevel = player.totalXpNeededForNextLevel;
         const xpAtCurrentLevel = player.xpEarnedAtCurrentLevel;
@@ -200,10 +203,6 @@ system.runInterval(() => {
         const themecolor = config.themecolor;
 
 		player.removeTag("noPitchDiff");
-
-		if (player.hasTag("isBanned")) {
-            ban(player);
-        }
 
         if (selectedItem?.typeId === "minecraft:trident") {
             player.isHoldingTrident = true;
@@ -697,7 +696,7 @@ world.afterEvents.playerSpawn.subscribe((playerJoin) => {
     const themecolor = config.themecolor;
     const thememode = config.thememode;
 
-	if (!initialSpawn || !player.isValid()) return;
+	if (!initialSpawn && !player.isValid()) return;
 
     Memory.register(player);
 
@@ -712,6 +711,9 @@ world.afterEvents.playerSpawn.subscribe((playerJoin) => {
     if (player.isOp() && thememode !== "Rosh" && thememode !== "Alice") {
         player.sendMessage(`${themecolor}Rosh §j> §cNo valid thememode entered in config! The thememode has been set back to default.`);
     }
+
+    namespoofA(player);
+    namespoofB(player);
 
     if (player.name in data.banList) {
 
@@ -755,9 +757,6 @@ world.afterEvents.playerSpawn.subscribe((playerJoin) => {
 
 	exploit_a(player);
 
-    namespoof_a(player);
-    namespoof_b(player);
-
     // TODO: Update this code
 	//if (player.hasTag("notify")) {
 		//player.runCommandAsync('execute at @a[tag=reported] run tellraw @a[tag=notify] {"rawtext":[{"text":"§r§uRosh §j> §8"},{"selector":"@s"},{"text":" §chas been reported while your were offline."}]}');
@@ -789,13 +788,6 @@ world.afterEvents.playerSpawn.subscribe((playerJoin) => {
 });
 
 
-//world.afterEvents.entitySpawn.subscribe(({entity}) => {
-
-	//if (!entity.isValid()) return;
-
-//});
-
-
 world.afterEvents.entityHitEntity.subscribe(({ hitEntity: entity, damagingEntity: player}) => {
 	
 	if (!player.isPlayer() || !entity.isValid() || player.isHoldingTrident) return;
@@ -810,7 +802,7 @@ world.afterEvents.entityHitEntity.subscribe(({ hitEntity: entity, damagingEntity
     hitbox_b(player, entity);
     
     if (config.generalModules.killaura) {
-        killauraA(player);
+        killauraA(player, entity);
         killauraB(player, entity);
         killauraC(player, entity);
         killauraD(player, entity);
@@ -821,7 +813,7 @@ world.afterEvents.entityHitEntity.subscribe(({ hitEntity: entity, damagingEntity
 
 	badpackets_c(player, entity);
 	
-	if(config.modules.killauraE.enabled) {
+	if (config.modules.killauraE.enabled) {
 		setScore(player, "tick_counter", getScore(player, "tick_counter", 0) + 2);
 	}
 
@@ -829,10 +821,20 @@ world.afterEvents.entityHitEntity.subscribe(({ hitEntity: entity, damagingEntity
 
 		const container = player.getComponent("inventory").container;
 		const item = container.getItem(player.selectedSlotIndex);
-		
-		if (item?.typeId === config.customcommands.ui.ui_item && item?.nameTag === config.customcommands.ui.ui_item_name) {
-		    playerMenuSelected(player, entity);
-		}
+        const itemEnchants = item.getComponent("enchantable")?.getEnchantments() ?? [];
+
+        for (const enchantData of itemEnchants) {
+            const enchantTypeId = enchantData.type.id;
+
+            if (
+                item?.typeId === config.customcommands.ui.ui_item &&
+                item?.nameTag === config.customcommands.ui.ui_item_name &&
+                enchantTypeId === "unbreaking" &&
+                enchantData.level === 3
+            ) {
+                playerMenuSelected(player, entity);
+            }
+        }
 	}
 });
 

@@ -85,8 +85,15 @@ export function killauraD(player, target) {
         if (!blockDetected) return;
     }
 
+    let targetName = "";
+
+    // If the target is a player, get their name.
+    if (target.isPlayer()) {
+        targetName = target.name;
+    } 
+
     // If no clear path was found at any height, flag the player for potential Killaura use.
     if (blockDetected) {
-        flag(player, "Killaura", "D", "hit through", detectedBlockType);
+        flag(player, "Killaura", "D", "hit through", `${detectedBlockType}, target=${targetName}`);
     }
 }

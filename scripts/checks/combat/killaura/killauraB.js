@@ -11,6 +11,13 @@ export function killauraB(player, entity) {
 
     if (!config.modules.killauraB.enabled) return;
 
+    let targetName = "";
+
+    // If the target is a player, get their name.
+    if (entity.isPlayer()) {
+        targetName = entity.name;
+    }
+
     // Get the player's inventory container and the currently selected item
     const container = player.getComponent("inventory")?.container;
     const selectedSlot = player.selectedSlotIndex;
@@ -19,7 +26,7 @@ export function killauraB(player, entity) {
 
     // Flag the player if they are using an item while attacking
     if (player.hasTag("right")) {
-        flag(player, "Killaura", "B", "used item", `${selectedItem.typeId}, ticks=${ticks}`);
+        flag(player, "Killaura", "B", "used item", `${selectedItem.typeId}, ticks=${ticks}, target=${targetName}`);
     }
 
     // Get the type ID of the attacked entity
@@ -50,14 +57,14 @@ export function killauraB(player, entity) {
 
     // Flag the player if they attacked an invalid entity
     if (invalidEntities.has(entityId)) {
-        flag(player, "Killaura", "B", "invalid-entity", entityId);
+        flag(player, "Killaura", "B", "invalid-entity", `${entityId}`);
     }
 
     if (player.isSleeping) {
-        flag(player, "Killaura", "B", "sleeping", "true");
+        flag(player, "Killaura", "B", "sleeping", `true, target=${targetName}`);
     }
 
     if (player.isDead()) {
-        flag(player, "Killaura", "B", "dead", "true");
+        flag(player, "Killaura", "B", "dead", `true, target=${targetName}`);
     }
 }

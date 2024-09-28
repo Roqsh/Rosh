@@ -10,7 +10,7 @@ import { flag, endsWithNumberInParentheses } from "../../../util";
  * the second player will be marked with Player(2), which adds 3 additional 
  * characters that we will account for by checking if the name ends with `)`.
  */
-export function namespoof_a(player) {
+export function namespoofA(player) {
 
     if (!config.modules.namespoofA.enabled) return;
 
