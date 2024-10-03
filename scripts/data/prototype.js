@@ -1,5 +1,6 @@
 import { Player, Entity } from "@minecraft/server";
-import { Memory } from "../utils/Memory.js";    
+import { Memory } from "../utils/Memory.js";
+import { BoundingBox } from "../utils/BoundingBox.js";
 
 /**
  * Initializes and enhances the Player prototype with custom methods.
@@ -292,6 +293,10 @@ export function loadPlayerPrototypes() {
     
         return (currentMs - loginMs > ticksInMs);
     };
+
+    Player.prototype.getBoundingBox = function() {
+        return BoundingBox.getPlayerBoundingBox(this);
+    }
 }
 
 /**

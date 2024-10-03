@@ -1,4 +1,5 @@
 import { Vector3 } from "@minecraft/server";
+import { BoundingBox } from "../../utils/BoundingBox.js";
 
 declare module "@minecraft/server" {
 	
@@ -367,13 +368,20 @@ declare module "@minecraft/server" {
          * Mutes the player, preventing them from sending chat messages. Adds the `isMuted` tag.
          * @returns {Promise<boolean>} A promise that resolves when the player is muted.
          */
-        mute(): Promise<boolean>,
+        mute(): Promise<boolean>;
 
         /**
          * Unmutes the player, allowing them to send chat messages again. Removes the `isMuted` tag.
          * @returns {Promise<boolean>} A promise that resolves when the player is unmuted.
          */
-        unmute(): Promise<boolean>
+        unmute(): Promise<boolean>;
+
+        /**
+         * Gets a player's current bounding box. (aka Hitbox)
+         * @returns {BoundingBox} The player's current bounding box.
+         * @Rosh
+         */
+        getBoundingBox(): BoundingBox
     }
 
     interface Entity {

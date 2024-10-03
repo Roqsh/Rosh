@@ -1,5 +1,4 @@
 import * as Minecraft from "@minecraft/server";
-import { getEyeHeight } from "../util";
 
 /**
  * The BoundingBox class represents a three-dimensional rectangular area in space, 
@@ -31,16 +30,76 @@ export class BoundingBox {
     }
 
     /**
+     * Determines if a player (his hitbox) is inside the bounding box.
+     * @param {Minecraft.Player} player - The player to check.
+     * @returns {boolean} - True if the player is inside the bounding box, false otherwise.
+     */
+    containsPlayer(player) {
+        // Determine the player's bounding box based on their current action
+        const playerBoundingBox = this.getPlayerBoundingBox(player);
+    
+        // Check if the player's bounding box is inside this bounding box
+        return this.intersectsWith(playerBoundingBox);
+    }
+
+    /**
      * Checks if another bounding box intersects with this bounding box.
      * @param {BoundingBox} other - The other bounding box to check for intersection.
      * @returns {boolean} - True if the bounding boxes intersect, false otherwise.
      */
-    intersects(other) {
+    intersectsWith(other) {
         return (
             this.max.x >= other.min.x && this.min.x <= other.max.x &&
             this.max.y >= other.min.y && this.min.y <= other.max.y &&
             this.max.z >= other.min.z && this.min.z <= other.max.z
         );
+    }
+
+    /**
+     * Checks if a ray intersects with this bounding box.
+     * @param {{
+     * origin: {x: number, y: number, z: number}, 
+     * direction: {x: number, y: number, z: number}
+     * }} ray - The ray to check, defined by its origin and direction.
+     * @returns {boolean} - True if the ray intersects the bounding box, false otherwise.
+     */
+    intersectsWithRay(ray) {
+        const { origin, direction } = ray;
+   
+        let tMin = -Infinity;
+        let tMax = Infinity;
+   
+        // Define the bounding box coordinates
+        const { x: minX, y: minY, z: minZ } = this.min;
+        const { x: maxX, y: maxY, z: maxZ } = this.max;
+   
+        // Check for intersection along each axis
+        for (const [axis, minCoord, maxCoord] of [
+            ['x', minX, maxX],
+            ['y', minY, maxY],
+            ['z', minZ, maxZ]
+        ]) {
+            const dir = direction[axis];
+            const orig = origin[axis];
+   
+            if (dir === 0) {
+                // Ray is parallel to the axis, so check if origin is within bounds
+                if (orig < minCoord || orig > maxCoord) return false;
+            } else {
+                // Calculate t values for this slab (entry and exit points)
+                const t1 = (minCoord - orig) / dir;
+                const t2 = (maxCoord - orig) / dir;
+                const tNear = Math.min(t1, t2);
+                const tFar = Math.max(t1, t2);
+   
+                if (tNear > tMax || tFar < tMin) return false;
+                tMin = Math.max(tMin, tNear);
+                tMax = Math.min(tMax, tFar);
+            }
+        }
+   
+        // If tMin is greater than tMax, there's no intersection
+        return tMin <= tMax;
     }
 
     /**
@@ -68,109 +127,43 @@ export class BoundingBox {
     }
 
     /**
-     * Determines if a player (his hitbox) is inside the bounding box.
-     * @param {Minecraft.Player} player - The player to check.
-     * @returns {boolean} - True if the player is inside the bounding box, false otherwise.
+     * Checks if this bounding box is equal to another bounding box.
+     * @param {BoundingBox} other - The other bounding box to compare with.
+     * @returns {boolean} - True if the bounding boxes are equal, false otherwise.
      */
-    containsPlayer(player) {
-        // Determine the player's bounding box based on their current action
-        const playerBoundingBox = this.getPlayerBoundingBox(player);
-    
-        // Check if the player's bounding box is inside this bounding box
-        return this.intersects(playerBoundingBox);
-    }
-
-    /**
-     * Determines if two players are inside the same bounding box.
-     * @param {Minecraft.Player} player1 - The first player.
-     * @param {Minecraft.Player} player2 - The second player.
-     * @returns {boolean} - True if both players are inside the bounding box, false otherwise.
-     */
-    static arePlayersColliding(player1, player2) {
-        const box1 = BoundingBox.getPlayerBoundingBox(player1);
-        const box2 = BoundingBox.getPlayerBoundingBox(player2);
-    
-        return box1.intersects(box2);
-    }
-
-    /**
-     * Checks if a ray intersects with this bounding box.
-     * @param {{
-     * origin: {x: number, y: number, z: number}, 
-     * direction: {x: number, y: number, z: number}
-     * }} ray - The ray to check, defined by its origin and direction.
-     * @returns {boolean} - True if the ray intersects the bounding box, false otherwise.
-     */
-    collidesWithRay(ray) {
-        const { origin, direction } = ray;
-
-        // Define the slab method to test intersections
-        const tMin = -Infinity;
-        const tMax = Infinity;
-
-        // Define the bounding box coordinates
-        const { x: minX, y: minY, z: minZ } = this.min;
-        const { x: maxX, y: maxY, z: maxZ } = this.max;
-
-        // Check for intersection along each axis
-        for (const [i, minCoord, maxCoord] of [
-            [direction.x, minX, maxX],
-            [direction.y, minY, maxY],
-            [direction.z, minZ, maxZ]
-        ]) {
-            if (i === 0) {
-                // Ray is parallel to the slab, ignore this axis
-                if (origin[i] < minCoord || origin[i] > maxCoord) return false;
-            } else {
-                // Calculate t values for this slab
-                const t1 = (minCoord - origin[i]) / direction[i];
-                const t2 = (maxCoord - origin[i]) / direction[i];
-                const tNear = Math.min(t1, t2);
-                const tFar = Math.max(t1, t2);
-
-                if (tNear > tMax || tFar < tMin) return false;
-                if (tNear > tMin) tMin = tNear;
-                if (tFar < tMax) tMax = tFar;
-            }
-        }
-
-        return tMin <= tMax;
-    }
-
-    /**
-     * Returns the player's current bounding box based on their state.
-     * @param {Minecraft.Player} player - The player whose bounding box to get.
-     * @returns {BoundingBox} - The player's current bounding box.
-     */
-    getPlayerBoundingBox(player) {
-        const eyeHeight = getEyeHeight(player);
-
-        let height = 1.8; // Default height for standing
-        let width = 0.6;  // Default width for the bounding box
-        let depth = 0.6;  // Depth is the same as width for simplicity
-        let yOffset = 0;
-    
-        if (player.isSneaking) {
-            height = 1.65;
-        } else if (player.isSwimming || player.isCrawling) {
-            height = 0.6;
-            yOffset = 0.4 - eyeHeight; // Adjust for swimming/crawling
-        } else if (player.isGliding) {
-            height = 0.6;
-            yOffset = 0.4 - eyeHeight; // Adjust for gliding
-        } else if (player.isRiding()) {
-            height = 0.75; // Approximate height when riding
-            yOffset = 0.75 - eyeHeight; // Adjust based on riding position
-        } else if (player.isSleeping) {
-            height = 0.2;
-            width = 0.6; // Width remains the same when sleeping
-            yOffset = 0.1 - eyeHeight; // Adjust for lying down
-        }
-    
-        return new BoundingBox(
-            { x: player.location.x - width / 2, y: player.location.y + yOffset, z: player.location.z - depth / 2 },
-            { x: player.location.x + width / 2, y: player.location.y + height + yOffset, z: player.location.z + depth / 2 }
+    equals(other) {
+        return (
+            this.min.x === other.min.x &&
+            this.min.y === other.min.y &&
+            this.min.z === other.min.z &&
+            this.max.x === other.max.x &&
+            this.max.y === other.max.y &&
+            this.max.z === other.max.z
         );
+    }
+
+    /**
+     * Gets the span of the bounding box (i.e. the difference between its maximum and minimum coordinates).
+     * @returns {{x: number, y: number, z: number}} - The span of the bounding box.
+     */
+    getSpan() {
+        return {
+            x: this.max.x - this.min.x,
+            y: this.max.y - this.min.y,
+            z: this.max.z - this.min.z
+        };
+    }
+    
+    /**
+     * Returns the center of the bounding box.
+     * @returns {{x: number, y: number, z: number}} - The center of the bounding box.
+     */
+    getCenter() {
+        return {
+            x: (this.min.x + this.max.x) / 2,
+            y: (this.min.y + this.max.y) / 2,
+            z: (this.min.z + this.max.z) / 2
+        };
     }
 
     /**
@@ -186,7 +179,7 @@ export class BoundingBox {
      *   bottomRightBack: { x: number, y: number, z: number }
      * }} - An object with properties for each corner position.
      */
-    getCornerPositions() {
+    getCorners() {
         const { x: minX, y: minY, z: minZ } = this.min;
         const { x: maxX, y: maxY, z: maxZ } = this.max;
  
@@ -200,5 +193,52 @@ export class BoundingBox {
             bottomLeftBack: { x: minX, y: minY, z: maxZ },
             bottomRightBack: { x: maxX, y: minY, z: maxZ }
         };
+    }
+
+    /**
+     * Calculates the volume of the bounding box.
+     * @returns {number} - The volume of the bounding box.
+     */
+    getVolume() {
+        const span = this.getSpan();
+        return span.x * span.y * span.z;
+    }
+
+    /**
+     * Determines if two players are inside the same bounding box.
+     * @param {Minecraft.Player} player1 - The first player.
+     * @param {Minecraft.Player} player2 - The second player.
+     * @returns {boolean} - True if both players are inside the bounding box, false otherwise.
+     */
+    static arePlayersColliding(player1, player2) {
+        const box1 = BoundingBox.getPlayerBoundingBox(player1);
+        const box2 = BoundingBox.getPlayerBoundingBox(player2);
+    
+        return box1.intersectsWith(box2);
+    }
+
+    /**
+     * Returns the player's current bounding box based on their state.
+     * @param {Minecraft.Player} player - The player whose bounding box to get.
+     * @returns {BoundingBox} - The player's current bounding box.
+     */
+    static getPlayerBoundingBox(player) {
+        let height = 1.8; // Default height for standing
+        let width = 0.6;  // Default width for the bounding box
+        let depth = 0.6;  // Depth is the same as width for simplicity
+    
+        // Adjust the height based on the player's state
+        if (player.isSneaking) {
+            height = 1.65;
+        } else if (player.isSwimming || player.isGliding /**|| player.isCrawling*/) {
+            height = 0.6;
+        } else if (player.isSleeping) {
+            height = 0.2;
+        }
+
+        return new BoundingBox(
+            { x: player.location.x - width / 2, y: player.location.y, z: player.location.z - depth / 2 },
+            { x: player.location.x + width / 2, y: player.location.y + height, z: player.location.z + depth / 2 }
+        );
     }
 }
