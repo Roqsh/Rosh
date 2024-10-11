@@ -387,7 +387,8 @@ declare module "@minecraft/server" {
     interface Entity {
 
         /**
-         * Whether the entity is a player. (Type-id is `minecraft:player`.)
+         * Checks if the current entity is a player.
+         * @returns {boolean} True if the entity is a player, false otherwise.
          * @Rosh
          */
         isPlayer(): boolean,

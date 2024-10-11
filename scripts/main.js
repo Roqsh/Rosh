@@ -536,7 +536,7 @@ world.beforeEvents.itemUse.subscribe((itemUse) => {
 
 	const { source: player, itemStack: item } = itemUse;
 
-	if (player.typeId !== "minecraft:player") return;
+    if (!player.isValid()) return;
 
 	if (!player.hasTag("itemUse")) {
 		Minecraft.system.run(() => player.addTag("itemUse"));
@@ -549,6 +549,8 @@ world.beforeEvents.itemUse.subscribe((itemUse) => {
 world.beforeEvents.playerPlaceBlock.subscribe(async (placeBlock) => {
 
     const { player, block } = placeBlock;
+
+    if (!player.isValid() || !block.isValid()) return;
 
     if (config.generalModules.scaffold) {
         await scaffold_h(player);
@@ -563,6 +565,8 @@ let blockPlaceCounts = {}; // Store block place counts per player
 world.afterEvents.playerPlaceBlock.subscribe(async (placeBlock) => {
     
 	const { player, block } = placeBlock;
+
+    if (!player.isValid() || !block.isValid()) return;
 
     await dependencies_h(player, block);
 
@@ -605,6 +609,8 @@ world.beforeEvents.playerBreakBlock.subscribe((blockBreak) => {
 	
     const { player, block } = blockBreak;
 
+    if (!player.isValid() || !block.isValid()) return;
+
     if (config.generalModules.nuker) {      
         nuker_b(player, block, blockBreak, Minecraft);     
         nuker_c(player, block, blockBreak, Minecraft);    
@@ -616,6 +622,8 @@ world.beforeEvents.playerBreakBlock.subscribe((blockBreak) => {
 world.afterEvents.playerBreakBlock.subscribe(async (blockBreak) => {
 
     const { player, block, dimension } = blockBreak;
+
+    if (!player.isValid() || !block.isValid()) return;
 	
 	const brokenBlockId = blockBreak.brokenBlockPermutation.type.id;
 
@@ -696,7 +704,7 @@ world.afterEvents.playerSpawn.subscribe((playerJoin) => {
     const themecolor = config.themecolor;
     const thememode = config.thememode;
 
-	if (!initialSpawn && !player.isValid()) return;
+	if (!player.isValid() || !initialSpawn) return;
 
     Memory.register(player);
 
@@ -788,9 +796,11 @@ world.afterEvents.playerSpawn.subscribe((playerJoin) => {
 });
 
 
-world.afterEvents.entityHitEntity.subscribe(({ hitEntity: entity, damagingEntity: player}) => {
+world.afterEvents.entityHitEntity.subscribe((entityHitEntity) => {
+
+    const { hitEntity: entity, damagingEntity: player} = entityHitEntity;
 	
-	if (!player.isPlayer() || !entity.isValid() || player.isHoldingTrident) return;
+	if (!player.isPlayer() || !player.isValid() || !entity.isValid() || player.isHoldingTrident) return;
 
 	if (!player.hasTag("attacking")) {
 		player.addTag("attacking");
@@ -839,11 +849,11 @@ world.afterEvents.entityHitEntity.subscribe(({ hitEntity: entity, damagingEntity
 });
 
 
-world.afterEvents.entityHitBlock.subscribe((entityHit) => {
+world.afterEvents.entityHitBlock.subscribe((entityHitBlock) => {
 
-	const { damagingEntity: player} = entityHit;
+	const { damagingEntity: player} = entityHitBlock;
 
-    if (player.typeId !== "minecraft:player") return;
+    if (!player.isPlayer() || !player.isValid()) return;
 
     player.startBreakTime = Date.now();
 	player.flagAutotoolA = false;
@@ -858,7 +868,7 @@ world.afterEvents.itemUse.subscribe((itemUse) => {
 
     const { itemStack: item, source: player } = itemUse;
 
-    if (player.typeId !== "minecraft:player" || !player.hasTag("itemUse")) return;
+    if (!player.isPlayer() || !player.isValid()) return;
 
     const itemEnchants = item.getComponent("enchantable")?.getEnchantments() ?? [];
 

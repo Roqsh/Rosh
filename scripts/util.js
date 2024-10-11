@@ -17,7 +17,7 @@ import { resetWarns } from "./commands/staff/resetwarns.js";
  */
 export function flag(player, check, checkType, debugName, debug, revertAction = false, cancelObject) {
     // Input validation
-    if (typeof player !== "object") throw new TypeError(`Error: player is type of ${typeof player}. Expected "object"`);
+    if (!player.isPlayer()) throw new TypeError(`Error: player is type of ${typeof player}. Expected "object"`);
     if (typeof check !== "string") throw new TypeError(`Error: check is type of ${typeof check}. Expected "string"`);
     if (typeof checkType !== "string") throw new TypeError(`Error: checkType is type of ${typeof checkType}. Expected "string"`);
     if (typeof debugName !== "string" && typeof debugName !== "undefined") throw new TypeError(`Error: debugName is type of ${typeof debugName}. Expected "string" or "undefined"`);
@@ -165,8 +165,8 @@ function handleKickPunishment(player, kickvl, check, checkType, themecolor) {
             const message = `${timeDisplay()}§8${player.name} §chas been kicked!`;
             data.recentLogs.push(message);
 
-            tellStaff(`§r${themecolor}Rosh §j> §8${player.name} §chas been kicked for ${themecolor}${check}§j/${themecolor}${checkType.toUpperCase()} §c!`, "notify");
-            if (config.console_debug) console.warn(`§r${themecolor}Rosh §j> §8${player.name} §chas been kicked for ${themecolor}${check}§j/${themecolor}${checkType.toUpperCase()} §c!`);
+            tellStaff(`${themecolor}Rosh §j> §8${player.name} §chas been kicked for ${themecolor}${check}§j/${themecolor}${checkType.toUpperCase()} §c!`, "notify");
+            if (config.console_debug) console.warn(`${themecolor}Rosh §j> §8${player.name} §chas been kicked for ${themecolor}${check}§j/${themecolor}${checkType.toUpperCase()} §c!`);
 
             resetWarns(player);
 
@@ -227,7 +227,7 @@ function handleBanPunishment(player, check, checkType, themecolor, punishmentLen
             const message = `${timeDisplay()}§8${player.name} §chas been banned!`;
             data.recentLogs.push(message);
 
-            tellStaff(`§r${themecolor}Rosh §j> §8${player.name} §chas been banned for ${themecolor}${check}§j/${themecolor}${checkType.toUpperCase()} §c!`, "notify");
+            tellStaff(`${themecolor}Rosh §j> §8${player.name} §chas been banned for ${themecolor}${check}§j/${themecolor}${checkType.toUpperCase()} §c!`, "notify");
             if (config.console_debug) console.warn(`§r${themecolor}Rosh §j> §8${player.name} §chas been banned for ${themecolor}${check}§j/${themecolor}${checkType.toUpperCase()} §c!`);
 
         } else {
@@ -256,7 +256,7 @@ function handleMutePunishment(player, check, checkType, themecolor) {
     // If the player is already muted, dont send the mute message again
     if (!player.hasTag("isMuted")) {
         // Notify the muted player about the mute
-        player.sendMessage(`§r${themecolor}Rosh §j> §cYou have been muted!`);
+        player.sendMessage(`${themecolor}Rosh §j> §cYou have been muted!`);
     }
 
     // Tags the player as muted which prevents messages from being sent in Minecraft.ChatSendBeforeEvent
@@ -266,7 +266,7 @@ function handleMutePunishment(player, check, checkType, themecolor) {
     const message = `${timeDisplay()}§8${player.name} §chas been muted!`;
     data.recentLogs.push(message);
 
-    tellStaff(`§r${themecolor}Rosh §j> §8${player.name} §chas been muted for ${themecolor}${check}§j/${themecolor}${checkType.toUpperCase()} §c!`, "notify");
+    tellStaff(`${themecolor}Rosh §j> §8${player.name} §chas been muted for ${themecolor}${check}§j/${themecolor}${checkType.toUpperCase()} §c!`, "notify");
     if (config.console_debug) console.warn(`§r${themecolor}Rosh §j> §8${player.name} §chas been muted for ${themecolor}${check}§j/${themecolor}${checkType.toUpperCase()} §c!`);
     
     resetWarns(player);
@@ -314,8 +314,8 @@ function handleAlert(player, check, checkType, currentVl, debugName, debug, them
     if (thememode === "Rosh") {
 
         // Notify staff in-game
-        tellStaff(`§r${themecolor}Rosh §j> §8${player.name} §jfailed ${themecolor}${check}§j/${themecolor}${checkType.toUpperCase()}§j - {${debugName}=${debug}, §8${currentVl}x§j}`, ["notify", "debug"]);
-        tellStaff(`§r${themecolor}Rosh §j> §8${player.name} §jfailed ${themecolor}${check}§j/${themecolor}${checkType.toUpperCase()}§j - {§8${currentVl}x§j}`, "notify", "debug");
+        tellStaff(`${themecolor}Rosh §j> §8${player.name} §jfailed ${themecolor}${check}§j/${themecolor}${checkType.toUpperCase()}§j - {${debugName}=${debug}, §8${currentVl}x§j}`, ["notify", "debug"]);
+        tellStaff(`${themecolor}Rosh §j> §8${player.name} §jfailed ${themecolor}${check}§j/${themecolor}${checkType.toUpperCase()}§j - {§8${currentVl}x§j}`, "notify", "debug");
 
         // Log the flag to the UI log section
         const message = config.logSettings.showDebug 
@@ -325,7 +325,7 @@ function handleAlert(player, check, checkType, currentVl, debugName, debug, them
 
         // Log to console if enabled
         if (config.console_debug) {
-            console.warn(`§r${themecolor}Rosh §j> §8${player.name} §jfailed ${themecolor}${check}§j/${themecolor}${checkType.toUpperCase()}§j - {${debugName}=${debug}, §8${currentVl}x§j}`);
+            console.warn(`${themecolor}Rosh §j> §8${player.name} §jfailed ${themecolor}${check}§j/${themecolor}${checkType.toUpperCase()}§j - {${debugName}=${debug}, §8${currentVl}x§j}`);
         }
 
     } else if (thememode === "Alice") {
@@ -362,8 +362,8 @@ function handleAlert(player, check, checkType, currentVl, debugName, debug, them
         }
 
         // Notify staff in-game
-        tellStaff(`§r${themecolor}Rosh §j> §8${player.name} §jfailed ${themecolor}${check}§j/${themecolor}${checkType.toUpperCase()}§j - {${debugName}=${debug}§j} [${volume}§j]`, ["notify", "debug"]);
-        tellStaff(`§r${themecolor}Rosh §j> §8${player.name} §jfailed ${themecolor}${check}§j/${themecolor}${checkType.toUpperCase()}§j - [${volume}§j]`, "notify", "debug");
+        tellStaff(`${themecolor}Rosh §j> §8${player.name} §jfailed ${themecolor}${check}§j/${themecolor}${checkType.toUpperCase()}§j - {${debugName}=${debug}§j} [${volume}§j]`, ["notify", "debug"]);
+        tellStaff(`${themecolor}Rosh §j> §8${player.name} §jfailed ${themecolor}${check}§j/${themecolor}${checkType.toUpperCase()}§j - [${volume}§j]`, "notify", "debug");
 
         // Log the flag to the UI log section
         const message = config.logSettings.showDebug 
@@ -373,7 +373,7 @@ function handleAlert(player, check, checkType, currentVl, debugName, debug, them
         
         // Log to console if enabled
         if (config.console_debug) {
-            console.warn(`§r${themecolor}Rosh §j> §8${player.name} §jfailed ${themecolor}${check}§j/${themecolor}${checkType.toUpperCase()}§j - {${debugName}=${debug}§j} [${volume}§j]`);
+            console.warn(`${themecolor}Rosh §j> §8${player.name} §jfailed ${themecolor}${check}§j/${themecolor}${checkType.toUpperCase()}§j - {${debugName}=${debug}§j} [${volume}§j]`);
         }
     }
 }
@@ -388,7 +388,7 @@ function handleAlert(player, check, checkType, currentVl, debugName, debug, them
  */
 export function ban(player) {
     // Validate that the input is an object
-    if (typeof player !== "object" || player === null) {
+    if (!player.isPlayer()) {
         throw new TypeError(`Error: player is type of ${typeof player}. Expected "object"`);
     }
 
@@ -398,8 +398,8 @@ export function ban(player) {
     const themecolor = config.themecolor;
 
     // Define messages for unbanning scenarios
-    const unbanQueueMessage = `§r${themecolor}Rosh §j> §8${player.name} §ahas been found in the unban queue and has been unbanned!`;
-    const expiredBanMessage = `§r${themecolor}Rosh §j> §8${player.name}'s §aban has expired and has now been unbanned!`;
+    const unbanQueueMessage = `${themecolor}Rosh §j> §8${player.name} §ahas been found in the unban queue and has been unbanned!`;
+    const expiredBanMessage = `${themecolor}Rosh §j> §8${player.name}'s §aban has expired and has now been unbanned!`;
 
     // Extract the base player name for checking the unban queue
     const playerName = player.name.toLowerCase().split(" ")[0];
@@ -489,7 +489,7 @@ export function ban(player) {
  */
 export function animation(player, type) {
     // Validate the input
-    if (typeof player !== 'object' || player === null) {
+    if (!player.isPlayer()) {
         throw new TypeError(`Error: player is type of ${typeof player}. Expected "object".`);
     }
 
@@ -663,7 +663,7 @@ export function timeDisplay(format) {
  */
 export function getScore(player, objectiveName, defaultValue = 0) {
     // Check if the player is an object
-    if (typeof player !== 'object' || player === null) {
+    if (!player.isPlayer()) {
         throw new TypeError(`Error: player is type of ${typeof player}. Expected "object".`);
     }
 
@@ -711,7 +711,7 @@ export function getScore(player, objectiveName, defaultValue = 0) {
  */
 export function setScore(player, objectiveName, value) {
     // Check if the player is an object
-    if (typeof player !== 'object' || player === null) {
+    if (!player.isPlayer()) {
         throw new TypeError(`Error: player is type of ${typeof player}. Expected "object".`);
     }
 
@@ -798,7 +798,7 @@ export function lowercaseFirstLetter(string) {
 */
 export function getAngle(player, position) {
     // Validate the input
-    if (typeof player !== 'object' || player === null) {
+    if (!player.isPlayer()) {
         throw new TypeError(`Error: player is type of ${typeof player}. Expected "object".`);
     }
 
@@ -846,7 +846,7 @@ export function getAngle(player, position) {
  */
 export function getEyeHeight(player) {
     // Validate the input
-    if (typeof player !== 'object' || player === null) {
+    if (!player.isPlayer()) {
         throw new TypeError(`Error: player is of type ${typeof player}. Expected "object".`);
     }
     
@@ -985,7 +985,7 @@ export function endsWithNumberInParentheses(string) {
  */
 export function addOp(player, initiator) {
     // Validate the inputs
-    if (typeof player !== 'object' || player === null) {
+    if (!player.isPlayer()) {
         throw new TypeError(`Error: player is type of ${typeof player}. Expected "object".`);
     }
     if (typeof initiator !== 'object' || initiator === null) {
@@ -1027,7 +1027,7 @@ export function addOp(player, initiator) {
  */
 export function removeOp(player, initiator) {
     // Validate the inputs
-    if (typeof player !== 'object' || player === null) {
+    if (!player.isPlayer()) {
         throw new TypeError(`Error: player is type of ${typeof player}. Expected "object".`);
     }
     if (typeof initiator !== 'object' || initiator === null) {
@@ -1123,6 +1123,50 @@ export function tellStaff(message, tags, excludeTags) {
 
 
 /**
+ * Sets the title, subtitle, and actionbar for a player. [Unused]
+ * @param {Minecraft.Player} player - The player object.
+ * @param {string|null} [title=null] - The main title to display. If null, no title is displayed.
+ * @param {string|null} [subtitle=null] - The subtitle to display. If null, no subtitle is displayed.
+ * @param {string|null} [actionbar=null] - The actionbar message to display. If null, no actionbar message is displayed.
+ * @returns {Promise<void>} A promise that resolves when all commands have been executed.
+ */
+export async function setTitle(player, title = null, subtitle = null, actionbar = null) {
+    // Validate the inputs
+    if (!player.isPlayer()) {
+        throw new TypeError(`Error: player is type of ${typeof player}. Expected "object".`);
+    }
+    
+    try {
+        const commands = [];
+
+        // Add the title command if a title is provided
+        if (title) {
+            commands.push(`title "${player.name}" title ${title}`);
+        }
+
+        // Add the subtitle command if a subtitle is provided
+        if (subtitle) {
+            commands.push(`title "${player.name}" subtitle ${subtitle}`);
+        }
+
+        // Add the actionbar command if an actionbar message is provided
+        if (actionbar) {
+            commands.push(`title "${player.name}" actionbar ${actionbar}`);
+        }
+
+        // Execute all collected commands in parallel if there are any
+        if (commands.length > 0) {
+            await Promise.all(commands.map(command => player.runCommandAsync(command)));
+        }
+    } catch (error) {
+        // Log an error message if command execution fails
+        console.error(`Failed to set titles for player ${player.name}:`, error);
+    }
+}
+
+
+
+/**
  * Gets a player's horizontal speed.
  * @param {Minecraft.Player} player - The player to get the speed from.
  * @returns {number} The horizontal speed of the player.
@@ -1130,7 +1174,7 @@ export function tellStaff(message, tags, excludeTags) {
  */
 export function getSpeed(player) {
     // Validate the input
-    if (typeof player !== 'object' || player === null) {
+    if (!player.isPlayer()) {
         throw new TypeError(`Error: player is type of ${typeof player}. Expected "object".`);
     }
 
@@ -1154,7 +1198,7 @@ export function getSpeed(player) {
  */
 export function getTotalSpeed(player) {
     // Validate the input
-    if (typeof player !== 'object' || player === null) {
+    if (!player.isPlayer()) {
         throw new TypeError(`Error: player is type of ${typeof player}. Expected "object".`);
     }
 
@@ -1181,7 +1225,7 @@ export function getTotalSpeed(player) {
  */
 export function hVelocity(player) {
     // Validate the input
-    if (typeof player !== 'object' || player === null) {
+    if (!player.isPlayer()) {
         throw new TypeError(`Error: player is type of ${typeof player}. Expected "object".`);
     }
 
@@ -1210,7 +1254,7 @@ export function hVelocity(player) {
  */
 export function aroundAir(player) {
     // Validate the input
-    if (typeof player !== 'object' || player === null) {
+    if (!player.isPlayer()) {
         throw new TypeError(`Error: player is type of ${typeof player}. Expected "object".`);
     }
 
@@ -1248,7 +1292,7 @@ export function aroundAir(player) {
  */
 export function inAir(player) {
     // Check if player is an object
-    if (typeof player !== 'object' || player === null) {
+    if (!player.isPlayer()) {
         throw new TypeError(`Error: player is type of ${typeof player}. Expected "object".`);
     }
 
@@ -1284,7 +1328,7 @@ export function inAir(player) {
  */
 export function debug(player, name, debugInfo, tag) {
     // Validate the input
-    if (typeof player !== 'object' || player === null) {
+    if (!player.isPlayer()) {
         throw new TypeError(`Error: player is type of ${typeof player}. Expected "object".`);
     }
 

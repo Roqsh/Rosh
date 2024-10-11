@@ -279,6 +279,8 @@ export function loadPlayerPrototypes() {
 
     Player.prototype.isLoggedIn = function(ticks) {
 
+        if (!this.isValid()) return false;
+
         const playerInfo = Memory.get(this.id);  // Retrieve player info from Memory
     
         if (!playerInfo) {
@@ -303,8 +305,12 @@ export function loadPlayerPrototypes() {
  * Initializes and enhances the Entity prototype with custom methods.
  */
 export function loadEntityPrototypes() {
-
+    
+    /**
+     * Checks if the current entity is a player.
+     * @returns {boolean} True if the entity is a player, false otherwise.
+     */
     Entity.prototype.isPlayer = function() {
-        return this.typeId === "minecraft:player";
-    }
+        return this.typeId === "minecraft:player" && this instanceof Player && typeof this === "object" && this !== null;
+    };
 }

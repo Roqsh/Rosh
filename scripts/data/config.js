@@ -138,6 +138,13 @@ export default
             "aliases": ["r", "rr", "roshreport", "rosh-report", "rep"]
         },
 
+        "reportui": {
+            "enabled": true,
+            "description": "§r!reportui §8- Opens a menu to the report a player",
+            "operator": false,
+            "aliases": ["reportgui", "reportmenu"]
+        },
+
         "vanish": {
             "enabled": true,
             "description": "§r!vanish §8- Sets you in spectator mode",

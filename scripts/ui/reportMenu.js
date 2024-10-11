@@ -11,12 +11,15 @@ import { timeDisplay, getPlayerByName, endsWithNumberInParentheses, tellStaff } 
  */
 export function reportMenu(player) {
 
+    const themecolor = config.themecolor;
+
+    player.sendMessage(`${themecolor}Rosh §j> §aLeave the chat to view the report menu.`);
+
     // Play a sound to indicate that the menu has been opened
     player.playSound("mob.chicken.plop");
 
-    const themecolor = config.themecolor;
     const allPlayers = world.getAllPlayers();
-    const onlinePlayerCount = allPlayers.length;
+    const onlinePlayerCount = allPlayers.length - 1; // Don't count the initiator
 
     // Create the initial menu with the option to select an offline player
     const menu = new MinecraftUI.ActionFormData()
@@ -29,17 +32,15 @@ export function reportMenu(player) {
         
         let playerName = `${plr.name}`;
 
-        // Mark the player themselves with "You"
-        if (plr.id === player.id) {
-            playerName += " - You";
-        }
-
-        // Mark operators with "Op"
-        if (plr.isOp()) {
+        // If the initiator is an operator, let them see other operators
+        if (player.isOp() && plr.isOp()) {
             playerName += `\n§8[${themecolor}Op§8]`;
         }
 
-        menu.button(playerName);
+        // Dont show the initiator as someone who can be reported
+        if (plr.name !== player.name) {
+            menu.button(playerName);
+        }
     });
 
     // Show the menu and handle the player's selection
@@ -74,7 +75,7 @@ function openOfflinePlayerMenu(player) {
     // Create a modal form to enter the name of the offline player
     const menu = new MinecraftUI.ModalFormData()
         .title("Offline Report")
-        .textField("Player:", "§o§7Enter name here")
+        .textField("", "§o§7Enter name here")
         .submitButton("Report Player");
 
     // Show the modal form and handle the player's input
@@ -154,7 +155,7 @@ function cheatType(player, selectedPlayer) {
 
     }).catch(handleMenuError(player, themecolor));
 }
-jk
+
 /**
  * Handles any errors that occur during menu interactions.
  * @param {Minecraft.Player} player - The player interacting with the menu.
@@ -402,11 +403,11 @@ function confirmReportMenu(player, selectedPlayer, cheatType) {
         // Add the player to the reported players list to prevent double reporting
         player.reports.push(targetName);
 
-        const playerIsOnline = getPlayerByName(targetName);
+        const onlinePlayer = getPlayerByName(targetName);
 
-        if (playerIsOnline) {
+        if (onlinePlayer) {
             // Mark the player as reported
-            member.addTag("reported");
+            onlinePlayer.addTag("reported");
         }
 
         // Log the report for the staff to review

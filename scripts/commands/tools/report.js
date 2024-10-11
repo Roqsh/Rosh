@@ -21,7 +21,7 @@ export function report(message, args) {
 
     // Check if target player name is provided
     if (!args.length) {
-        player.sendMessage(`${themecolor}Rosh §j> §cYou need to provide who to report.`);
+        player.sendMessage(`${themecolor}Rosh §j> §cYou need to provide who to report or type §8!reportui§c.`);
         return;
     }
 

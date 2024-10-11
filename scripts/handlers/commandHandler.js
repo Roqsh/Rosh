@@ -16,6 +16,7 @@ import { unfreeze } from "../commands/punishments/unfreeze.js";
 // Importing Tools
 import { spectate } from "../commands/tools/spectate.js";
 import { report } from "../commands/tools/report.js";
+import { reportMenu } from "../ui/reportMenu.js";
 import { vanish } from "../commands/tools/vanish.js";
 import { fly } from "../commands/tools/fly.js";
 import { invsee } from "../commands/tools/invsee.js";
@@ -141,6 +142,7 @@ function runCommand(msg, commandName, args) {
                 case "unfreeze": unfreeze(message, args); break;
                 case "spectate": spectate(message, args); break;
                 case "report": report(message, args); break;
+                case "reportui": reportMenu(message.sender); break;
                 case "vanish": vanish(message); break;
                 case "fly": fly(message, args); break;
                 case "invsee": invsee(message, args); break;
