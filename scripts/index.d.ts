@@ -1,4 +1,4 @@
-import { Vector3 } from "@minecraft/server";
+import { Vector3, ItemStack } from "@minecraft/server";
 import { BoundingBox } from "../../utils/BoundingBox.js";
 
 declare module "@minecraft/server" {
@@ -382,6 +382,48 @@ declare module "@minecraft/server" {
          * @Rosh
          */
         getBoundingBox(): BoundingBox
+
+        /**
+         * Gets the item in the player's hand.
+         * @returns {ItemStack} The item in the player's hand or undefined if the player is not holding an item.
+         * @Rosh
+         */
+        getItemInHand(): ItemStack | undefined;
+
+        /**
+         * Gets the item in the player's hand from the last tick.
+         * @returns {ItemStack} The item in the player's hand from the last tick or undefined if the player is not holding an item.
+         * @Rosh
+         */
+        getLastItemInHand(): ItemStack | undefined;
+
+        /**
+         * Sets the item in the player's hand from the last tick.
+         * @param {ItemStack} lastItemInHand The item in the player's hand from the last tick to set.
+         * @Rosh
+         */
+        setLastItemInHand(lastItemInHand: ItemStack): void;
+
+        /**
+         * Gets the item in the player's cursor.
+         * @returns {ItemStack} The item in the player's cursor or undefined if the player is not holding an item in their cursor.
+         * @Rosh
+         */
+        getItemInCursor(): ItemStack | undefined;
+
+        /**
+         * Gets the item in the player's cursor from the last tick.
+         * @returns {ItemStack} The item in the player's cursor from the last tick or undefined if the player is not holding an item in their cursor.
+         * @Rosh
+         */
+        getLastItemInCursor(): ItemStack | undefined;
+
+        /**
+         * Sets the item in the player's cursor from the last tick.
+         * @param {ItemStack} lastItemInCursor The item in the player's cursor from the last tick to set.
+         * @Rosh
+         */
+        setLastItemInCursor(lastItemInCursor: ItemStack): void;
     }
 
     interface Entity {

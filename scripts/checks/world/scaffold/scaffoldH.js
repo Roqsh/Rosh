@@ -37,8 +37,7 @@ export async function scaffold_h(player) {
             flag(player, "Scaffold", "H", "hotbar", "empty");
         }
 
-        const selectedSlot = player.selectedSlotIndex;
-        const selectedItem = container.getItem(selectedSlot);
+        const selectedItem = player.getItemInHand();
 
         // If the amount of the held item is smaller than 1, flag
         if (selectedItem.amount < 1) {

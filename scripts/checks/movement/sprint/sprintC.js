@@ -11,9 +11,7 @@ export function sprint_c(player) {
     if (!config.modules.invalidsprintC.enabled || !player.isSprinting || !player.hasTag("right")) return;
 
     // Get the player's inventory container and the currently selected item
-    const container = player.getComponent("inventory")?.container;
-    const selectedSlot = player.selectedSlotIndex;
-    const selectedItem = container.getItem(selectedSlot);
+    const selectedItem = player.getItemInHand();
     const ticks = getScore(player, "right", 0);
 
     // Flag the player if they are using an item while sprinting

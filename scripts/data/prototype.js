@@ -1,4 +1,4 @@
-import { Player, Entity } from "@minecraft/server";
+import { Player, Entity, ItemStack } from "@minecraft/server";
 import { Memory } from "../utils/Memory.js";
 import { BoundingBox } from "../utils/BoundingBox.js";
 
@@ -7,61 +7,154 @@ import { BoundingBox } from "../utils/BoundingBox.js";
  */
 export function loadPlayerPrototypes() {
 
-    // Adding CPS methods to the Player prototype
+    /**
+     * Gets the item in the player's hand.
+     * @returns {ItemStack | undefined} The item in the player's hand or undefined if the player is not holding an item.
+     */
+    Player.prototype.getItemInHand = function() {
+        return this.getComponent("inventory")?.container.getItem(this.selectedSlotIndex);
+    }
 
+    /**
+     * Gets the item in the player's hand from the last tick.
+     * @returns {ItemStack | undefined} The item in the player's hand from the last tick or undefined if the player is not holding an item.
+     */
+    Player.prototype.getLastItemInHand = function() {
+        return this.lastItemInHand ?? this.getItemInHand();
+    }
+
+    /**
+     * Sets the item in the player's hand from the last tick.
+     * @param {ItemStack} lastItemInHand The item in the player's hand from the last tick to set.
+     */
+    Player.prototype.setLastItemInHand = function(lastItemInHand) {
+        this.lastItemInHand = lastItemInHand;
+    }
+
+    /**
+     * Gets the item in the player's cursor.
+     * @returns {ItemStack | undefined} The item in the player's cursor or undefined if the player is not holding an item in their cursor.
+     */
+    Player.prototype.getItemInCursor = function() {
+        return this.getComponent("cursor_inventory")?.item;
+    }
+
+    /**
+     * Gets the item in the player's cursor from the last tick.
+     * @returns {ItemStack | undefined} The item in the player's cursor from the last tick or undefined if the player is not holding an item in their cursor.
+     */
+    Player.prototype.getLastItemInCursor = function() {
+        return this.lastItemInCursor ?? this.getItemInCursor();
+    }
+
+    /**
+     * Sets the item in the player's cursor from the last tick.
+     * @param {ItemStack} lastItemInCursor The item in the player's cursor from the last tick to set.
+     */
+    Player.prototype.setLastItemInCursor = function(lastItemInCursor) {
+        this.lastItemInCursor = lastItemInCursor;
+    }
+
+    /**
+     * Gets the player's attacks per second (only counts actual attacks, not arm swings).
+     * @returns {number} The player's attacks per second (CPS).
+     */
     Player.prototype.getCps = function() {
         return this.clicks ?? 0;  // Use nullish coalescing operator
     };
 
+    /**
+     * Sets the player's attacks per second (only counts actual attacks, not arm swings).
+     * @param {number} [cpsValue] The player's attacks per second (CPS) to set. If not provided, sets to 0.
+     */
     Player.prototype.setCps = function(cpsValue) {
         this.clicks = cpsValue || 0;
     };
 
+    /**
+     * Gets the player's attacks per second from the last tick (only counts actual attacks, not arm swings).
+     * @returns {number} The player's attacks per second (CPS) from the last tick or 0 if the player is not holding an item.
+     */
     Player.prototype.getLastCps = function() {
         return this.lastClicks ?? 0;  // Use nullish coalescing operator
     };
 
+    /**
+     * Sets the player's attacks per second from the last tick (only counts actual attacks, not arm swings).
+     * @param {number} [lastCpsValue] The player's attacks per second (CPS) from the last tick to set. If not provided, sets to 0.
+     */
     Player.prototype.setLastCps = function(lastCpsValue) {
         this.lastClicks = lastCpsValue || 0;
     };
 
-    // Adding yaw methods to the Player prototype
-
+    /**
+     * Gets the player's current yaw (horizontal rotation).
+     * @returns {number} The player's current yaw.
+     */
     Player.prototype.getYaw = function() {
         return this.yaw ?? this.getRotation().y;
     };
 
+    /**
+     * Sets the player's yaw (horizontal rotation).
+     * @param {number} yawValue The yaw value to set for the player.
+     */
     Player.prototype.setYaw = function(yawValue) {
         this.yaw = yawValue;
     };
 
+    /**
+     * Gets the player's yaw (horizontal rotation) from the last tick.
+     * @returns {number} The player's yaw from the last tick or the current yaw if not set.
+     */
     Player.prototype.getLastYaw = function() {
         return this.lastYaw ?? this.getYaw();
     }
 
+    /**
+     * Sets the player's yaw (horizontal rotation) from the last tick.
+     * @param {number} lastYawValue The yaw value to set for the player.
+     */
     Player.prototype.setLastYaw = function(lastYawValue) {
         this.lastYaw = lastYawValue;
     };
 
+    /**
+     * Gets the change in the player's yaw since the last update.
+     * @returns {number} The change in the player's yaw.
+     */
     Player.prototype.getDeltaYaw = function() {
         return this.deltaYaw ?? 0;  // Use nullish coalescing operator
     };
 
+    /**
+     * Sets the change in the player's yaw since the last update.
+     * @param {number} deltaYawValue The value to set for the change in yaw.
+     */
     Player.prototype.setDeltaYaw = function(deltaYawValue) {
         this.deltaYaw = deltaYawValue;
     };
 
-
-    // Adding pitch methods to the Player prototype
-
+    /**
+     * Gets the player's current pitch (vertical rotation).
+     * @returns {number} The player's current pitch.
+     */
     Player.prototype.getPitch = function() {
         return this.pitch ?? this.getRotation().x;
     };
 
+    /**
+     * Sets the player's pitch (vertical rotation).
+     * @param {number} pitchValue The pitch value to set for the player.
+     */
     Player.prototype.setPitch = function(pitchValue) {
         this.pitch = pitchValue;
     };
 
+    /**
+     * Gets the player's pitch (vertical rotation) from the last tick.
+     * @returns {number} The player's pitch from the last tick or the current pitch if not set.
+     */
     Player.prototype.getLastPitch = function() {
         return this.lastPitch ?? this.getPitch();
     }

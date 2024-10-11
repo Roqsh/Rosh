@@ -26,7 +26,7 @@ export function ui(message) {
     }
 
     // Get the currently held item
-    const currentItem = container?.getItem(player.selectedSlotIndex);
+    const currentItem = player.getItemInHand();
 
     // Ensure the player doesn't have the UI item in their current slot
     if (

@@ -195,7 +195,6 @@ system.runInterval(() => {
         const xpAtCurrentLevel = player.xpEarnedAtCurrentLevel;
         const container = player.getComponent("inventory")?.container;
         const selectedSlot = player.selectedSlotIndex;
-        const selectedItem = container.getItem(selectedSlot);
         const level = player.level;
 
 		const speed = getSpeed(player);
@@ -204,10 +203,10 @@ system.runInterval(() => {
 
 		player.removeTag("noPitchDiff");
 
-        if (selectedItem?.typeId === "minecraft:trident") {
+        if (player.getItemInHand()?.typeId === "minecraft:trident") {
             player.isHoldingTrident = true;
 
-            const itemEnchants = selectedItem.getComponent("enchantable")?.getEnchantments() ?? [];
+            const itemEnchants = player.getItemInHand().getComponent("enchantable")?.getEnchantments() ?? [];
             for (const enchantData of itemEnchants) {
                 const enchantTypeId = enchantData.type.id;
                 if (enchantTypeId === "riptide") {
@@ -513,6 +512,9 @@ system.runInterval(() => {
 			player.removeTag("bow");
 			setScore(player, "tag_reset", 0);
 		}
+
+        player.setLastItemInHand(player.getItemInHand());
+        player.setLastItemInCursor(player.getItemInCursor());
 
         player.isCrawling = false;
         player.isRunningStairs = false;

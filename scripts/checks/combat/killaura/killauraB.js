@@ -19,9 +19,7 @@ export function killauraB(player, entity) {
     }
 
     // Get the player's inventory container and the currently selected item
-    const container = player.getComponent("inventory")?.container;
-    const selectedSlot = player.selectedSlotIndex;
-    const selectedItem = container.getItem(selectedSlot);
+    const selectedItem = player.getItemInHand();
     const ticks = getScore(player, "right");
 
     // Flag the player if they are using an item while attacking
