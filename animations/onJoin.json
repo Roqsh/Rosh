@@ -19,6 +19,7 @@
                     "/scoreboard objectives add autotoolvl dummy",
 					"/scoreboard objectives add autoclickervl dummy",
                     "/scoreboard objectives add invmovevl dummy",
+                    "/scoreboard objectives add inventoryvl dummy",
 					"/scoreboard objectives add right dummy",
 					"/scoreboard objectives add reachvl dummy",
 					"/scoreboard objectives add cbevl dummy",

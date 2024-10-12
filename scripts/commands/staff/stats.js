@@ -70,7 +70,7 @@ export function getStats(player, member) {
         "autototemvl", "badpacketsvl", "badenchantsvl", "crashervl", "cbevl", "exploitvl", "illegalitemsvl", 
         "spammervl", "fastusevl", "autotoolvl", "namespoofvl", "timervl", 
         "motionvl", "strafevl", "flyvl", "speedvl", "noslowvl", "invalidsprintvl", "invalidjumpvl", 
-        "invmovevl", "scaffoldvl", "nukervl", "towervl"
+        "invmovevl", "scaffoldvl", "nukervl", "towervl", "inventoryvl"
     ];
 
     for (const violation of violations) {
@@ -110,7 +110,8 @@ export function getStats(player, member) {
                 motionvl: "Motion",
                 aimvl: "Aim",
                 nukervl: "Nuker",
-                hitboxvl: "Hitbox"
+                hitboxvl: "Hitbox",
+                inventoryvl: "Inventory"
             };
 
             // Send the message to the player

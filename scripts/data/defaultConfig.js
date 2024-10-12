@@ -55,6 +55,22 @@ export default
             "minVlbeforePunishment": 8
         },
 
+        "inventoryA": {
+            "enabled": true,
+            "description": "Checks for a cursor item while sneaking or sprinting.",
+            "punishment": "kick",
+            "punishmentLength": "1d",
+            "minVlbeforePunishment": 8
+        },
+
+        "inventoryB": {
+            "enabled": true,
+            "description": "Checks for inventory transactions while sneaking or sprinting.",
+            "punishment": "kick",
+            "punishmentLength": "1d",
+            "minVlbeforePunishment": 8
+        },
+
         /*
         Packet Checks
         */
@@ -394,7 +410,7 @@ export default
         },
 
         "invalidjumpA": {
-            "enabled": true,
+            "enabled": false,
             "description": "Checks for jumping while in the air.",
             "punishment": "kick",
             "punishmentLength": "1d",

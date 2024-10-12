@@ -37,7 +37,7 @@ function calculateSpeed(velocity) {
  * - Thank you **@yellowworld777** (Github) for the original detection idea! <3
  * - Github: https://github.com/yellowworld777/Timer-Calculator
  */
-export function timer_a(player, lagValue) {
+export function timerA(player, lagValue) {
 
     if (!config.modules.timerA.enabled || player.isDead()) return;
 

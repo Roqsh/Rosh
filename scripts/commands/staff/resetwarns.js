@@ -72,7 +72,7 @@ export function resetWarns(player) {
         "autototemvl", "badpacketsvl", "badenchantsvl", "crashervl", "cbevl", "exploitvl", "illegalitemsvl", 
         "spammervl", "fastusevl", "autotoolvl", "namespoofvl", "timervl", 
         "motionvl", "strafevl", "flyvl", "speedvl", "noslowvl", "invalidsprintvl", "invalidjumpvl", "elytravl", 
-        "invmovevl", "scaffoldvl", "nukervl", "towervl"
+        "invmovevl", "scaffoldvl", "nukervl", "towervl", "inventoryvl"
     ];
 
     for (const violation of violations) {

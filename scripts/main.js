@@ -23,7 +23,9 @@ import { badpackets_j } from "./checks/misc/badpackets/badpacketsJ.js";
 import { exploit_a } from "./checks/misc/exploit/exploitA.js";
 import { namespoofA } from "./checks/misc/namespoof/namespoofA.js";
 import { namespoofB } from "./checks/misc/namespoof/namespoofB.js";
-import { timer_a } from "./checks/misc/timer/timerA.js";
+import { inventoryA } from "./checks/misc/inventory/inventoryA.js";
+import { inventoryB } from "./checks/misc/inventory/inventoryB.js";
+import { timerA } from "./checks/misc/timer/timerA.js";
 
 // Import Movement related checks
 import { speed_a } from "./checks/movement/speed/speedA.js";
@@ -348,7 +350,7 @@ system.runInterval(() => {
             motion_d(player);
             motion_e(player);
 
-            timer_a(player, lagValue);
+            timerA(player, lagValue);
     
             speed_a(player);
             speed_b(player);
@@ -372,6 +374,10 @@ system.runInterval(() => {
             player.setLastVelocity(movementData.currentVelocity);
         }
 
+
+        inventoryA(player);
+        inventoryB(player);
+        
         
         //badpackets_a(player);
         badpackets_b(player);
