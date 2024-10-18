@@ -6,6 +6,37 @@ import * as Minecraft from "@minecraft/server";
 export class Block {
 
     /**
+     * Gets the friction of the given block.
+     * @param {Minecraft.Block} block - The block to get the friction of.
+     * @returns {number} - The friction of the given block.
+     * @remarks The friction values are based on the vanilla Minecraft physics.
+     */
+    static getFriction(block) {
+        switch(true) {
+            case block.typeId === "minecraft:air":
+                return 0;
+            case block.typeId === "minecraft:water":
+                return 0.8;
+            case block.typeId === "minecraft:lava":
+                return 0.5;
+            case block.typeId === "minecraft:ice" || block.typeId === "minecraft:packed_ice":
+                return 0.098;
+            case block.typeId === "minecraft:blue_ice":
+                return 0.089;
+            case block.typeId === "minecraft:soul_sand":
+                return 0.4;
+            case block.typeId === "minecraft:slime_block":
+                return 0.8;
+            case block.typeId === "minecraft:honey_block":
+                return 0.4;
+            case block.typeId === "minecraft:cobweb":
+                return 0.9;
+            default:
+                return 0.6;
+        }
+    }
+
+    /**
      * Returns a string representing the state of the given block.
      * @param {Minecraft.Block} block - The reference block.
      * @returns {string} - A string indicating the type of the block (Air, Liquid, Waterlogged, Solid, Invalid or Unknown).
@@ -28,6 +59,7 @@ export class Block {
     }
 
     /**
+     * TODO: Recode with proper raytracing
      * Gets the face of the block being interacted with.
      * @param {Minecraft.Block} block - The block being interacted with.
      * @param {Minecraft.Player} player - The player interacting with the block.

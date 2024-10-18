@@ -2,14 +2,16 @@ import * as Minecraft from "@minecraft/server";
 import config from "../../../data/config.js";
 import { flag, debug } from "../../../util";
 
+// TODO: Ignore script interactions and /clear command via packetSend (@minecraft/server-net)
+
 // In-memory store for tracking inventories per player
 const playerInventoryMap = new Map();
 
 /**
- * Flags if any inventory items are removed or reduced and:
+ * Flags if any inventory items are removed, changed or reduced and:
  * - If the change did not happen in any hotbar slot (0-8)
  * - And still atleast 1 item remains (patches `/clear` command)
- * - And the player is sprinting / sneaking
+ * - And the player is sneaking / sprinting / swimminng / sleeping / dead (invalid states)
  * - If items are new or their amount increases, it will not false when using `/give` or collecting items
  * @param {Minecraft.Player} player - The player to check.
  */
@@ -25,7 +27,7 @@ export function inventoryB(player) {
 
     if (lastInventory) {
         let anyItemRemaining = false;
-        let anyItemMissingOrReduced = false;
+        let anyItemMissingChangedOrReduced = false;
         let changedSlots = [];
 
         for (let slot = 9; slot <= 36; slot++) {
@@ -40,35 +42,32 @@ export function inventoryB(player) {
                 anyItemRemaining = true;
             }
 
-            // Check for changes in item type or amount
+            // Check for changes in item type or amount that indicate invalid transactions
             if (
                 (!currentItem && lastItem) || // item removed
                 (currentItem && lastItem && currentItem.typeId !== lastItem.typeId) || // item type changed
-                (currentItem && lastItem && currentItem.amount !== lastItem.amount) // item amount changed
+                (currentItem && lastItem && currentItem.amount < lastItem.amount) // item amount reduced
             ) {
                 changedSlots.push({
                     slot,
                     from: lastItem ? `${lastItem.typeId} (x${lastItem.amount})` : 'empty',
                     to: currentItem ? `${currentItem.typeId} (x${currentItem.amount})` : 'empty'
                 });
-            }
 
-            // If an item is missing or the amount has reduced, mark it
-            if (
-                lastItem &&
-                (!currentItem || currentItem.amount < lastItem.amount)
-            ) {
-                anyItemMissingOrReduced = true;
+                anyItemMissingChangedOrReduced = true;
             }
         }
 
-        // Only flag if at least one item remains AND some items are missing or reduced
-        if (anyItemRemaining && anyItemMissingOrReduced && (player.isSprinting || player.isSneaking)) {
+        // Check if the player is in an invalid state
+        const isInvalidState = player.isSneaking || player.isSprinting || player.isSwimming || player.isSleeping || player.isDead();
+
+        // Only flag if some items are missing, changed or reduced AND if at least one item remains
+        if (anyItemRemaining && anyItemMissingChangedOrReduced && isInvalidState) {
             let slotDetails = changedSlots.map(
                 slotInfo => `Slot ${slotInfo.slot}: ${slotInfo.from} -> ${slotInfo.to}`
             ).join(", ");
 
-            flag(player, "Inventory", "B", "changes while moving", `${slotDetails}`);
+            flag(player, "Inventory", "B", "invalid changes", `${slotDetails}`);
         }
     }
 

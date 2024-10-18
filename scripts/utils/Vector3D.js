@@ -124,9 +124,7 @@ export class Vector3D {
 
         const length = this.getVectorLength(vector);
 
-        if (length === 0) {
-            throw new Error("Cannot normalize a vector with a length of zero.");
-        }
+        if (length === 0) return;
 
         return {
             x: vector.x / length,

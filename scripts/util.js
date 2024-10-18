@@ -838,26 +838,26 @@ export function getAngle(player, position) {
 
 
 /**
- * Returns a number representing the height on the y-axis of a player depending on their current action.
- * @param {Minecraft.Player} player - The player object.
- * @returns {number} - The eye height of the player.
+ * Returns a number representing the eye height on the y-axis of a target depending on their current action.
+ * @param {Minecraft.Player | Minecraft.Entity} target - The target to calculate the eye height for.
+ * @returns {number} - The eye height of the target.
  * @remarks
  * TODO: Once Mojang adds .isCrawling or something similar, account for it by 0.40625. (.isRiding needs to be accounted for too)
  */
-export function getEyeHeight(player) {
+export function getEyeHeight(target) {
     // Validate the input
-    if (!player.isPlayer()) {
-        throw new TypeError(`Error: player is of type ${typeof player}. Expected "object".`);
+    if (typeof target !== "object") {
+        throw new TypeError(`Error: player is of type ${typeof target}. Expected "object".`);
     }
     
     switch (true) {
-        case player.isSneaking:
+        case target.isSneaking:
             return 1.28125;
 
-        case player.isSwimming:
+        case target.isSwimming:
             return 0.40625;
 
-        case player.isGliding:
+        case target.isGliding:
             return 0.40625;
 
         default:

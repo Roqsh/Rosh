@@ -57,15 +57,15 @@ export default
 
         "inventoryA": {
             "enabled": true,
-            "description": "Checks for a cursor item while sneaking or sprinting.",
+            "description": "Checks for a cursor item in invalid scenarios.",
             "punishment": "kick",
             "punishmentLength": "1d",
-            "minVlbeforePunishment": 8
+            "minVlbeforePunishment": 5
         },
 
         "inventoryB": {
             "enabled": true,
-            "description": "Checks for inventory transactions while sneaking or sprinting.",
+            "description": "Checks for inventory transactions in invalid scenarios.",
             "punishment": "kick",
             "punishmentLength": "1d",
             "minVlbeforePunishment": 8
