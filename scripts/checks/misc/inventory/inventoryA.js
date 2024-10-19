@@ -1,6 +1,6 @@
 import * as Minecraft from "@minecraft/server";
 import config from "../../../data/config.js";
-import { flag, debug } from "../../../util";
+import { flag } from "../../../util";
 
 // Initialize player buffer
 const playerBuffer = new Map();
