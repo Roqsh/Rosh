@@ -191,13 +191,13 @@ system.runInterval(() => {
 
 		const rotation = player.getRotation();
 		const velocity = player.getVelocity();
-        const totalXp = player.getTotalXp();
+        //const totalXp = player.getTotalXp();
 
-        const xpForNextLevel = player.totalXpNeededForNextLevel;
-        const xpAtCurrentLevel = player.xpEarnedAtCurrentLevel;
+        //const xpForNextLevel = player.totalXpNeededForNextLevel;
+        //const xpAtCurrentLevel = player.xpEarnedAtCurrentLevel;
         const container = player.getComponent("inventory")?.container;
         const selectedSlot = player.selectedSlotIndex;
-        const level = player.level;
+        //const level = player.level;
 
 		const speed = getSpeed(player);
 
