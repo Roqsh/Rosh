@@ -28,7 +28,7 @@
 			"type": "script",
 			"uuid": "63f5ce57-ff70-431b-ac36-b31b9aad86dc",
 			"version": [1, 0, 0],
-			"entry": "scripts/main.js"
+			"entry": "scripts/Rosh.js"
 		}
 	],
 	"dependencies": [

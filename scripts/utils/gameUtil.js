@@ -2,7 +2,7 @@
  * Manages player tags and scoreboard tracking based on player attributes and held items.
  * @param {Object} player - The player object.
  */
-export async function tag_system(player) {
+export async function manageTags(player) {
     try {
         // Add tags based on held items
         await Promise.all([

@@ -34,9 +34,9 @@ export function autoclickerB(player) {
     cpsHistory.add(currentTime, currentCps);
 
     // Retrieve all stored CPS values and their timestamps
-    const cpsEntries = cpsHistory.getAll();
-    const cpsValues = cpsEntries.map(entry => entry.value);
-    const timestamps = cpsEntries.map(entry => entry.key);
+    const allEntries = cpsHistory.getAll();
+    const cpsValues = allEntries.map(entry => entry.value);
+    const timestamps = allEntries.map(entry => entry.key);
 
     // Ensure we have enough samples before performing checks
     if (cpsValues.length < SAMPLES) return;

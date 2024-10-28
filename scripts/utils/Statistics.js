@@ -209,17 +209,17 @@ export class Statistics {
 
     /**
      * Checks if there are more than a specified number of consecutive duplicate values in an array
-     * @param {number[]} arr - The array of numbers to check.
+     * @param {number[]} array - The array of numbers to check.
      * @param {number} threshold - The maximum number of consecutive duplicates allowed.
      * @returns {number} The index where the threshold is met, or NaN if not met.
      */
-    static checkConsecutiveDuplicates(arr, threshold) {
+    static checkConsecutiveDuplicates(array, threshold) {
 
         let duplicateCount = 0;
 
-        for (let i = 1; i < arr.length; i++) {
+        for (let i = 1; i < array.length; i++) {
             // If the current element is equal to the previous one, increment the duplicate count
-            if (arr[i] === arr[i - 1]) {
+            if (array[i] === array[i - 1]) {
                 duplicateCount++;
                 if (duplicateCount >= threshold) {
                     // Return the index where duplicates start

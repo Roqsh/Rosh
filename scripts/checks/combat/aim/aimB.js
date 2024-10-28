@@ -1,6 +1,6 @@
 import * as Minecraft from "@minecraft/server";
 import config from "../../../data/config.js";
-import { flag, debug } from "../../../util";
+import { flag, uppercaseFirstLetter, debug } from "../../../util";
 import { EvictingList } from "../../../utils/EvictingList.js";
 
 const yawSamples = new Map();
@@ -71,22 +71,13 @@ function checkForSmoothing(player, sampleList, type, currentDelta, frequencyThre
 
         // Debug information if not zero
         if (currentDelta != 0) {
-            debug(player, `Delta ${capitalize(type)}`, `${currentDelta}, frequency=${integerFrequency}, (${integerCount} of ${sampleList.getCurrentSize()})`, `aimB${type}`);
+            debug(player, `Delta ${uppercaseFirstLetter(type)}`, `${currentDelta}, frequency=${integerFrequency}, (${integerCount} of ${sampleList.getCurrentSize()})`, `aimB${type}`);
         }
 
         // Flag the player if the integer frequency exceeds the threshold
         if (integerFrequency > frequencyThreshold) {
-            flag(player, "Aim", "B", `delta${capitalize(type)}`, `${recentIntegerValue}, frequency=${integerFrequency}, (${integerCount} of ${sampleList.getCurrentSize()})`);
+            flag(player, "Aim", "B", `delta${uppercaseFirstLetter(type)}`, `${recentIntegerValue}, frequency=${integerFrequency}, (${integerCount} of ${sampleList.getCurrentSize()})`);
             sampleList.clear();
         }
     }
-}
-
-/**
- * Capitalizes the first letter of a string.
- * @param {string} str - The string to capitalize.
- * @returns {string} - The capitalized string.
- */
-function capitalize(str) {
-    return str.charAt(0).toUpperCase() + str.slice(1);
 }
