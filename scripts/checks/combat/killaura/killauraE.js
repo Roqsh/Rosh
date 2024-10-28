@@ -1,7 +1,8 @@
+// TODO: Recode pretty much everythin ...
+
+
 import config from "../../../data/config.js";
 import { flag } from "../../../util";
-
-// TODO: Recode
 
 /**
  * @param {player} player - The player to check

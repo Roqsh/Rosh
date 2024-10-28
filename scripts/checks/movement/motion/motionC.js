@@ -11,7 +11,7 @@ const motion_c_map = new Map();
  */
 export function motion_c(player) {
 
-    if(!config.modules.motionC.enabled || player.isOnGround || getScore(player, "tick_counter2", 0) <= 5) return;
+    if(!config.modules.motionC.enabled || player.isOnGround || !player.isLoggedIn()) return;
     
     const motionData = motion_c_map.get(player.name);
     const currentPos = {x: player.location.x, y: player.location.y, z: player.location.z};

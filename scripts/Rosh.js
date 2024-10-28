@@ -194,6 +194,8 @@ system.runInterval(() => {
             ban(player);
         }
 
+        manageTags(player);
+
 		const rotation = player.getRotation();
 		const velocity = player.getVelocity();
         //const totalXp = player.getTotalXp();
@@ -226,20 +228,20 @@ system.runInterval(() => {
             player.isHoldingRiptideTrident = false;
         }
         
-		if(player.blocksBroken >= 1 && config.modules.nukerA.enabled) player.blocksBroken = 0;
+		if (player.blocksBroken >= 1 && config.modules.nukerA.enabled) player.blocksBroken = 0;
 
 		if (Date.now() - player.startBreakTime < config.modules.autotoolA.startBreakDelay && player.lastSelectedSlot !== selectedSlot) {
 			player.flagAutotoolA = true;
 			player.autotoolSwitchDelay = Date.now() - player.startBreakTime;
 		}
 
-		if(player.hasTag("moving")) {
+		if (player.hasTag("moving")) {
 			player.runCommandAsync(`scoreboard players set @s xPos ${Math.floor(player.location.x)}`);
 			player.runCommandAsync(`scoreboard players set @s yPos ${Math.floor(player.location.y)}`);
 			player.runCommandAsync(`scoreboard players set @s zPos ${Math.floor(player.location.z)}`);
 		}
 
-		if(getScore(player, "kickvl", 0) > config.kicksBeforeBan / 2 && !player.hasTag("strict")) {
+		if (getScore(player, "kickvl", 0) > config.kicksBeforeBan / 2 && !player.hasTag("strict")) {
 			try {
 				player.addTag("strict");
 			} catch (error) {
@@ -281,28 +283,12 @@ system.runInterval(() => {
                 break;
         }
 
-		manageTags(player);	
-
-		const tick = getScore(player, "tickValue", 0);
-		setScore(player, "tickValue", tick + 1);
-
-
-        // Invmove/A delay
-        const invmove_delay = getScore(player, "invmove_delay", 0);
-		if(player.hasTag("hasGUIopen")) {
-			setScore(player, "invmove_delay", invmove_delay + 1);
-		} else setScore(player, "invmove_delay", 0);
-
-
-        // Fly/D delay
-		const flyTime = getScore(player, "airTime", 0);
-		if(!player.isOnGround && aroundAir(player)) {
-			setScore(player, "airTime", flyTime + 1);
-		} else setScore(player, "airTime", 0);
-
+		const tick = getScore(player, "currentTick", 0);
+		setScore(player, "currentTick", tick + 1);
+        
         // Debug utilities
-		debug(player, "Speed", speed, "speed");
-		debug(player, "Ticks", `${tick <= 20 ? `§a` : `§c`}${tick}`, "ticks");
+        debug(player, "Speed", speed, "speed");
+        debug(player, "Ticks", `${tick <= 20 ? `§a` : `§c`}${tick}`, "ticks");
         debug(player, "YVelocity", velocity.y, "devvelocity");
 
         if (player.hasTag("tps")) {
@@ -372,9 +358,9 @@ system.runInterval(() => {
             
             jump_a(player);
 
-            invmove_a(player);
+            //invmove_a(player);
             
-            // Update the player's last position and velocity using the returned value
+            // Update the player's last position and velocity using the returned values by the movement handler
             player.setLastPosition(movementData.currentPosition);
             player.setLastVelocity(movementData.currentVelocity);
         }
@@ -402,6 +388,7 @@ system.runInterval(() => {
             aimA(player);
             aimB(player);
             
+            // Update the player's last yaw and pitch using the returned values by the rotation handler
             player.setLastYaw(rotationData.currentYaw);
             player.setLastPitch(rotationData.currentPitch);
         }
@@ -416,6 +403,7 @@ system.runInterval(() => {
             autoclickerD(player);
             autoclickerE(player);
 
+            // Update the player's last clicks per second using the returned value by the clicks handler
             player.setLastCps(clicksData.currentCps);
         }
 
@@ -455,30 +443,31 @@ system.runInterval(() => {
         dependencies_e(player);
         scaffold_f_dependency(player, tick);
         
+        // Runs every tick
         player.removeTag("attacking");
         player.removeTag("breaking");
         player.removeTag("itemUse");
         
+        // Runs every 20th tick (every second)
         if (tick >= 20) {
             player.lastTime = Date.now();
             player.clicks = 0;
-            setScore(player, "tickValue", 0);
-            const currentCounter = getScore(player, "tick_counter", 0);
-            setScore(player, "tick_counter", currentCounter + 1);
-            setScore(player, "tick_counter2", getScore(player, "tick_counter2", 0) + 1);
-            setScore(player, "tag_reset", getScore(player, "tag_reset", 0) + 1);
-            setScore(player, "packets", 0);
             player.removeTag("placing");
+            setScore(player, "tagReset", getScore(player, "tagReset", 0) + 1);
+            setScore(player, "packets", 0);
+
+            setScore(player, "currentTick", 0); // Reset for new couting
         }
         
-        if (getScore(player, "tag_reset", 0) >= 5) {
+        // Runs every 100th tick (every 5 seconds)
+        if (getScore(player, "tagReset", 0) >= 5) {
             player.removeTag("damaged");
             player.removeTag("fall_damage");
-            player.removeTag("end_portal");
-            player.removeTag("timer_bypass");
+            player.removeTag("rosh:timer_bypass");
             player.removeTag("ender_pearl");
             player.removeTag("bow");
-            setScore(player, "tag_reset", 0);
+
+            setScore(player, "tagReset", 0); // Reset for new couting
         }
         
         player.setLastItemInHand(player.getItemInHand());
@@ -731,8 +720,6 @@ world.afterEvents.playerSpawn.subscribe((playerJoin) => {
         player.lastGoodPosition = player.location;
     }
 
-	setScore(player, "tick_counter2", 0);
-
 	exploit_a(player);
 
     // TODO: Update this code
@@ -786,16 +773,12 @@ world.afterEvents.entityHitEntity.subscribe((entityHitEntity) => {
         killauraB(player, entity);
         killauraC(player, entity);
         killauraD(player, entity);
-        killauraE(player, entity);
+        //killauraE(player, entity);
     }
 
 	reach_a(player, entity);
 
 	badpackets_c(player, entity);
-	
-	if (config.modules.killauraE.enabled) {
-		setScore(player, "tick_counter", getScore(player, "tick_counter", 0) + 2);
-	}
 
 	if (config.customcommands.ui.enabled && player.isOp() && entity.typeId === "minecraft:player") {
 

@@ -88,7 +88,7 @@ declare module "@minecraft/server" {
 
         /**
          * Whether the player is logged in for the specified number of ticks.
-         * @param {number} ticks The number of ticks to check for. Defaults to 5.
+         * @param {number} ticks The number of ticks to check for. Defaults to 5 seconds (100 ticks) if not specified.
          * @Rosh
          */
         isLoggedIn(ticks: number): boolean;

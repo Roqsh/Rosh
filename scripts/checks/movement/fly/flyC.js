@@ -13,7 +13,7 @@ export function fly_c(player) {
   
     if (!config.modules.flyC.enabled) return;
 
-    if (aroundAir(player) && getScore(player, "tick_counter2", 0) > 8 && !player.isGliding && !player.isDead()) {
+    if (aroundAir(player) && player.isLoggedIn() && !player.isGliding && !player.isDead()) {
 
         const posDiff = Math.abs(player.location.x - player.getLastPosition().x) + Math.abs(player.location.z - player.getLastPosition().z);
 
