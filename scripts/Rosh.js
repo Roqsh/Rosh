@@ -10,6 +10,10 @@ import { mainMenu, rateLimit } from "./ui/mainMenu.js";
 import { playerMenuSelected } from "./ui/main/playerMenu.js";
 
 // Import Miscellaneous checks
+import { badenchantsA } from "./checks/misc/badenchants/badenchantsA.js";
+import { badenchantsB } from "./checks/misc/badenchants/badenchantsB.js";
+import { badenchantsC } from "./checks/misc/badenchants/badenchantsC.js";
+import { badenchantsD } from "./checks/misc/badenchants/badenchantsD.js";
 //import { badpackets_a } from "./checks/misc/badpackets/badpacketsA.js";
 import { badpackets_b } from "./checks/misc/badpackets/badpacketsB.js";
 import { badpackets_c } from "./checks/misc/badpackets/badpacketsC.js";
@@ -89,6 +93,7 @@ import { aimB } from "./checks/combat/aim/aimB.js";
 
 import { clicksHandler } from "./handlers/clicksHandler.js";
 import { commandHandler } from "./handlers/commandHandler.js";
+import { enchantmentsHandler } from "./handlers/enchantmentsHandler.js";
 import { movementHandler } from "./handlers/movementHandler.js";
 import { rotationHandler } from "./handlers/rotationHandler.js";
 
@@ -401,6 +406,7 @@ system.runInterval(() => {
             player.setLastPitch(rotationData.currentPitch);
         }
 
+
         const clicksData = clicksHandler(player, tick);
         
         if (clicksData) {
@@ -412,82 +418,38 @@ system.runInterval(() => {
 
             player.setLastCps(clicksData.currentCps);
         }
+
         
+        const enchantmentsData = enchantmentsHandler(player);
         
-        //TODO: Move checks into their own folder + create handler [Patched, it should be disabled by default]
-        function handleBadEnchantments(player, enchantment, itemTypeId, i, type) {
-            flag(player, "BadEnchants", type, "enchantment", `${enchantment.type.id},level=${enchantment.level},slot=${i}`);
-        }
-        
-        function isInvalidEnchantment(enchantment, item2Enchants, i, player, itemTypeId, enchantments, config) {
-            const { type, level } = enchantment;
-            const typeId = type.id;
-        
-            // Check for enchantments that are higher than what is vanilla possible
-            if (config.modules.badenchantsA.enabled) {
-                const maxLevel = config.modules.badenchantsA.levelExclusions[type] ?? type.maxLevel;
-                if (level > maxLevel) {
-                    handleBadEnchantments(player, enchantment, itemTypeId, i, "A");
-                    return true;
-                }
-            }
-        
-            // Check for negative/null enchantments
-            if (config.modules.badenchantsB.enabled && level <= 0) {
-                handleBadEnchantments(player, enchantment, itemTypeId, i, "B");
-                return true;
-            }
-        
-            // Check for enchantments that should not be allowed on specific items
-            if (config.modules.badenchantsC.enabled && item2Enchants) {
-                if (!item2Enchants.canAddEnchantment({ type, level: 1 })) {
-                    handleBadEnchantments(player, enchantment, itemTypeId, i, "C");
-                    return true;
-                }
-                if (config.modules.badenchantsC.multi_protection) {
-                    item2Enchants.addEnchantment({ type, level: 1 });
-                }
-            }
-        
-            // Check for duplicate enchantments
-            if (config.modules.badenchantsD.enabled) {
-                if (enchantments.includes(typeId)) {
-                    flag(player, "BadEnchants", "D", "enchantments", `${enchantments.join(", ")},slot=${i}`);
-                    return true;
-                }
-                enchantments.push(typeId);
-            }
-        
-            return false;
-        }
-        
-        for (let i = 0; i < 36; i++) {
-            const item = container.getItem(i);
-            if (!item) continue;
-        
-            const itemType = item.type ?? ItemTypes.get("minecraft:book");
-            const item2 = new ItemStack(itemType, item.amount);
-            const itemEnchants = item.getComponent("enchantable")?.getEnchantments() ?? [];
+        enchantmentsData.forEach((itemData) => {
+            if (!itemData) return; // Skip empty slots
+            
+            const { slot, typeId, enchantments } = itemData;
+            const item2 = new Minecraft.ItemStack(typeId, itemData.amount);
             const item2Enchants = item2.getComponent("enchantable");
-            const enchantments = [];
-        
+            const existingEnchantments = [];
+            
             let hasBadEnchantments = false;
-        
-            for (const enchantment of itemEnchants) {
-                if (isInvalidEnchantment(enchantment, item2Enchants, i, player, item.typeId, enchantments, config)) {
+            
+            for (const enchantment of enchantments) {
+                const checkA = badenchantsA(player, enchantment, slot);
+                const checkB = badenchantsB(player, enchantment, slot);
+                const checkC = badenchantsC(player, enchantment, item2Enchants, slot);
+                const checkD = badenchantsD(player, enchantment, existingEnchantments, slot);
+                
+                if (checkA || checkB || checkC || checkD) {
                     hasBadEnchantments = true;
-                    continue;
+                } else {
+                    item2Enchants.addEnchantment(enchantment);
                 }
-        
-                // Add valid enchantment to the item2Enchants
-                item2Enchants.addEnchantment(enchantment);
             }
-        
+            
             // If the item had any bad enchantments, replace it with the modified item
             if (hasBadEnchantments) {
-                container.setItem(i, item2);
+                container.setItem(slot, item2);
             }
-        }
+        });
         
 
         dependencies_e(player);

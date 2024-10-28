@@ -483,31 +483,31 @@ export default
         },
 
         "badenchantsA": {
-			"enabled": true,
-            "description": "Checks for levels that are higher than what the item supports",
+			"enabled": false,
+            "description": "Checks if an enchantment exceeds its maximum allowed level.",
 			"levelExclusions": {}, // Example:  "sharpness": 69,
 			"punishment": "kick",
 			"minVlbeforePunishment": 0
 		},
 
         "badenchantsB": {
-            "enabled": true,
-            "description": "Checks for negative enchantments",           
+            "enabled": false,
+            "description": "Checks if an enchantment has a negative or zero level, which is invalid.",           
             "punishment": "kick",
             "minVlbeforePunishment": 0
         },
 
         "badenchantsC": {
-            "enabled": true,
-            "description": "Checks for unsupported enchantments",           
+            "enabled": false,
+            "description": "Checks if an enchantment is not compatible with the item it is applied to.",           
             "punishment": "kick",
-            "multi_protection": true,
+            "multi_protection": false,
             "minVlbeforePunishment": 0
         },
 
         "badenchantsD": {
-            "enabled": true,
-            "description": "Checks for duplicate enchantments",           
+            "enabled": false,
+            "description": "Checks for duplicate enchantments within an item, which is not allowed.",           
             "punishment": "kick",
             "minVlbeforePunishment": 0
         },
