@@ -10,10 +10,10 @@ import { mainMenu, rateLimit } from "./ui/mainMenu.js";
 import { playerMenuSelected } from "./ui/main/playerMenu.js";
 
 // Import Miscellaneous checks
-import { badenchantsA } from "./checks/misc/badenchants/badenchantsA.js";
-import { badenchantsB } from "./checks/misc/badenchants/badenchantsB.js";
-import { badenchantsC } from "./checks/misc/badenchants/badenchantsC.js";
-import { badenchantsD } from "./checks/misc/badenchants/badenchantsD.js";
+//import { badenchantsA } from "./checks/misc/badenchants/badenchantsA.js";
+//import { badenchantsB } from "./checks/misc/badenchants/badenchantsB.js";
+//import { badenchantsC } from "./checks/misc/badenchants/badenchantsC.js";
+//import { badenchantsD } from "./checks/misc/badenchants/badenchantsD.js";
 //import { badpackets_a } from "./checks/misc/badpackets/badpacketsA.js";
 import { badpackets_b } from "./checks/misc/badpackets/badpacketsB.js";
 import { badpackets_c } from "./checks/misc/badpackets/badpacketsC.js";
@@ -79,7 +79,7 @@ import { killauraA } from "./checks/combat/killaura/killauraA.js";
 import { killauraB } from "./checks/combat/killaura/killauraB.js";
 import { killauraC } from "./checks/combat/killaura/killauraC.js";
 import { killauraD } from "./checks/combat/killaura/killauraD.js";
-import { killauraE, dependencies_e } from "./checks/combat/killaura/killauraE.js";
+//import { killauraE } from "./checks/combat/killaura/killauraE.js";
 import { hitbox_a } from "./checks/combat/hitbox/hitboxA.js";
 import { hitbox_b } from "./checks/combat/hitbox/hitboxB.js";
 import { reach_a } from "./checks/combat/reach/reachA.js";
@@ -93,7 +93,7 @@ import { aimB } from "./checks/combat/aim/aimB.js";
 
 import { clicksHandler } from "./handlers/clicksHandler.js";
 import { commandHandler } from "./handlers/commandHandler.js";
-import { enchantmentsHandler } from "./handlers/enchantmentsHandler.js";
+//import { enchantmentsHandler } from "./handlers/enchantmentsHandler.js";
 import { movementHandler } from "./handlers/movementHandler.js";
 import { rotationHandler } from "./handlers/rotationHandler.js";
 
@@ -187,25 +187,19 @@ system.runInterval(() => {
 	   lagValue = lag;
 	   lastDate = Date.now();
     }
-
-	for (const player of world.getAllPlayers()) {
+    
+    for (const player of world.getAllPlayers()) {
 
         if (player.hasTag("isBanned")) {
             ban(player);
         }
 
         manageTags(player);
-
-		const rotation = player.getRotation();
-		const velocity = player.getVelocity();
-        //const totalXp = player.getTotalXp();
-
-        //const xpForNextLevel = player.totalXpNeededForNextLevel;
-        //const xpAtCurrentLevel = player.xpEarnedAtCurrentLevel;
+        
+        const rotation = player.getRotation();
+        const velocity = player.getVelocity();
         const container = player.getComponent("inventory")?.container;
         const selectedSlot = player.selectedSlotIndex;
-        //const level = player.level;
-
 		const speed = getSpeed(player);
 
         const themecolor = config.themecolor;
@@ -406,41 +400,8 @@ system.runInterval(() => {
             // Update the player's last clicks per second using the returned value by the clicks handler
             player.setLastCps(clicksData.currentCps);
         }
-
-        
-        const enchantmentsData = enchantmentsHandler(player);
-        
-        enchantmentsData.forEach((itemData) => {
-            if (!itemData) return; // Skip empty slots
-            
-            const { slot, typeId, enchantments } = itemData;
-            const item2 = new Minecraft.ItemStack(typeId, itemData.amount);
-            const item2Enchants = item2.getComponent("enchantable");
-            const existingEnchantments = [];
-            
-            let hasBadEnchantments = false;
-            
-            for (const enchantment of enchantments) {
-                const checkA = badenchantsA(player, enchantment, slot);
-                const checkB = badenchantsB(player, enchantment, slot);
-                const checkC = badenchantsC(player, enchantment, item2Enchants, slot);
-                const checkD = badenchantsD(player, enchantment, existingEnchantments, slot);
-                
-                if (checkA || checkB || checkC || checkD) {
-                    hasBadEnchantments = true;
-                } else {
-                    item2Enchants.addEnchantment(enchantment);
-                }
-            }
-            
-            // If the item had any bad enchantments, replace it with the modified item
-            if (hasBadEnchantments) {
-                container.setItem(slot, item2);
-            }
-        });
         
 
-        dependencies_e(player);
         scaffold_f_dependency(player, tick);
         
         // Runs every tick
@@ -773,7 +734,6 @@ world.afterEvents.entityHitEntity.subscribe((entityHitEntity) => {
         killauraB(player, entity);
         killauraC(player, entity);
         killauraD(player, entity);
-        //killauraE(player, entity);
     }
 
 	reach_a(player, entity);
@@ -864,22 +824,23 @@ system.beforeEvents.watchdogTerminate.subscribe((watchdogTerminate) => {
 });
 
 
+// Gets executed once the /reload command is used
 if ([...world.getPlayers()].length >= 1) {
 
-	for (const player of world.getPlayers()) {
+    for (const player of world.getPlayers()) {
 
-		player.blocksBroken = 0;
-		player.lastTime = Date.now();
+        player.blocksBroken = 0;
+        player.lastTime = Date.now();
         player.clicks = 0;
-		player.reports = [];
+        player.reports = [];
         
-		if (player.isOnGround) {
+        if (player.isOnGround) {
             player.lastGoodPosition = player.location;
         }
-
+        
         // Inform the player about the successfull reload
         if (player.isOp()) {
             player.sendMessage(`${config.themecolor}Rosh §j> §aRosh has been successfully reloaded!`);
         }
-	}
+    }
 };
