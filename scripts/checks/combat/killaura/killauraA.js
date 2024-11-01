@@ -2,7 +2,7 @@ import * as Minecraft from "@minecraft/server";
 import config from "../../../data/config.js";
 import { flag } from "../../../util";
 
-// TODO: Implement buffer system
+const buffer = new Map(); // Store player buffers here
 
 /**
  * Checks for attacking with an integer x/y rotation.
@@ -13,22 +13,30 @@ export function killauraA(player, entity) {
     
     if (!config.modules.killauraA.enabled) return;
 
-    // Get the player's current rotation.
     const rotation = player.getRotation();
 
-    let targetName = "";
-
     // If the target is a player, get their name.
-    if (entity.isPlayer()) {
-        targetName = entity.name;
-    }
+    let targetName = "";
+    targetName = target.isPlayer() ? `, target=${target.name}` : `, target=${target.typeId.replace("minecraft:", "")}`;
 
-    // Check if the player is not riding and has a non-zero x-axis rotation.
-    if (!player.isRiding() && rotation.x !== 0) {
+    if (!player.isRiding()) {
 
-        // If either the x or y rotation is an integer, flag for potential Killaura behavior.
+        // If either the x or y rotation is an integer, increment buffer
         if (Number.isInteger(rotation.x) || Number.isInteger(rotation.y)) {
-            flag(player, "Killaura", "A", "xRot", `x=${rotation.x}, y=${rotation.y}, target=${targetName}`);
+
+            // Initialize buffer count for the player if not set
+            if (!buffer.has(player.id)) {
+                buffer.set(player.id, 0);
+            }
+
+            // Increment the player's buffer
+            buffer.set(player.id, buffer.get(player.id) + 1);
+
+            // If buffer count reaches threshold, flag and reset buffer
+            if (buffer.get(player.id) >= 3) {
+                flag(player, "Killaura", "A", "xRot", `${rotation.x}, yRot=${rotation.y}${targetName}`);
+                buffer.set(player.id, 0);
+            }
         }
     }
 }

@@ -79,7 +79,6 @@ import { killauraA } from "./checks/combat/killaura/killauraA.js";
 import { killauraB } from "./checks/combat/killaura/killauraB.js";
 import { killauraC } from "./checks/combat/killaura/killauraC.js";
 import { killauraD } from "./checks/combat/killaura/killauraD.js";
-//import { killauraE } from "./checks/combat/killaura/killauraE.js";
 import { hitbox_a } from "./checks/combat/hitbox/hitboxA.js";
 import { hitbox_b } from "./checks/combat/hitbox/hitboxB.js";
 import { reach_a } from "./checks/combat/reach/reachA.js";

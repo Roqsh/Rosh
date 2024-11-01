@@ -11,12 +11,9 @@ export function killauraB(player, entity) {
 
     if (!config.modules.killauraB.enabled) return;
 
-    let targetName = "";
-
     // If the target is a player, get their name.
-    if (entity.isPlayer()) {
-        targetName = entity.name;
-    }
+    let targetName = "";
+    targetName = target.isPlayer() ? `, target=${target.name}` : `, target=${target.typeId.replace("minecraft:", "")}`;
 
     // Get the player's inventory container and the currently selected item
     const selectedItem = player.getItemInHand();
@@ -24,7 +21,7 @@ export function killauraB(player, entity) {
 
     // Flag the player if they are using an item while attacking
     if (player.hasTag("right")) {
-        flag(player, "Killaura", "B", "used item", `${selectedItem.typeId}, ticks=${ticks}, target=${targetName}`);
+        flag(player, "Killaura", "B", "used item", `${selectedItem.typeId}, ticks=${ticks}${targetName}`);
     }
 
     // Get the type ID of the attacked entity
@@ -59,10 +56,10 @@ export function killauraB(player, entity) {
     }
 
     if (player.isSleeping) {
-        flag(player, "Killaura", "B", "sleeping", `true, target=${targetName}`);
+        flag(player, "Killaura", "B", "sleeping", `true${targetName}`);
     }
 
     if (player.isDead()) {
-        flag(player, "Killaura", "B", "dead", `true, target=${targetName}`);
+        flag(player, "Killaura", "B", "dead", `true${targetName}`);
     }
 }

@@ -176,7 +176,7 @@ export function loadPlayerPrototypes() {
 
     Player.prototype.isDead = function() {
         const healthComponent = this.getComponent("health");
-        return healthComponent ? healthComponent.currentValue === 0 : false;  // Added null check
+        return healthComponent ? healthComponent.currentValue <= 0 : false;  // Added null check
     };
 
     Player.prototype.isAlive = function() {

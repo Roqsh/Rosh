@@ -303,7 +303,7 @@ export default
             "enabled": true,
             "description": "Checks for attacking with an integer x/y rotation.",
             "punishment": "kick",
-            "punishmentLength": "7d",
+            "punishmentLength": "2d",
             "minVlbeforePunishment": 5
         },
 
@@ -330,15 +330,8 @@ export default
             "description": "Checks if a player hits through a solid wall.",
             "y_increment": 0.1,
             "punishment": "kick",
-            "punishmentLength": "7d",
+            "punishmentLength": "2d",
             "minVlbeforePunishment": 9
-        },
-
-        "killauraE": {
-            "enabled": false,
-            "description": "Killaura Bot check (Spawns a fake player and if it gets attacked it flags)",
-            "punishment": "kick",
-            "minVlbeforePunishment": 2
         },
 
         "hitboxA": {

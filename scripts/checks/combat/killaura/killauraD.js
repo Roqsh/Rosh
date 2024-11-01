@@ -2,8 +2,10 @@ import * as Minecraft from "@minecraft/server";
 import config from "../../../data/config.js";
 import { flag } from "../../../util.js";
 import { Vector3D } from "../../../utils/Vector3D.js";
+import { EvictingList } from "../../../utils/EvictingList.js";
 
-// TODO: Implement Bounding Box system to prevent false positives (Hitboxes can be outside of corner positions)
+// Map to store each player's detection timestamps
+const playerDetectionTimestamps = new Map();
 
 /**
  * Checks if a player hits through a solid wall.
@@ -13,6 +15,12 @@ import { Vector3D } from "../../../utils/Vector3D.js";
 export function killauraD(player, target) {
     
     if (!config.modules.killauraD.enabled) return;
+
+    // Initialize an EvictingList with a capacity of 6 timestamps if not already present
+    if (!playerDetectionTimestamps.has(player.name)) {
+        playerDetectionTimestamps.set(player.name, new EvictingList(5));
+    }
+    const detectionTimestamps = playerDetectionTimestamps.get(player.name);
 
     // Get the eye positions of the player and the target.
     const playerEyePos = Vector3D.getEyePosition(player);
@@ -25,7 +33,7 @@ export function killauraD(player, target) {
     const magnitude = Vector3D.getVectorLength(directionVector);
 
     // Exit early if the player and target are in close proximity.
-    if (magnitude < 0.01) return;
+    if (magnitude < 0.5) return;
 
     // Normalize the direction vector for ray tracing.
     const stepVector = Vector3D.getNormalizedVector(directionVector);
@@ -85,15 +93,26 @@ export function killauraD(player, target) {
         if (!blockDetected) return;
     }
 
-    let targetName = "";
-
     // If the target is a player, get their name.
-    if (target.isPlayer()) {
-        targetName = target.name;
-    } 
+    let targetName = "";
+    targetName = target.isPlayer() ? `, target=${target.name}` : `, target=${target.typeId.replace("minecraft:", "")}`;
 
-    // If no clear path was found at any height, flag the player for potential Killaura use.
+    // If no clear path was found at any height, add to the EvictingList
     if (blockDetected) {
-        flag(player, "Killaura", "D", "hit through", `${detectedBlockType}, target=${targetName}`);
+        detectionTimestamps.add(Date.now(), "True");
+    }
+
+    // If the EvictingList is full, get the time difference between the oldest and newest timestamp
+    if (detectionTimestamps.getCurrentSize() >= 5) {
+        
+        const allTimestamps = detectionTimestamps.getAll();
+        const oldestTimestamp = allTimestamps[0].key;
+        const newestTimestamp = allTimestamps[allTimestamps.length - 1].key;
+
+        // Check if the timestamps are within 1 second of each other
+        if (newestTimestamp - oldestTimestamp < 1000) {
+            flag(player, "Killaura", "D", "hit through", `${detectedBlockType}${targetName}`);
+            detectionTimestamps.clear();
+        }
     }
 }
