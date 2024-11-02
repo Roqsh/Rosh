@@ -1,23 +1,28 @@
+import * as Minecraft from "@minecraft/server";
 import config from "../../../data/config.js";
 import { flag } from "../../../util.js";
 
 /**
- * @name reach_b
- * @param {player} player - The player to check
- * @remarks Checks for placing too far away
-*/
+ * Checks if a player is exceeding the reach distance of a block.
+ * @param {Minecraft.Player} player - The player to check.
+ * @param {Minecraft.Block} block - The block being broken.
+ * @param {Object} blockEvent - The event object.
+ * @param {Object} Minecraft - The Minecraft game object.
+ */
+export function reachB(player, block, blockEvent, Minecraft) {
 
-export function reach_b(player, block, undoPlace) {
-	
-	if(config.modules.reachB.enabled) {
+    if (!config.modules.reachB.enabled || block.typeId === "minecraft:scaffolding" || player.getGameMode() === "creative") return;
 
-		if(player.fallDistance > 1.3 || block.typeId === "minecraft:scaffolding") return;
+    // Calculate horizontal distance between the player and the block
+    const distance = Math.hypot(block.location.x - player.location.x, block.location.z - player.location.z);
 
-		const distance = Math.sqrt(Math.pow(block.location.x - player.location.x, 2) + Math.pow(block.location.z - player.location.z, 2));
+    // Flag and cancel block break if distance exceeds the limit
+    if (distance > config.modules.reachB.reach) {
+        blockEvent.cancel = true;
 
-		if(distance > config.modules.reachB.reach) {
-			flag(player, "Reach", "B", "distance", distance);
-			undoPlace = true;
-		}
-	}
+        // Schedule the flag for the player in Minecraft's system queue
+        Minecraft.system.run(() => {
+            flag(player, "Reach", "B", "distance", `${distance}`);
+        });
+    }
 }

@@ -59,7 +59,7 @@ import { nukerA } from "./checks/world/nuker/nukerA.js";
 import { nukerB } from "./checks/world/nuker/nukerB.js";
 import { nukerC } from "./checks/world/nuker/nukerC.js";
 import { nukerD } from "./checks/world/nuker/nukerD.js";
-import { reach_b } from "./checks/world/reach/reachB.js";
+import { reachB } from "./checks/world/reach/reachB.js";
 import { scaffold_a } from "./checks/world/scaffold/scaffoldA.js";
 import { scaffold_b } from "./checks/world/scaffold/scaffoldB.js";
 import { scaffold_c } from "./checks/world/scaffold/scaffoldC.js";
@@ -220,8 +220,6 @@ system.runInterval(() => {
             player.isHoldingTrident = false;
             player.isHoldingRiptideTrident = false;
         }
-        
-		if (player.blocksBroken >= 1 && config.modules.nukerA.enabled) player.blocksBroken = 0;
 
 		if (Date.now() - player.startBreakTime < config.modules.autotoolA.startBreakDelay && player.lastSelectedSlot !== selectedSlot) {
 			player.flagAutotoolA = true;
@@ -466,10 +464,12 @@ world.beforeEvents.itemUse.subscribe((itemUse) => {
 
 
 world.beforeEvents.playerPlaceBlock.subscribe(async (placeBlock) => {
-
+    
     const { player, block } = placeBlock;
-
+    
     if (!player.isValid() || !block.isValid()) return;
+    
+    reachB(player, block, placeBlock, Minecraft);
 
     if (config.generalModules.scaffold) {
         await scaffold_h(player);
@@ -510,10 +510,6 @@ world.afterEvents.playerPlaceBlock.subscribe(async (placeBlock) => {
 	    tower_b(player, block);	
 	}
 
-    if (config.generalModules.reach) {
-		reach_b(player, block, undoPlace);
-	}
-
 	if (undoPlace) {
 		try {
 			block.setType(Minecraft.MinecraftBlockTypes.air);
@@ -534,6 +530,8 @@ world.beforeEvents.playerBreakBlock.subscribe((blockBreak) => {
         player.addTag("breaking");
     }
     
+    reachB(player, block, blockBreak, Minecraft);
+    
     nukerB(player, block, blockBreak, Minecraft);
     nukerC(player, block, blockBreak, Minecraft);
     nukerD(player, block, blockBreak, Minecraft);
@@ -548,18 +546,7 @@ world.afterEvents.playerBreakBlock.subscribe((blockBreak) => {
     
     nukerA(player, block);
 
-    const brokenBlockId = blockBreak.brokenBlockPermutation.type.id;
     let revertBlock = false;
-
-	if (config.modules.reachB.enabled) {
-
-		const distance = Math.sqrt(Math.pow(block.location.x - player.location.x, 2) + Math.pow(block.location.z - player.location.z, 2));
-
-		if (distance > config.modules.reachB.reach) {
-			flag(player, "Reach", "B", "distance", distance);
-			revertBlock = true;
-		}
-	}
 	
 	if (config.modules.autotoolA.enabled && player.flagAutotoolA) {
 		flag(player, "AutoTool", "A", "selectedSlot", `${player.selectedSlotIndex},lastSelectedSlot=${player.lastSelectedSlot},switchDelay=${player.autotoolSwitchDelay}`);
@@ -652,7 +639,6 @@ world.afterEvents.playerSpawn.subscribe((playerJoin) => {
         player.removeTag("reported");
     }
 
-	player.blocksBroken = 0;
 	player.lastTime = Date.now();
     player.clicks = 0;
 	player.reports = [];
@@ -809,7 +795,6 @@ if ([...world.getPlayers()].length >= 1) {
 
     for (const player of world.getPlayers()) {
 
-        player.blocksBroken = 0;
         player.lastTime = Date.now();
         player.clicks = 0;
         player.reports = [];

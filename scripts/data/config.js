@@ -984,12 +984,12 @@ export default
 
         "reachB": {
             "enabled": true,
-            "description": "Checks for breaking too far away",
-            "punishment": "kick",
+            "description": "Checks if a player is exceeding the reach distance of a block.",
             "reach": 6.65,
-            "minVlbeforePunishment": 1
+            "punishment": "kick",
+            "punishmentLength": "7d",
+            "minVlbeforePunishment": 8
         },
-
     },
     
     "misc_modules": {},
