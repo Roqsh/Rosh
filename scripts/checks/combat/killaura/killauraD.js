@@ -94,8 +94,7 @@ export function killauraD(player, target) {
     }
 
     // If the target is a player, get their name.
-    let targetName = "";
-    targetName = target.isPlayer() ? `, target=${target.name}` : `, target=${target.typeId.replace("minecraft:", "")}`;
+    const targetName = target.isPlayer() ? `, target=${target.name}` : `, target=${target.typeId.replace("minecraft:", "")}`;
 
     // If no clear path was found at any height, add to the EvictingList
     if (blockDetected) {
@@ -110,7 +109,7 @@ export function killauraD(player, target) {
         const newestTimestamp = allTimestamps[allTimestamps.length - 1].key;
 
         // Check if the timestamps are within 1 second of each other
-        if (newestTimestamp - oldestTimestamp < 1000) {
+        if (newestTimestamp - oldestTimestamp <= 1000) {
             flag(player, "Killaura", "D", "hit through", `${detectedBlockType}${targetName}`);
             detectionTimestamps.clear();
         }

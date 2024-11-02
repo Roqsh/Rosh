@@ -870,22 +870,12 @@ export default
             "minVlbeforePunishment": 8
         },
 
-        "instabreakA": {
+        "nukerD": {
             "enabled": true,
-            "description": "Checks for breaking unbreakable blocks",
-            "unbreakable_blocks": [
-                "minecraft:bedrock",
-                "minecraft:end_portal",
-                "minecraft:end_portal_gateway",
-                "minecraft:barrier",
-                "minecraft:command_block",
-                "minecraft:chain_command_block",
-                "minecraft:repeating_command_block",
-                "minecraft:end_gateway",
-                "minecraft:light_block"
-            ],
+            "description":"Checks if a player is breaking an unbreakable block in survival.",
             "punishment": "kick",
-            "minVlbeforePunishment": 1
+            "punishmentLength": "7d",
+            "minVlbeforePunishment": 4
         },
 
         "scaffoldA": {

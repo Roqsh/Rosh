@@ -530,16 +530,17 @@ world.beforeEvents.playerBreakBlock.subscribe((blockBreak) => {
     
     if (!player.isValid() || !block.isValid()) return;
 
-    if(!player.hasTag("breaking")) {
+    if (!player.hasTag("breaking")) {
         player.addTag("breaking");
     }
     
     nukerB(player, block, blockBreak, Minecraft);
     nukerC(player, block, blockBreak, Minecraft);
+    nukerD(player, block, blockBreak, Minecraft);
 });
 
 
-world.afterEvents.playerBreakBlock.subscribe(async (blockBreak) => {
+world.afterEvents.playerBreakBlock.subscribe((blockBreak) => {
     
     const { player, block, dimension } = blockBreak;
     
@@ -563,20 +564,6 @@ world.afterEvents.playerBreakBlock.subscribe(async (blockBreak) => {
 	if (config.modules.autotoolA.enabled && player.flagAutotoolA) {
 		flag(player, "AutoTool", "A", "selectedSlot", `${player.selectedSlotIndex},lastSelectedSlot=${player.lastSelectedSlot},switchDelay=${player.autotoolSwitchDelay}`);
         revertBlock = true;
-	}
-
-	if (config.modules.instabreakA.enabled && config.modules.instabreakA.unbreakable_blocks.includes(blockBreak.brokenBlockPermutation.type.id)) {
-
-		const checkGmc = world.getPlayers({
-			excludeGameModes: [Minecraft.GameMode.creative],
-			name: player.name
-		});
-
-		if ([...checkGmc].length !== 0) {
-			revertBlock = true;
-			flag(player, "InstaBreak", "A", "block", blockBreak.brokenBlockPermutation.type.id, true);
-			currentVL++;
-		}
 	}
 
 	if (revertBlock) {
