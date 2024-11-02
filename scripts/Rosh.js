@@ -55,10 +55,10 @@ import { jump_a } from "./checks/movement/jump/jumpA.js";
 import { invmove_a } from "./checks/movement/invmove/invmoveA.js";
 
 // Import World related checks
-import { nuker_a } from "./checks/world/nuker/nukerA.js";
-import { nuker_b } from "./checks/world/nuker/nukerB.js";
-import { nuker_c } from "./checks/world/nuker/nukerC.js";
-import { nuker_d } from "./checks/world/nuker/nukerD.js";
+import { nukerA } from "./checks/world/nuker/nukerA.js";
+import { nukerB } from "./checks/world/nuker/nukerB.js";
+import { nukerC } from "./checks/world/nuker/nukerC.js";
+import { nukerD } from "./checks/world/nuker/nukerD.js";
 import { reach_b } from "./checks/world/reach/reachB.js";
 import { scaffold_a } from "./checks/world/scaffold/scaffoldA.js";
 import { scaffold_b } from "./checks/world/scaffold/scaffoldB.js";
@@ -525,36 +525,30 @@ world.afterEvents.playerPlaceBlock.subscribe(async (placeBlock) => {
 
 
 world.beforeEvents.playerBreakBlock.subscribe((blockBreak) => {
-	
+    
     const { player, block } = blockBreak;
-
+    
     if (!player.isValid() || !block.isValid()) return;
 
-    if (config.generalModules.nuker) {      
-        nuker_b(player, block, blockBreak, Minecraft);     
-        nuker_c(player, block, blockBreak, Minecraft);    
-        nuker_d(player, block, blockBreak, Minecraft);      
+    if(!player.hasTag("breaking")) {
+        player.addTag("breaking");
     }
+    
+    nukerB(player, block, blockBreak, Minecraft);
+    nukerC(player, block, blockBreak, Minecraft);
 });
 
 
 world.afterEvents.playerBreakBlock.subscribe(async (blockBreak) => {
-
+    
     const { player, block, dimension } = blockBreak;
-
+    
     if (!player.isValid() || !block.isValid()) return;
-	
-	const brokenBlockId = blockBreak.brokenBlockPermutation.type.id;
+    
+    nukerA(player, block);
 
-	if(!player.hasTag("breaking")) {
-		player.addTag("breaking");
-	}
-
-	let revertBlock = false;
-	
-    if (config.generalModules.nuker) {   
-        await nuker_a(player, revertBlock);      
-    }
+    const brokenBlockId = blockBreak.brokenBlockPermutation.type.id;
+    let revertBlock = false;
 
 	if (config.modules.reachB.enabled) {
 

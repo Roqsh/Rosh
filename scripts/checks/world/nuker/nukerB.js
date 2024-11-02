@@ -1,45 +1,34 @@
+import * as Minecraft from "@minecraft/server";
 import config from "../../../data/config.js";
-import { flag, getAngle, getSpeed } from "../../../util.js";
+import { flag, getAngle } from "../../../util.js";
 
 /**
- * Checks for breaking with a too high angle (behind) or too low angle (precise)
- * @name nuker_b
- * @param {player} player - The player to check
- * @param {block} block - The broken block
- * @param {object} blockBreak - The event object for block breaking
- * @param {object} Minecraft - The Minecraft game object
- * @remarks Really high sensitivities ***may*** false flag
+ * Checks if a player is breaking a block at an unusual angle.
+ * @param {Minecraft.Player} player - The player to check.
+ * @param {Minecraft.Block} block - The block being broken.
+ * @param {Object} blockBreakEvent - The event object for block breaking.
+ * @param {Object} Minecraft - The Minecraft game object.
  */
-export function nuker_b(player, block, blockBreak, Minecraft) {
+export function nukerB(player, block, blockBreakEvent, Minecraft) {
 
-	if(config.modules.nukerB.enabled) {
+    if (!config.modules.nukerB.enabled) return;
 
-        const angle = getAngle(player, block);
-        
-        if(angle > config.modules.nukerB.angle) {
+    // Calculate the angle between the player and the block
+    const angle = getAngle(player, block);
 
-            const distance = Math.sqrt(
-                Math.pow(block.location.x - player.location.x, 2) + 
-                Math.pow(block.location.z - player.location.z, 2)
-            );
+    // Check if the angle exceeds the allowed threshold
+    if (angle <= config.modules.nukerB.angle) return;
 
-            if(distance > 1.5) {
+    // Calculate horizontal distance between the player and the block
+    const distance = Math.hypot(block.location.x - player.location.x, block.location.z - player.location.z);
 
-                blockBreak.cancel = true;
+    // Flag and cancel block break if distance exceeds the limit
+    if (distance > 1.5) {
+        blockBreakEvent.cancel = true;
 
-                Minecraft.system.run(() => {
-                    flag(player, "Nuker", "B", "angle", angle);
-                });
-            }
-        }
-
-        if(angle < 3 && getSpeed(player) > 1.25) {
-
-            blockBreak.cancel = true;
-
-            Minecraft.system.run(() => {
-                flag(player, "Nuker", "B", "angle", `${angle},speed=${getSpeed(player)}`);
-            });
-        }
+        // Schedule the flag for the player in Minecraft's system queue
+        Minecraft.system.run(() => {
+            flag(player, "Nuker", "B", "angle", `${angle}°`);
+        });
     }
 }

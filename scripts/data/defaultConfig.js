@@ -545,35 +545,28 @@ export default
 
         "nukerA": {
             "enabled": true,
-            "description":"Checks for breaking too many blocks within a tick",
+            "description":"Checks for breaking too many blocks within a tick.",
             "maxBlocks": 3,
             "punishment": "kick",
-            "minVlbeforePunishment": 0
+            "punishmentLength": "7d",
+            "minVlbeforePunishment": 8
         },
 
         "nukerB": {
             "enabled": true,
-            "description":"Checks for breaking with a too high angle",
-            "angle": 80,
+            "description":"Checks if a player is breaking a block at an unusual angle.",
+            "angle": 60,
             "punishment": "kick",
-            "minVlbeforePunishment": 1
+            "punishmentLength": "7d",
+            "minVlbeforePunishment": 8
         },
 
         "nukerC": {
-            "enabled": false,
-            "description":"Checks for breaking a covered block",
-            "punishment": "kick",
-            "score": -1,
-            "minVlbeforePunishment": 0
-        },
-
-        "nukerD": {
             "enabled": true,
-            "description":"Checks for not looking at the broken block",
+            "description":"Checks if a player is breaking a covered block.",
             "punishment": "kick",
-            "score": -1,
-            "punishmentLength": "1m",
-            "minVlbeforePunishment": 1
+            "punishmentLength": "7d",
+            "minVlbeforePunishment": 8
         },
 
         "instabreakA": {

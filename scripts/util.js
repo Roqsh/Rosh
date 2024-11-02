@@ -790,7 +790,7 @@ export function lowercaseFirstLetter(string) {
 
 
 /**
- * Calculates the angle between a player and a second position.
+ * Calculates the angle between a player and a second position on the XZ-level (2D).
  * @param {Minecraft.Player} player - The Player to calculate the angle on
  * @param {object} position - The position to calculate the angle to
  * @returns {number} - The angle between the player and the position in degrees.

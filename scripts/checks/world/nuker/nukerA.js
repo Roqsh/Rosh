@@ -1,30 +1,39 @@
+import * as Minecraft from "@minecraft/server";
 import config from "../../../data/config.js";
 import { flag } from "../../../util.js";
 
+let blockBreakCounts = {};
+
 /**
- * Checks for breaking too many blocks within a tick. (default set to 3)
- * @name nuker_a
- * @param {player} player - The player to check
- * @remarks Some Nuker cheats can lead to an error: command queue is full when they are extremely fast
- * (Therefore the check stops when it exceeds 8 blocks to reduce performance losses)
+ * Checks for breaking too many blocks within a tick.
+ * @param {Minecraft.Player} player - The player to check.
+ * @param {Minecraft.Block} block - The block being broken.
  */
-export async function nuker_a(player, revertBlock) {
+export function nukerA(player, block) {
 
-    if(config.modules.nukerA.enabled) {
+    if (!config.modules.nukerA.enabled || player.getEffect("haste") || player.getGameMode() === "creative") return;
 
-		if(player.getGameMode() === "creative") return;
+    const MAX_BLOCKS = config.modules.nukerA.maxBlocks;
+    const currentTime = Date.now();
 
-	    player.blocksBroken++;
+    // Initialize player-specific data if not already set
+    if (!blockBreakCounts[player.id]) {
+        blockBreakCounts[player.id] = { count: 0, lastTickTime: currentTime };
+    }
 
-		const blocks = player.blocksBroken;
+    const playerData = blockBreakCounts[player.id];
+    const timeDifference = currentTime - playerData.lastTickTime;
 
-		if(blocks > 6) return;
+    // Reset the count if more than 50ms (1 tick) have passed
+    if (timeDifference > 50) {
+        playerData.count = 0;
+        playerData.lastTickTime = currentTime;
+    }
 
-		if(blocks > config.modules.nukerA.maxBlocks) {
+    playerData.count++;
 
-			revertBlock = true;
-		        
-            flag(player, "Nuker", "A", "blocks", blocks);
-		}
-	}
+    // Check if the count exceeds the threshold
+    if (playerData.count > MAX_BLOCKS) {
+        flag(player, "Nuker", "A", "breakings", `${playerData.count}, ${timeDifference}ms`);
+    }
 }
