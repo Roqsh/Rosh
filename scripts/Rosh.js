@@ -148,7 +148,7 @@ world.afterEvents.chatSend.subscribe(({ sender: player }) => {
 		flag(player, "Spammer", "A", "moving", "true");
 	}
 
-	if(config.modules.spammerB.enabled && player.hasTag("attacking") && !player.getEffect(Minecraft.MinecraftEffectTypes.miningFatigue)) {
+	if(config.modules.spammerB.enabled && player.hasTag("attacking") && !player.getEffect(Minecraft.EffectTypes.miningFatigue)) {
 		flag(player, "Spammer", "B", "attacking", "true");
 	}
 
@@ -161,19 +161,17 @@ world.afterEvents.chatSend.subscribe(({ sender: player }) => {
 	}
 });
 
-
 world.afterEvents.entityHurt.subscribe((data) => {
-
-	const player = data.hurtEntity;
-
-	if(player.typeId !== "minecraft:player") return;
-
-	player.addTag("damaged");
-
-	if(data.damageSource.cause === "fall") {
-		player.addTag("fall_damage");
-	}
-
+    
+    const player = data.hurtEntity;
+    
+    if (!player.isPlayer()) return;
+    
+    player.addTag("damaged");
+    
+    if (data.damageSource.cause === "fall") {
+        player.addTag("fall_damage");
+    }
 });
 
 system.runInterval(() => {
@@ -404,13 +402,13 @@ system.runInterval(() => {
         // Runs every tick
         player.removeTag("attacking");
         player.removeTag("breaking");
+        player.removeTag("placing");
         player.removeTag("itemUse");
         
         // Runs every 20th tick (every second)
         if (tick >= 20) {
             player.lastTime = Date.now();
             player.clicks = 0;
-            player.removeTag("placing");
             setScore(player, "tagReset", getScore(player, "tagReset", 0) + 1);
             setScore(player, "packets", 0);
 
@@ -450,16 +448,16 @@ system.runInterval(() => {
 
 
 world.beforeEvents.itemUse.subscribe((itemUse) => {
-
-	const { source: player, itemStack: item } = itemUse;
-
+    
+    const { source: player, itemStack: item } = itemUse;
+    
     if (!player.isValid()) return;
-
-	if (!player.hasTag("itemUse")) {
-		Minecraft.system.run(() => player.addTag("itemUse"));
-	}
-
-	if (player.hasTag("frozen")) itemUse.cancel = true;
+    
+    if (!player.hasTag("itemUse")) {
+        Minecraft.system.run(() => player.addTag("itemUse"));
+    }
+    
+    if (player.hasTag("frozen")) itemUse.cancel = true;
 });
 
 
@@ -469,6 +467,10 @@ world.beforeEvents.playerPlaceBlock.subscribe(async (placeBlock) => {
     
     if (!player.isValid() || !block.isValid()) return;
     
+    if (!player.hasTag("placing")) {
+        Minecraft.system.run(() => player.addTag("placing"));
+    }
+    
     reachB(player, block, placeBlock, Minecraft);
 
     if (config.generalModules.scaffold) {
@@ -477,6 +479,8 @@ world.beforeEvents.playerPlaceBlock.subscribe(async (placeBlock) => {
         scaffold_j(player, block);
         scaffold_k(player, block);
 	}
+
+    if (player.hasTag("frozen")) placeBlock.cancel = true;
 });
 
 let blockPlaceCounts = {}; // Store block place counts per player
@@ -488,10 +492,6 @@ world.afterEvents.playerPlaceBlock.subscribe(async (placeBlock) => {
     if (!player.isValid() || !block.isValid()) return;
 
     await dependencies_h(player, block);
-
-	if(!player.hasTag("placing")) {
-		player.addTag("placing");
-	}
 
 	let undoPlace = false;
 
@@ -527,7 +527,7 @@ world.beforeEvents.playerBreakBlock.subscribe((blockBreak) => {
     if (!player.isValid() || !block.isValid()) return;
 
     if (!player.hasTag("breaking")) {
-        player.addTag("breaking");
+        Minecraft.system.run(() => player.addTag("breaking"));
     }
     
     reachB(player, block, blockBreak, Minecraft);
@@ -535,6 +535,8 @@ world.beforeEvents.playerBreakBlock.subscribe((blockBreak) => {
     nukerB(player, block, blockBreak, Minecraft);
     nukerC(player, block, blockBreak, Minecraft);
     nukerD(player, block, blockBreak, Minecraft);
+
+    if (player.hasTag("frozen")) blockBreak.cancel = true;
 });
 
 
@@ -681,17 +683,17 @@ world.afterEvents.playerSpawn.subscribe((playerJoin) => {
 
 
 world.afterEvents.entityHitEntity.subscribe((entityHitEntity) => {
-
+    
     const { hitEntity: entity, damagingEntity: player} = entityHitEntity;
-	
-	if (!player.isPlayer() || !player.isValid() || !entity.isValid() || player.isHoldingTrident) return;
-
-	if (!player.hasTag("attacking")) {
-		player.addTag("attacking");
-	}
+    
+    if (!player.isPlayer() || !player.isValid() || !entity.isValid() || player.isHoldingTrident) return;
+    
+    if (!player.hasTag("attacking")) {
+        player.addTag("attacking");
+    }
     
     player.clicks++;
-
+    
     hitbox_a(player, entity);
     hitbox_b(player, entity);
     
@@ -701,20 +703,20 @@ world.afterEvents.entityHitEntity.subscribe((entityHitEntity) => {
         killauraC(player, entity);
         killauraD(player, entity);
     }
-
-	reach_a(player, entity);
-
-	badpackets_c(player, entity);
-
-	if (config.customcommands.ui.enabled && player.isOp() && entity.typeId === "minecraft:player") {
-
-		const container = player.getComponent("inventory").container;
-		const item = container.getItem(player.selectedSlotIndex);
+    
+    reach_a(player, entity);
+    
+    badpackets_c(player, entity);
+    
+    if (config.customcommands.ui.enabled && player.isOp() && entity.typeId === "minecraft:player") {
+        
+        const container = player.getComponent("inventory").container;
+        const item = container.getItem(player.selectedSlotIndex);
         const itemEnchants = item.getComponent("enchantable")?.getEnchantments() ?? [];
-
+        
         for (const enchantData of itemEnchants) {
             const enchantTypeId = enchantData.type.id;
-
+            
             if (
                 item?.typeId === config.customcommands.ui.ui_item &&
                 item?.nameTag === config.customcommands.ui.ui_item_name &&
@@ -724,34 +726,32 @@ world.afterEvents.entityHitEntity.subscribe((entityHitEntity) => {
                 playerMenuSelected(player, entity);
             }
         }
-	}
+    }
 });
 
 
 world.afterEvents.entityHitBlock.subscribe((entityHitBlock) => {
-
-	const { damagingEntity: player} = entityHitBlock;
-
+    
+    const { damagingEntity: player} = entityHitBlock;
+    
     if (!player.isPlayer() || !player.isValid()) return;
-
+    
     player.startBreakTime = Date.now();
-	player.flagAutotoolA = false;
-	player.lastSelectedSlot = player.selectedSlotIndex;
-	player.autotoolSwitchDelay = 0;
+    player.flagAutotoolA = false;
+    player.lastSelectedSlot = player.selectedSlotIndex;
+    player.autotoolSwitchDelay = 0;
 });
 
 
 world.afterEvents.itemUse.subscribe((itemUse) => {
-
-    const themecolor = config.themecolor;
-
+    
     const { itemStack: item, source: player } = itemUse;
-
+    
     if (!player.isPlayer() || !player.isValid()) return;
-
+    
     const itemEnchants = item.getComponent("enchantable")?.getEnchantments() ?? [];
-
-    for(const enchantData of itemEnchants) {
+    
+    for (const enchantData of itemEnchants) {
 
         const enchantTypeId = enchantData.type.id;
 
@@ -766,7 +766,7 @@ world.afterEvents.itemUse.subscribe((itemUse) => {
 			if (rateLimit(player)) {
 				mainMenu(player);
 			} else {
-				player.sendMessage(`${themecolor}Rosh §j> §cYou are trying to access the UI too frequently!`);
+				player.sendMessage(`${config.themecolor}Rosh §j> §cYou are trying to access the UI too frequently!`);
 			}
         }
 

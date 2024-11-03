@@ -16,7 +16,7 @@ export function killauraA(player, entity) {
     const rotation = player.getRotation();
 
     // If the target is a player, get their name.
-    const targetName = target.isPlayer() ? `, target=${target.name}` : `, target=${target.typeId.replace("minecraft:", "")}`;
+    const targetName = entity.isPlayer() ? `, target=${entity.name}` : `, target=${entity.typeId.replace("minecraft:", "")}`;
 
     if (!player.isRiding()) {
 

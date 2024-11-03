@@ -12,7 +12,7 @@ export function killauraB(player, entity) {
     if (!config.modules.killauraB.enabled) return;
 
     // If the target is a player, get their name.
-    const targetName = target.isPlayer() ? `, target=${target.name}` : `, target=${target.typeId.replace("minecraft:", "")}`;
+    const targetName = entity.isPlayer() ? `, target=${entity.name}` : `, target=${entity.typeId.replace("minecraft:", "")}`;
 
     // Get the player's inventory container and the currently selected item
     const selectedItem = player.getItemInHand();

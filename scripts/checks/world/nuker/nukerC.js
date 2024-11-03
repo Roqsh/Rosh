@@ -27,13 +27,11 @@ export function nukerC(player, block, blockBreakEvent, Minecraft) {
 
     // Check each surrounding position to see if it is a solid block
     for (const direction of directions) {
-
         const adjacentPos = {
             x: block.location.x + direction.x,
             y: block.location.y + direction.y,
             z: block.location.z + direction.z
         };
-
         const adjacentBlock = player.dimension.getBlock(adjacentPos);
 
         // Increase solid block count if adjacent block is solid and not air
@@ -46,7 +44,6 @@ export function nukerC(player, block, blockBreakEvent, Minecraft) {
             let solidCoverage = true;
 
             for (const bedDir of directions) {
-
                 const bedPos = {
                     x: adjacentPos.x + bedDir.x,
                     y: adjacentPos.y + bedDir.y,
