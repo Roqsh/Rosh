@@ -27,4 +27,11 @@ export function namespoofB(player) {
         // Sanitize the player's nametag to only display valid characters
         player.nameTag = player.nameTag.replace(/[^A-Za-z0-9_\-() ]/g, '').trim();
     }
+    
+    const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+    
+    // Ensure the player's name starts with a letter
+    if (!letters.includes(player.name.charAt(0))) {
+        flag(player, "Namespoof", "B", "starts with", `${player.name.charAt(0)}`);
+    }
 }

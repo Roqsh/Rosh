@@ -54,7 +54,7 @@ import { sprint_c } from "./checks/movement/sprint/sprintC.js";
 import { jump_a } from "./checks/movement/jump/jumpA.js";
 import { invmove_a } from "./checks/movement/invmove/invmoveA.js";
 
-// Import World related checks
+// Import Block related checks
 import { nukerA } from "./checks/world/nuker/nukerA.js";
 import { nukerB } from "./checks/world/nuker/nukerB.js";
 import { nukerC } from "./checks/world/nuker/nukerC.js";
@@ -103,105 +103,31 @@ let tps = 20;
 let lagValue = 1;
 let lastDate = Date.now();
 
-world.beforeEvents.chatSend.subscribe((msg) => {
-
-    const themecolor = config.themecolor;
-	const { sender: player, message } = msg;
-    
-    badpackets_e(player, message, msg);
-
-	if (message.includes("horion") || message.includes("borion") || message.includes("packet") || message.includes("vector") || message.includes("prax") || message.includes("zephyr") || message.includes("nuvola")  || message.includes("aelous") || message.includes("disepi") || message.includes("ambrosial") || message.includes("utility mod") || message.includes("nigga") || message.includes("niger")) {	
-		msg.cancel = true;
-	}
-
-	if (message.includes("Horion") || message.includes("Borion") || message.includes("Packet") || message.includes("Vector") || message.includes("Prax") || message.includes("Zephyr") || message.includes("Nuvola") || message.includes("Aelous") || message.includes("Disepi") || message.includes("Ambrosial") || message.includes("Lunaris") || message.includes("Nigga") || message.includes("Niger")) {
-		msg.cancel = true;
-	}
-
-	if (player.hasTag("isMuted")) {
-		msg.cancel = true;
-		player.sendMessage(`§r${themecolor}Rosh §j> §cUnable to send that message - You are muted!`);
-	}
-
-	commandHandler(msg);
-
-	if (config.logSettings.showChat) {
-        data.recentLogs.push(`${timeDisplay()}§r<${player.nameTag}> ${message}`);
-    }
-
-	if (!msg.cancel) {
-		if (player.name !== player.nameTag) {
-			world.sendMessage(`§r<${player.nameTag}> ${message}`);
-			msg.cancel = true;
-		} else {
-			world.sendMessage(`<${player.nameTag}> ${message.replace(/[^\x00-\xFF]/g, "")}`);
-			msg.cancel = true;
-		}
-	}
-});
-
-
-world.afterEvents.chatSend.subscribe(({ sender: player }) => {
-
-    //TODO: Recode them (Move them into their own category and add Spammer/E)
-	if(config.modules.spammerA.enabled && player.isSprinting && player.isOnGround && !player.isJumping) {
-		flag(player, "Spammer", "A", "moving", "true");
-	}
-
-	if(config.modules.spammerB.enabled && player.hasTag("attacking") && !player.getEffect(Minecraft.EffectTypes.miningFatigue)) {
-		flag(player, "Spammer", "B", "attacking", "true");
-	}
-
-	if(config.modules.spammerC.enabled && player.hasTag("placing")) {
-		flag(player, "Spammer", "C", "placing", "true");
-	}
-
-	if(config.modules.spammerD.enabled && player.hasTag("hasGUIopen")) {
-		flag(player, "Spammer", "D", "inGUI", "true");
-	}
-});
-
-world.afterEvents.entityHurt.subscribe((data) => {
-    
-    const player = data.hurtEntity;
-    
-    if (!player.isPlayer()) return;
-    
-    player.addTag("damaged");
-    
-    if (data.damageSource.cause === "fall") {
-        player.addTag("fall_damage");
-    }
-});
-
 system.runInterval(() => {
-
+    
     if (system.currentTick % 20 == 0) {
-	   const deltaDate = Date.now() - lastDate;
-	   const lag = deltaDate / 1000;
-
-	   tps = Minecraft.TicksPerSecond / lag;
-	   lagValue = lag;
-	   lastDate = Date.now();
+        const deltaDate = Date.now() - lastDate;
+        const lag = deltaDate / 1000;
+        
+        tps = Minecraft.TicksPerSecond / lag;
+        lagValue = lag;
+        lastDate = Date.now();
     }
     
     for (const player of world.getAllPlayers()) {
-
+        
         if (player.hasTag("isBanned")) {
             ban(player);
         }
-
+        
         manageTags(player);
         
         const rotation = player.getRotation();
         const velocity = player.getVelocity();
         const container = player.getComponent("inventory")?.container;
         const selectedSlot = player.selectedSlotIndex;
-		const speed = getSpeed(player);
 
         const themecolor = config.themecolor;
-
-		player.removeTag("noPitchDiff");
 
         if (player.getItemInHand()?.typeId === "minecraft:trident") {
             player.isHoldingTrident = true;
@@ -222,12 +148,6 @@ system.runInterval(() => {
 		if (Date.now() - player.startBreakTime < config.modules.autotoolA.startBreakDelay && player.lastSelectedSlot !== selectedSlot) {
 			player.flagAutotoolA = true;
 			player.autotoolSwitchDelay = Date.now() - player.startBreakTime;
-		}
-
-		if (player.hasTag("moving")) {
-			player.runCommandAsync(`scoreboard players set @s xPos ${Math.floor(player.location.x)}`);
-			player.runCommandAsync(`scoreboard players set @s yPos ${Math.floor(player.location.y)}`);
-			player.runCommandAsync(`scoreboard players set @s zPos ${Math.floor(player.location.z)}`);
 		}
 
 		if (getScore(player, "kickvl", 0) > config.kicksBeforeBan / 2 && !player.hasTag("strict")) {
@@ -276,7 +196,7 @@ system.runInterval(() => {
 		setScore(player, "currentTick", tick + 1);
         
         // Debug utilities
-        debug(player, "Speed", speed, "speed");
+        debug(player, "Speed", getSpeed(player), "speed");
         debug(player, "Ticks", `${tick <= 20 ? `§a` : `§c`}${tick}`, "ticks");
         debug(player, "YVelocity", velocity.y, "devvelocity");
 
@@ -443,6 +363,78 @@ system.runInterval(() => {
         if (player.isFalling && !player.isHoldingRiptideTrident) {
             player.usedRiptideTrident = false;
         }
+    }
+});
+
+
+world.beforeEvents.chatSend.subscribe((msg) => {
+
+    const themecolor = config.themecolor;
+	const { sender: player, message } = msg;
+    
+    badpackets_e(player, message, msg);
+
+	if (message.includes("horion") || message.includes("borion") || message.includes("packet") || message.includes("vector") || message.includes("prax") || message.includes("zephyr") || message.includes("nuvola")  || message.includes("aelous") || message.includes("disepi") || message.includes("ambrosial") || message.includes("utility mod") || message.includes("nigga") || message.includes("niger")) {	
+		msg.cancel = true;
+	}
+
+	if (message.includes("Horion") || message.includes("Borion") || message.includes("Packet") || message.includes("Vector") || message.includes("Prax") || message.includes("Zephyr") || message.includes("Nuvola") || message.includes("Aelous") || message.includes("Disepi") || message.includes("Ambrosial") || message.includes("Lunaris") || message.includes("Nigga") || message.includes("Niger")) {
+		msg.cancel = true;
+	}
+    
+    if (player.isMuted()) {
+        msg.cancel = true;
+        player.sendMessage(`${themecolor}Rosh §j> §cUnable to send that message - You are muted!`);
+	}
+
+	commandHandler(msg);
+
+	if (config.logSettings.showChat) {
+        data.recentLogs.push(`${timeDisplay()}§r<${player.nameTag}> ${message}`);
+    }
+
+	if (!msg.cancel) {
+		if (player.name !== player.nameTag) {
+			world.sendMessage(`§r<${player.nameTag}> ${message}`);
+			msg.cancel = true;
+		} else {
+			world.sendMessage(`<${player.nameTag}> ${message.replace(/[^\x00-\xFF]/g, "")}`);
+			msg.cancel = true;
+		}
+	}
+});
+
+
+world.afterEvents.chatSend.subscribe(({ sender: player }) => {
+
+    //TODO: Recode them (Move them into their own category and add Spammer/E)
+	if(config.modules.spammerA.enabled && player.isSprinting && player.isOnGround && !player.isJumping) {
+		flag(player, "Spammer", "A", "moving", "true");
+	}
+
+	if(config.modules.spammerB.enabled && player.hasTag("attacking") && !player.getEffect(Minecraft.EffectTypes.miningFatigue)) {
+		flag(player, "Spammer", "B", "attacking", "true");
+	}
+
+	if(config.modules.spammerC.enabled && player.hasTag("placing")) {
+		flag(player, "Spammer", "C", "placing", "true");
+	}
+
+	if(config.modules.spammerD.enabled && player.hasTag("hasGUIopen")) {
+		flag(player, "Spammer", "D", "inGUI", "true");
+	}
+});
+
+world.afterEvents.entityHurt.subscribe((data) => {
+    
+    const player = data.hurtEntity;
+    
+    if (!player.isPlayer()) return;
+    
+    player.addTag("damaged");
+    
+    if (data.damageSource.cause === "fall") {
+        player.addTag("fall_damage");
     }
 });
 

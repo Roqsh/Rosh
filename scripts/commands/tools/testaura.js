@@ -60,13 +60,17 @@ export function testaura(message, args) {
  */
 export function summonAuraBot(player, targetPlayer) {
 
-    // Get random coordinates to spawn the bot
-    const x = Math.random() * 6 - 3;
-    const y = Math.random() * 2; 
-    const z = Math.random() * 6 - 3; 
+    const viewDirection = targetPlayer.getViewDirection();
+
+    // Calculate the position 1.5 blocks behind the player
+    const spawnPosition = {
+        x: targetPlayer.location.x - viewDirection.x * 1.5,
+        y: targetPlayer.location.y - viewDirection.y * 1.5,
+        z: targetPlayer.location.z - viewDirection.z * 1.5
+    };
 
     // Spawn the bot to check for Killaura
-    targetPlayer.runCommandAsync(`summon rosh:killaura ~${x} ~${y} ~${z}`);
+    targetPlayer.runCommandAsync(`summon rosh:killaura ~${spawnPosition.x} ~${spawnPosition.y} ~${spawnPosition.z}`);
     
     // Notify the initiator
     player.sendMessage(`${config.themecolor}Rosh §j> §aKillaura bot succesfully spawned.`);

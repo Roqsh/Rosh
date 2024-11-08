@@ -532,6 +532,23 @@ export function animation(player, type) {
 
 
 /**
+ * Converts a camelCase string to a formatted string with a forward slash.
+ * @param {string} input - The string to convert.
+ * @returns {string} The converted string in "Example/A" format.
+ * @example 
+ * convertString("testB"); // returns "Test/B"
+ */
+export function convertString(input) {
+    return input
+        // Insert '/' between lowercase and uppercase boundaries
+        .replace(/([a-z])([A-Z])/g, (match, p1, p2) => `${p1}/${p2}`)
+        // Capitalize the first character
+        .replace(/^./, (match) => match.toUpperCase());
+}
+
+
+
+/**
  * Parses a time string into milliseconds.
  * @param {string} str - The time value to convert to milliseconds
  * @example convertToMs("24d"); // returns 2073600000
