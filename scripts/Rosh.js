@@ -116,8 +116,12 @@ system.runInterval(() => {
     
     for (const player of world.getAllPlayers()) {
         
-        if (player.hasTag("isBanned")) {
-            ban(player);
+        if (player.isBanned()) {
+            const gotBanned = player.ban();
+
+            if (gotBanned) {
+                continue; // Skip this player iteration if they are banned
+            }
         }
         
         manageTags(player);

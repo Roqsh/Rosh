@@ -1,6 +1,7 @@
 import { Player, Entity, ItemStack } from "@minecraft/server";
 import { Memory } from "../utils/Memory.js";
 import { BoundingBox } from "../utils/BoundingBox.js";
+import { ban } from "../util.js";
 
 /**
  * Initializes and enhances the Player prototype with custom methods.
@@ -233,6 +234,14 @@ export function loadPlayerPrototypes() {
         return this.hasTag("isMuted");
     }
 
+    Player.prototype.ban = function() {
+        const state = ban(this);
+        return state;
+    }
+
+    Player.prototype.isBanned = function() {
+        return this.hasTag("isBanned");
+    }
 
     // Adding movement methods to the Player prototype
 

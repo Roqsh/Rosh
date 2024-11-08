@@ -70,7 +70,7 @@ export function summonAuraBot(player, targetPlayer) {
     };
 
     // Spawn the bot to check for Killaura
-    targetPlayer.runCommandAsync(`summon rosh:killaura ~${spawnPosition.x} ~${spawnPosition.y} ~${spawnPosition.z}`);
+    targetPlayer.runCommandAsync(`summon rosh:killaura ~${spawnPosition.x} ~${spawnPosition.y + 1.5} ~${spawnPosition.z}`);
     
     // Notify the initiator
     player.sendMessage(`${config.themecolor}Rosh §j> §aKillaura bot succesfully spawned.`);

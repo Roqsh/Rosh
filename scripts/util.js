@@ -383,7 +383,8 @@ function handleAlert(player, check, checkType, currentVl, debugName, debug, them
 /**
  * Bans a player from the game.
  * @param {Minecraft.Player} player - The player to be banned.
- * @example ban(rqosh);
+ * @returns {boolean} Whether or not the player was banned. (If the ban length runs out **OR** the player gets unbanned by staff **OR** the player is in a ban whitelist, this will return false.)
+ * @example ban(rqosh); // Returns a boolean indicating whether or not the player was banned.
  * @throws {TypeError} If player is not an object.
  */
 export function ban(player) {
@@ -393,7 +394,7 @@ export function ban(player) {
     }
 
     // If the player is in the whitelist, do nothing
-    if (config.excluded_players.includes(player.name)) return;
+    if (config.excluded_players.includes(player.name)) return false;
 
     const themecolor = config.themecolor;
 
@@ -417,7 +418,7 @@ export function ban(player) {
 
         // Remove the player from the unban queue
         data.unbanQueue = data.unbanQueue.filter(name => name !== playerName);
-        return;
+        return false;
     }
 
     // Initialize variables for reason and time
@@ -451,7 +452,7 @@ export function ban(player) {
                 if (tag.includes("Reason:") || tag.includes("Length:")) player.removeTag(tag);
             });
 
-            return;
+            return false;
         }
 
         // Calculate the remaining ban time
@@ -476,6 +477,8 @@ export function ban(player) {
 
     // Kick the player with the ban message
     player.kick(banMessage);
+
+    return true;
 }
 
 

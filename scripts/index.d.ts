@@ -87,6 +87,13 @@ declare module "@minecraft/server" {
         isMuted(): boolean;
 
         /**
+         * Whether the player is banned (tagged with `isBanned`).
+         * @returns {boolean} True if the player is banned, false otherwise.
+         * @Rosh
+         */
+        isBanned(): boolean;
+
+        /**
          * Whether the player is logged in for the specified number of ticks.
          * @param {number} ticks The number of ticks to check for. Defaults to 5 seconds (100 ticks) if not specified.
          * @Rosh
@@ -363,6 +370,12 @@ declare module "@minecraft/server" {
          * @Rosh
          */
         kick(reason: string | undefined): Promise<boolean>;
+
+        /**
+         * Bans the player from the server.
+         * @returns {boolean} True if the player was successfully banned, false otherwise.
+         */
+        ban(): boolean;
 
         /**
          * Mutes the player, preventing them from sending chat messages. Adds the `isMuted` tag.
