@@ -1,6 +1,6 @@
 import * as Minecraft from "@minecraft/server";
 import config from "../../data/config.js";
-import { convertString } from "../../util.js";
+import { String } from "../../utils/String.js";
 
 /**
  * Sends a description of the specified module to the player.
@@ -45,7 +45,7 @@ export function about(message, args) {
     }
 
     // Format the module name for better readability
-    const readableCheck = convertString(moduleName);
+    const readableCheck = String.format(moduleName);
 
     // Send the description of the module to the player
     player.sendMessage(`§r${themecolor}Rosh §j> §aDescription of §8${readableCheck}§a: §8${description}`);

@@ -535,23 +535,6 @@ export function animation(player, type) {
 
 
 /**
- * Converts a camelCase string to a formatted string with a forward slash.
- * @param {string} input - The string to convert.
- * @returns {string} The converted string in "Example/A" format.
- * @example 
- * convertString("testB"); // returns "Test/B"
- */
-export function convertString(input) {
-    return input
-        // Insert '/' between lowercase and uppercase boundaries
-        .replace(/([a-z])([A-Z])/g, (match, p1, p2) => `${p1}/${p2}`)
-        // Capitalize the first character
-        .replace(/^./, (match) => match.toUpperCase());
-}
-
-
-
-/**
  * Parses a time string into milliseconds.
  * @param {string} str - The time value to convert to milliseconds
  * @example convertToMs("24d"); // returns 2073600000
@@ -763,48 +746,6 @@ export function setScore(player, objectiveName, value) {
     } catch (error) {
         console.error(`Error: Failed to set score for player. ${error.message}`);
     }
-}
-
-
-
-/**
- * Capitalizes the first letter of the given string.
- * @param {string} string - The string to modify
- * @returns {string} The updated string with the first letter capitalized
- * @example uppercaseFirstLetter('hello'); // returns 'Hello'
- * @example uppercaseFirstLetter(''); // returns ''
- * @example uppercaseFirstLetter(123); // returns 123
- * @remarks Gives back the original input if it is not a string/or length = 0
- */
-export function uppercaseFirstLetter(string) {
-    // Check if the input is a string or is an empty string
-    if (typeof string !== 'string' || string.length === 0) {
-        return string;
-    }
-
-    const [first, ...rest] = string;
-    return `${first.toUpperCase()}${rest.join('')}`;
-}
-
-
-
-/**
- * Lowercases the first letter of the given string.
- * @param {string} string - The string to modify
- * @returns {string} The updated string with the first letter lowercased
- * @example lowercaseFirstLetter('Hello'); // returns 'hello'
- * @example lowercaseFirstLetter(''); // returns ''
- * @example lowercaseFirstLetter(123); // returns 123
- * @remarks Gives back the original input if it is not a string/or length = 0
- */
-export function lowercaseFirstLetter(string) {
-    // Check if the input is a string or is an empty string
-    if (typeof string !== 'string' || string.length === 0) {
-        return string;
-    }
-
-	const [first, ...rest] = string;
-    return `${first.toLowerCase()}${rest.join('')}`;
 }
 
 

@@ -2,7 +2,7 @@ import * as Minecraft from "@minecraft/server";
 import * as MinecraftUI from "@minecraft/server-ui";
 import { world } from "@minecraft/server";
 import config from "../../data/config.js";
-import { uppercaseFirstLetter, tellStaff } from "../../util.js";
+import { tellStaff } from "../../util.js";
 import { clearEnderchest } from "../../commands/tools/ecwipe.js";
 import { addOp } from "../../commands/staff/op.js";
 import { removeOp } from "../../commands/staff/deop.js";
@@ -11,6 +11,7 @@ import { summonAuraBot } from "../../commands/tools/testaura.js";
 import { getStats } from "../../commands/staff/stats.js";
 import { mainMenu } from "../mainMenu.js";
 import { kickPlayerMenu, banPlayerMenu } from "./punishMenu.js";
+import { String } from "../../utils/String.js";
 
 /**
  * Displays a list of all available players to manage.
@@ -88,7 +89,7 @@ export function playerMenuSelected(player, selectedPlayer) {
         .title(`Manage ${selectedPlayer.name}`)
         .body(
             `§8Coordinates: ${Math.floor(selectedPlayer.location.x)}, ${Math.floor(selectedPlayer.location.y)}, ${Math.floor(selectedPlayer.location.z)}\n` + 
-            `Dimension: ${uppercaseFirstLetter((selectedPlayer.dimension.id).replace("minecraft:", ""))}\n` + 
+            `Dimension: ${String.toUpperCase((selectedPlayer.dimension.id).replace("minecraft:", ""))}\n` + 
             `Operator: ${selectedPlayer.isOp() ? "§8[§a+§8]" : "§8[§c-§8]"}\n` + 
             `Muted: ${selectedPlayer.hasTag("isMuted") ? "§8[§a+§8]" : "§8[§c-§8]"}\n` + 
             `Frozen: ${selectedPlayer.hasTag("frozen") ? "§8[§a+§8]" : "§8[§c-§8]"}\n` + 
@@ -239,7 +240,7 @@ function playerMenuTeleport(player, selectedPlayer) {
         .title(`Teleport Menu - ${selectedPlayer.name}`)
         .body(
             `§aLocation: §8${Math.floor(selectedPlayer.location.x)}§a, §8${Math.floor(selectedPlayer.location.y)}§a, §8${Math.floor(selectedPlayer.location.z)}\n` +
-            `§aDimension: §8${uppercaseFirstLetter((selectedPlayer.dimension.id).replace("minecraft:", ""))}`
+            `§aDimension: §8${String.toUpperCase((selectedPlayer.dimension.id).replace("minecraft:", ""))}`
         )
         .button(`Teleport to ${selectedPlayer.name}`)
         .button(`Teleport ${selectedPlayer.name} to you`)
@@ -294,7 +295,7 @@ function playerMenuGamemode(player, selectedPlayer) {
     // Create a menu for changing gamemodes
     const menu = new MinecraftUI.ActionFormData()
         .title(`Gamemode Menu - ${selectedPlayer.name}`)
-        .body(`§aGamemode: §8${uppercaseFirstLetter(selectedPlayer.getGameMode())}`)
+        .body(`§aGamemode: §8${String.toUpperCase(selectedPlayer.getGameMode())}`)
         .button("Adventure")
         .button("Survival")
         .button("Creative")
@@ -343,5 +344,5 @@ function updateGameMode(selectedPlayer, player, gamemode) {
 
     // Update the gamemode of the player and notify them about the change
     selectedPlayer.setGameMode(gamemode);
-    player.sendMessage(`${themecolor}Rosh §j> ${selectedPlayer.id === player.id ? "§aYour" : `§8${selectedPlayer.name}'s`} §agamemode is now §8${uppercaseFirstLetter(selectedPlayer.getGameMode())}§a.`);
+    player.sendMessage(`${themecolor}Rosh §j> ${selectedPlayer.id === player.id ? "§aYour" : `§8${selectedPlayer.name}'s`} §agamemode is now §8${String.toUpperCase(selectedPlayer.getGameMode())}§a.`);
 }

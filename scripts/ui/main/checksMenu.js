@@ -2,8 +2,8 @@ import * as MinecraftUI from "@minecraft/server-ui";
 import { world } from "@minecraft/server";
 import config from "../../data/config.js";
 import data from "../../data/data.js";
-import { uppercaseFirstLetter } from "../../util.js";
 import { mainMenu } from "../mainMenu.js";
+import { String } from "../../utils/String.js";
 
 const moduleList = Object.keys(config.modules).concat(Object.keys(config.misc_modules));
 const modules = [];
@@ -46,7 +46,7 @@ export function checksMenu(player) {
         .title("Checks")
 
     for (const subModule of modules) {
-        menu.button(uppercaseFirstLetter(subModule));
+        menu.button(String.toUpperCase(subModule));
     }
 
     menu.button("Back");
@@ -90,7 +90,7 @@ function modulesCheckSelectMenu(player, selection) {
         checks.push(module);
 
         const checkData = config.modules[module] ?? config.misc_modules[module];
-        menu.button(`${uppercaseFirstLetter(subCheck)}/${module[module.length - 1]}\n${checkData.enabled ? "§8[§a+§8]" : "§8[§c-§8]"}`);
+        menu.button(`${String.toUpperCase(subCheck)}/${module[module.length - 1]}\n${checkData.enabled ? "§8[§a+§8]" : "§8[§c-§8]"}`);
     }
 
     if (checks.length === 1) return editChecksMenu(player, checks[0]);
@@ -137,7 +137,7 @@ function editChecksMenu(player, check) {
 
         if (punishmentSettings.includes(key)) continue;
 
-        const settingName = uppercaseFirstLetter(key).replace(/_./g, (match) => " " + match[1].toUpperCase());
+        const settingName = String.toUpperCase(key).replace(/_./g, (match) => " " + match[1].toUpperCase());
 
         switch (typeof checkData[key]) {
             case "number":

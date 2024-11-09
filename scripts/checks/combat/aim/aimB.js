@@ -1,7 +1,8 @@
 import * as Minecraft from "@minecraft/server";
 import config from "../../../data/config.js";
-import { flag, uppercaseFirstLetter, debug } from "../../../util";
+import { flag, debug } from "../../../util";
 import { EvictingList } from "../../../utils/EvictingList.js";
+import { String } from "../../../utils/String.js";
 
 const yawSamples = new Map();
 const pitchSamples = new Map();
@@ -71,12 +72,12 @@ function checkForSmoothing(player, sampleList, type, currentDelta, frequencyThre
 
         // Debug information if not zero
         if (currentDelta != 0) {
-            debug(player, `Delta ${uppercaseFirstLetter(type)}`, `${currentDelta}, frequency=${integerFrequency}, (${integerCount} of ${sampleList.getCurrentSize()})`, `aimB${type}`);
+            debug(player, `Delta ${String.toUpperCase(type)}`, `${currentDelta}, frequency=${integerFrequency}, (${integerCount} of ${sampleList.getCurrentSize()})`, `aimB${type}`);
         }
 
         // Flag the player if the integer frequency exceeds the threshold
         if (integerFrequency > frequencyThreshold) {
-            flag(player, "Aim", "B", `delta${uppercaseFirstLetter(type)}`, `${recentIntegerValue}, frequency=${integerFrequency}, (${integerCount} of ${sampleList.getCurrentSize()})`);
+            flag(player, "Aim", "B", `delta${String.toUpperCase(type)}`, `${recentIntegerValue}, frequency=${integerFrequency}, (${integerCount} of ${sampleList.getCurrentSize()})`);
             sampleList.clear();
         }
     }

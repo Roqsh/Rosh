@@ -153,14 +153,10 @@ system.runInterval(() => {
 			player.flagAutotoolA = true;
 			player.autotoolSwitchDelay = Date.now() - player.startBreakTime;
 		}
-
-		if (getScore(player, "kickvl", 0) > config.kicksBeforeBan / 2 && !player.hasTag("strict")) {
-			try {
-				player.addTag("strict");
-			} catch (error) {
-				player.runCommandAsync(`tag "${player.name}" add strict`);
-			}
-		}
+        
+        if (getScore(player, "kickvl", 0) > config.kicksBeforeBan / 2 && !player.hasTag("strict")) {
+            player.addTag("strict");
+        }
 
 		const blockUnderPlayer = player.dimension.getBlock({
             x: player.location.x, 
@@ -377,14 +373,6 @@ world.beforeEvents.chatSend.subscribe((msg) => {
 	const { sender: player, message } = msg;
     
     badpackets_e(player, message, msg);
-
-	if (message.includes("horion") || message.includes("borion") || message.includes("packet") || message.includes("vector") || message.includes("prax") || message.includes("zephyr") || message.includes("nuvola")  || message.includes("aelous") || message.includes("disepi") || message.includes("ambrosial") || message.includes("utility mod") || message.includes("nigga") || message.includes("niger")) {	
-		msg.cancel = true;
-	}
-
-	if (message.includes("Horion") || message.includes("Borion") || message.includes("Packet") || message.includes("Vector") || message.includes("Prax") || message.includes("Zephyr") || message.includes("Nuvola") || message.includes("Aelous") || message.includes("Disepi") || message.includes("Ambrosial") || message.includes("Lunaris") || message.includes("Nigga") || message.includes("Niger")) {
-		msg.cancel = true;
-	}
     
     if (player.isMuted()) {
         msg.cancel = true;
@@ -408,26 +396,6 @@ world.beforeEvents.chatSend.subscribe((msg) => {
 	}
 });
 
-
-world.afterEvents.chatSend.subscribe(({ sender: player }) => {
-
-    //TODO: Recode them (Move them into their own category and add Spammer/E)
-	if(config.modules.spammerA.enabled && player.isSprinting && player.isOnGround && !player.isJumping) {
-		flag(player, "Spammer", "A", "moving", "true");
-	}
-
-	if(config.modules.spammerB.enabled && player.hasTag("attacking") && !player.getEffect(Minecraft.EffectTypes.miningFatigue)) {
-		flag(player, "Spammer", "B", "attacking", "true");
-	}
-
-	if(config.modules.spammerC.enabled && player.hasTag("placing")) {
-		flag(player, "Spammer", "C", "placing", "true");
-	}
-
-	if(config.modules.spammerD.enabled && player.hasTag("hasGUIopen")) {
-		flag(player, "Spammer", "D", "inGUI", "true");
-	}
-});
 
 world.afterEvents.entityHurt.subscribe((data) => {
     

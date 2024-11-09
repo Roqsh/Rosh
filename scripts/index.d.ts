@@ -372,20 +372,23 @@ declare module "@minecraft/server" {
         kick(reason: string | undefined): Promise<boolean>;
 
         /**
-         * Bans the player from the server.
+         * Bans a player from the game.
          * @returns {boolean} True if the player was successfully banned, false otherwise.
+         * @Rosh
          */
         ban(): boolean;
 
         /**
          * Mutes the player, preventing them from sending chat messages. Adds the `isMuted` tag.
          * @returns {Promise<boolean>} A promise that resolves when the player is muted.
+         * @Rosh
          */
         mute(): Promise<boolean>;
 
         /**
          * Unmutes the player, allowing them to send chat messages again. Removes the `isMuted` tag.
          * @returns {Promise<boolean>} A promise that resolves when the player is unmuted.
+         * @Rosh
          */
         unmute(): Promise<boolean>;
 
