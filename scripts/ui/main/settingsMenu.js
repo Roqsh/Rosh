@@ -19,6 +19,7 @@ export function settingsMenu(player) {
     const menu = new MinecraftUI.ActionFormData()
         .title("Settings")
         .button(`Notifications\n${player.hasTag("notify") ? "§8[§a+§8]" : "§8[§c-§8]"}`)
+        .button(`Webhooks\n${config.webhook.enabled ? "§8[§a+§8]" : "§8[§c-§8]"}`)
         .button(`Autoban\n${config.autoban ? "§8[§a+§8]" : "§8[§c-§8]"}`)
         .button(`Silent\n${config.silent ? "§8[§a+§8]" : "§8[§c-§8]"}`)
         .button(`Preset\n${config.preset === "stable" ? "§8Stable" : "§8Beta"}`)
@@ -36,12 +37,13 @@ export function settingsMenu(player) {
 
         switch (response.selection) {
             case 0: handleNotification(player, themecolor); break;
-            case 1: autobanMenu(player); break;
-            case 2: silentMenu(player); break;
-            case 3: presetMenu(player); break;
-            case 4: themecolorMenu(player); break;
-            case 5: thememodeMenu(player); break; 
-            case 6: mainMenu(player); break;
+            case 1: webhookMenu(player); break;
+            case 2: autobanMenu(player); break;
+            case 3: silentMenu(player); break;
+            case 4: presetMenu(player); break;
+            case 5: themecolorMenu(player); break;
+            case 6: thememodeMenu(player); break; 
+            case 7: mainMenu(player); break;
         }
     }).catch((error) => {
         // Handle promise rejection
@@ -51,7 +53,74 @@ export function settingsMenu(player) {
 }
 
 /**
- * Displays a toggle to enabled autobanning people.
+ * Lets a player toggle and customize Webhooks.
+ * @param {import("@minecraft/server").Player} player  - The player to whom the menu is shown.
+ */
+function webhookMenu(player) {
+
+    // Play a sound to indicate the menu has been opened
+    player.playSound("mob.chicken.plop");
+
+    const themecolor = config.themecolor;
+
+    const currentStyleIndex = config.webhook.style === "message" ? 0 : 1;
+
+    // Create a menu to enable or disable Webhooks
+    const menu = new MinecraftUI.ModalFormData()
+        .title("Webhooks")
+        .toggle(`${config.webhook.enabled ? "Disable Webhooks" : "Enable Webhooks"}`, config.webhook.enabled)
+        .dropdown("Webhook Style", ["Message", "Embed"], currentStyleIndex)
+        .textField("Webhook URL", `${config.webhook.url ? config.webhook.url : "§o§7Enter URL here"}`)
+        .submitButton("Save Changes");
+
+    // Show the menu to the player and handle the response based on the player's selection
+    menu.show(player).then((response) => {
+        
+        // Check if the menu was cancelled and back to the settings menu
+        if (response.canceled) {
+            return settingsMenu(player);
+        }
+
+        // Get the new values from the response
+        const newEnabled = response.formValues[0];
+        const newStyle = response.formValues[1] === 0 ? "message" : "embed"; // 0 -> message, 1 -> embed
+        const newUrl = response.formValues[2];
+
+        // Check if there are any changes
+        let feedbackMessage = [];
+        if (config.webhook.enabled !== newEnabled) {
+            config.webhook.enabled = newEnabled;
+            feedbackMessage.push(`${themecolor}Rosh §j> §8Webhooks ${config.webhook.enabled ? "§a" : "§c"}are now ${newEnabled ? "enabled" : "disabled"}!`);
+        }
+
+        if (config.webhook.style !== newStyle) {
+            config.webhook.style = newStyle;
+            feedbackMessage.push(`${themecolor}Rosh §j> §aWebhook Style is now set to §8${newStyle === "message" ? "Message" : "Embed"}§a.`);
+        }
+
+        if (config.webhook.url !== newUrl) {
+            if (newUrl.indexOf(":") === -1 || newUrl.length === 0) {
+                feedbackMessage.push(`${themecolor}Rosh §j> §cPlease enter a valid Webhook URL!`);
+            } else {
+                config.webhook.url = newUrl;
+                feedbackMessage.push(`${themecolor}Rosh §j> §aWebhook URL has been updated to: §8${newUrl}`);
+            }
+        }
+
+        // Send the feedback messages to the player
+        feedbackMessage.forEach(message => {
+            player.sendMessage(message);
+        });
+
+    }).catch((error) => {
+        // Handle promise rejection
+        console.error(`${new Date().toISOString()} | ${error}${error.stack}`);
+        player.sendMessage(`${themecolor}Rosh §j> §cAn error occurred:\n§8${error}\n${error.stack}`);
+    });
+}
+
+/**
+ * Displays a toggle to enable autobanning people.
  * @param {import("@minecraft/server").Player} player  - The player to whom the menu is shown.
  */
 function autobanMenu(player) {

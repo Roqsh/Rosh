@@ -1,5 +1,13 @@
-export default
-{
+
+
+export default {
+
+    "webhook": {
+        "enabled": false,
+        "style": "embed", // Either 'message' or 'embed'
+        "url": "" // Better keep it private!
+    },
+    
     "preset": "stable", // Choose between 'stable' and 'beta' - Beta contains checks which are still under development/not finished, so false flags or bugs can occur.
 
     "themecolor": "§u", // The color of the theme which is used for Rosh - ex: §a, §c, §9, etc.

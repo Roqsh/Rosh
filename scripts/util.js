@@ -3,6 +3,8 @@ import config from "./data/config.js";
 import data from "./data/data.js";
 import { world } from "@minecraft/server";
 import { resetWarns } from "./commands/staff/resetwarns.js";
+import { Embed } from "./utils/Embed.js";
+import { Webhook } from "./utils/Webhook.js";
 
 /**
  * Alerts staff if a player fails a check.
@@ -310,6 +312,9 @@ function handleAlert(player, check, checkType, currentVl, debugName, debug, them
         thememode = "Rosh";
     }
 
+    // Determine the maximum violation level that a player is allowed to have before a punishment
+    const maxVl = config.modules[check.toLowerCase() + checkType.toUpperCase()].minVlbeforePunishment;
+
     // Handling alert based on the theme mode
     if (thememode === "Rosh") {
 
@@ -329,9 +334,6 @@ function handleAlert(player, check, checkType, currentVl, debugName, debug, them
         }
 
     } else if (thememode === "Alice") {
-
-        // Determine the maximum violation level that a player is allowed to have before a punishment
-        const maxVl = config.modules[check.toLowerCase() + checkType.toUpperCase()].minVlbeforePunishment;
 
         // Generate a visual representation of the violation level
         let volume = ``;
@@ -375,6 +377,54 @@ function handleAlert(player, check, checkType, currentVl, debugName, debug, them
         if (config.console_debug) {
             console.warn(`${themecolor}Rosh §j> §8${player.name} §jfailed ${themecolor}${check}§j/${themecolor}${checkType.toUpperCase()}§j - {${debugName}=${debug}§j} [${volume}§j]`);
         }
+    }
+
+    // Send a webhook if enabled
+    handleWebhook(player, check, checkType, debugName, debug, currentVl, maxVl);
+}
+
+/**
+ * Handles the webhook logic.
+ * @param {Minecraft.Player} player - The player who failed the check.
+ * @param {string} check - The name of the check that was failed.
+ * @param {string} checkType - The type of sub-check that was failed.
+ * @param {string} debugName - The name of the debug value.
+ * @param {string | number | object} debug - Debug information.
+ * @param {number} currentVl - The current violation level.
+ * @param {number} maxVl - The maximum violation level before punishment.
+ */
+function handleWebhook(player, check, checkType, debugName, debug, currentVl, maxVl) {
+
+    // Only send a webhook if enabled
+    if (!config.webhook.enabled) return;
+
+    // Handle webhook based on style
+    if (config.webhook.style === "message") {
+
+        const message = `Rosh > ${player.name} failed ${check}/${checkType.toUpperCase()} - {${debugName}=${debug}} [${currentVl}/${maxVl}]`;
+
+        // Send the webhook
+        const url = config.webhook.url;
+        Webhook.sendWebhook(url, { content: message, embeds: undefined });
+
+    } else if (config.webhook.style === "embed") {
+        
+        const embed = new Embed();
+        
+        // Configure the embed's properties
+        embed.setTitle(`Rosh`);
+        embed.setColor(10620377); // Purple/Pink-ish
+        embed.setTimestamp(new Date());
+        embed.setDescription([
+            `Player: ${player.name}`,
+            `Check: ${check}/${checkType.toUpperCase()}`,
+            `Debug: ${debugName}=${debug}`,
+            `Violations: ${currentVl}/${maxVl}`
+        ]);
+        
+        // Send the webhook
+        const url = config.webhook.url;
+        Webhook.sendWebhook(url, { content: undefined, embeds: [embed] });
     }
 }
 
