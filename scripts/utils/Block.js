@@ -12,24 +12,24 @@ export class Block {
      * @remarks The friction values are based on the vanilla Minecraft physics.
      */
     static getFriction(block) {
-        switch(true) {
-            case block.typeId === "minecraft:air":
+        switch(block.typeId) {
+            case "minecraft:air":
                 return 0;
-            case block.typeId === "minecraft:water":
+            case "minecraft:water":
                 return 0.8;
-            case block.typeId === "minecraft:lava":
+            case "minecraft:lava":
                 return 0.5;
-            case block.typeId === "minecraft:ice" || block.typeId === "minecraft:packed_ice":
+            case "minecraft:ice" || "minecraft:packed_ice":
                 return 0.098;
-            case block.typeId === "minecraft:blue_ice":
+            case "minecraft:blue_ice":
                 return 0.089;
-            case block.typeId === "minecraft:soul_sand":
+            case "minecraft:soul_sand":
                 return 0.4;
-            case block.typeId === "minecraft:slime_block":
+            case "minecraft:slime_block":
                 return 0.8;
-            case block.typeId === "minecraft:honey_block":
+            case "minecraft:honey_block":
                 return 0.4;
-            case block.typeId === "minecraft:cobweb":
+            case "minecraft:cobweb":
                 return 0.9;
             default:
                 return 0.6;

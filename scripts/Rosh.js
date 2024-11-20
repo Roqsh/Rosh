@@ -4,8 +4,7 @@ import config from "./data/config.js";
 import data from "./data/data.js";
 import { loadPlayerPrototypes, loadEntityPrototypes } from "./data/prototype.js";
 import { Memory } from "./utils/Memory.js";
-import { manageTags } from "./utils/gameUtil.js";
-import { flag, ban, convertToMs, timeDisplay, getScore, setScore, tellStaff, getSpeed, aroundAir, inAir, debug } from "./util.js";
+import { flag, ban, convertToMs, timeDisplay, getScore, setScore, tellStaff, manageTags, getSpeed, aroundAir, inAir, debug } from "./util.js";
 import { mainMenu, rateLimit } from "./ui/mainMenu.js";
 import { playerMenuSelected } from "./ui/main/playerMenu.js";
 

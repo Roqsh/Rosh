@@ -1,6 +1,7 @@
 import * as Minecraft from "@minecraft/server";
 import config from '../../data/config.js';
 import defaultConfig from '../../data/defaultConfig.js';
+import { String } from "../../utils/String.js";
 
 /**
  * Handles the module command to view or update configuration settings.
@@ -32,7 +33,7 @@ export function module(message, args) {
     const moduleData = config[category][module];
 
     // Format the module name for better readability
-    const fancyCheck = module.replace(/([A-Z])/g, '/$1').replace(/^./, str => str.toUpperCase());
+    const fancyCheck = String.format(module);
 
     // If the module is not found, send an error message with the list of available modules
     if (!moduleData) {
