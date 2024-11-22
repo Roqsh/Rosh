@@ -170,6 +170,8 @@ function handleKickPunishment(player, kickvl, check, checkType, themecolor) {
             tellStaff(`${themecolor}Rosh §j> §8${player.name} §chas been kicked for ${themecolor}${check}§j/${themecolor}${checkType.toUpperCase()} §c!`, "notify");
             if (config.console_debug) console.warn(`${themecolor}Rosh §j> §8${player.name} §chas been kicked for ${themecolor}${check}§j/${themecolor}${checkType.toUpperCase()} §c!`);
 
+            handleKickWebhook(player, check, checkType, kickvl)
+
             resetWarns(player);
 
             player.kick(`${themecolor}Rosh §j> §cKicked for ${themecolor}${check} §c!`);
@@ -231,6 +233,8 @@ function handleBanPunishment(player, check, checkType, themecolor, punishmentLen
 
             tellStaff(`${themecolor}Rosh §j> §8${player.name} §chas been banned for ${themecolor}${check}§j/${themecolor}${checkType.toUpperCase()} §c!`, "notify");
             if (config.console_debug) console.warn(`§r${themecolor}Rosh §j> §8${player.name} §chas been banned for ${themecolor}${check}§j/${themecolor}${checkType.toUpperCase()} §c!`);
+
+            handleBanWebhook(player, check, checkType, duration);
 
         } else {
             tellStaff(`${themecolor}Rosh §j> §8${player.name} §cshould have been banned for ${themecolor}${check}§j/${themecolor}${checkType.toUpperCase()}§c, but '§8config.autoban§c' was disabled!`, "notify");
@@ -380,11 +384,11 @@ function handleAlert(player, check, checkType, currentVl, debugName, debug, them
     }
 
     // Send a webhook if enabled
-    handleWebhook(player, check, checkType, debugName, debug, currentVl, maxVl);
+    handleAlertWebhook(player, check, checkType, debugName, debug, currentVl, maxVl);
 }
 
 /**
- * Handles the webhook logic.
+ * Handles the webhook logic when a player fails a check.
  * @param {Minecraft.Player} player - The player who failed the check.
  * @param {string} check - The name of the check that was failed.
  * @param {string} checkType - The type of sub-check that was failed.
@@ -393,7 +397,7 @@ function handleAlert(player, check, checkType, currentVl, debugName, debug, them
  * @param {number} currentVl - The current violation level.
  * @param {number} maxVl - The maximum violation level before punishment.
  */
-function handleWebhook(player, check, checkType, debugName, debug, currentVl, maxVl) {
+function handleAlertWebhook(player, check, checkType, debugName, debug, currentVl, maxVl) {
 
     // Only send a webhook if enabled
     if (!config.webhook.enabled) return;
@@ -401,7 +405,7 @@ function handleWebhook(player, check, checkType, debugName, debug, currentVl, ma
     // Handle webhook based on style
     if (config.webhook.style === "message") {
 
-        const message = `Rosh > ${player.name} failed ${check}/${checkType.toUpperCase()} - {${debugName}=${debug}} [${currentVl}/${maxVl}]`;
+        const message = `**Rosh** > ${player.name} failed ${check}/${checkType.toUpperCase()} - {${debugName}=${debug}} [${currentVl}/${maxVl}]`;
 
         // Send the webhook
         const url = config.webhook.url;
@@ -412,14 +416,98 @@ function handleWebhook(player, check, checkType, debugName, debug, currentVl, ma
         const embed = new Embed();
         
         // Configure the embed's properties
-        embed.setTitle(`Rosh`);
-        embed.setColor(10620377); // Purple/Pink-ish
+        embed.setTitle("Alert");
         embed.setTimestamp(new Date());
         embed.setDescription([
-            `Player: ${player.name}`,
-            `Check: ${check}/${checkType.toUpperCase()}`,
-            `Debug: ${debugName}=${debug}`,
-            `Violations: ${currentVl}/${maxVl}`
+            `Player: \` ${player.name} \``,
+            `Check: \` ${check}/${checkType.toUpperCase()} \``,
+            `Debug: \` ${debugName}=${debug} \``,
+            `Violations: \` ${currentVl}/${maxVl} \``
+        ]);
+        
+        // Send the webhook
+        const url = config.webhook.url;
+        Webhook.sendWebhook(url, { content: undefined, embeds: [embed] });
+    }
+}
+
+/**
+ * Handles sending a webhook message when a player is kicked.
+ * @param {Minecraft.Player} player - The player who was kicked.
+ * @param {string} check - The name of the check that was failed.
+ * @param {string} checkType - The type of sub-check that was failed.
+ * @param {number} kickVl - The current kick violation level.
+ */
+function handleKickWebhook(player, check, checkType, kickVl) {
+
+    // Only send a webhook if enabled
+    if (!config.webhook.enabled) return;
+
+    // Handle webhook based on style
+    if (config.webhook.style === "message") {
+
+        const violations = config.autoban ? ` [${kickVl}/${config.kicksBeforeBan}]` : "";
+
+        const message = `**Rosh** > ${player.name} has been kicked for ${check}/${checkType.toUpperCase()}!${violations}`;
+
+        const url = config.webhook.url;
+        Webhook.sendWebhook(url, { content: message, embeds: undefined });
+
+    } else if (config.webhook.style === "embed") {
+        
+        const embed = new Embed();
+
+        const violations = config.autoban ? `\nViolations: \` ${kickVl}/${config.kicksBeforeBan} \`` : "";
+        
+        // Configure the embed's properties
+        embed.setTitle("Kick");
+        embed.setColor(16711680); // Red
+        embed.setTimestamp(new Date());
+        embed.setDescription([
+            `Player: \` ${player.name} \``,
+            `Reason: \` ${check}/${checkType.toUpperCase()} \``,
+            `By: \` Rosh Anticheat \`${violations}`, // Only show kickBeforeBan-violations if autoban is enabled
+        ]);
+        
+        // Send the webhook
+        const url = config.webhook.url;
+        Webhook.sendWebhook(url, { content: undefined, embeds: [embed] });
+    }
+}
+
+/**
+ * Sends a webhook notification when a player is banned.
+ * @param {Minecraft.Player} player - The player who was banned.
+ * @param {string} check - The name of the check that was failed.
+ * @param {string} checkType - The type of sub-check that was failed.
+ * @param {string} duration - The duration of the ban (e.g., "30d" for 30 days).
+ */
+function handleBanWebhook(player, check, checkType, duration) {
+
+    // Only send a webhook if enabled
+    if (!config.webhook.enabled) return;
+
+    // Handle webhook based on style
+    if (config.webhook.style === "message") {
+
+        const message = `**Rosh** > ${player.name} has been banned for ${check}/${checkType.toUpperCase()}!`;
+
+        const url = config.webhook.url;
+        Webhook.sendWebhook(url, { content: message, embeds: undefined });
+
+    } else if (config.webhook.style === "embed") {
+        
+        const embed = new Embed();
+        
+        // Configure the embed's properties
+        embed.setTitle("Ban");
+        embed.setColor(16711680); // Red
+        embed.setTimestamp(new Date());
+        embed.setDescription([
+            `Player: \` ${player.name} \``,
+            `Reason: \` ${check}/${checkType.toUpperCase()} \``,
+            `Duration: \` ${duration} \``,
+            `By: \` Rosh Anticheat \``
         ]);
         
         // Send the webhook

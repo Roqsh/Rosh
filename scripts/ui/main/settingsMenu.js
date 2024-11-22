@@ -242,8 +242,8 @@ function themecolorMenu(player) {
 
     const themecolor = config.themecolor;
     const themecolors = [
-        "§1Color", "§2Color", "§3Color", "§4Color", "§5Color", "§6Color", "§7Color", "§8Color", "§9Color", "§0Color", "§qColor", "§eColor", "§rColor", 
-        "§tColor", "§uColor", "§iColor", "§pColor", "§aColor", "§sColor", "§dColor", "§gColor", "§hColor", "§jColor", "§cColor", "§bColor", "§nColor", "§mColor"
+        "§0Color", "§1Color", "§2Color", "§3Color", "§4Color", "§5Color", "§6Color", "§7Color", "§8Color", "§9Color", "§qColor", "§eColor", "§rColor", 
+        "§aColor", "§bColor", "§cColor", "§dColor", "§eColor", "§fColor", "§gColor", "§jColor", "§nColor", "§pColor", "§qColor", "§sColor", "§tColor", "§uColor"
     ];
 
     const currentColorIndex = themecolors.indexOf(themecolor + "Color");

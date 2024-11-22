@@ -10,7 +10,7 @@ export class Embed {
         this.description = null;
         this.url = null;
         this.timestamp = null;
-        this.color = 0x7289DA; // Default color (Discord blue)
+        this.color = null;
         this.image = null;
         this.thumbnail = null;
         this.video = null;

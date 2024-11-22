@@ -13,8 +13,10 @@ export class Webhook {
      * @param {Array<object>} [payload.embeds] - An array of embed objects or `Embed` instances.
      * @example
      * const embed = new Embed();
-     * embed.setTitle("Test Embed").setDescription("This is a test.");
+     * embed.setTitle("Test Embed");
+     * embed.setDescription("This is a test.");
      * Webhook.sendWebhook("<your-webhook-url>", { content: "Hello, World!", embeds: [embed] });
+     * @credits https://github.com/m0lc14kk/WebhookAPI <3
      */
     static async sendWebhook(webhookUri, { content = "", embeds = [] }) {
 
