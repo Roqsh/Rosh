@@ -4,7 +4,7 @@ import config from "./data/config.js";
 import data from "./data/data.js";
 import { loadPlayerPrototypes, loadEntityPrototypes } from "./data/prototype.js";
 import { Memory } from "./utils/Memory.js";
-import { flag, ban, convertToMs, timeDisplay, getScore, setScore, tellStaff, manageTags, getSpeed, aroundAir, inAir, debug } from "./util.js";
+import { flag, ban, convertToMs, timeDisplay, getScore, setScore, tellStaff, manageTags, manageProperties, getSpeed, aroundAir, inAir, debug } from "./util.js";
 import { mainMenu, rateLimit } from "./ui/mainMenu.js";
 import { playerMenuSelected } from "./ui/main/playerMenu.js";
 
@@ -13,16 +13,12 @@ import { playerMenuSelected } from "./ui/main/playerMenu.js";
 //import { badenchantsB } from "./checks/misc/badenchants/badenchantsB.js";
 //import { badenchantsC } from "./checks/misc/badenchants/badenchantsC.js";
 //import { badenchantsD } from "./checks/misc/badenchants/badenchantsD.js";
-//import { badpackets_a } from "./checks/misc/badpackets/badpacketsA.js";
 import { badpackets_b } from "./checks/misc/badpackets/badpacketsB.js";
 import { badpackets_c } from "./checks/misc/badpackets/badpacketsC.js";
-//import { badpackets_d } from "./checks/misc/badpackets/badpacketsD.js";
 import { badpackets_e } from "./checks/misc/badpackets/badpacketsE.js";
 import { badpackets_f } from "./checks/misc/badpackets/badpacketsF.js";
-import { badpackets_g } from "./checks/misc/badpackets/badpacketsG.js";
 import { badpackets_h } from "./checks/misc/badpackets/badpacketsH.js";
-import { badpackets_i } from "./checks/misc/badpackets/badpacketsI.js";
-import { badpackets_j } from "./checks/misc/badpackets/badpacketsJ.js";
+import { badpacketsJ } from "./checks/misc/badpackets/badpacketsJ.js";
 import { exploit_a } from "./checks/misc/exploit/exploitA.js";
 import { namespoofA } from "./checks/misc/namespoof/namespoofA.js";
 import { namespoofB } from "./checks/misc/namespoof/namespoofB.js";
@@ -88,6 +84,7 @@ import { autoclickerD } from "./checks/combat/autoclicker/autoclickerD.js";
 import { autoclickerE } from "./checks/combat/autoclicker/autoclickerE.js";
 import { aimA } from "./checks/combat/aim/aimA.js";
 import { aimB } from "./checks/combat/aim/aimB.js";
+import { aimC } from "./checks/combat/aim/aimC.js";
 
 import { clicksHandler } from "./handlers/clicksHandler.js";
 import { commandHandler } from "./handlers/commandHandler.js";
@@ -124,6 +121,7 @@ system.runInterval(() => {
         }
         
         manageTags(player);
+        manageProperties(player);
         
         const rotation = player.getRotation();
         const velocity = player.getVelocity();
@@ -157,39 +155,6 @@ system.runInterval(() => {
             player.addTag("strict");
         }
 
-		const blockUnderPlayer = player.dimension.getBlock({
-            x: player.location.x, 
-            y: player.location.y - 1, 
-            z: player.location.z
-        });
-        
-        switch (true) {
-
-            case blockUnderPlayer.typeId.includes("ice"):
-                player.isOnIce = true;
-                break;
-
-            case blockUnderPlayer.typeId.includes("snow"):
-                player.isOnSnow = true;
-                break;
-
-            case blockUnderPlayer.typeId.includes("slime"):
-                player.touchedSlimeBlock = true;
-                break;
-
-            case blockUnderPlayer.typeId.includes("shulker"):
-                player.isOnShulker = true;
-                break;
-
-            case blockUnderPlayer.typeId.includes("stairs"):
-                player.isRunningStairs = true;
-                break;
-
-            // Add more cases as needed
-            default:
-                // Optional: Handle the case where no match is found
-                break;
-        }
 
 		const tick = getScore(player, "currentTick", 0);
 		setScore(player, "currentTick", tick + 1);
@@ -278,14 +243,10 @@ system.runInterval(() => {
         inventoryB(player);
         
         
-        //badpackets_a(player);
         badpackets_b(player);
-        //badpackets_d(player);
         badpackets_f(player);
-        badpackets_g(player);
         badpackets_h(player);
-        badpackets_i(player);
-        badpackets_j(player);
+        badpacketsJ(player);
         
         exploit_a(player);
 
@@ -295,6 +256,7 @@ system.runInterval(() => {
         if (rotationData) {
             aimA(player);
             aimB(player);
+            aimC(player);
             
             // Update the player's last yaw and pitch using the returned values by the rotation handler
             player.setLastYaw(rotationData.currentYaw);

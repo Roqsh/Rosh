@@ -232,4 +232,14 @@ export class Statistics {
 
         return NaN;
     }
+
+    /**
+     * Checks if a given number is nearly an integer.
+     * @param {number} value - The number to check.
+     * @param {number} [tolerance=1e-7] - The maximum difference from the nearest integer.
+     * @returns {boolean} True if the number is nearly an integer, false otherwise.
+     */
+    static isNearlyInteger(value, tolerance = 1e-7) {
+        return Math.abs(value - Math.round(value)) < tolerance;
+    }
 }

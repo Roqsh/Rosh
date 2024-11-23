@@ -1,29 +1,25 @@
+import * as Minecraft from "@minecraft/server";
+import { EntityEquippableComponent, EquipmentSlot, ItemDurabilityComponent } from "@minecraft/server";
 import config from "../../../data/config.js";
 import { flag } from "../../../util";
-import { EntityEquippableComponent, EquipmentSlot, ItemDurabilityComponent } from "@minecraft/server";
 
 /**
- * Checks for sending invalid glide "packets".
- * @name badpackets_j
- * @param {player} player - The player to check
- * @remarks Cheats used to send glide packets without having the needed permissions (Wearing an elytra),
- * resulting in a full movement disabler for BDS predictions making nearly all Rosh movement checks not functional.
-*/
-export function badpackets_j(player) {
+ * Checks for invalid gliding.
+ * @param {Minecraft.Player} player - The player to check.
+ */
+export function badpacketsJ(player) {
 
-    if (!config.modules.badpacketsJ.enabled) return;
+    if (!config.modules.badpacketsJ.enabled || !player.isGliding) return;
 
-    if (player.isGliding) {
+    const chestEquipment = player.getComponent(EntityEquippableComponent.componentId)?.getEquipment(EquipmentSlot.Chest);
+    const durability = chestEquipment?.getComponent(ItemDurabilityComponent.componentId);
+    const remaining = durability?.maxDurability - durability?.damage;
+    
+    if (chestEquipment?.typeId !== "minecraft:elytra") {
+        flag(player, "BadPackets", "J", "invalid glide, chest-equipment", `${chestEquipment ? chestEquipment.typeId : "none"}`);
+    }
 
-        const elytra = player.getComponent(EntityEquippableComponent.componentId)?.getEquipment(EquipmentSlot.Chest);
-		const durability = elytra?.getComponent(ItemDurabilityComponent.componentId);
-
-        if (
-            elytra?.typeId != "minecraft:elytra" || 
-            elytra?.typeId == "minecraft:elytra" && 
-            durability.maxDurability - durability.damage <= 0
-        ) {
-			flag(player, "BadPackets", "J", "invalid", "glide");
-		}
+    if (chestEquipment?.typeId === "minecraft:elytra" && remaining <= 0) {
+        flag(player, "BadPackets", "J", "invalid glide, durability", `${remaining}/${durability.maxDurability}`);
     }
 }

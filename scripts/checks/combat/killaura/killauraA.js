@@ -1,6 +1,7 @@
 import * as Minecraft from "@minecraft/server";
 import config from "../../../data/config.js";
 import { flag } from "../../../util";
+import { Statistics } from "../../../utils/Statistics.js";
 
 const buffer = new Map(); // Store player buffers here
 
@@ -21,7 +22,7 @@ export function killauraA(player, entity) {
     if (!player.isRiding()) {
 
         // If either the x or y rotation is an integer, increment buffer
-        if (Number.isInteger(rotation.x) || Number.isInteger(rotation.y)) {
+        if (Statistics.isNearlyInteger(rotation.x) || Statistics.isNearlyInteger(rotation.y)) {
 
             // Initialize buffer count for the player if not set
             if (!buffer.has(player.id)) {

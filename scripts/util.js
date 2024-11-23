@@ -1290,6 +1290,49 @@ export async function manageTags(player) {
 
 
 /**
+ * Checks the block under a player and sets certain properties based on the block's type.
+ * @param {Minecraft.Player} player - The player object.
+ */
+export function manageProperties(player) {
+
+    const blockUnderPlayer = player.dimension.getBlock({
+        x: player.location.x, 
+        y: player.location.y - 1, 
+        z: player.location.z
+    });
+    
+    switch (true) {
+        
+        case blockUnderPlayer.typeId.includes("ice"):
+            player.isOnIce = true;
+            break;
+
+        case blockUnderPlayer.typeId.includes("snow"):
+            player.isOnSnow = true;
+            break;
+
+        case blockUnderPlayer.typeId.includes("slime"):
+            player.touchedSlimeBlock = true;
+            break;
+
+        case blockUnderPlayer.typeId.includes("shulker"):
+            player.isOnShulker = true;
+            break;
+
+        case blockUnderPlayer.typeId.includes("stairs"):
+            player.isRunningStairs = true;
+            break;
+
+        // Add more cases as needed
+        default:
+            // Optional: Handle the case where no match is found
+            break;
+    }
+}
+
+
+
+/**
  * Gets a player's horizontal speed.
  * @param {Minecraft.Player} player - The player to get the speed from.
  * @returns {number} The horizontal speed of the player.

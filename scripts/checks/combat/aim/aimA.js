@@ -19,10 +19,10 @@ export function aimA(player) {
     const yaw = player.getYaw();
 
     if (Math.abs(pitch) > 90) {
-        flag(player, "Aim", "A", "pitch", pitch);
+        flag(player, "Aim", "A", "pitch", `${pitch}, exceeding=${Math.abs(pitch) - 90}`);
     }
 
     if (Math.abs(yaw) > 180) {
-        flag(player, "Aim", "A", "yaw", yaw);
+        flag(player, "Aim", "A", "yaw", `${yaw}, exceeding=${Math.abs(yaw) - 180}`);
     }
 }

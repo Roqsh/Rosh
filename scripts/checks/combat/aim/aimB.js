@@ -2,6 +2,7 @@ import * as Minecraft from "@minecraft/server";
 import config from "../../../data/config.js";
 import { flag, debug } from "../../../util";
 import { EvictingList } from "../../../utils/EvictingList.js";
+import { Statistics } from "../../../utils/Statistics.js";
 import { String } from "../../../utils/String.js";
 
 const yawSamples = new Map();
@@ -60,11 +61,11 @@ export function aimB(player) {
  */
 function checkForSmoothing(player, sampleList, type, currentDelta, frequencyThreshold) {
     // Count how many delta values are integers
-    const integerCount = sampleList.getAll().filter(item => Number.isInteger(item.value)).length;
+    const integerCount = sampleList.getAll().filter(item => Statistics.isNearlyInteger(item.value)).length;
     const integerFrequency = integerCount / sampleList.getCurrentSize();
 
     // Get the most recent integer delta value
-    const recentIntegerEntry = sampleList.getAll().reverse().find(item => Number.isInteger(item.value));
+    const recentIntegerEntry = sampleList.getAll().reverse().find(item => Statistics.isNearlyInteger(item.value));
     
     // Only proceed if a recent integer value exists
     if (recentIntegerEntry) {

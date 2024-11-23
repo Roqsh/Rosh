@@ -241,6 +241,18 @@ export default
             "minVlbeforePunishment": 6
         },
 
+        "aimC": {
+            "enabled": true,
+            "description":"Checks for suspicious duplicate rotations that match pre-snap values.",
+            "samples": 50,
+            "min_delta": 20,
+            "duplicate_threshold": 5,
+            "tolerance": 1e-7,
+            "punishment": "kick",
+            "punishmentLength": "7d",
+            "minVlbeforePunishment": 5
+        },
+
         "autoclickerA": {
             "enabled": true,
             "description":"Checks if a player's CPS exceeds the allowed threshold multiple times.",
@@ -627,7 +639,7 @@ export default
         },
 
         "scaffoldG": {
-            "enabled": true,
+            "enabled": false,
             "description": "Checks for not triggering the 'itemUse' event",
             "punishment": "kick", 
             "minVlbeforePunishment": 0
