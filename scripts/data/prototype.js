@@ -135,6 +135,38 @@ export function loadPlayerPrototypes() {
     Player.prototype.setDeltaYaw = function(deltaYawValue) {
         this.deltaYaw = deltaYawValue;
     };
+    
+    /**
+     * Gets the change in the player's yaw from the last tick.
+     * @returns {number} The change in the player's yaw from the last tick or the current delta yaw if not set.
+     */
+    Player.prototype.getLastDeltaYaw = function() {
+        return this.lastDeltaYaw ?? this.getDeltaYaw();
+    }
+    
+    /**
+     * Sets the change in the player's yaw from the last tick.
+     * @param {number} lastDeltaYawValue - The value to set for the last delta yaw.
+     */
+    Player.prototype.setLastDeltaYaw = function(lastDeltaYawValue) {
+        this.lastDeltaYaw = lastDeltaYawValue;
+    }
+
+    /**
+     * Gets the change in the player's yaw since the last update (jolt) for use in velocity checks.
+     * @returns {number} The change in the player's yaw since the last update (jolt) or 0 if not set.
+     */
+    Player.prototype.getJoltYaw = function() {
+        return this.joltYaw ?? 0;
+    }
+
+    /**
+     * Sets the change in the player's yaw since the last update (jolt) for use in velocity checks.
+     * @param {number} joltYawValue The value to set for the change in yaw (jolt).
+     */
+    Player.prototype.setJoltYaw = function(joltYawValue) {
+        this.joltYaw = joltYawValue;
+    }
 
     /**
      * Gets the player's current pitch (vertical rotation).
@@ -172,6 +204,37 @@ export function loadPlayerPrototypes() {
         this.deltaPitch = deltaPitchValue;
     };
 
+    /**
+     * Gets the change in the player's pitch from the last tick.
+     * @returns {number} The change in the player's pitch from the last tick or the current delta pitch if not set.
+     */
+    Player.prototype.getLastDeltaPitch = function() {
+        return this.lastDeltaPitch ?? this.getDeltaPitch();
+    }
+
+    /**
+     * Sets the change in the player's pitch from the last tick.
+     * @param {number} lastDeltaPitchValue - The value to set for the last delta pitch.
+     */
+    Player.prototype.setLastDeltaPitch = function(lastDeltaPitchValue) {
+        this.lastDeltaPitch = lastDeltaPitchValue;
+    }
+
+    /**
+     * Gets the change in the player's pitch since the last update (jolt) for use in velocity checks.
+     * @returns {number} The change in the player's pitch since the last update (jolt) or 0 if not set.
+     */
+    Player.prototype.getJoltPitch = function() {
+        return this.joltPitch ?? 0;
+    }
+
+    /**
+     * Sets the change in the player's pitch since the last update (jolt) for use in velocity checks.
+     * @param {number} joltPitchValue - The value to set for the change in pitch (jolt).
+     */
+    Player.prototype.setJoltPitch = function(joltPitchValue) {
+        this.joltPitch = joltPitchValue;
+    }
 
     // Adding health methods to the Player prototype
 

@@ -6,13 +6,14 @@ import { debug } from "../util";
  * This function returns the current rotation data to allow checks to run before updating the values.
  * 
  * @param {Minecraft.Player} player - The player whose rotation data is being processed.
- * @returns {{ currentYaw: number, currentPitch: number } | false} 
+ * @returns {{ currentYaw: number, currentPitch: number, deltaYaw: number, deltaPitch: number } | false} 
  * Returns the current yaw and pitch, or false if an error occurs.
  */
 export function rotationHandler(player) {
     try {
-        // Get the player's current rotation (yaw and pitch)
         const currentRotation = player.getRotation();
+
+        // Get the player's current rotation (yaw and pitch)
         const currentYaw = currentRotation.y;
         const currentPitch = currentRotation.x;
 
@@ -23,6 +24,10 @@ export function rotationHandler(player) {
         // Calculate changes in yaw and pitch (deltas)
         const deltaYaw = currentYaw - lastYaw;
         const deltaPitch = currentPitch - lastPitch;
+
+        // Calculate changes in deltaYaw and deltaPitch (jolts)
+        const joltYaw = deltaYaw - player.getLastDeltaYaw();
+        const joltPitch = deltaPitch - player.getLastDeltaPitch();
 
         // Debug output to track yaw and pitch changes (for debugging purposes)
         const debugData = [
@@ -40,9 +45,11 @@ export function rotationHandler(player) {
         player.setPitch(currentPitch);
         player.setDeltaYaw(deltaYaw);
         player.setDeltaPitch(deltaPitch);
+        player.setJoltYaw(joltYaw);
+        player.setJoltPitch(joltPitch);
 
         // Return the current yaw and pitch for updating after the checks
-        return { currentYaw, currentPitch };
+        return { currentYaw, currentPitch, deltaYaw, deltaPitch };
 
     } catch (error) {
         // Log error details for easier debugging in case of failure

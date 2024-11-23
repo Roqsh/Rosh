@@ -258,9 +258,11 @@ system.runInterval(() => {
             aimB(player);
             aimC(player);
             
-            // Update the player's last yaw and pitch using the returned values by the rotation handler
+            // Update the player's last (delta) yaw and pitch using the returned values by the rotation handler
             player.setLastYaw(rotationData.currentYaw);
             player.setLastPitch(rotationData.currentPitch);
+            player.setLastDeltaYaw(rotationData.deltaYaw);
+            player.setLastDeltaPitch(rotationData.deltaPitch);
         }
 
 

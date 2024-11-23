@@ -171,6 +171,20 @@ declare module "@minecraft/server" {
         getDeltaYaw(): number;
 
         /**
+         * Gets the change in the player's yaw from the last tick.
+         * @returns {number} The change in the player's yaw from the last tick or the current delta yaw if not set.
+         * @Rosh
+         */
+        getLastDeltaYaw(): number;
+
+        /**
+         * Gets the change in the player's yaw since the last update (jolt).
+         * @returns {number} The change in the player's yaw since the last update (jolt).
+         * @Rosh
+         */
+        getJoltYaw(): number;
+
+        /**
          * Sets the player's yaw (horizontal rotation).
          * @param {number} yawValue The yaw value to set for the player.
          * @Rosh
@@ -190,6 +204,20 @@ declare module "@minecraft/server" {
          * @Rosh
          */
         setDeltaYaw(deltaYawValue: number): void;
+
+        /**
+         * Sets the change in the player's yaw from the last tick.
+         * @param {number} lastDeltaYawValue The value to set for the last delta yaw.
+         * @Rosh
+         */
+        setLastDeltaYaw(lastDeltaYawValue: number): void;
+
+        /**
+         * Sets the change in the player's yaw since the last update (jolt).
+         * @param {number} joltYawValue The value to set for the change in yaw (jolt).
+         * @Rosh
+         */
+        setJoltYaw(joltYawValue: number): void;
 
         /**
          * Gets the player's current pitch (vertical rotation).
@@ -213,6 +241,20 @@ declare module "@minecraft/server" {
         getDeltaPitch(): number;
 
         /**
+         * Gets the change in the player's pitch from the last tick.
+         * @returns {number} The change in the player's pitch from the last tick or the current delta pitch if not set.
+         * @Rosh
+         */
+        getLastDeltaPitch(): number;
+
+        /**
+         * Gets the change in the player's pitch since the last update (jolt).
+         * @returns {number} The change in the player's pitch since the last update (jolt).
+         * @Rosh
+         */
+        getJoltPitch(): number;
+
+        /**
          * Sets the player's pitch (vertical rotation).
          * @param {number} pitchValue The pitch value to set for the player.
          * @Rosh
@@ -232,6 +274,19 @@ declare module "@minecraft/server" {
          * @Rosh
          */
         setDeltaPitch(deltaPitchValue: number): void;
+
+        /**
+         * Sets the change in the player's pitch from the last tick.
+         * @param {number} lastDeltaPitchValue The value to set for the last delta pitch.
+         * @Rosh
+         */
+        setLastDeltaPitch(lastDeltaPitchValue: number): void;
+
+        /**
+         * Sets the change in the player's pitch since the last update (jolt).
+         * @param {number} joltPitchValue The value to set for the change in pitch (jolt).
+         */
+        setJoltPitch(joltPitchValue: number): void;
 
         /**
          * A helper variable for calculating the player's attacks per second.
