@@ -9,10 +9,6 @@ import { mainMenu, rateLimit } from "./ui/mainMenu.js";
 import { playerMenuSelected } from "./ui/main/playerMenu.js";
 
 // Import Miscellaneous checks
-//import { badenchantsA } from "./checks/misc/badenchants/badenchantsA.js";
-//import { badenchantsB } from "./checks/misc/badenchants/badenchantsB.js";
-//import { badenchantsC } from "./checks/misc/badenchants/badenchantsC.js";
-//import { badenchantsD } from "./checks/misc/badenchants/badenchantsD.js";
 import { badpackets_b } from "./checks/misc/badpackets/badpacketsB.js";
 import { badpackets_c } from "./checks/misc/badpackets/badpacketsC.js";
 import { badpackets_e } from "./checks/misc/badpackets/badpacketsE.js";
@@ -63,7 +59,6 @@ import { scaffold_e } from "./checks/world/scaffold/scaffoldE.js";
 import { scaffold_f, scaffold_f_dependency } from "./checks/world/scaffold/scaffoldF.js";
 import { scaffold_g } from "./checks/world/scaffold/scaffoldG.js";
 import { scaffold_h, dependencies_h } from "./checks/world/scaffold/scaffoldH.js";
-// import { scaffold_i } from "./checks/world/scaffold/scaffoldI.js";
 import { scaffold_j } from "./checks/world/scaffold/scaffoldJ.js";
 import { scaffold_k } from "./checks/world/scaffold/scaffoldK.js";
 import { tower_a } from "./checks/world/tower/towerA.js";
@@ -74,6 +69,7 @@ import { killauraA } from "./checks/combat/killaura/killauraA.js";
 import { killauraB } from "./checks/combat/killaura/killauraB.js";
 import { killauraC } from "./checks/combat/killaura/killauraC.js";
 import { killauraD } from "./checks/combat/killaura/killauraD.js";
+import { killauraE } from "./checks/combat/killaura/killauraE.js";
 import { hitbox_a } from "./checks/combat/hitbox/hitboxA.js";
 import { hitbox_b } from "./checks/combat/hitbox/hitboxB.js";
 import { reach_a } from "./checks/combat/reach/reachA.js";
@@ -88,7 +84,6 @@ import { aimC } from "./checks/combat/aim/aimC.js";
 
 import { clicksHandler } from "./handlers/clicksHandler.js";
 import { commandHandler } from "./handlers/commandHandler.js";
-//import { enchantmentsHandler } from "./handlers/enchantmentsHandler.js";
 import { movementHandler } from "./handlers/movementHandler.js";
 import { rotationHandler } from "./handlers/rotationHandler.js";
 
@@ -230,17 +225,11 @@ system.runInterval(() => {
             sprint_c(player);
             
             jump_a(player);
-
-            //invmove_a(player);
             
             // Update the player's last position and velocity using the returned values by the movement handler
             player.setLastPosition(movementData.currentPosition);
             player.setLastVelocity(movementData.currentVelocity);
         }
-
-
-        inventoryA(player);
-        inventoryB(player);
         
         
         badpackets_b(player);
@@ -250,6 +239,9 @@ system.runInterval(() => {
         
         exploit_a(player);
 
+
+        inventoryA(player);
+        inventoryB(player);
         
         const rotationData = rotationHandler(player);
         
@@ -264,7 +256,6 @@ system.runInterval(() => {
             player.setLastDeltaYaw(rotationData.deltaYaw);
             player.setLastDeltaPitch(rotationData.deltaPitch);
         }
-
 
         const clicksData = clicksHandler(player, tick);
         
@@ -295,7 +286,7 @@ system.runInterval(() => {
             setScore(player, "tagReset", getScore(player, "tagReset", 0) + 1);
             setScore(player, "packets", 0);
 
-            setScore(player, "currentTick", 0); // Reset for new couting
+            setScore(player, "currentTick", 0); // Reset for new counting
         }
         
         // Runs every 100th tick (every 5 seconds)
@@ -306,7 +297,7 @@ system.runInterval(() => {
             player.removeTag("ender_pearl");
             player.removeTag("bow");
 
-            setScore(player, "tagReset", 0); // Reset for new couting
+            setScore(player, "tagReset", 0); // Reset for new counting
         }
         
         player.setLastItemInHand(player.getItemInHand());
@@ -478,7 +469,7 @@ world.afterEvents.playerBreakBlock.subscribe((blockBreak) => {
     let revertBlock = false;
 	
 	if (config.modules.autotoolA.enabled && player.flagAutotoolA) {
-		flag(player, "AutoTool", "A", "selectedSlot", `${player.selectedSlotIndex},lastSelectedSlot=${player.lastSelectedSlot},switchDelay=${player.autotoolSwitchDelay}`);
+		flag(player, "AutoTool", "A", "slot", `${player.selectedSlotIndex}, lastSlot=${player.lastSelectedSlot}, delay=${player.autotoolSwitchDelay}`);
         revertBlock = true;
 	}
 
@@ -576,8 +567,6 @@ world.afterEvents.playerSpawn.subscribe((playerJoin) => {
         player.lastGoodPosition = player.location;
     }
 
-	exploit_a(player);
-
     // TODO: Update this code
 	//if (player.hasTag("notify")) {
 		//player.runCommandAsync('execute at @a[tag=reported] run tellraw @a[tag=notify] {"rawtext":[{"text":"§r§uRosh §j> §8"},{"selector":"@s"},{"text":" §chas been reported while your were offline."}]}');
@@ -629,6 +618,7 @@ world.afterEvents.entityHitEntity.subscribe((entityHitEntity) => {
         killauraB(player, entity);
         killauraC(player, entity);
         killauraD(player, entity);
+        killauraE(player, entity);
     }
     
     reach_a(player, entity);
@@ -661,7 +651,7 @@ world.afterEvents.entityHitBlock.subscribe((entityHitBlock) => {
     
     const { damagingEntity: player} = entityHitBlock;
     
-    if (!player.isPlayer() || !player.isValid()) return;
+    if (/**!player.isPlayer() ||*/ !player.isValid()) return;
     
     player.startBreakTime = Date.now();
     player.flagAutotoolA = false;

@@ -346,6 +346,14 @@ export default
             "minVlbeforePunishment": 9
         },
 
+        "killauraE": {
+            "enabled": true,
+            "description": "Detects suspicious optimal yaw values when looking at a target.",
+            "punishment": "kick",
+            "punishmentLength": "1d",
+            "minVlbeforePunishment": 6
+        },
+
         "hitboxA": {
             "enabled": true,
             "description": "Checks for attacking with a too high angle",

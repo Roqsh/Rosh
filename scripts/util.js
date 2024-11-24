@@ -1482,6 +1482,45 @@ export function inAir(player) {
 
 
 
+// Initialize a Map to store the starting Y position of a fall for each player
+const playerFallData = new Map();
+
+/**
+ * Calculates the fall distance of a player from the start of the fall.
+ * @param {Minecraft.Player} player - The player to calculate the fall distance for.
+ * @returns {number} The fall distance of the player (0 if not falling or on ground).
+ */
+export function calculateFallDistance(player) {
+    const currentY = player.location.y;
+    const isOnGround = player.isOnGround;
+    const isFalling = player.isFalling;
+    let fallDistance = 0;
+
+    if (isOnGround) {
+        // Reset fall tracking when the player lands
+        playerFallData.delete(player);
+        return fallDistance; // No fall distance if on the ground
+    }
+
+    if (isFalling) {
+        // Check if we already have a recorded fall start position
+        if (!playerFallData.has(player)) {
+            // Mark the current position as the start of the fall
+            playerFallData.set(player, currentY);
+        }
+        // Calculate fall distance from the start Y position
+        const startY = playerFallData.get(player);
+        fallDistance = startY - currentY;
+    } else {
+        // If the player is not falling, reset the fall start position
+        playerFallData.delete(player);
+    }
+
+    return fallDistance;
+}
+
+
+
 /**
  * Sends debug information to players with a specific tag.
  * @param {Minecraft.Player} player - The player running the debug function.

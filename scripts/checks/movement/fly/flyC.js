@@ -8,6 +8,7 @@ import { flag, getScore, aroundAir, debug } from "../../../util";
  * @remarks
  * **Note:**
  * - False flags when jumping with a horse.
+ * - False flags upon teleportation.
  */
 export function fly_c(player) {
   

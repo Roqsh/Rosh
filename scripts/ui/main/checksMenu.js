@@ -5,7 +5,7 @@ import data from "../../data/data.js";
 import { mainMenu } from "../mainMenu.js";
 import { String } from "../../utils/String.js";
 
-const moduleList = Object.keys(config.modules).concat(Object.keys(config.misc_modules));
+const moduleList = Object.keys(config.modules);
 const modules = [];
 
 for (const fullModule of moduleList) {
@@ -89,7 +89,7 @@ function modulesCheckSelectMenu(player, selection) {
         if (!module.startsWith(subCheck)) continue;
         checks.push(module);
 
-        const checkData = config.modules[module] ?? config.misc_modules[module];
+        const checkData = config.modules[module];
         menu.button(`${String.toUpperCase(subCheck)}/${module[module.length - 1]}\n${checkData.enabled ? "§8[§a+§8]" : "§8[§c-§8]"}`);
     }
 
@@ -125,7 +125,7 @@ function editChecksMenu(player, check) {
 
     const themecolor = config.themecolor;
     const formattedCheckName = check.replace(/([A-Z])/g, '/$1').replace(/^./, str => str.toUpperCase());
-    const checkData = config.modules[check] ?? config.misc_modules[check];
+    const checkData = config.modules[check];
     const originalCheckData = { ...checkData }; // Save a copy of the original check data
     let optionsMap = [];
 
