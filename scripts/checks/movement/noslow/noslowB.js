@@ -8,7 +8,7 @@ const lastPositions = new Map();
  * Checks if the player is not slowing down when inside a cobweb.
  * @param {Minecraft.Player} player - The player to check.
  */
-export function noslow_b(player) {
+export function noslowB(player) {
 
     // Return early if the module is disabled or the player is flying.
     if (!config.modules.noslowB.enabled || player.isFlying) return;

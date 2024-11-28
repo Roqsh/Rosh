@@ -11,13 +11,13 @@ const optimalYawDifferences = new Map();
 /**
  * Detects suspicious optimal yaw values when looking at a target.
  * @param {Minecraft.Player} player - The player to check.
- * @param {Minecraft.Entity} target - The attacked player.
+ * @param {Minecraft.Player | Minecraft.Entity} target - The attacked player.
  */
 export function killauraE(player, target) {
 
     if (!config.modules.killauraE.enabled || getSpeed(player) === 0) return;
 
-    // Initialize an EvictingList with a capacity of 6 timestamps if not already present
+    // Initialize an EvictingList with a capacity of 65 timestamps if not already present
     if (!optimalYawDifferences.has(player.name)) {
         optimalYawDifferences.set(player.name, new EvictingList(65));
     }

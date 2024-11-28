@@ -9,7 +9,7 @@ const playerBuffer = new Map();
  * Checks if the player is not slowing down when using an item.
  * @param {Player} player - The player to check.
  */
-export function noslow_a(player) {
+export function noslowA(player) {
 
     // Exit early if the NoSlow A module is disabled or the player isn't using an item.
     if (!config.modules.noslowA.enabled || !player.hasTag("right")) return;

@@ -10,7 +10,7 @@ const playerDetectionTimestamps = new Map();
 /**
  * Checks if a player hits through a solid wall.
  * @param {Minecraft.Player} player - The player to check.
- * @param {Minecraft.Entity} target - The attacked player.
+ * @param {Minecraft.Player | Minecraft.Entity} target - The attacked player.
  */
 export function killauraD(player, target) {
     

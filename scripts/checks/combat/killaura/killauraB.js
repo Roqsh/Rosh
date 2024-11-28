@@ -5,7 +5,7 @@ import { flag, getScore, debug } from "../../../util";
 /**
  * Checks for invalid attacks.
  * @param {Minecraft.Player} player - The player being monitored.
- * @param {Minecraft.Entity} entity - The entity being attacked by the player.
+ * @param {Minecraft.Player | Minecraft.Entity} entity - The entity being attacked by the player.
  */
 export function killauraB(player, entity) {
 

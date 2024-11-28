@@ -8,7 +8,7 @@ const buffer = new Map(); // Store player buffers here
 /**
  * Checks for attacking with an integer x/y rotation.
  * @param {Minecraft.Player} player - The player to check.
- * @param {Minecraft.Entity} entity - The attacked entity.
+ * @param {Minecraft.Player | Minecraft.Entity} entity - The attacked entity.
  */
 export function killauraA(player, entity) {
     

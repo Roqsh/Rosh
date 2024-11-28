@@ -37,13 +37,12 @@ import { fly_d } from "./checks/movement/fly/flyD.js";
 import { fly_e } from "./checks/movement/fly/flyE.js";
 import { strafe_a } from "./checks/movement/strafe/strafeA.js";
 import { strafe_b } from "./checks/movement/strafe/strafeB.js";
-import { noslow_a } from "./checks/movement/noslow/noslowA.js";
-import { noslow_b } from "./checks/movement/noslow/noslowB.js";
-import { sprint_a } from "./checks/movement/sprint/sprintA.js";
-import { sprint_b } from "./checks/movement/sprint/sprintB.js";
-import { sprint_c } from "./checks/movement/sprint/sprintC.js";
+import { noslowA } from "./checks/movement/noslow/noslowA.js";
+import { noslowB } from "./checks/movement/noslow/noslowB.js";
+import { sprintA } from "./checks/movement/sprint/sprintA.js";
+import { sprintB } from "./checks/movement/sprint/sprintB.js";
+import { sprintC } from "./checks/movement/sprint/sprintC.js";
 import { jump_a } from "./checks/movement/jump/jumpA.js";
-import { invmove_a } from "./checks/movement/invmove/invmoveA.js";
 
 // Import Block related checks
 import { nukerA } from "./checks/world/nuker/nukerA.js";
@@ -81,6 +80,7 @@ import { autoclickerE } from "./checks/combat/autoclicker/autoclickerE.js";
 import { aimA } from "./checks/combat/aim/aimA.js";
 import { aimB } from "./checks/combat/aim/aimB.js";
 import { aimC } from "./checks/combat/aim/aimC.js";
+import { aimD } from "./checks/combat/aim/aimD.js";
 
 import { clicksHandler } from "./handlers/clicksHandler.js";
 import { commandHandler } from "./handlers/commandHandler.js";
@@ -217,18 +217,14 @@ system.runInterval(() => {
             strafe_a(player);
             strafe_b(player);
             
-            noslow_a(player);
-            noslow_b(player);
+            noslowA(player);
+            noslowB(player);
             
-            sprint_a(player);
-            sprint_b(player);
-            sprint_c(player);
+            sprintA(player);
+            sprintB(player);
+            sprintC(player);
             
             jump_a(player);
-            
-            // Update the player's last position and velocity using the returned values by the movement handler
-            player.setLastPosition(movementData.currentPosition);
-            player.setLastVelocity(movementData.currentVelocity);
         }
         
         
@@ -249,12 +245,7 @@ system.runInterval(() => {
             aimA(player);
             aimB(player);
             aimC(player);
-            
-            // Update the player's last (delta) yaw and pitch using the returned values by the rotation handler
-            player.setLastYaw(rotationData.currentYaw);
-            player.setLastPitch(rotationData.currentPitch);
-            player.setLastDeltaYaw(rotationData.deltaYaw);
-            player.setLastDeltaPitch(rotationData.deltaPitch);
+            aimD(player);
         }
 
         const clicksData = clicksHandler(player, tick);
@@ -300,8 +291,19 @@ system.runInterval(() => {
             setScore(player, "tagReset", 0); // Reset for new counting
         }
         
+        // Update the player's last held items
         player.setLastItemInHand(player.getItemInHand());
         player.setLastItemInCursor(player.getItemInCursor());
+
+        // Update the player's last position and velocity using the returned values by the movement handler
+        player.setLastPosition(movementData.currentPosition);
+        player.setLastVelocity(movementData.currentVelocity);
+
+        // Update the player's last (delta) yaw and pitch using the returned values by the rotation handler
+        player.setLastYaw(rotationData.currentYaw);
+        player.setLastPitch(rotationData.currentPitch);
+        player.setLastDeltaYaw(rotationData.deltaYaw);
+        player.setLastDeltaPitch(rotationData.deltaPitch);
 
         player.isCrawling = false;
         player.isRunningStairs = false;
@@ -710,7 +712,7 @@ system.beforeEvents.watchdogTerminate.subscribe((watchdogTerminate) => {
 // Gets executed once the /reload command is used
 if ([...world.getPlayers()].length >= 1) {
 
-    for (const player of world.getPlayers()) {
+    for (const player of world.getAllPlayers()) {
 
         player.lastTime = Date.now();
         player.clicks = 0;

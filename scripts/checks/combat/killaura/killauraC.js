@@ -5,7 +5,7 @@ import { flag } from "../../../util";
 /**
  * Checks for attacking multiple entities at once.
  * @param {Minecraft.Player} player - The player to check.
- * @param {Minecraft.Entity} entity - The attacked entity.
+ * @param {Minecraft.Player | Minecraft.Entity} entity - The attacked entity.
  */
 export function killauraC(player, entity) {
 

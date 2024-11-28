@@ -48,6 +48,6 @@ export function fly_d(player) {
 
     // Flag if the player hasn't started to fall after being in the air for too long
     if (!player.isFalling && counter >= config.modules.flyD.in_air_ticks) {
-        flag(player, "Fly", "D", "not falling", ` ${counter}ticks`);
+        flag(player, "Fly", "D", "not falling", ` ${counter} ticks`);
     }
 }

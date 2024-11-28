@@ -6,7 +6,7 @@ import { flag } from "../../../util";
  * Checks for sprinting while having the blindness effect.
  * @param {Minecraft.Player} player - The player to check.
  */
-export function sprint_b(player) {
+export function sprintB(player) {
     
     if (!config.modules.invalidsprintB.enabled || !player.isSprinting) return;
 

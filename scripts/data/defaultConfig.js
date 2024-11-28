@@ -253,6 +253,14 @@ export default
             "minVlbeforePunishment": 5
         },
 
+        "aimD": {
+            "enabled": true,
+            "description": "Checks for improper deceleration when doing large yaw movements.",
+            "punishment": "kick",
+            "punishmentLength": "1d",
+            "minVlbeforePunishment": 8
+        },
+
         "autoclickerA": {
             "enabled": true,
             "description":"Checks if a player's CPS exceeds the allowed threshold multiple times.",
@@ -268,13 +276,13 @@ export default
         "autoclickerB": {
             "enabled": true,
             "description": "Checks for suspiciously low deviation or duplicate CPS.",   
-            "samples": 8,
-            "maxDuplicates": 1,
+            "samples": 9,
+            "maxDuplicates": 2,
             "minStdDev": 0.5,
             "minAverageCps": 7,
             "punishment": "kick",
             "punishmentLength": "2d",
-            "minVlbeforePunishment": 4,
+            "minVlbeforePunishment": 5,
         },
 
         "autoclickerC": {

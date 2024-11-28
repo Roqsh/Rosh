@@ -10,7 +10,7 @@ const playerInvalidSprintBuffer = new Map();
  * Checks for sprinting in invalid directions. (Omni-Sprint)
  * @param {Minecraft.Player} player - The player to check.
  */
-export function sprint_a(player) {
+export function sprintA(player) {
 
     if (!config.modules.invalidsprintA.enabled || !player.isSprinting || player.isInWater) return;
 

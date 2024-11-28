@@ -6,7 +6,7 @@ import { flag, getScore } from "../../../util";
  * Checks for sprinting while using an item.
  * @param {Player} player - The player to check.
  */
-export function sprint_c(player) {
+export function sprintC(player) {
 
     if (!config.modules.invalidsprintC.enabled || !player.isSprinting || !player.hasTag("right")) return;
 
