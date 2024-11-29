@@ -17,7 +17,7 @@ export function scaffold_b(player) {
     const rotation = player.getRotation();
     
     // Define excluded rotations
-    const excludedPitch = [0];
+    const excludedPitch = [0, 90, -90];
 
     // Check the rotations only if they are not excluded
     if (!excludedPitch.includes(rotation.x)) {

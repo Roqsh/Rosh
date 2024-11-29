@@ -14,9 +14,9 @@ export function sprintA(player) {
 
     if (!config.modules.invalidsprintA.enabled || !player.isSprinting || player.isInWater) return;
 
-    // Define the threshold angle (e.g., 75 degrees) and buffer threshold (e.g., 8 events)
+    // Define the threshold angle (e.g., 75 degrees) and buffer threshold (e.g., 9 events)
     const ANGLE_THRESHOLD = config.modules.invalidsprintA.angle_threshold || 75;
-    const BUFFER_THRESHOLD = config.modules.invalidsprintA.buffer_threshold || 8;
+    const BUFFER_THRESHOLD = config.modules.invalidsprintA.buffer_threshold || 9;
 
     // Get the player's current move direction vector
     const moveDirection = player.getMoveDirection();

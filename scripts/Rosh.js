@@ -39,6 +39,7 @@ import { strafe_a } from "./checks/movement/strafe/strafeA.js";
 import { strafe_b } from "./checks/movement/strafe/strafeB.js";
 import { noslowA } from "./checks/movement/noslow/noslowA.js";
 import { noslowB } from "./checks/movement/noslow/noslowB.js";
+import { noslowC } from "./checks/movement/noslow/noslowC.js";
 import { sprintA } from "./checks/movement/sprint/sprintA.js";
 import { sprintB } from "./checks/movement/sprint/sprintB.js";
 import { sprintC } from "./checks/movement/sprint/sprintC.js";
@@ -80,7 +81,6 @@ import { autoclickerE } from "./checks/combat/autoclicker/autoclickerE.js";
 import { aimA } from "./checks/combat/aim/aimA.js";
 import { aimB } from "./checks/combat/aim/aimB.js";
 import { aimC } from "./checks/combat/aim/aimC.js";
-import { aimD } from "./checks/combat/aim/aimD.js";
 
 import { clicksHandler } from "./handlers/clicksHandler.js";
 import { commandHandler } from "./handlers/commandHandler.js";
@@ -219,6 +219,7 @@ system.runInterval(() => {
             
             noslowA(player);
             noslowB(player);
+            noslowC(player);
             
             sprintA(player);
             sprintB(player);
@@ -245,7 +246,6 @@ system.runInterval(() => {
             aimA(player);
             aimB(player);
             aimC(player);
-            aimD(player);
         }
 
         const clicksData = clicksHandler(player, tick);
@@ -274,6 +274,8 @@ system.runInterval(() => {
         if (tick >= 20) {
             player.lastTime = Date.now();
             player.clicks = 0;
+            player.removeTag("damaged");
+            player.removeTag("fall_damage");
             setScore(player, "tagReset", getScore(player, "tagReset", 0) + 1);
             setScore(player, "packets", 0);
 
@@ -282,9 +284,6 @@ system.runInterval(() => {
         
         // Runs every 100th tick (every 5 seconds)
         if (getScore(player, "tagReset", 0) >= 5) {
-            player.removeTag("damaged");
-            player.removeTag("fall_damage");
-            player.removeTag("rosh:timer_bypass");
             player.removeTag("ender_pearl");
             player.removeTag("bow");
 

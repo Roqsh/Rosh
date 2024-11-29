@@ -562,14 +562,6 @@ export default {
             "minVlbeforePunishment": 5
         },
 
-        "aimD": {
-            "enabled": true,
-            "description": "Checks for improper deceleration when doing large yaw movements.",
-            "punishment": "kick",
-            "punishmentLength": "1d",
-            "minVlbeforePunishment": 8
-        },
-
         "autoclickerA": {
             "enabled": true,
             "description":"Checks if a player's CPS exceeds the allowed threshold multiple times.",
@@ -713,11 +705,19 @@ export default {
             "minVlbeforePunishment": 3
         },
 
+        "noslowC": {
+            "enabled": true,
+            "description": "Checks for improper deceleration when doing large yaw movements.",
+            "punishment": "kick",
+            "punishmentLength": "1d",
+            "minVlbeforePunishment": 8
+        },
+
         "invalidsprintA": {
             "enabled": true,
             "description": "Checks for sprinting in invalid directions. (Omni-Sprint)",
             "angle_threshold": 75,
-            "buffer_threshold": 8,
+            "buffer_threshold": 9,
             "punishment": "kick",
             "punishmentLength": "1d",
             "minVlbeforePunishment": 7

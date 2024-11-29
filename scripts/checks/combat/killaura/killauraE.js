@@ -15,11 +15,11 @@ const optimalYawDifferences = new Map();
  */
 export function killauraE(player, target) {
 
-    if (!config.modules.killauraE.enabled || getSpeed(player) === 0) return;
+    if (!config.modules.killauraE.enabled || getSpeed(player) < 0.22) return;
 
-    // Initialize an EvictingList with a capacity of 65 timestamps if not already present
+    // Initialize an EvictingList with a capacity of 75 timestamps if not already present
     if (!optimalYawDifferences.has(player.name)) {
-        optimalYawDifferences.set(player.name, new EvictingList(65));
+        optimalYawDifferences.set(player.name, new EvictingList(75));
     }
     const yawDifferences = optimalYawDifferences.get(player.name);
     

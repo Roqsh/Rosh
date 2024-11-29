@@ -19,7 +19,7 @@ export function killauraA(player, entity) {
     // If the target is a player, get their name.
     const targetName = entity.isPlayer() ? `, target=${entity.name}` : `, target=${entity.typeId.replace("minecraft:", "")}`;
 
-    if (!player.isRiding()) {
+    if (!player.isRiding() && rotation.x !== 0 && Math.abs(rotation.x) !== 90) {
 
         // If either the x or y rotation is an integer, increment buffer
         if (Statistics.isNearlyInteger(rotation.x) || Statistics.isNearlyInteger(rotation.y)) {
@@ -33,7 +33,7 @@ export function killauraA(player, entity) {
             buffer.set(player.id, buffer.get(player.id) + 1);
 
             // If buffer count reaches threshold, flag and reset buffer
-            if (buffer.get(player.id) >= 3) {
+            if (buffer.get(player.id) >= 4) {
                 flag(player, "Killaura", "A", "xRot", `${rotation.x}, yRot=${rotation.y}${targetName}`);
                 buffer.set(player.id, 0);
             }

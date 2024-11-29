@@ -109,4 +109,5 @@ export function timerA(player, lagValue) {
 
     // Clear the timerHold array for the next round of samples
     player.timerHold = [];
+    player.removeTag("rosh:timer_bypass");
 }

@@ -6,12 +6,12 @@ import { flag, getSpeed, debug } from "../../../util";
 const playerLastMoveDirections = new Map();
 
 /**
- * Checks for improper decelerating when doing large yaw movements.
+ * Checks for improper deceleration when doing large yaw movements.
  * @param {Minecraft.Player} player - The player to check.
  */
-export function aimD(player) {
+export function noslowC(player) {
 
-    if (!config.modules.aimD.enabled) return;
+    if (!config.modules.noslowC.enabled || player.hasTag("damaged")) return;
 
     const moveDirection = player.getMoveDirection();
     const playerId = player.id;
@@ -33,7 +33,7 @@ export function aimD(player) {
         debug(player, "Acceleration", acceleration, "accel");
 
         if (player.getDeltaYaw() > 35 && acceleration < 0.00001) {
-            flag(player, "Aim", "D", "deltaYaw", `${player.getDeltaYaw().toFixed(2)}, acceleration=${acceleration}`);
+            flag(player, "NoSlow", "C", "deltaYaw", `${player.getDeltaYaw().toFixed(2)}, acceleration=${acceleration}`);
         }
     }
 
