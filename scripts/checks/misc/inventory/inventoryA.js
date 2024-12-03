@@ -17,7 +17,7 @@ export function inventoryA(player) {
     const lastCursorItem = player.getLastItemInCursor();
 
     // Check if the player is in an invalid state
-    const isInvalidState = player.isSneaking || player.isSprinting || player.isSwimming || player.isSleeping || player.isDead();
+    const isInvalidState = player.isSneaking || player.isSprinting || player.isSwimming || player.isSleeping || player.isDead() || player.hasTag("attacking") || player.hasTag("placing") || player.hasTag("breaking");
 
     // Get or initialize the player's buffer
     let buffer = playerBuffer.get(player.id) || 0;

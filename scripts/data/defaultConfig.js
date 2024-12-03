@@ -1,5 +1,6 @@
-export default
-{
+
+
+export default {
 
     // This is only required to reset modules via the !module command. ( !module <module_name> reset )
     // Therefore, you better not change this!
@@ -502,12 +503,11 @@ export default
         },
 
         "flyE": {
-            "enabled": true,
+            "enabled": false,
             "description": "Predicts the change in a player's vertical velocity.",
-            "threshold": 2,
             "punishment": "kick",
             "punishmentLength": "7d",
-            "minVlbeforePunishment": 6
+            "minVlbeforePunishment": 8
         },
 
         "motionA": {

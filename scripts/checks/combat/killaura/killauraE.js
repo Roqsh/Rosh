@@ -1,6 +1,6 @@
 import * as Minecraft from "@minecraft/server";
 import config from "../../../data/config.js";
-import { flag, getSpeed, debug } from "../../../util";
+import { flag, getSpeed } from "../../../util";
 import { EvictingList } from "../../../utils/EvictingList.js";
 import { Statistics } from "../../../utils/Statistics.js";
 import { Vector3D } from "../../../utils/Vector3D.js";
@@ -51,7 +51,7 @@ export function killauraE(player, target) {
     // Add the yaw difference to the EvictingList
     yawDifferences.add(yawDiff, Date.now());
 
-    if (yawDifferences.getCurrentSize() >= 65) {
+    if (yawDifferences.getCurrentSize() >= 75) {
         const diff = yawDifferences.getAll().map(entry => entry.key);
 
         // Calculate the standard deviation and average of the yaw differences

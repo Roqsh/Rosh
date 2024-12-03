@@ -1,4 +1,5 @@
 import * as Minecraft from "@minecraft/server";
+import * as Network from "@minecraft/server-net";
 import { system, world, ItemTypes, ItemStack } from "@minecraft/server";
 import config from "./data/config.js";
 import data from "./data/data.js";
@@ -321,6 +322,22 @@ system.runInterval(() => {
     }
 });
 
+const filter = {
+    monitoredPacketIds: [""],
+    ignoredPacketIds: [""]
+}
+
+Network.beforeEvents.packetReceive.subscribe((packet) => {
+    
+    const {packetId, packetSize, sender: player} = packet;
+
+    if (!player || !player.isValid()) return;
+    
+    if (player.hasTag("packetlogger")) {
+        player.sendMessage(`${config.themecolor}Rosh §j> §8${packetId} §j(§8${packetSize} bytes§j)`);
+    }
+
+}/** , filter */);
 
 world.beforeEvents.chatSend.subscribe((msg) => {
 

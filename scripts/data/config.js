@@ -811,12 +811,11 @@ export default {
         },
 
         "flyE": {
-            "enabled": true,
+            "enabled": false,
             "description": "Predicts the change in a player's vertical velocity.",
-            "threshold": 2,
             "punishment": "kick",
             "punishmentLength": "7d",
-            "minVlbeforePunishment": 6
+            "minVlbeforePunishment": 8
         },
 
         "motionA": {

@@ -16,8 +16,8 @@ export function debugMenu(player) {
     // Create a menu with buttons for accessing various debugging tools
     const menu = new MinecraftUI.ActionFormData()
         .title("Debug Tools")
-        .button(`Checks\n${player.hasTag("debug") ? "§8[§a+§8]" : "§8[§c-§8]"}`)
-        .button(`Events\n${player.hasTag("eventlogger") ? "§8[§a+§8]" : "§8[§c-§8]"}`)
+        .button(`Alerts\n${player.hasTag("debug") ? "§8[§a+§8]" : "§8[§c-§8]"}`)
+        .button(`Packets\n${player.hasTag("packetlogger") ? "§8[§a+§8]" : "§8[§c-§8]"}`)
         .button(`Speed\n${player.hasTag("speed") ? "§8[§a+§8]" : "§8[§c-§8]"}`)
         .button(`Ticks\n${player.hasTag("ticks") ? "§8[§a+§8]" : "§8[§c-§8]"}`)
         .button(`Tps\n${player.hasTag("tps") ? "§8[§a+§8]" : "§8[§c-§8]"}`)
@@ -40,8 +40,8 @@ export function debugMenu(player) {
 
         // Perform actions based on the selected option
         switch (response.selection) {
-            case 0: toggleTag(player, "debug", "Check-Debug"); break;
-            case 1: toggleTag(player, "eventlogger", "Events"); break;
+            case 0: toggleTag(player, "debug", `${player.hasTag("debug") ? "§c" : "§a"}Debug-content of §8Alerts`); break;
+            case 1: toggleTag(player, "packetlogger", `Packets ${player.hasTag("packetlogger") ? "§c" : "§a"}sent by the client`); break;
             case 2: toggleTag(player, "speed", "Speed"); break;
             case 3: toggleTag(player, "ticks", "Ticks"); break;
             case 4: toggleTag(player, "tps", "Tps"); break;

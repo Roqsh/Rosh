@@ -2,18 +2,17 @@ import * as Minecraft from "@minecraft/server";
 import config from "../../../data/config.js";
 import { flag, debug } from "../../../util";
 
-// TODO: Ignore script interactions and /clear command via packetSend (@minecraft/server-net)
-
 // In-memory store for tracking inventories per player
 const playerInventoryMap = new Map();
 
 /**
- * Flags if any inventory items are removed, changed or reduced and:
- * - If the change did not happen in any hotbar slot (0-8)
- * - And still atleast 1 item remains (patches `/clear` command)
- * - And the player is sneaking / sprinting / swimminng / sleeping / dead (invalid states)
- * - If items are new or their amount increases, it will not false when using `/give` or collecting items
+ * Flags invalid inventory transactions.
  * @param {Minecraft.Player} player - The player to check.
+ * 
+ * **TODO:**
+ * - Ignore script interactions
+ * - Ignore /clear 'player' 'item' 'slot' 'amount' command, /clear 'player' is fine
+ * - Ignore middle click (moves an item from the inventory to the hotbar without having the inventory open)
  */
 export function inventoryB(player) {
 
@@ -59,7 +58,7 @@ export function inventoryB(player) {
         }
 
         // Check if the player is in an invalid state
-        const isInvalidState = player.isSneaking || player.isSprinting || player.isSwimming || player.isSleeping || player.isDead();
+        const isInvalidState = player.isSneaking || player.isSprinting || player.isSwimming || player.isSleeping || player.isDead() || player.hasTag("attacking") || player.hasTag("placing") || player.hasTag("breaking");
 
         // Only flag if some items are missing, changed or reduced AND if at least one item remains
         if (anyItemRemaining && anyItemMissingChangedOrReduced && isInvalidState) {
