@@ -1295,6 +1295,8 @@ export async function manageTags(player) {
  */
 export function manageProperties(player) {
 
+    player.wasFalling = false;
+
     const blockUnderPlayer = player.dimension.getBlock({
         x: player.location.x, 
         y: player.location.y - 1, 
@@ -1413,10 +1415,8 @@ export function hVelocity(player) {
 
 
 /**
- * Returns true if a player is surrounded by air
- * @param {Minecraft.Player} player - The player that you are checking
- * @example if(aroundAir(player)) flag(player, "Movement", "A")
- * @remarks Flags for Movement/A if a player is surrounded by air
+ * Returns true if a player is surrounded by air.
+ * @param {Minecraft.Player} player - The player to check.
  */
 export function aroundAir(player) {
     // Validate the input
@@ -1452,9 +1452,6 @@ export function aroundAir(player) {
  * Returns true if a player is in air. (Refactored Paradox Anticheat Code)
  * @param {Minecraft.Player} player - The player to check.
  * @returns {boolean} True if the player is in air, false otherwise.
- * @example 
- * if (inAir(player)) flag(player, "Movement", "A")
- * // Flags for Movement/A if a player is in air
  */
 export function inAir(player) {
     // Check if player is an object
@@ -1491,6 +1488,7 @@ const playerFallData = new Map();
  * @returns {number} The fall distance of the player (0 if not falling or on ground).
  */
 export function calculateFallDistance(player) {
+
     const currentY = player.location.y;
     const isOnGround = player.isOnGround;
     const isFalling = player.isFalling;

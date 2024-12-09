@@ -13,10 +13,16 @@ declare module "@minecraft/server" {
         isCrawling: boolean;
 
         /**
-         * Whether the player is riding another entity (e.g., a horse, a pig, or a strider).
+         * Whether the player is riding another entity.
          * @Rosh
          */
         isRiding(): boolean;
+
+        /**
+         * The entity that the player is riding (e.g., a horse, a pig, a strider ...).
+         * @Rosh
+         */
+        getRiddenEntity(): Entity;
 
         /**
          * Whether the block below the player is a type of ice.

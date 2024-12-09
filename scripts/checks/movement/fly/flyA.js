@@ -5,12 +5,15 @@ import { flag, aroundAir, inAir, debug } from "../../../util";
 /**
  * Checks for excessive vertical movement while in air.
  * @param {Minecraft.Player} player - The player to check.
+ * 
+ * **Notes:**
+ * - May produce false positives if the player has the fly ability in Education Edition (`ability <player> mayfly true`)
+ * - May produce false positives if the player is `teleported upwards`
+ * - May produce false positives if you are dragged upwards to an entity when `riding` it
  */
 export function fly_a(player) {
 
     if (!config.modules.flyA.enabled) return;
-
-    const velocity = player.getVelocity();
 
     // Check if the player is in air and exempt certain situations
     if (
@@ -18,32 +21,34 @@ export function fly_a(player) {
         inAir(player) &&
         player.isLoggedIn() &&
         !player.isDead() &&
-        !player.isSlimeBouncing() &&
+        !player.isSlimeBouncing() && // Todo: Predict maximum allowed bounce
         !player.isTridentHovering() &&
         !player.isGliding &&
-        !player.isFlying
+        !player.isFlying &&
+        !player.getEffect("levitation")
     ) {
 
+        const position = player.getPosition();
+        const lastPosition = player.getLastPosition();
+
+        const deltaY = position.y - lastPosition.y;
+
         // Get the maximum vertical change allowed
-        let maxVerticalChange = 0.42000008;
+        let maxVerticalChange = 0.42;
 
-        // Check if the player has a jump boost effect
         const jumpBoost = player.getEffect("jump_boost");
-        if (jumpBoost) {
 
-            // Calculate the maximum vertical change allowed with the jump boost effect
-            maxVerticalChange = (jumpBoost.amplifier * (0.5 * 0.42000008)) + 0.42000008;
+        if (jumpBoost) {
+            maxVerticalChange = (jumpBoost.amplifier * (0.5 * 0.42)) + 0.42;
         }
 
         if (player.hasTag("damaged")) {
             maxVerticalChange += 0.37;
         }
 
-        // Check if the player's vertical velocity exceeds the maximum allowed
-        if (velocity.y > maxVerticalChange) {
-
-            // Flag the player for excessive vertical movement
-            flag(player, "Fly", "A", "yVel", `${velocity.y}, max=${maxVerticalChange}`, true);
+        // Check if the player's vertical delta exceeds the maximum allowed
+        if (deltaY > maxVerticalChange) {
+            flag(player, "Fly", "A", "yPos-delta", deltaY, true);
         }
     }
 }

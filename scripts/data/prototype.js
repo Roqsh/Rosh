@@ -380,11 +380,18 @@ export function loadPlayerPrototypes() {
     // Adding utility methods
 
     Player.prototype.isRiding = function() {
-        // The tag `isRiding` is added when the riding animation controller is triggered
-        if (this.hasTag("isRiding")) {
+        
+        if (this.hasComponent("riding")) {
             return true;
         } else {
             return false;
+        }
+    }
+
+    Player.prototype.getRiddenEntity = function() {
+
+        if (this.hasComponent("riding")) {
+            return this.getComponent("riding").entityRidingOn;
         }
     }
 

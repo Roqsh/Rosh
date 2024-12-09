@@ -388,15 +388,7 @@ export default {
             "enabled": true,
             "description": "Checks for being below the possible y-Level.",
             "punishment": "kick",
-            "minVlbeforePunishment": 1
-        },
-
-        "crasherA": {
-            "enabled": false,
-            "description":"Checks for old horion crasher method, some clients may still use them",
-            "punishment": "kick",
-            "punishmentLength": "14d",
-            "minVlbeforePunishment": 1
+            "minVlbeforePunishment": 9
         },
 
         "badpacketsA": {
@@ -812,7 +804,7 @@ export default {
 
         "flyE": {
             "enabled": false,
-            "description": "Predicts the change in a player's vertical velocity.",
+            "description": "Predicts the change in a player's vertical movement.",
             "punishment": "kick",
             "punishmentLength": "7d",
             "minVlbeforePunishment": 8

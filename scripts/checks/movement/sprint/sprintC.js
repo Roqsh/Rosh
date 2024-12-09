@@ -15,7 +15,7 @@ export function sprintC(player) {
     const ticks = getScore(player, "right", 0);
 
     // Flag the player if they are using an item while sprinting
-    if (ticks > 5 && ticks < 30) {
-        flag(player, "InvalidSprint", "C", "used item", `${selectedItem.typeId.replace("minecraft:", "")}, ticks=${ticks}`, true);
+    if (ticks > 4 && ticks < 30) {
+        flag(player, "InvalidSprint", "C", "used item", `${selectedItem.typeId.replace("minecraft:", "")}`, true);
     }
 }

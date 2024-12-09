@@ -16,7 +16,7 @@ import { badpackets_e } from "./checks/misc/badpackets/badpacketsE.js";
 import { badpackets_f } from "./checks/misc/badpackets/badpacketsF.js";
 import { badpackets_h } from "./checks/misc/badpackets/badpacketsH.js";
 import { badpacketsJ } from "./checks/misc/badpackets/badpacketsJ.js";
-import { exploit_a } from "./checks/misc/exploit/exploitA.js";
+import { exploitA } from "./checks/misc/exploit/exploitA.js";
 import { namespoofA } from "./checks/misc/namespoof/namespoofA.js";
 import { namespoofB } from "./checks/misc/namespoof/namespoofB.js";
 import { inventoryA } from "./checks/misc/inventory/inventoryA.js";
@@ -190,9 +190,9 @@ system.runInterval(() => {
         }
 
         //player.onScreenDisplay.setActionBar(`${themecolor}Debug §j> §8Falling: ${player.isFalling ? "§aTrue" : "§cFalse"}`);
-        //player.onScreenDisplay.setActionBar(`${themecolor}Debug §j> §8Bouncing: ${player.isSlimeBouncing() ? "§aTrue" : "§cFalse"}`);
-        //player.onScreenDisplay.setActionBar(`${themecolor}Debug §j> §8Hovering: ${player.isTridentHovering() ? "§aTrue" : "§cFalse"}`);
-        //if (player.getVelocity().y != 0) player.sendMessage(`${themecolor}Debug §j> §8yVelocity: ${player.getVelocity().y < 0 ? "§c" : "§a"}${player.getVelocity().y}`);
+        //player.onScreenDisplay.setActionBar(`${themecolor}Debug §j> §8Slime Bouncing: ${player.isSlimeBouncing() ? "§aTrue" : "§cFalse"}`);
+        //player.onScreenDisplay.setActionBar(`${themecolor}Debug §j> §8Trident Hovering: ${player.isTridentHovering() ? "§aTrue" : "§cFalse"}`);
+        //if (player.getVelocity().y != 0) player.sendMessage(`${themecolor}Debug §j> §8Y-Velocity: ${player.getVelocity().y < 0 ? "§c" : "§a"}${player.getVelocity().y}`);
         
 
         const movementData = movementHandler(player);
@@ -235,8 +235,7 @@ system.runInterval(() => {
         badpackets_h(player);
         badpacketsJ(player);
         
-        exploit_a(player);
-
+        exploitA(player);
 
         inventoryA(player);
         inventoryB(player);
@@ -311,6 +310,8 @@ system.runInterval(() => {
         player.isOnIce = false;
         player.isOnSnow = false;
         player.isOnShulker = false;
+
+        player.wasFalling = player.isFalling;
 
         if (player.isFalling) {
             player.touchedSlimeBlock = false;
@@ -533,12 +534,12 @@ world.afterEvents.playerSpawn.subscribe((playerJoin) => {
 
     Memory.register(player);
 
+    if (config.logSettings.showJoinLeave) {
+		data.recentLogs.push(`${timeDisplay()}§8${player.name} §jjoined the server`)
+	}  
+
 	if (player.isOp() || player.name === "rqosh") {
 		player.sendMessage(`${themecolor}Rosh §j> §aWelcome §8${player.name}§a!`);
-	}
-
-	if (config.logSettings.showJoinLeave) {
-		data.recentLogs.push(`${timeDisplay()}§8${player.name} §jjoined the server`)
 	}
 
     if (player.isOp() && thememode !== "Rosh" && thememode !== "Alice") {

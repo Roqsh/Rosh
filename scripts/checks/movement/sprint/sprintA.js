@@ -21,7 +21,7 @@ export function sprintA(player) {
     // Get the player's current move direction vector
     const moveDirection = player.getMoveDirection();
 
-    if (Vector3D.getVectorLength(moveDirection) < 0.1) return;
+    if (Vector3D.getVectorLength(moveDirection) < 0.001) return;
 
     // Normalize the move direction vector (x and z components only)
     const normalizedMoveDirection = Vector3D.getNormalizedVector({
