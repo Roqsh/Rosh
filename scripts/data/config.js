@@ -3,9 +3,9 @@
 export default {
 
     "webhook": {
-        "enabled": false,
+        "enabled": true,
         "style": "embed", // Either 'message' or 'embed'
-        "url": "" // Better keep it private!
+        "url": "https://discord.com/api/webhooks/1308806933607878686/_C7rSx31HqyBw-3BVxSazfmUxsCg1gjzfGJuqFztOScHGXCw8Hscs4Xbt7P6BLiHIUSZ" // Better keep it private!
     },
     
     "preset": "stable", // Choose between 'stable' and 'beta' - Beta contains checks which are still under development/not finished, so false flags or bugs can occur.
@@ -773,7 +773,7 @@ export default {
             "description": "Checks for excessive vertical movement while in air.",
             "punishment": "kick",
             "punishmentLength": "7d",
-            "minVlbeforePunishment": 4
+            "minVlbeforePunishment": 9
         }, 
 
         "flyB": {
@@ -782,7 +782,7 @@ export default {
             "threshold": 9,
             "punishment": "kick",
             "punishmentLength": "7d",
-            "minVlbeforePunishment": 8
+            "minVlbeforePunishment": 9
         },
 
         "flyC": {
@@ -790,7 +790,7 @@ export default {
             "description": "Checks for invalid Y movements",
             "punishment": "kick",
             "punishmentLength": "7d",
-            "minVlbeforePunishment": 8
+            "minVlbeforePunishment": 9
         },
 
         "flyD": {
@@ -799,7 +799,7 @@ export default {
             "in_air_ticks": 10,
             "punishment": "kick",
             "punishmentLength": "7d",
-            "minVlbeforePunishment": 8
+            "minVlbeforePunishment": 9
         },
 
         "flyE": {
@@ -807,7 +807,7 @@ export default {
             "description": "Predicts the change in a player's vertical movement.",
             "punishment": "kick",
             "punishmentLength": "7d",
-            "minVlbeforePunishment": 8
+            "minVlbeforePunishment": 9
         },
 
         "motionA": {

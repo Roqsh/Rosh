@@ -5,7 +5,7 @@ import config from "./data/config.js";
 import data from "./data/data.js";
 import { loadPlayerPrototypes, loadEntityPrototypes } from "./data/prototype.js";
 import { Memory } from "./utils/Memory.js";
-import { flag, ban, convertToMs, timeDisplay, getScore, setScore, tellStaff, manageTags, manageProperties, getSpeed, aroundAir, inAir, debug } from "./util.js";
+import { flag, ban, convertToMs, timeDisplay, getScore, setScore, tellStaff, manageTags, manageProperties, getSpeed, aroundAir, inAir, calculateFallDistance, calculateUpwardMotion, debug } from "./util.js";
 import { mainMenu, rateLimit } from "./ui/mainMenu.js";
 import { playerMenuSelected } from "./ui/main/playerMenu.js";
 
@@ -123,6 +123,14 @@ system.runInterval(() => {
         const velocity = player.getVelocity();
         const container = player.getComponent("inventory")?.container;
         const selectedSlot = player.selectedSlotIndex;
+        const fallDistance = calculateFallDistance(player);
+        const upwardMotion = calculateUpwardMotion(player);
+        player.setFallDistance(fallDistance);
+        player.setUpwardMotion(upwardMotion);
+
+        if (fallDistance !== 0) {
+            player.setLastAvailableFallDistance(fallDistance);
+        }
 
         const themecolor = config.themecolor;
 
@@ -189,10 +197,10 @@ system.runInterval(() => {
             player.lastGoodPosition = player.location;
         }
 
-        //player.onScreenDisplay.setActionBar(`${themecolor}Debug §j> §8Falling: ${player.isFalling ? "§aTrue" : "§cFalse"}`);
-        //player.onScreenDisplay.setActionBar(`${themecolor}Debug §j> §8Slime Bouncing: ${player.isSlimeBouncing() ? "§aTrue" : "§cFalse"}`);
+        player.onScreenDisplay.setActionBar(`${themecolor}Debug §j> §8Slime Bouncing: ${player.isSlimeBouncing() ? `§j(§8${upwardMotion < player.lastAvailableFallDistance ? "§a" : "§c"}${upwardMotion.toFixed(4)}§j/§a${(player.lastAvailableFallDistance * 0.7).toFixed(4)}§j)` : "§cFalse"}`);
         //player.onScreenDisplay.setActionBar(`${themecolor}Debug §j> §8Trident Hovering: ${player.isTridentHovering() ? "§aTrue" : "§cFalse"}`);
-        //if (player.getVelocity().y != 0) player.sendMessage(`${themecolor}Debug §j> §8Y-Velocity: ${player.getVelocity().y < 0 ? "§c" : "§a"}${player.getVelocity().y}`);
+        //if (player.getLastVelocity().y !== 0) player.sendMessage(`${themecolor}Debug §j> §8Y-Velocity: ${player.getVelocity().y < 0 ? "§c" : "§a"}${player.getVelocity().y}`);
+        //if (player.lastFallDistance !== 0) player.sendMessage(`${themecolor}Debug §j> §8SFall Distance: ${fallDistance}`);
         
 
         const movementData = movementHandler(player);
@@ -304,6 +312,8 @@ system.runInterval(() => {
         player.setLastDeltaYaw(rotationData.deltaYaw);
         player.setLastDeltaPitch(rotationData.deltaPitch);
 
+        player.setLastFallDistance(fallDistance);
+
         player.isCrawling = false;
         player.isRunningStairs = false;
 
@@ -311,9 +321,13 @@ system.runInterval(() => {
         player.isOnSnow = false;
         player.isOnShulker = false;
 
-        player.wasFalling = player.isFalling;
+        const blockUnderPlayer = player.dimension.getBlock({
+            x: player.location.x, 
+            y: player.location.y - 1, 
+            z: player.location.z
+        }).typeId;
 
-        if (player.isFalling) {
+        if (player.isFalling || (blockUnderPlayer !== "minecraft:slime" && blockUnderPlayer !== "minecraft:air")) {
             player.touchedSlimeBlock = false;
         }
 

@@ -462,10 +462,10 @@ export default {
 
         "flyA": {
             "enabled": true,
-            "description": "Checks for excessive vertical movement while in air.",
+            "description": "Checks for excessive vertical movement while.",
             "punishment": "kick",
             "punishmentLength": "7d",
-            "minVlbeforePunishment": 4
+            "minVlbeforePunishment": 9
         }, 
 
         "flyB": {
@@ -474,7 +474,7 @@ export default {
             "threshold": 9,
             "punishment": "kick",
             "punishmentLength": "7d",
-            "minVlbeforePunishment": 8
+            "minVlbeforePunishment": 9
         },
 
         "flyC": {
@@ -482,7 +482,7 @@ export default {
             "description": "Checks for invalid Y movements",
             "punishment": "kick",
             "punishmentLength": "7d",
-            "minVlbeforePunishment": 8
+            "minVlbeforePunishment": 9
         },
 
         "flyD": {
@@ -491,7 +491,7 @@ export default {
             "in_air_ticks": 10,
             "punishment": "kick",
             "punishmentLength": "7d",
-            "minVlbeforePunishment": 8
+            "minVlbeforePunishment": 9
         },
 
         "flyE": {
@@ -499,7 +499,7 @@ export default {
             "description": "Predicts the change in a player's vertical movement.",
             "punishment": "kick",
             "punishmentLength": "7d",
-            "minVlbeforePunishment": 8
+            "minVlbeforePunishment": 9
         },
 
         "motionA": {

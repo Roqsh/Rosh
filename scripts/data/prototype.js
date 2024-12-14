@@ -339,6 +339,70 @@ export function loadPlayerPrototypes() {
             z: currentPos.z - lastPos.z,
         }
     };
+    
+    /**
+     * Gets the player's current fall distance.
+     * @returns {number} The player's current fall distance.
+     */
+    Player.prototype.getFallDistance = function() {
+        return this.fallDistance;
+    }
+
+    /**
+     * Sets the player's current fall distance.
+     * @param {number} fallDistance - The player's current fall distance to set.
+     */
+    Player.prototype.setFallDistance = function(fallDistance) {
+        this.fallDistance = fallDistance;
+    }
+
+    /**
+     * Gets the player's fall distance from the last tick.
+     * @returns {number} The player's fall distance from the last tick or the current fall distance if not set.
+     */
+    Player.prototype.getLastFallDistance = function() {
+        return  this.lastFallDistance ?? this.fallDistance;
+    }
+    
+    /**
+     * Sets the player's fall distance from the last tick.
+     * @param {number} lastFallDistance - The fall distance value to set for the last tick.
+     */
+    Player.prototype.setLastFallDistance = function(lastFallDistance) {
+        this.lastFallDistance = lastFallDistance;
+    }
+    
+    /**
+     * Gets the player's last available fall distance **that isnt zero**.
+     * @returns {number} The last available fall distance of the player.
+     */
+    Player.prototype.getLastAvailableFallDistance = function() {
+        return this.lastAvailableFallDistance;
+    }
+    
+    /**
+     * Sets the player's last available fall distance **that isnt zero**.
+     * @param {number} lastAvailableFallDistance - The fall distance to set as the last available for the player.
+     */
+    Player.prototype.setLastAvailableFallDistance = function(lastAvailableFallDistance) {
+        this.lastAvailableFallDistance = lastAvailableFallDistance;
+    }
+
+    /**
+     * Gets the player's upward motion (distance of upward motion from the start of the levitation).
+     * @returns {number} The player's upward motion (distance of upward motion from the start of the levitation).
+     */
+    Player.prototype.getUpwardMotion = function() {
+        return this.upwardMotion;
+    }
+
+    /**
+     * Sets the player's upward motion (distance of upward motion from the start of the levitation).
+     * @param {number} upwardMotion - The upward motion value to set for the player.
+     */
+    Player.prototype.setUpwardMotion = function(upwardMotion) {
+        this.upwardMotion = upwardMotion;
+    }
 
 
     // Adding operating system specific methods to the Player prototype
@@ -428,12 +492,31 @@ export function loadPlayerPrototypes() {
             return false;
         }
 
+        const fallDistance = this.getLastAvailableFallDistance();
+        const upwardMotion = this.upwardMotion;
+
+        const maxBounceHeight = fallDistance * 0.75; // Patches extreme y-boosts into the air when touching slimes
+
+        // Check if the player touched a slime block and has a positive velocity (being repelled upwards)
+        if (this.touchedSlimeBlock && this.getVelocity().y > 0 && upwardMotion <= maxBounceHeight) {
+            return true;
+        }
+    
+        return false; // Default return false when not bouncing
+    };
+
+    Player.prototype.isSlimeBouncingFlyA = function() {
+        
+        if (this.isFalling || this.isFlying) {
+            return false;
+        }
+
         // Check if the player touched a slime block and has a positive velocity (being repelled upwards)
         if (this.touchedSlimeBlock && this.getVelocity().y > 0) {
             return true;
         }
     
-        return false; // Default return false when not bouncing
+        return false;
     };
 
     Player.prototype.isTridentHovering = function() {

@@ -419,6 +419,60 @@ declare module "@minecraft/server" {
         getMoveDirection(): Vector3;
 
         /**
+         * Gets the player's current fall distance.
+         * @returns {number} The player's current fall distance.
+         * @Rosh
+         */
+        getFallDistance(): number;
+
+        /**
+         * Sets the player's current fall distance.
+         * @param {number} fallDistance The player's fall distance to set.
+         * @Rosh
+         */
+        setFallDistance(fallDistance: number): void;
+
+        /**
+         * Gets the player's last fall distance.
+         * @returns {number} The player's last fall distance.
+         * @Rosh
+         */
+        getLastFallDistance(): number;
+
+        /**
+         * Sets the player's last fall distance.
+         * @param {number} fallDistance The player's last fall distance to set.
+         * @Rosh
+         */
+        setLastFallDistance(fallDistance: number): void;
+
+        /**
+         * Gets the player's last available fall distance **that isnt zero**.
+         * @returns {number} The player's last available fall distance.
+         * @Rosh
+         */
+        getLastAvailableFallDistance(): number;
+
+        /**
+         * Sets the player's last available fall distance **that isnt zero**.
+         * @param {number} fallDistance The player's last available fall distance to set.
+         * @Rosh
+         */
+        setLastAvailableFallDistance(fallDistance: number): void;
+        
+        /**
+         * Gets the player's upward motion (distance of upward motion from the start of the levitation).
+         * @returns {number} The player's upward motion.
+         */
+        getUpwardMotion(): number;
+
+        /**
+         * Sets the player's upward motion (distance of upward motion from the start of the levitation).
+         * @param {number} upwardMotion - The upward motion value to set for the player.
+         */
+        setUpwardMotion(upwardMotion: number): void;
+
+        /**
          * Stores a list of player names the player has reported for potentially malicious behavior.
          * @Rosh
          */

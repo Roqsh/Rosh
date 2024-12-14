@@ -3,7 +3,7 @@ import config from "../../../data/config.js";
 import { flag, aroundAir, inAir, debug } from "../../../util";
 
 /**
- * Checks for excessive vertical movement while in air.
+ * Checks for excessive vertical movement.
  * @param {Minecraft.Player} player - The player to check.
  * 
  * **Notes:**
@@ -21,34 +21,24 @@ export function fly_a(player) {
         inAir(player) &&
         player.isLoggedIn() &&
         !player.isDead() &&
-        !player.isSlimeBouncing() && // Todo: Predict maximum allowed bounce
         !player.isTridentHovering() &&
         !player.isGliding &&
         !player.isFlying &&
-        !player.getEffect("levitation")
+        !player.getEffect("levitation") &&
+        !player.hasTag("damaged")
     ) {
 
-        const position = player.getPosition();
-        const lastPosition = player.getLastPosition();
+        const isSlimeBouncing = player.isSlimeBouncingFlyA();
 
-        const deltaY = position.y - lastPosition.y;
+        const fallDistance = player.getLastAvailableFallDistance();
+        const upwardMotion = player.getUpwardMotion();
 
-        // Get the maximum vertical change allowed
-        let maxVerticalChange = 0.42;
+        const maxBounceHeight = fallDistance * 0.7;
 
-        const jumpBoost = player.getEffect("jump_boost");
+        if (maxBounceHeight < 0.1) return;
 
-        if (jumpBoost) {
-            maxVerticalChange = (jumpBoost.amplifier * (0.5 * 0.42)) + 0.42;
-        }
-
-        if (player.hasTag("damaged")) {
-            maxVerticalChange += 0.37;
-        }
-
-        // Check if the player's vertical delta exceeds the maximum allowed
-        if (deltaY > maxVerticalChange) {
-            flag(player, "Fly", "A", "yPos-delta", deltaY, true);
+        if (isSlimeBouncing && upwardMotion > maxBounceHeight) {
+            flag(player, "Fly", "A", "upward Motion", `${upwardMotion.toFixed(4)}/${maxBounceHeight.toFixed(4)}, exceeding=${Math.abs(maxBounceHeight - upwardMotion).toFixed(4)}, bounce-back percentage=${((upwardMotion / maxBounceHeight) * 100).toFixed(1)}`);
         }
     }
 }

@@ -1295,8 +1295,6 @@ export async function manageTags(player) {
  */
 export function manageProperties(player) {
 
-    player.wasFalling = false;
-
     const blockUnderPlayer = player.dimension.getBlock({
         x: player.location.x, 
         y: player.location.y - 1, 
@@ -1515,6 +1513,46 @@ export function calculateFallDistance(player) {
     }
 
     return fallDistance;
+}
+
+
+
+// Initialize a Map to store the starting Y position
+const playerFlyData = new Map();
+
+/**
+ * Calculates the distance of upward motion from the start of the levitation.
+ * @param {Minecraft.Player} player - The player to calculate the upward motion for.
+ * @returns {number} The distance of upward motion of the player (0 if falling or on ground).
+ */
+export function calculateUpwardMotion(player) {
+
+    const currentY = player.location.y;
+    const isOnGround = player.isOnGround;
+    const isFalling = player.isFalling;
+    let upwardMotion = 0;
+
+    if (isOnGround) {
+        // Reset fly tracking when the player lands
+        playerFlyData.delete(player);
+        return upwardMotion; // No fly distance if on the ground
+    }
+
+    if (!isFalling) {
+        // Check if we already have a recorded flight start position
+        if (!playerFlyData.has(player)) {
+            // Mark the current position as the start of the flight
+            playerFlyData.set(player, currentY);
+        }
+        // Calculate fly distance from the start Y position
+        const startY = playerFlyData.get(player);
+        upwardMotion = currentY - startY;
+    } else {
+        // If the player is falling, reset the fly start position
+        playerFlyData.delete(player);
+    }
+
+    return upwardMotion;
 }
 
 
