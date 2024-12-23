@@ -8,7 +8,7 @@ import { addOp } from "../../commands/staff/op.js";
 import { removeOp } from "../../commands/staff/deop.js";
 import { addVanish, removeVanish } from "../../commands/tools/vanish.js";
 import { summonAuraBot } from "../../commands/tools/testaura.js";
-import { getStats } from "../../commands/staff/stats.js";
+import { getViolations } from "../../commands/staff/violations.js";
 import { mainMenu } from "../mainMenu.js";
 import { kickPlayerMenu, banPlayerMenu } from "./punishMenu.js";
 import { String } from "../../utils/String.js";
@@ -29,6 +29,7 @@ export function playerMenu(player) {
     // Create a menu that lists all currently active players
     const menu = new MinecraftUI.ActionFormData()
         .title("Manage Players")
+        .button("Search Player")
     
         // Gets all available players
         for (const plr of allPlayers) {
@@ -59,8 +60,12 @@ export function playerMenu(player) {
             return;
         }
 
-        if ([...allPlayers].length > response.selection) {
-            playerMenuSelected(player, [...allPlayers][response.selection]);
+        if (response.selection === 0) {
+            player.sendMessage(`${themecolor}Rosh §j> §o§aSoon... !`);
+        }
+
+        if (response.selection > 0 && [...allPlayers].length > response.selection - 1) {
+            playerMenuSelected(player, [...allPlayers][response.selection - 1]);
         } else {
             mainMenu(player);
         }
@@ -90,44 +95,47 @@ export function playerMenuSelected(player, selectedPlayer) {
         .body(
             `§8Coordinates: ${Math.floor(selectedPlayer.location.x)}, ${Math.floor(selectedPlayer.location.y)}, ${Math.floor(selectedPlayer.location.z)}\n` + 
             `Dimension: ${String.toUpperCase((selectedPlayer.dimension.id).replace("minecraft:", ""))}\n` + 
-            `Operator: ${selectedPlayer.isOp() ? "§8[§a+§8]" : "§8[§c-§8]"}\n` + 
+            `Gamemode: ${String.toUpperCase(selectedPlayer.getGameMode())}\n` + 
+            `Device: ${selectedPlayer.clientSystemInfo.platformType}\n` + 
+            `Input: ${selectedPlayer.inputInfo.lastInputModeUsed}\n` +
+            `Operator: ${selectedPlayer.isOp() ? "§8[§a+§8]" : "§8[§c-§8]"}\n\n` +
+
             `Muted: ${selectedPlayer.hasTag("isMuted") ? "§8[§a+§8]" : "§8[§c-§8]"}\n` + 
             `Frozen: ${selectedPlayer.hasTag("frozen") ? "§8[§a+§8]" : "§8[§c-§8]"}\n` + 
             `Vanished: ${selectedPlayer.hasTag("vanish") ? "§8[§a+§8]" : "§8[§c-§8]"}\n` + 
             `Fly Mode: ${selectedPlayer.hasTag("flying") ? "§8[§a+§8]" : "§8[§c-§8]"}`
         )
-        .button("Clear EnderChest")
-        .button("Report Player")
-        .button("Kick Player")
-        .button("Ban Player")
-        .button(`${selectedPlayer.hasTag("flying") ? "Disable Fly Mode" : "Enable Fly Mode"}`)
-        .button(`${selectedPlayer.hasTag("frozen") ? "Unfreeze Player" : "Freeze Player"}`)
-        .button(`${selectedPlayer.hasTag("isMuted") ? "Unmute Player" : "Mute Player"}`)
-        .button(`${selectedPlayer.isOp() ? "Remove Operator status" : "Set as Operator"}`)
-        .button(`${selectedPlayer.hasTag("vanish") ? "Unvanish Player" : "Vanish Player"}`)   
-        .button("Teleport")
-        .button("Switch Gamemode")
-        .button("View Violations")
-        .button('Killaura Check')
-        .button("Back");
+        .button("Report Player") // 0
+        .button("Kick Player") // 1
+        .button("Ban Player") // 2
+        .button(`${selectedPlayer.hasTag("frozen") ? "Unfreeze Player" : "Freeze Player"}`) // 3
+        .button(`${selectedPlayer.hasTag("isMuted") ? "Unmute Player" : "Mute Player"}`) //4
+        .button(`${selectedPlayer.isOp() ? "Remove Operator status" : "Set as Operator"}`) // 5
+        .button(`${selectedPlayer.hasTag("vanish") ? "Unvanish Player" : "Vanish Player"}`) // 6
+        .button(`${selectedPlayer.hasTag("flying") ? "Disable Fly Mode" : "Enable Fly Mode"}`) // 7
+        .button("Clear EnderChest") // 8
+        .button("Teleport") // 9
+        .button("Switch Gamemode") // 10
+        .button("View Violations") // 11
+        .button('Killaura Check') // 12
+        .button("Back"); // 13
 
     // Show the menu to the player and handle the response based on the player's selection
     menu.show(player).then((response) => {
 
         switch (response.selection) {
 
-            case 0:
+            case 8:
                 clearEnderchest(selectedPlayer);
-                selectedPlayer.sendMessage(`${themecolor}Rosh §j> §cYour ender chest has been cleared by §8${player.name}§c.`)
                 player.sendMessage(`${themecolor}Rosh §j> §cYou have cleared §8${selectedPlayer.name}'s §cenderchest.`);
                 playerMenuSelected(player, selectedPlayer);
                 break;
 
-            case 1: player.sendMessage(`${themecolor}Rosh §j> §o§aSoon... !`); break;
-            case 2: kickPlayerMenu(player, selectedPlayer, 1); break;
-            case 3: banPlayerMenu(player, selectedPlayer, 1); break;
+            case 0: player.sendMessage(`${themecolor}Rosh §j> §o§aSoon... !`); break;
+            case 1: kickPlayerMenu(player, selectedPlayer, 1); break;
+            case 2: banPlayerMenu(player, selectedPlayer, 1); break;
 
-            case 4:
+            case 7:
                 if (selectedPlayer.hasTag("flying")) {
                     selectedPlayer.removeTag("flying");
                     selectedPlayer.runCommandAsync("ability @s mayfly false");
@@ -142,7 +150,7 @@ export function playerMenuSelected(player, selectedPlayer) {
                 playerMenuSelected(player, selectedPlayer);
                 break;
 
-            case 5:
+            case 3:
                 if (selectedPlayer.hasTag("frozen")) {
                     selectedPlayer.removeTag("frozen");
                     selectedPlayer.sendMessage(`§r${themecolor}Rosh §j> §aYou are no longer frozen.`);
@@ -151,30 +159,30 @@ export function playerMenuSelected(player, selectedPlayer) {
                     selectedPlayer.onScreenDisplay.setHudVisibility(Minecraft.HudVisibility.Reset);
                     player.sendMessage(`§r${themecolor}Rosh §j> §aYou have unfrozen §8${selectedPlayer.name}§a.`);
                 } else {
-                    // Prevent freezing yourself
-                    if (selectedPlayer.id === player.id) {
-                        player.sendMessage(`${themecolor}Rosh §j> §cYou can't freeze yourself.`);
+                    // Prevent freezing Operators
+                    if (selectedPlayer.isOp()) {
+                        player.sendMessage(`${themecolor}Rosh §j> §8${selectedPlayer.name} §cis an Operator and cannot be frozen!`);
                         return;
                     }
                     selectedPlayer.addTag("frozen");
-                    selectedPlayer.sendMessage(`§r${themecolor}Rosh §j> §cYou are now frozen.`);
                     selectedPlayer.inputPermissions.movementEnabled = false;
                     selectedPlayer.inputPermissions.cameraEnabled = false;
                     selectedPlayer.onScreenDisplay.setHudVisibility(Minecraft.HudVisibility.Hide);
+                    selectedPlayer.sendMessage(`§r${themecolor}Rosh §j> §cYou are now frozen.`);
                     player.sendMessage(`§r${themecolor}Rosh §j> §cYou have frozen §8${selectedPlayer.name}§c.`);
                 }
                 playerMenuSelected(player, selectedPlayer);
                 break;
 
-            case 6:
+            case 4:
                 if (selectedPlayer.hasTag("isMuted")) {
                     selectedPlayer.unmute();
                     selectedPlayer.sendMessage(`${themecolor}Rosh §j> §aYou are no longer muted.`);
                     player.sendMessage(`${themecolor}Rosh §j> §aYou have unmuted §8${selectedPlayer.id === player.id ? "§ayourself" : `${selectedPlayer.name}`}§a.`);
                 } else {
-                    // Prevent muting yourself
-                    if (selectedPlayer.id === player.id) {
-                        player.sendMessage(`${themecolor}Rosh §j> §cYou can't mute yourself.`);
+                    // Prevent muting Operators
+                    if (selectedPlayer.isOp()) {
+                        player.sendMessage(`${themecolor}Rosh §j> §8${selectedPlayer.name} §cis an Operator and cannot be muted!`);
                         return;
                     }
                     selectedPlayer.mute();
@@ -184,7 +192,7 @@ export function playerMenuSelected(player, selectedPlayer) {
                 playerMenuSelected(player, selectedPlayer);
                 break;
 
-            case 7:
+            case 5:
                 if (selectedPlayer.isOp()) {
                     // Prevent deopping oneself
                     if (selectedPlayer.id === player.id) {
@@ -200,7 +208,7 @@ export function playerMenuSelected(player, selectedPlayer) {
                 }
                 break;
 
-            case 8:
+            case 6:
                 if (selectedPlayer.hasTag("vanish")) {
                     removeVanish(selectedPlayer, themecolor);
                 } else {
@@ -211,7 +219,7 @@ export function playerMenuSelected(player, selectedPlayer) {
 
             case 9: playerMenuTeleport(player, selectedPlayer); break;
             case 10: playerMenuGamemode(player, selectedPlayer); break;
-            case 11: getStats(player, selectedPlayer); break;
+            case 11: getViolations(player, selectedPlayer); break;
             case 12: summonAuraBot(player, selectedPlayer); break;
             case 13: playerMenu(player); break;
         }

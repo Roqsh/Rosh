@@ -32,8 +32,8 @@ import { tellstaff } from "../commands/staff/tellstaff.js";
 import { notify } from "../commands/staff/notify.js";
 import { autoban } from "../commands/staff/autoban.js";
 import { module } from "../commands/staff/module.js";
-import { stats } from "../commands/staff/stats.js";
 import { logs } from "../commands/staff/logs.js";
+import { violations } from "../commands/staff/violations.js";
 import { banlist } from "../commands/staff/banlist.js";
 import { resetwarns } from "../commands/staff/resetwarns.js";
 import { tag } from "../commands/staff/tag.js";
@@ -156,7 +156,7 @@ function runCommand(msg, commandName, args) {
                 case "notify": notify(message); break;
                 case "autoban": autoban(message); break;
                 case "module": module(message, args); break;
-                case "stats": stats(message, args); break;
+                case "violations": violations(message, args); break;
                 case "logs": logs(message, args); break;
                 case "banlist": banlist(message, args); break;
                 case "resetwarns": resetwarns(message, args); break;

@@ -1440,6 +1440,7 @@ export function aroundAir(player) {
             }
         }
     }
+    
     // All surrounding blocks are air
     return true;
 }
@@ -1452,12 +1453,11 @@ export function aroundAir(player) {
  * @returns {boolean} True if the player is in air, false otherwise.
  */
 export function inAir(player) {
-    // Check if player is an object
+    // Validate the input
     if (!player.isPlayer()) {
         throw new TypeError(`Error: player is type of ${typeof player}. Expected "object".`);
     }
 
-    // Get player's location and dimension
     const { x, y, z } = player.location;
     const dimension = player.dimension;
 

@@ -3,13 +3,13 @@ import config from "../../data/config.js";
 import { getScore, getPlayerByName, endsWithNumberInParentheses } from "../../util";
 
 /**
- * Gets stats from a player (such as kicks, flags, etc.).
+ * Gets violations from a player (such as kicks, flags, etc.).
  * @param {object} message - The message object containing the sender's information.
  * @param {Minecraft.Player} message.sender - The player who initiated the stats command.
  * @param {array} args - Additional arguments provided, with the first argument being the target player's name.
  * @throws {TypeError} If the message is not an object or if args is not an array.
  */
-export function stats(message, args) {
+export function violations(message, args) {
     // Validate message and args
     if (typeof message !== "object" || !message.sender) {
         throw new TypeError(`message is type of ${typeof message}. Expected "object" with "sender" property.`);
@@ -23,7 +23,7 @@ export function stats(message, args) {
 
     // Check if target player name is provided
     if (!args.length) {
-        player.sendMessage(`${themecolor}Rosh §j> §cYou need to provide whose stats to get.`);
+        player.sendMessage(`${themecolor}Rosh §j> §cYou need to provide whose violations to get.`);
         return;
     }
 
@@ -36,7 +36,7 @@ export function stats(message, args) {
 
     // Check if target player name is valid
     if (targetName.length < minNameLength || targetName.length > maxNameLength) {
-        player.sendMessage(`${themecolor}Rosh §j> §cYou need to provide a valid player to get their stats from.`);
+        player.sendMessage(`${themecolor}Rosh §j> §cYou need to provide a valid player to get their violations from.`);
         return;
     }
 
@@ -49,7 +49,7 @@ export function stats(message, args) {
         return;
     }
 
-    getStats(player, member);
+    getViolations(player, member);
 }
 
 /**
@@ -57,7 +57,7 @@ export function stats(message, args) {
  * @param {Minecraft.Player} player - The player who initiated the event.
  * @param {Minecraft.Player} member - The player whos stats to get.
  */
-export function getStats(player, member) {
+export function getViolations(player, member) {
 
     const themecolor = config.themecolor;
 

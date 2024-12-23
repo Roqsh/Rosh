@@ -3,9 +3,9 @@
 export default {
 
     "webhook": {
-        "enabled": true,
+        "enabled": false,
         "style": "embed", // Either 'message' or 'embed'
-        "url": "https://discord.com/api/webhooks/1308806933607878686/_C7rSx31HqyBw-3BVxSazfmUxsCg1gjzfGJuqFztOScHGXCw8Hscs4Xbt7P6BLiHIUSZ" // Better keep it private!
+        "url": "" // Better keep it private!
     },
     
     "preset": "stable", // Choose between 'stable' and 'beta' - Beta contains checks which are still under development/not finished, so false flags or bugs can occur.
@@ -246,9 +246,9 @@ export default {
             "aliases": ["setting", "check"]
         },
 
-        "stats": {
+        "violations": {
             "enabled": true,
-            "description": "§r!stats <player> §8- Lets you see flags and punishments of a player",
+            "description": "§r!violations <player> §8- Lets you see flags and punishments of a player",
             "operator": true,
             "aliases": ["info"]
         },
