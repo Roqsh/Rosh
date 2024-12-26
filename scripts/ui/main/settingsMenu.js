@@ -21,7 +21,7 @@ export function settingsMenu(player) {
         .button(`Notifications\n${player.hasTag("notify") ? "§8[§a+§8]" : "§8[§c-§8]"}`)
         .button(`Webhooks\n${config.webhook.enabled ? "§8[§a+§8]" : "§8[§c-§8]"}`)
         .button(`Autoban\n${config.autoban ? "§8[§a+§8]" : "§8[§c-§8]"}`)
-        .button(`Silent\n${config.silent ? "§8[§a+§8]" : "§8[§c-§8]"}`)
+        .button(`Silent Flags\n${config.silent ? "§8[§a+§8]" : "§8[§c-§8]"}`)
         .button(`Preset\n${config.preset === "stable" ? "§8Stable" : "§8Beta"}`)
         .button(`Themecolor\n${config.themecolor}Color`)
         .button(`Thememode\n§8${config.thememode}`)
@@ -178,7 +178,7 @@ function silentMenu(player) {
         }
 
         config.silent = response.formValues[0];
-        player.sendMessage(`${themecolor}Rosh §j> ${config.silent ? "§a" : "§c"}Silent Flagging is now ${config.silent ? "enabled" : "disabled"}!`);
+        player.sendMessage(`${themecolor}Rosh §j> ${config.silent ? "§a" : "§c"}Silent Flagging is now ${config.silent ? "enabled, meaning players movement will no longer be reverted!" : "disabled, meaning players movement will be reverted!"}`);
 
     }).catch((error) => {
         // Handle promise rejection

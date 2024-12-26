@@ -2,7 +2,7 @@ import { Player, Entity, ItemStack, HudVisibility } from "@minecraft/server";
 import { Memory } from "../utils/Memory.js";
 import { BoundingBox } from "../utils/BoundingBox.js";
 import { ban } from "../util.js";
-import { data } from "../data/data.js";
+import data from "../data/data.js";
 
 /**
  * Initializes and enhances the Player prototype with custom methods.

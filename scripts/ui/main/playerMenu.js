@@ -59,7 +59,7 @@ export function playerMenu(player) {
             return;
         }
 
-        if (response.selection > 0 && [...allPlayers].length > response.selection) {
+        if ([...allPlayers].length > response.selection) {
             playerMenuSelected(player, [...allPlayers][response.selection]);
         } else {
             mainMenu(player);
@@ -84,6 +84,16 @@ export function playerMenuSelected(player, selectedPlayer) {
 
     const themecolor = config.themecolor;
 
+    let device = "§oUnknown§r§8";
+    let input = "§oUnknown§r§8";
+
+    try {
+        device = selectedPlayer.clientSystemInfo.platformType;
+        input = selectedPlayer.inputInfo.lastInputModeUsed;
+    } catch (error) {
+        console.warn(`Unable to retrieve device and input information for ${selectedPlayer.name}. This can be safely ignored.`);
+    }
+
     // Create a menu with various options for managing the selected player
     const menu = new MinecraftUI.ActionFormData()
         .title(`Manage ${selectedPlayer.name}`)
@@ -91,8 +101,8 @@ export function playerMenuSelected(player, selectedPlayer) {
             `§8Coordinates: ${Math.floor(selectedPlayer.location.x)}, ${Math.floor(selectedPlayer.location.y)}, ${Math.floor(selectedPlayer.location.z)}\n` + 
             `Dimension: ${String.toUpperCase((selectedPlayer.dimension.id).replace("minecraft:", ""))}\n` + 
             `Gamemode: ${String.toUpperCase(selectedPlayer.getGameMode())}\n` + 
-            `Device: ${selectedPlayer.clientSystemInfo.platformType}\n` + 
-            `Input: ${selectedPlayer.inputInfo.lastInputModeUsed}\n` +
+            `Device: ${device}\n` + 
+            `Input: ${input}\n` +
             `Operator: ${selectedPlayer.isOp() ? "§8[§a+§8]" : "§8[§c-§8]"}\n\n` +
 
             `Muted: ${selectedPlayer.hasTag("isMuted") ? "§8[§a+§8]" : "§8[§c-§8]"}\n` + 
