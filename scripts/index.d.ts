@@ -86,6 +86,13 @@ declare module "@minecraft/server" {
         isAlive(): boolean;
 
         /**
+         * Whether the player is frozen (tagged with `isFrozen`).
+         * @returns {boolean} True if the player is frozen, false otherwise.
+         * @Rosh
+         */
+        isFrozen(): boolean;
+
+        /**
          * Whether the player is muted (tagged with `isMuted`).
          * @returns {boolean} True if the player is muted, false otherwise.
          * @Rosh
@@ -494,6 +501,13 @@ declare module "@minecraft/server" {
         ban(): boolean;
 
         /**
+         * Unbans a player from the game.
+         * @returns {boolean} True if the player was successfully unbanned, false otherwise.
+         * @Rosh
+         */
+        unban(): boolean;
+
+        /**
          * Mutes the player, preventing them from sending chat messages. Adds the `isMuted` tag.
          * @returns {Promise<boolean>} A promise that resolves when the player is muted.
          * @Rosh
@@ -506,6 +520,20 @@ declare module "@minecraft/server" {
          * @Rosh
          */
         unmute(): Promise<boolean>;
+
+        /**
+         * Freezes the player, preventing them from moving, rotating their camera and hides their UI. Adds the `isFrozen` tag.
+         * @returns {boolean} True if the player was successfully frozen, false otherwise.
+         * @Rosh
+         */
+        freeze(): boolean;
+
+        /**
+         * Unfreezes the player, allowing them to move, rotate their camera and shows their UI again. Removes the `isFrozen` tag.
+         * @returns {boolean} True if the player was successfully unfrozen, false otherwise.
+         * @Rosh
+         */
+        unfreeze(): boolean;
 
         /**
          * Gets a player's current bounding box. (aka Hitbox)

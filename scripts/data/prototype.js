@@ -1,7 +1,8 @@
-import { Player, Entity, ItemStack } from "@minecraft/server";
+import { Player, Entity, ItemStack, HudVisibility } from "@minecraft/server";
 import { Memory } from "../utils/Memory.js";
 import { BoundingBox } from "../utils/BoundingBox.js";
 import { ban } from "../util.js";
+import { data } from "../data/data.js";
 
 /**
  * Initializes and enhances the Player prototype with custom methods.
@@ -265,6 +266,32 @@ export function loadPlayerPrototypes() {
         }
     };
 
+    Player.prototype.ban = function() {
+        const state = ban(this);
+        return state;
+    }
+
+    Player.prototype.unban = function() {
+        try {
+            if (data.unbanQueue.includes(this.name)) {
+                return true;
+            } else {
+                delete data.banList[this.name];
+                data.unbanQueue.push(this.name);
+                data.recentLogs.push(`${timeDisplay()}§8${targetName} §ahas been unbanned!`);
+                return true;
+            }
+        } catch (e) {
+            console.error(`Failed to unban player ${this.name}:`, e);
+            return false;
+        }
+        
+    }
+
+    Player.prototype.isBanned = function() {
+        return this.hasTag("isBanned");
+    }
+
     Player.prototype.mute = async function() {
         try {
             if (this.hasTag("isMuted")) {
@@ -297,13 +324,42 @@ export function loadPlayerPrototypes() {
         return this.hasTag("isMuted");
     }
 
-    Player.prototype.ban = function() {
-        const state = ban(this);
-        return state;
+    Player.prototype.freeze = function() {
+        try {
+            if (this.hasTag("isFrozen")) {
+                return true;
+            } else {
+                this.addTag("isFrozen");
+                this.inputPermissions.movementEnabled = false;
+                this.inputPermissions.cameraEnabled = false;
+                this.onScreenDisplay.setHudVisibility(HudVisibility.Hide);
+                return true;
+            }
+        } catch (e) {
+            console.error(`Failed to freeze player ${this.name}:`, e);
+            return false;
+        }
     }
 
-    Player.prototype.isBanned = function() {
-        return this.hasTag("isBanned");
+    Player.prototype.unfreeze = function() {
+        try {
+            if (this.hasTag("isFrozen")) {
+                this.removeTag("isFrozen");
+                this.inputPermissions.movementEnabled = true;
+                this.inputPermissions.cameraEnabled = true;
+                this.onScreenDisplay.setHudVisibility(HudVisibility.Reset);
+                return true;
+            } else {
+                return true;
+            }
+        } catch (e) {
+            console.error(`Failed to unfreeze player ${this.name}:`, e);
+            return false;
+        }
+    }
+
+    Player.prototype.isFrozen = function() {
+        return this.hasTag("isFrozen");
     }
 
     // Adding movement methods to the Player prototype

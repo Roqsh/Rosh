@@ -115,6 +115,10 @@ system.runInterval(() => {
                 continue; // Skip this player iteration if they are banned
             }
         }
+
+        if (!player.isValid()) {
+            continue; // Skip this player iteration if their EntityLifeTimeState is unloaded
+        }
         
         manageTags(player);
         manageProperties(player);

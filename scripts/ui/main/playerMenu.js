@@ -29,7 +29,6 @@ export function playerMenu(player) {
     // Create a menu that lists all currently active players
     const menu = new MinecraftUI.ActionFormData()
         .title("Manage Players")
-        .button("Search Player")
     
         // Gets all available players
         for (const plr of allPlayers) {
@@ -60,12 +59,8 @@ export function playerMenu(player) {
             return;
         }
 
-        if (response.selection === 0) {
-            player.sendMessage(`${themecolor}Rosh §j> §o§aSoon... !`);
-        }
-
-        if (response.selection > 0 && [...allPlayers].length > response.selection - 1) {
-            playerMenuSelected(player, [...allPlayers][response.selection - 1]);
+        if (response.selection > 0 && [...allPlayers].length > response.selection) {
+            playerMenuSelected(player, [...allPlayers][response.selection]);
         } else {
             mainMenu(player);
         }
@@ -136,6 +131,7 @@ export function playerMenuSelected(player, selectedPlayer) {
             case 2: banPlayerMenu(player, selectedPlayer, 1); break;
 
             case 7:
+
                 if (selectedPlayer.hasTag("flying")) {
                     selectedPlayer.removeTag("flying");
                     selectedPlayer.runCommandAsync("ability @s mayfly false");
@@ -151,31 +147,27 @@ export function playerMenuSelected(player, selectedPlayer) {
                 break;
 
             case 3:
-                if (selectedPlayer.hasTag("frozen")) {
-                    selectedPlayer.removeTag("frozen");
+
+                if (selectedPlayer.isFrozen()) {
+                    selectedPlayer.unfreeze();
                     selectedPlayer.sendMessage(`§r${themecolor}Rosh §j> §aYou are no longer frozen.`);
-                    selectedPlayer.inputPermissions.movementEnabled = true;
-                    selectedPlayer.inputPermissions.cameraEnabled = true;
-                    selectedPlayer.onScreenDisplay.setHudVisibility(Minecraft.HudVisibility.Reset);
-                    player.sendMessage(`§r${themecolor}Rosh §j> §aYou have unfrozen §8${selectedPlayer.name}§a.`);
+                    player.sendMessage(`${themecolor}Rosh §j> §aYou have unfrozen §8${selectedPlayer.id === player.id ? "§ayourself" : `${selectedPlayer.name}`}§a.`);
                 } else {
                     // Prevent freezing Operators
                     if (selectedPlayer.isOp()) {
                         player.sendMessage(`${themecolor}Rosh §j> §8${selectedPlayer.name} §cis an Operator and cannot be frozen!`);
                         return;
                     }
-                    selectedPlayer.addTag("frozen");
-                    selectedPlayer.inputPermissions.movementEnabled = false;
-                    selectedPlayer.inputPermissions.cameraEnabled = false;
-                    selectedPlayer.onScreenDisplay.setHudVisibility(Minecraft.HudVisibility.Hide);
-                    selectedPlayer.sendMessage(`§r${themecolor}Rosh §j> §cYou are now frozen.`);
-                    player.sendMessage(`§r${themecolor}Rosh §j> §cYou have frozen §8${selectedPlayer.name}§c.`);
+                    selectedPlayer.freeze();
+                    selectedPlayer.sendMessage(`${themecolor}Rosh §j> §cYou are now frozen.`);
+                    player.sendMessage(`${themecolor}Rosh §j> §cYou have frozen §8${selectedPlayer.name}§c.`);
                 }
                 playerMenuSelected(player, selectedPlayer);
                 break;
 
             case 4:
-                if (selectedPlayer.hasTag("isMuted")) {
+
+                if (selectedPlayer.isMuted()) {
                     selectedPlayer.unmute();
                     selectedPlayer.sendMessage(`${themecolor}Rosh §j> §aYou are no longer muted.`);
                     player.sendMessage(`${themecolor}Rosh §j> §aYou have unmuted §8${selectedPlayer.id === player.id ? "§ayourself" : `${selectedPlayer.name}`}§a.`);

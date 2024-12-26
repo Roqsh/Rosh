@@ -56,7 +56,7 @@ export function killauraE(player, target) {
 
         // Calculate the standard deviation and average of the yaw differences
         const deviation = Statistics.getDeviation(diff);
-        const average = Statistics.getMean(diff);
+        const average = Statistics.getAverage(diff);
 
         // If the target is a player, get their name.
         const targetName = target.isPlayer() ? `, target=${target.name}` : `, target=${target.typeId.replace("minecraft:", "")}`;

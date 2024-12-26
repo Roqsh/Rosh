@@ -67,7 +67,7 @@ export function timerA(player, lagValue) {
     }
 
     // Calculate average timer value
-    const averageTimer = Statistics.getMean(player.timerHold);
+    const averageTimer = Statistics.getAverage(player.timerHold);
 
     debug(player, "Timer", `${averageTimer} §j(§8V:${lagValue}§j)`, "timer-debug");
 

@@ -37,7 +37,7 @@ export function autoclickerC(player) {
     if (cpsValues.length < SAMPLES) return;
 
     // Calculate the average CPS
-    const averageCps = Statistics.getMean(cpsValues);
+    const averageCps = Statistics.getAverage(cpsValues);
 
     // Check if the average CPS meets the minimum threshold
     if (averageCps < MIN_AVERAGE_CPS) return;

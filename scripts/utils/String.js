@@ -6,7 +6,7 @@
 export class String {
 
     /**
-     * Capitalizes the first letter of the given string.
+     * Capitalizes the **first** letter of the given string.
      * @param {string} string - The string to modify
      * @returns {string} The updated string with the first letter capitalized
      * @example String.toUpperCase('hello'); // returns 'Hello'
@@ -22,7 +22,7 @@ export class String {
     }
 
     /**
-     * Lowercases the first letter of the given string.
+     * Lowercases the **first** letter of the given string.
      * @param {string} string - The string to modify
      * @returns {string} The updated string with the first letter lowercased
      * @example String.toLowerCase('Hello'); // returns 'hello'

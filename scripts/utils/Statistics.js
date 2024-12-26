@@ -6,11 +6,11 @@
 export class Statistics {
 
     /**
-     * Calculates the mean (average) of an array of numbers.
+     * Calculates the average (mean) of an array of numbers.
      * @param {number[]} values - The array of numbers.
      * @returns {number} The mean of the array.
      */
-    static getMean(values) {
+    static getAverage(values) {
         if (values.length === 0) return 0;
         const sum = values.reduce((acc, val) => acc + val, 0);
         return sum / values.length;
@@ -62,21 +62,6 @@ export class Statistics {
         const highOutliers = data.filter(value => value > upperBound);
 
         return { lowOutliers, highOutliers };
-    }
-
-    /**
-     * Calculates the Z-score of each data point in a dataset to detect outliers with a Z-score greater than 2.
-     * @param {number[]} data - The dataset to analyze.
-     * @returns {{zScores: number[], outliers: number[]}} An object containing the z-scores and identified outliers.
-     */
-    static getZScoreOutliers(data) {
-        const mean = data.reduce((sum, val) => sum + val, 0) / data.length;
-        const stdDev = this.getDeviation(data);
-        
-        const zScores = data.map(value => (value - mean) / stdDev);
-        const outliers = data.filter((_, i) => Math.abs(zScores[i]) > 2); // Z-score > 2 as a threshold
-        
-        return { zScores, outliers };
     }
 
     /**

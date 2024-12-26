@@ -555,6 +555,7 @@ export function ban(player) {
         });
 
         // Remove the player from the unban queue
+        delete data.banList[player.name];
         data.unbanQueue = data.unbanQueue.filter(name => name !== playerName);
         return false;
     }

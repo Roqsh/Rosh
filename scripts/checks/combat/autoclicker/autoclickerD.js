@@ -34,7 +34,7 @@ export function autoclickerD(player) {
     const allEntries = cpsHistory.getAll();
     const cpsValues = allEntries.map(entry => entry.value);
     const timestamps = allEntries.map(entry => entry.key);
-    const averageCps = Statistics.getMean(cpsValues);
+    const averageCps = Statistics.getAverage(cpsValues);
 
     // Ensure we have enough samples before performing checks
     if (cpsValues.length < 3) return;
