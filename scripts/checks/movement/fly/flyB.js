@@ -7,12 +7,14 @@ const flyDetectionCounter = new Map();
 /**
  * Checks for no vertical movement.
  * @param {Minecraft.Player} player - The player to check.
- * @remarks 
+ * @remarks
+ * 
+ * **Notes:**
  * - May produce false positives if the player has the fly ability in Education Edition (`ability <player> mayfly true`).
- * - May produce false positives if the player is repeatedly teleported to the same y-level mid-air. (No API method yet to detect that)
+ * - False flags if the player is repeatedly teleported to the same y-level mid-air. (No API method yet to detect that)
  * - May produce false positives if the player is not completely logged in when joining.
  */
-export function fly_b(player) {
+export function flyB(player) {
 
     if (!config.modules.flyB.enabled) return;
 
@@ -22,6 +24,7 @@ export function fly_b(player) {
         !inAir(player) ||
         !player.isLoggedIn() ||
         player.isDead() ||
+        player.isTridentHovering() ||
         player.isGliding ||
         player.isFlying ||
         player.isOnGround ||
@@ -34,7 +37,7 @@ export function fly_b(player) {
     const counter = flyDetectionCounter.get(player.id) || 0;
 
     if (verticalVelocity === 0) {
-        if (counter >= config.modules.flyB.threshold) {
+        if (counter >= 10) {
             flag(player, "Fly", "B", "yVel", verticalVelocity);
         }
         flyDetectionCounter.set(player.id, counter + 1);

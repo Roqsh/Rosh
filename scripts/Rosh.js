@@ -31,11 +31,11 @@ import { motion_b } from "./checks/movement/motion/motionB.js";
 import { motion_c } from "./checks/movement/motion/motionC.js";
 import { motion_d } from "./checks/movement/motion/motionD.js";
 import { motion_e } from "./checks/movement/motion/motionE.js";
-import { fly_a } from "./checks/movement/fly/flyA.js";
-import { fly_b } from "./checks/movement/fly/flyB.js";
-import { fly_c } from "./checks/movement/fly/flyC.js";
-import { fly_d } from "./checks/movement/fly/flyD.js";
-import { fly_e } from "./checks/movement/fly/flyE.js";
+import { flyA } from "./checks/movement/fly/flyA.js";
+import { flyB } from "./checks/movement/fly/flyB.js";
+import { flyC } from "./checks/movement/fly/flyC.js";
+import { flyD } from "./checks/movement/fly/flyD.js";
+import { flyE } from "./checks/movement/fly/flyE.js";
 import { strafe_a } from "./checks/movement/strafe/strafeA.js";
 import { strafe_b } from "./checks/movement/strafe/strafeB.js";
 import { noslowA } from "./checks/movement/noslow/noslowA.js";
@@ -44,7 +44,7 @@ import { noslowC } from "./checks/movement/noslow/noslowC.js";
 import { sprintA } from "./checks/movement/sprint/sprintA.js";
 import { sprintB } from "./checks/movement/sprint/sprintB.js";
 import { sprintC } from "./checks/movement/sprint/sprintC.js";
-import { jump_a } from "./checks/movement/jump/jumpA.js";
+import { jumpA } from "./checks/movement/jump/jumpA.js";
 
 // Import Block related checks
 import { nukerA } from "./checks/world/nuker/nukerA.js";
@@ -210,11 +210,11 @@ system.runInterval(() => {
         const movementData = movementHandler(player);
         
         if (movementData) {
-            fly_a(player);
-            fly_b(player);
-            fly_c(player);
-            fly_d(player);
-            fly_e(player);
+            flyA(player);
+            flyB(player);
+            flyC(player);
+            flyD(player);
+            flyE(player);
             
             motion_a(player);
             motion_b(player);
@@ -238,7 +238,7 @@ system.runInterval(() => {
             sprintB(player);
             sprintC(player);
             
-            jump_a(player);
+            jumpA(player);
         }
         
         

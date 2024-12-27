@@ -512,6 +512,8 @@ export function loadPlayerPrototypes() {
 
         if (this.hasComponent("riding")) {
             return this.getComponent("riding").entityRidingOn;
+        } else {
+            return undefined;
         }
     }
 

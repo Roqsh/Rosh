@@ -1,20 +1,28 @@
 import * as Minecraft from "@minecraft/server";
 import config from "../../../data/config.js";
-import { flag, getScore, aroundAir, debug } from "../../../util";
+import { flag, getScore, aroundAir, inAir, debug } from "../../../util";
 
 /**
  * Checks for ground spoof.
  * @param {Minecraft.Player} player - The player to check.
  * @remarks
- * **Note:**
- * - False flags when jumping with a horse.
- * - False flags upon teleportation.
+ * 
+ * **Notes:**
+ * - False flags upon teleportation. (No API method yet to detect that)
  */
-export function fly_c(player) {
+export function flyC(player) {
   
     if (!config.modules.flyC.enabled) return;
 
-    if (aroundAir(player) && player.isLoggedIn() && !player.isGliding && !player.isDead()) {
+    if (
+        aroundAir(player) && 
+        inAir(player) &&
+        player.isLoggedIn() &&  
+        !player.isDead() &&
+        player.getRiddenEntity()?.typeId !== "minecraft:horse" &&
+        !player.getEffect("slow_falling") &&
+        !player.getEffect("levitation")
+    ) {
 
         const posDiff = Math.abs(player.location.x - player.getLastPosition().x) + Math.abs(player.location.z - player.getLastPosition().z);
 

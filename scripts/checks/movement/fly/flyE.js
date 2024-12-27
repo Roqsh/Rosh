@@ -8,10 +8,12 @@ const bufferCounter = new Map();
 /**
  * Predicts the change in a player's vertical movement.
  * @param {Minecraft.Player} player - The player to check.
- * @remarks **Note:**
+ * @remarks
+ * 
+ * **Notes:**
  *  - May produce false positives upon teleportation. (No API method yet to detect that)
  */
-export function fly_e(player) {
+export function flyE(player) {
 
     if (!config.modules.flyE.enabled || config.preset?.toLowerCase() === "stable") return;
 
@@ -25,6 +27,8 @@ export function fly_e(player) {
         player.isGliding ||
         player.isFlying ||
         player.isOnGround ||
+        player.getEffect("levitation") ||
+        player.getEffect("jump_boost") ||
         player.getEffect("slow_falling") ||
         player.hasTag("damaged")
     ) return;

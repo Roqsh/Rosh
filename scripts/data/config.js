@@ -732,11 +732,11 @@ export default {
         },
 
         "invalidjumpA": {
-            "enabled": false,
-            "description": "Checks for jumping while in the air.",
+            "enabled": true,
+            "description": "Checks for jumping while in the air. (Air-Jump)",
             "punishment": "kick",
             "punishmentLength": "1d",
-            "minVlbeforePunishment": 4
+            "minVlbeforePunishment": 9
         },
 
         "invmoveA": {
@@ -770,7 +770,7 @@ export default {
 
         "flyA": {
             "enabled": true,
-            "description": "Checks for excessive vertical movement while in air.",
+            "description": "Checks for excessive vertical movement.",
             "punishment": "kick",
             "punishmentLength": "7d",
             "minVlbeforePunishment": 9
@@ -779,7 +779,6 @@ export default {
         "flyB": {
             "enabled": true,
             "description": "Checks for no vertical movement.",
-            "threshold": 9,
             "punishment": "kick",
             "punishmentLength": "7d",
             "minVlbeforePunishment": 9
@@ -787,7 +786,7 @@ export default {
 
         "flyC": {
             "enabled": true,
-            "description": "Checks for invalid Y movements",
+            "description": "Checks for ground spoof",
             "punishment": "kick",
             "punishmentLength": "7d",
             "minVlbeforePunishment": 9
@@ -796,7 +795,6 @@ export default {
         "flyD": {
             "enabled": true,
             "description": "Checks for not falling after being in the air for too long.",
-            "in_air_ticks": 10,
             "punishment": "kick",
             "punishmentLength": "7d",
             "minVlbeforePunishment": 9

@@ -2,40 +2,56 @@ import * as Minecraft from "@minecraft/server";
 import config from "../../../data/config.js";
 import { flag, aroundAir } from "../../../util";
 
-const lastDeltaYVelocity = new Map();
+const lastDeltaYMap = new Map();
+const lastAccelerationMap = new Map();
 
 /**
  * Checks for jumping while in the air.
  * @param {Minecraft.Player} player - The player to check.
  */
-export function jump_a(player) {
+export function jumpA(player) {
 
     if (!config.modules.invalidjumpA.enabled) return;
 
-    const currentYVelocity = player.getVelocity().y;
-    const previousYVelocity = player.getLastVelocity().y;
+    if (
+        !aroundAir(player) ||
+        !player.isLoggedIn() ||
+        player.isDead() ||
+        player.isSlimeBouncing() ||
+        player.isTridentHovering() ||
+        player.isRiding() ||
+        player.getEffect("levitation") ||
+        player.getEffect("jump_boost") ||
+        player.getEffect("slow_falling") ||
+        player.hasTag("damaged") ||
+        player.isOnGround ||
+        player.isGliding ||
+        player.isFlying
+    ) return;
 
-    // Calculate the delta to detect positive or negative changes in velocity
-    const deltaYVelocity = previousYVelocity - currentYVelocity;
+    const deltaY = player.getPosition().y - player.getLastPosition().y;
 
-    if (lastDeltaYVelocity.has(player.id)) {
-        
-        if (
-            aroundAir(player) &&
-            !player.isDead() &&
-            !player.isSlimeBouncing() &&
-            !player.hasTag("damaged") &&
-            !player.isOnGround &&
-            !player.isGliding &&
-            !player.isFlying &&
-            player.isJumping &&
-            lastDeltaYVelocity.get(player.id) < 0 &&
-            deltaYVelocity > 0
-        ) {
-            // The player's velocity changed from negative (falling) to positive (rising) mid air, flag
-            flag(player, "InvalidJump", "A", "air-jumped from", ` ${lastDeltaYVelocity.get(player.id)} to ${deltaYVelocity}`, true);
+    if (Math.abs(deltaY) < 0.01) return;
+
+    if (lastDeltaYMap.has(player.id)) {
+
+        const acceleration = deltaY - lastDeltaYMap.get(player.id);
+
+        if (lastAccelerationMap.has(player.id)) {
+            
+            const lastAcceleration = lastAccelerationMap.get(player.id);
+
+            if (
+                acceleration > 0 &&
+                lastAcceleration <= 0 &&
+                deltaY > 0
+            ) {
+                flag(player, "InvalidJump", "A", "air-jumped from", `${lastAcceleration.toFixed(4)} to ${acceleration.toFixed(4)}, deltaY: ${deltaY.toFixed(4)}`);
+            }
         }
+
+        lastAccelerationMap.set(player.id, acceleration);
     }
 
-    lastDeltaYVelocity.set(player.id, deltaYVelocity);
+    lastDeltaYMap.set(player.id, deltaY);
 }

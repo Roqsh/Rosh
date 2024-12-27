@@ -22,7 +22,7 @@ declare module "@minecraft/server" {
          * The entity that the player is riding (e.g., a horse, a pig, a strider ...).
          * @Rosh
          */
-        getRiddenEntity(): Entity;
+        getRiddenEntity(): Entity | undefined;
 
         /**
          * Whether the block below the player is a type of ice.

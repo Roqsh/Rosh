@@ -7,9 +7,13 @@ const isInAirCounter = new Map();
 
 /**
  * Checks for not falling after being in the air for too long.
- * @param {Minecraft.Player} player - The player to check. 
+ * @param {Minecraft.Player} player - The player to check.
+ * @remarks
+ * 
+ * **Notes:**
+ *  - May produce false positives upon teleportation. (No API method yet to detect that)
  */
-export function fly_d(player) {
+export function flyD(player) {
 
     if (!config.modules.flyD.enabled) return;
 
@@ -47,7 +51,7 @@ export function fly_d(player) {
     }
 
     // Flag if the player hasn't started to fall after being in the air for too long
-    if (!player.isFalling && counter >= config.modules.flyD.in_air_ticks) {
+    if (!player.isFalling && counter >= 10) {
         flag(player, "Fly", "D", "not falling", ` ${counter} ticks`);
     }
 }

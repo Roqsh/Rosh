@@ -5,13 +5,13 @@ import { flag, aroundAir, inAir, debug } from "../../../util";
 /**
  * Checks for excessive vertical movement.
  * @param {Minecraft.Player} player - The player to check.
- * 
+ * @remarks
  * **Notes:**
  * - May produce false positives if the player has the fly ability in Education Edition (`ability <player> mayfly true`)
- * - May produce false positives if the player is `teleported upwards`
+ * - May produce false positives if the player is `teleported upwards` (No API method yet to detect that)
  * - May produce false positives if you are dragged upwards to an entity when `riding` it
  */
-export function fly_a(player) {
+export function flyA(player) {
 
     if (!config.modules.flyA.enabled) return;
 
@@ -25,6 +25,7 @@ export function fly_a(player) {
         !player.isGliding &&
         !player.isFlying &&
         !player.getEffect("levitation") &&
+        !player.getEffect("jump_boost") &&
         !player.hasTag("damaged")
     ) {
 
@@ -33,7 +34,7 @@ export function fly_a(player) {
         const fallDistance = player.getLastAvailableFallDistance();
         const upwardMotion = player.getUpwardMotion();
 
-        const maxBounceHeight = fallDistance * 0.7;
+        const maxBounceHeight = fallDistance * 0.7; // 2/3 would be more accurate, but we need a buffer to avoid false positives
 
         if (maxBounceHeight < 0.1) return;
 
