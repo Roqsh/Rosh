@@ -70,7 +70,7 @@ export function getViolations(player, member) {
         "autototemvl", "badpacketsvl", "badenchantsvl", "crashervl", "cbevl", "exploitvl", "illegalitemsvl", 
         "spammervl", "fastusevl", "autotoolvl", "namespoofvl", "timervl", 
         "motionvl", "strafevl", "flyvl", "speedvl", "noslowvl", "invalidsprintvl", "invalidjumpvl", 
-        "invmovevl", "scaffoldvl", "nukervl", "towervl", "inventoryvl"
+        "scaffoldvl", "nukervl", "towervl", "inventoryvl"
     ];
 
     for (const violation of violations) {
@@ -97,7 +97,6 @@ export function getViolations(player, member) {
                 flyvl: "Fly",
                 illegalitemsvl: "IllegalItems",
                 invalidsprintvl: "Invalidsprint",
-                invmovevl: "Invmove",
                 killauravl: "Killaura",
                 namespoofvl: "Namespoof",
                 noslowvl: "NoSlow",

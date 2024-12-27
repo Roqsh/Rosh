@@ -1,3 +1,6 @@
+// Probably removed/replaced soon
+
+import * as Minecraft from "@minecraft/server";
 import config from "../../../data/config.js";
 import { flag, getSpeed } from "../../../util";
 
@@ -5,15 +8,14 @@ const lastVelocity = new Map();
 
 /**
  * Checks for having rounded velocities.
- * @name speed_b
- * @param {player} player - The player to check
- * @remarks velocity.y is excluded in velocityDiff due to false flags.
+ * @param {Minecraft.Player} player - The player to check
+ * @remarks
  * velocityDiff["x"] === 1 and velocityDiff["z"] === 1 are excluded due
- * to boats setting you 1 block to the side when leaving it while its driving.
+ * to boats setting you 1 block to the side when leaving.
  */
 export function speed_b(player) {
 
-    if (config.modules.speedB.enabled) {
+    if (config.modules.speedB.enabled && !player.isSlimeBouncing()) {
 
         const speed = getSpeed(player);
         const velocity = player.getVelocity();

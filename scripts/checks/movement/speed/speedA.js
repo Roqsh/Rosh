@@ -1,60 +1,58 @@
+// TODO: Recode... (Account for all possibilities and effects and dont just return)
+
+import * as Minecraft from "@minecraft/server";
 import config from "../../../data/config.js";
 import { flag, getSpeed } from "../../../util";
 
 /**
- * @name speed_a
- * @param {player} player - The player to check
- * @remarks Checks for moving too fast
-*/
-
+ * Checks for moving too fast.
+ * @param {Minecraft.Player} player - The player to check.
+ */
 export function speed_a(player) {
+    
+    if (!config.modules.speedA.enabled) return;
+    
+    if (
+        player.isFlying || 
+        player.isGliding ||
+        player.isOnIce ||
+        player.hasTag("attacking") ||
+        player.hasTag("damaged") ||
+        player.isSlimeBouncing() ||
+        player.isTridentHovering()
+    ) return;
 
     const playerSpeed = getSpeed(player);
-
-    if(config.modules.speedA.enabled) {
-
-        if (player.isFlying || 
-            player.isGliding ||
-            player.hasTag("attacking")
-        ) return;
-
-        if(player.getEffect("speed")) {
-
-            const maxSpeed = config.modules.speedA.speed;
-            const speedEffectValue = player.getEffect("speed").amplifier;
     
-            let modifiedSpeed = maxSpeed; 
-            
-            for(let i = 0; i < speedEffectValue; i++) {
-                modifiedSpeed += 0.3; 
-            }
-    
-            if(player.isRiding()) {
-                modifiedSpeed += 0.9;
-            }
-
-            if(playerSpeed > modifiedSpeed && !player.hasTag("damaged") && !player.isHoldingTrident && !player.isOnIce && !player.isSlimeBouncing()) {
-                flag(player, "Speed", "A", "speed", playerSpeed, true);
-            }
-    
-        } else {
+    if (player.getEffect("speed")) {
         
-            let maxSpeed2 = config.modules.speedA.speed;
-            
-            if(player.isRiding()) {
-                maxSpeed2 += 0.9;
-            }
-    
-            if(!player.hasTag("strict")) {
-                if(playerSpeed > maxSpeed2 + 0.1 && !player.hasTag("strict") && !player.hasTag("damaged") && !player.isFlying && !player.isHoldingTrident && !player.isOnIce && !player.isSlimeBouncing()) {
-                    flag(player, "Speed", "A", "speed", playerSpeed, true);
-                }
-            
-            } else {
-                if(playerSpeed > maxSpeed2 && !player.hasTag("damaged") && !player.isFlying && !player.isHoldingTrident && !player.isOnIce && !player.isSlimeBouncing()) {
-                    flag(player, "Speed", "A", "speed", playerSpeed, true);
-                }
-            }
+        const maxSpeed = config.modules.speedA.speed;
+        const speedEffectValue = player.getEffect("speed").amplifier;
+        
+        let modifiedSpeed = maxSpeed; 
+        
+        for (let i = 0; i < speedEffectValue; i++) {
+            modifiedSpeed += 0.3; 
         }
-    } 
+        
+        if (player.isRiding()) {
+            modifiedSpeed += 0.9;
+        }
+        
+        if (playerSpeed > modifiedSpeed) {
+            flag(player, "Speed", "A", "speed", playerSpeed, true);
+        }
+    
+    } else {
+        
+        let maxSpeed2 = config.modules.speedA.speed;
+        
+        if (player.isRiding()) {
+            maxSpeed2 += 0.9;
+        }
+        
+        if (playerSpeed > maxSpeed2) {
+            flag(player, "Speed", "A", "speed", playerSpeed, true);
+        }
+    }
 }

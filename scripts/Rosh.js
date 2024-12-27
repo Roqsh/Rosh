@@ -36,6 +36,7 @@ import { flyB } from "./checks/movement/fly/flyB.js";
 import { flyC } from "./checks/movement/fly/flyC.js";
 import { flyD } from "./checks/movement/fly/flyD.js";
 import { flyE } from "./checks/movement/fly/flyE.js";
+import { flyF } from "./checks/movement/fly/flyF.js";
 import { strafe_a } from "./checks/movement/strafe/strafeA.js";
 import { strafe_b } from "./checks/movement/strafe/strafeB.js";
 import { noslowA } from "./checks/movement/noslow/noslowA.js";
@@ -215,6 +216,7 @@ system.runInterval(() => {
             flyC(player);
             flyD(player);
             flyE(player);
+            flyF(player);
             
             motion_a(player);
             motion_b(player);

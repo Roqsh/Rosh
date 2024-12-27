@@ -3,57 +3,58 @@ import config from "../../../data/config.js";
 import { flag, aroundAir, inAir } from "../../../util";
 
 const lastDeltaYMap = new Map();
-const lastAccelerationMap = new Map();
+const bufferMap = new Map();
 
 /**
- * Checks for jumping while in the air.
+ * Checks for constant vertical movement.
  * @param {Minecraft.Player} player - The player to check.
+ * @remarks
+ * 
+ * **Notes:**
+ *  - May produce false positives upon teleportation. (No API method yet to detect that)
  */
-export function jumpA(player) {
+export function flyF(player) {
 
-    if (!config.modules.invalidjumpA.enabled) return;
+    if (!config.modules.flyF.enabled) return;
 
     if (
         !aroundAir(player) ||
         !inAir(player) ||
         !player.isLoggedIn() ||
         player.isDead() ||
+        player.isInWeb() ||
         player.isSlimeBouncing() ||
         player.isTridentHovering() ||
         player.isRiding() ||
         player.getEffect("levitation") ||
         player.getEffect("jump_boost") ||
         player.getEffect("slow_falling") ||
-        player.hasTag("damaged") ||
         player.isOnGround ||
         player.isGliding ||
         player.isFlying ||
-        player.getGameMode() === "creative"
+        player.isClimbing ||
+        player.isOnShulker ||
+        player.isRunningStairs
     ) return;
 
+    const buffer = bufferMap.get(player.id) || 0;
     const deltaY = player.getPosition().y - player.getLastPosition().y;
-
+    
     if (Math.abs(deltaY) < 0.01) return;
-
+    
     if (lastDeltaYMap.has(player.id)) {
 
-        const acceleration = deltaY - lastDeltaYMap.get(player.id);
+        const acceleration = Math.abs(deltaY - lastDeltaYMap.get(player.id));
 
-        if (lastAccelerationMap.has(player.id)) {
-            
-            const lastAcceleration = lastAccelerationMap.get(player.id);
-
-            if (
-                acceleration > 0 &&
-                lastAcceleration <= 0 &&
-                deltaY > 0
-            ) {
-                flag(player, "InvalidJump", "A", "air-jumped from", `${lastAcceleration.toFixed(4)} to ${acceleration.toFixed(4)}, deltaY: ${deltaY.toFixed(4)}`);
+        if (acceleration === 0) {
+            if (buffer >= 10) {
+                flag(player, "Fly", "F", "constant accel, deltaY", deltaY, true);
             }
+            bufferMap.set(player.id, buffer + 1);
+        } else {
+            bufferMap.set(player.id, 0);
         }
-
-        lastAccelerationMap.set(player.id, acceleration);
     }
-
+    
     lastDeltaYMap.set(player.id, deltaY);
 }

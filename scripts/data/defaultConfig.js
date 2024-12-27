@@ -431,22 +431,12 @@ export default {
             "minVlbeforePunishment": 9
         },
 
-        "invmoveA": {
-            "enabled": false,
-            "description": "Checks for moving while having a GUI open",
-            "punishment": "kick",
-            "delay": 8,
-            "minVlbeforePunishment": 5
-        },
-
         "speedA": {
             "enabled": true,
             "description":"Checks for moving too fast",
-            "speed": 1.1,
-            "checkForSprint": true,
-            "checkForJump": false,
             "punishment": "kick",
-            "minVlbeforePunishment": 6
+            "punishmentLength": "7d",
+            "minVlbeforePunishment": 9
         }, 
 
         "speedB": {
@@ -495,6 +485,14 @@ export default {
         "flyE": {
             "enabled": false,
             "description": "Predicts the change in a player's vertical movement.",
+            "punishment": "kick",
+            "punishmentLength": "7d",
+            "minVlbeforePunishment": 9
+        },
+
+        "flyF": {
+            "enabled": true,
+            "description": "Checks for constant vertical movement.",
             "punishment": "kick",
             "punishmentLength": "7d",
             "minVlbeforePunishment": 9
