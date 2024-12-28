@@ -520,11 +520,11 @@ export default {
         */
 
         "reachA": {
-            "enabled": false,
+            "enabled": true,
             "description": "Checks for exceeding the maximum reach when attacking.",
             "punishment": "kick",
-            "punishmentLength": "7d",
-            "minVlbeforePunishment": 8
+            "punishmentLength": "2d",
+            "minVlbeforePunishment": 9
         },  
 
         "aimA": {
