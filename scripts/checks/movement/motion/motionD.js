@@ -19,7 +19,7 @@ export function motion_d(player) {
 
     const lastUpdate = lastUpdateTime.get(playerName);
 
-    if (lastUpdate && !player.isRunningStairs && !player.isFlying) {
+    if (lastUpdate && !player.isOnStairs && !player.isFlying) {
 
         let maxValue = 45;
 

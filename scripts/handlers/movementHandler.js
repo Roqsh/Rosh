@@ -4,11 +4,10 @@ import { debug } from "../util";
 /**
  * Handles the player's movement data and calculates position and velocity changes.
  * This function does not update the player's last position and velocity immediately,
- * instead it returns the current data for external updates after running anti-cheat checks.
+ * as this is already done in the manageLastTick function.
  * 
  * @param {Minecraft.Player} player - The player whose movement data is being processed.
- * @returns {{ currentPosition: Minecraft.Vector3, currentVelocity: Minecraft.Vector3 } | false} 
- * Returns an object containing the player's current position and velocity, or false if an error occurs.
+ * @returns {boolean} Returns false if an error occurs, otherwise true.
  */
 export function movementHandler(player) {
     try {
@@ -43,8 +42,7 @@ export function movementHandler(player) {
         // Log the debug values
         debugData.forEach(({ label, value, tag }) => debug(player, label, value, tag));
 
-        // Return the current position and velocity for updating after the checks
-        return { currentPosition, currentVelocity };
+        return true;
 
     } catch (error) {
         // Log error details for easier debugging in case of failure

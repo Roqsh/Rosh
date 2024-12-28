@@ -5,7 +5,7 @@ import config from "./data/config.js";
 import data from "./data/data.js";
 import { loadPlayerPrototypes, loadEntityPrototypes } from "./data/prototype.js";
 import { Memory } from "./utils/Memory.js";
-import { flag, ban, convertToMs, timeDisplay, getScore, setScore, tellStaff, manageTags, manageProperties, getSpeed, aroundAir, inAir, calculateFallDistance, calculateUpwardMotion, debug } from "./util.js";
+import { flag, ban, convertToMs, getScore, timeDisplay, tellStaff } from "./util.js";
 import { mainMenu, rateLimit } from "./ui/mainMenu.js";
 import { playerMenuSelected } from "./ui/main/playerMenu.js";
 
@@ -84,10 +84,16 @@ import { aimA } from "./checks/combat/aim/aimA.js";
 import { aimB } from "./checks/combat/aim/aimB.js";
 import { aimC } from "./checks/combat/aim/aimC.js";
 
+import { debugHandler } from "./handlers/debugHandler.js";
 import { clicksHandler } from "./handlers/clicksHandler.js";
 import { commandHandler } from "./handlers/commandHandler.js";
 import { movementHandler } from "./handlers/movementHandler.js";
 import { rotationHandler } from "./handlers/rotationHandler.js";
+
+import { manageCurrentTick } from "./handlers/playerManager/manageCurrentTick.js";
+import { manageFootblock } from "./handlers/playerManager/manageFootblock.js";
+import { manageLastTick } from "./handlers/playerManager/manageLastTick.js";
+import { manageTickResetting } from "./handlers/playerManager/manageTickResetting.js";
 
 loadPlayerPrototypes();
 loadEntityPrototypes();
@@ -120,92 +126,11 @@ system.runInterval(() => {
         if (!player.isValid()) {
             continue; // Skip this player iteration if their EntityLifeTimeState is unloaded
         }
-        
-        manageTags(player);
-        manageProperties(player);
-        
-        const rotation = player.getRotation();
-        const velocity = player.getVelocity();
-        const container = player.getComponent("inventory")?.container;
-        const selectedSlot = player.selectedSlotIndex;
-        const fallDistance = calculateFallDistance(player);
-        const upwardMotion = calculateUpwardMotion(player);
-        player.setFallDistance(fallDistance);
-        player.setUpwardMotion(upwardMotion);
 
-        if (fallDistance !== 0) {
-            player.setLastAvailableFallDistance(fallDistance);
-        }
+        manageCurrentTick(player);
+        manageFootblock(player);
 
-        const themecolor = config.themecolor;
-
-        if (player.getItemInHand()?.typeId === "minecraft:trident") {
-            player.isHoldingTrident = true;
-
-            const itemEnchants = player.getItemInHand().getComponent("enchantable")?.getEnchantments() ?? [];
-            for (const enchantData of itemEnchants) {
-                const enchantTypeId = enchantData.type.id;
-                if (enchantTypeId === "riptide") {
-                    player.isHoldingRiptideTrident = true;
-                }
-            }
-            
-        } else {
-            player.isHoldingTrident = false;
-            player.isHoldingRiptideTrident = false;
-        }
-
-		if (Date.now() - player.startBreakTime < config.modules.autotoolA.startBreakDelay && player.lastSelectedSlot !== selectedSlot) {
-			player.flagAutotoolA = true;
-			player.autotoolSwitchDelay = Date.now() - player.startBreakTime;
-		}
-        
-        if (getScore(player, "kickvl", 0) > config.kicksBeforeBan / 2 && !player.hasTag("strict")) {
-            player.addTag("strict");
-        }
-
-
-		const tick = getScore(player, "currentTick", 0);
-		setScore(player, "currentTick", tick + 1);
-        
-        // Debug utilities
-        debug(player, "Speed", getSpeed(player), "speed");
-        debug(player, "Ticks", `${tick <= 20 ? `§a` : `§c`}${tick}`, "ticks");
-        debug(player, "YVelocity", velocity.y, "devvelocity");
-
-        if (player.hasTag("tps")) {
-            player.onScreenDisplay.setActionBar(`${themecolor}Debug §j> Tps: §8${tps}`);
-        }
-
-        if (player.hasTag("devblockray")) {
-
-            const blockOptions = {
-                maxDistance: 8,
-                includePassableBlocks: true
-            };
-        
-            const blockResult = player.getBlockFromViewDirection(blockOptions);
-
-            if (blockResult) {
-                player.onScreenDisplay.setActionBar(`${themecolor}Debug §j> §aBlock: §8${blockResult.block.typeId}§a/§8${blockResult.block.location.x}, ${blockResult.block.location.y}, ${blockResult.block.location.z} §aFace: §8${blockResult.face}§a/§8${blockResult.faceLocation.x}, ${blockResult.faceLocation.y}, ${blockResult.faceLocation.z}`);
-            } else {
-                player.onScreenDisplay.setActionBar(`${themecolor}Debug §j> §cNo block was hit by the raycast!`);
-            }
-        }
-
-        if (player.hasTag("health")) {
-            const health = player.getComponent("health");
-            player.onScreenDisplay.setActionBar(`${themecolor}Debug §j> §8Health: ${health.currentValue < health.effectiveMax ? "§c" : "§a"}${health.currentValue}§8/§a${health.effectiveMax}`);
-        }
-        
-        if (player.isOnGround) {
-            player.lastGoodPosition = player.location;
-        }
-
-        player.onScreenDisplay.setActionBar(`${themecolor}Debug §j> §8Slime Bouncing: ${player.isSlimeBouncing() ? `§j(§8${upwardMotion < player.lastAvailableFallDistance ? "§a" : "§c"}${upwardMotion.toFixed(4)}§j/§a${(player.lastAvailableFallDistance * 0.7).toFixed(4)}§j)` : "§cFalse"}`);
-        //player.onScreenDisplay.setActionBar(`${themecolor}Debug §j> §8Trident Hovering: ${player.isTridentHovering() ? "§aTrue" : "§cFalse"}`);
-        //if (player.getLastVelocity().y !== 0) player.sendMessage(`${themecolor}Debug §j> §8Y-Velocity: ${player.getVelocity().y < 0 ? "§c" : "§a"}${player.getVelocity().y}`);
-        //if (player.lastFallDistance !== 0) player.sendMessage(`${themecolor}Debug §j> §8SFall Distance: ${fallDistance}`);
+        debugHandler(player, tps);
         
 
         const movementData = movementHandler(player);
@@ -262,7 +187,7 @@ system.runInterval(() => {
             aimC(player);
         }
 
-        const clicksData = clicksHandler(player, tick);
+        const clicksData = clicksHandler(player, getScore(player, "currentTick", 0));
         
         if (clicksData) {
             autoclickerA(player);
@@ -275,73 +200,14 @@ system.runInterval(() => {
             player.setLastCps(clicksData.currentCps);
         }
         
-
-        scaffold_f_dependency(player, tick);
+        scaffold_f_dependency(player, getScore(player, "currentTick", 0));
         
-        // Runs every tick
-        player.removeTag("attacking");
-        player.removeTag("breaking");
-        player.removeTag("placing");
-        player.removeTag("itemUse");
-        
-        // Runs every 20th tick (every second)
-        if (tick >= 20) {
-            player.lastTime = Date.now();
-            player.clicks = 0;
-            player.removeTag("damaged");
-            player.removeTag("fall_damage");
-            setScore(player, "tagReset", getScore(player, "tagReset", 0) + 1);
-            setScore(player, "packets", 0);
 
-            setScore(player, "currentTick", 0); // Reset for new counting
-        }
-        
-        // Runs every 100th tick (every 5 seconds)
-        if (getScore(player, "tagReset", 0) >= 5) {
-            player.removeTag("ender_pearl");
-            player.removeTag("bow");
-
-            setScore(player, "tagReset", 0); // Reset for new counting
-        }
-        
-        // Update the player's last held items
-        player.setLastItemInHand(player.getItemInHand());
-        player.setLastItemInCursor(player.getItemInCursor());
-
-        // Update the player's last position and velocity using the returned values by the movement handler
-        player.setLastPosition(movementData.currentPosition);
-        player.setLastVelocity(movementData.currentVelocity);
-
-        // Update the player's last (delta) yaw and pitch using the returned values by the rotation handler
-        player.setLastYaw(rotationData.currentYaw);
-        player.setLastPitch(rotationData.currentPitch);
-        player.setLastDeltaYaw(rotationData.deltaYaw);
-        player.setLastDeltaPitch(rotationData.deltaPitch);
-
-        player.setLastFallDistance(fallDistance);
-
-        player.isCrawling = false;
-        player.isRunningStairs = false;
-
-        player.isOnIce = false;
-        player.isOnSnow = false;
-        player.isOnShulker = false;
-
-        const blockUnderPlayer = player.dimension.getBlock({
-            x: player.location.x, 
-            y: player.location.y - 1, 
-            z: player.location.z
-        }).typeId;
-
-        if (player.isFalling || (blockUnderPlayer !== "minecraft:slime" && blockUnderPlayer !== "minecraft:air")) {
-            player.touchedSlimeBlock = false;
-        }
-
-        if (player.isFalling && !player.isHoldingRiptideTrident) {
-            player.usedRiptideTrident = false;
-        }
+        manageLastTick(player);
+        manageTickResetting(player);
     }
 });
+
 
 const filter = {
     monitoredPacketIds: [""],
@@ -359,6 +225,7 @@ Network.beforeEvents.packetReceive.subscribe((packet) => {
     }
 
 }/** , filter */);
+
 
 world.beforeEvents.chatSend.subscribe((msg) => {
 

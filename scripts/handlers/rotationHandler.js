@@ -3,11 +3,8 @@ import { debug } from "../util";
 
 /**
  * Handles the player's rotation data, calculating and updating their yaw and pitch values.
- * This function returns the current rotation data to allow checks to run before updating the values.
- * 
  * @param {Minecraft.Player} player - The player whose rotation data is being processed.
- * @returns {{ currentYaw: number, currentPitch: number, deltaYaw: number, deltaPitch: number } | false} 
- * Returns the current yaw and pitch, or false if an error occurs.
+ * @returns {boolean} - Returns false if an error occurs, otherwise true.
  */
 export function rotationHandler(player) {
     try {
@@ -48,8 +45,7 @@ export function rotationHandler(player) {
         player.setJoltYaw(joltYaw);
         player.setJoltPitch(joltPitch);
 
-        // Return the current yaw and pitch for updating after the checks
-        return { currentYaw, currentPitch, deltaYaw, deltaPitch };
+        return true;
 
     } catch (error) {
         // Log error details for easier debugging in case of failure

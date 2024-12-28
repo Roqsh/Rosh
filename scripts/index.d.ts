@@ -37,10 +37,22 @@ declare module "@minecraft/server" {
         isOnSnow: boolean;
 
         /**
+         * Whether the player is on stairs.
+         * @Rosh
+         */
+        isOnStairs: boolean;
+
+        /**
          * Whether the player is on a shulker entity or shulker shell (works for both closed and open shulkers).
          * @Rosh
          */
         isOnShulker: boolean;
+
+        /**
+         * Whether the player is on a soul sand block.
+         * @Rosh
+         */
+        isOnSoulSand: boolean;
 
         /**
          * Returns true if at least one web block is found in a 3x4x3 cube around the player.
@@ -60,16 +72,16 @@ declare module "@minecraft/server" {
         isTridentHovering(): boolean;
 
         /**
-         * Whether the player is moving on stairs (upwards or downwards).
-         * @Rosh
-         */
-        isRunningStairs: boolean;
-
-        /**
          * Whether the player has a trident equipped in their selected slot.
          * @Rosh
          */
         isHoldingTrident: boolean;
+
+        /**
+         * Whether the player has a trident enchanted with riptide equipped in their selected slot.
+         * @Rosh
+         */
+        isHoldingRiptideTrident: boolean;
 
         /**
          * Whether the player is dead (Health = 0).

@@ -34,7 +34,7 @@ export function flyF(player) {
         player.isFlying ||
         player.isClimbing ||
         player.isOnShulker ||
-        player.isRunningStairs
+        player.isOnStairs
     ) return;
 
     const buffer = bufferMap.get(player.id) || 0;

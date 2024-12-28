@@ -1,5 +1,8 @@
 
 
+/**
+ * The config file for Rosh.
+ */
 export default {
 
     "webhook": {
