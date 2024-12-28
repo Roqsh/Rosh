@@ -25,6 +25,18 @@ declare module "@minecraft/server" {
         getRiddenEntity(): Entity | undefined;
 
         /**
+         * The number of ticks since the player last flew.
+         * @Rosh
+         */
+        ticksSinceFlight: number;
+
+        /**
+         * The number of ticks since the player last glided.
+         * @Rosh
+         */
+        ticksSinceGlide: number;
+
+        /**
          * Whether the block below the player is a type of ice.
          * @Rosh
          */

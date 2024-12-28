@@ -16,6 +16,8 @@ export function speed_a(player) {
         player.isFlying || 
         player.isGliding ||
         player.isOnIce ||
+        player.ticksSinceFlight < 20 ||
+        player.ticksSinceGlide < 20 ||
         player.hasTag("attacking") ||
         player.hasTag("damaged") ||
         player.isSlimeBouncing() ||

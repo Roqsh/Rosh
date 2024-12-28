@@ -15,7 +15,7 @@ const lastVelocity = new Map();
  */
 export function speed_b(player) {
 
-    if (config.modules.speedB.enabled && !player.isSlimeBouncing()) {
+    if (config.modules.speedB.enabled && !player.isSlimeBouncing() && !player.isClimbing) {
 
         const speed = getSpeed(player);
         const velocity = player.getVelocity();

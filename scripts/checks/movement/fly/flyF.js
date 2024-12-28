@@ -47,7 +47,7 @@ export function flyF(player) {
         const acceleration = Math.abs(deltaY - lastDeltaYMap.get(player.id));
 
         if (acceleration === 0) {
-            if (buffer >= 10) {
+            if (buffer >= 5) {
                 flag(player, "Fly", "F", "constant accel, deltaY", deltaY, true);
             }
             bufferMap.set(player.id, buffer + 1);

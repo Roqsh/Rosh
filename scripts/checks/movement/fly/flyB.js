@@ -37,8 +37,8 @@ export function flyB(player) {
     const counter = flyDetectionCounter.get(player.id) || 0;
 
     if (verticalVelocity === 0) {
-        if (counter >= 10) {
-            flag(player, "Fly", "B", "yVel", verticalVelocity);
+        if (counter >= 8) {
+            flag(player, "Fly", "B", "yVel", `${verticalVelocity}, horizontal: ${Math.hypot(player.getMoveDirection().x, player.getMoveDirection().z)}`);
         }
         flyDetectionCounter.set(player.id, counter + 1);
     } else {

@@ -1349,6 +1349,11 @@ export function hVelocity(player) {
 /**
  * Returns true if a player is surrounded by air.
  * @param {Minecraft.Player} player - The player to check.
+ * 
+ * @important
+ * This method currently causes **2 major issues !!!** :
+ * - A fly bypass similar to the one used in Flareon where you could just bridge next to you and fly.
+ * - A hover bypass aslong as you dont go up more than 1 block which can lead to extreme speeds etc.
  */
 export function aroundAir(player) {
     // Validate the input

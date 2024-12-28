@@ -43,7 +43,7 @@ export function flyD(player) {
         !player.getEffect("jump_boost") &&
         !player.getEffect("slow_falling") &&
         !player.hasTag("damaged") &&
-        player.getGameMode() !== "creative"
+        player.ticksSinceFlight > 10
     ) {
         isInAirCounter.set(player.id, counter + 1);
     } else {
@@ -51,7 +51,7 @@ export function flyD(player) {
     }
 
     // Flag if the player hasn't started to fall after being in the air for too long
-    if (!player.isFalling && counter >= 10) {
-        flag(player, "Fly", "D", "not falling", ` ${counter} ticks`);
+    if (!player.isFalling && counter >= 5) {
+        flag(player, "Fly", "D", "not falling, deltaY", player.getMoveDirection().y, true);
     }
 }

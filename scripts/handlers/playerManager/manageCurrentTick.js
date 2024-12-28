@@ -43,6 +43,19 @@ export function manageCurrentTick(player) {
         }
     }
 
+    // Timing stuff
+    if (player.isFlying) {
+        player.ticksSinceFlight = 0;
+    } else {
+        player.ticksSinceFlight++;
+    }
+
+    if (player.isGliding) {
+        player.ticksSinceGlide = 0;
+    } else {
+        player.ticksSinceGlide++;
+    }
+
     // Other
     player.runCommand(`tag @a[hasitem={item=ender_pearl,location=slot.weapon.mainhand}] add ender_pearl`);
     player.runCommand(`tag @a[hasitem={item=bow,location=slot.weapon.mainhand}] add bow`);

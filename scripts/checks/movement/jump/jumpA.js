@@ -28,7 +28,7 @@ export function jumpA(player) {
         player.isOnGround ||
         player.isGliding ||
         player.isFlying ||
-        player.getGameMode() === "creative"
+        player.ticksSinceFlight < 20
     ) return;
 
     const deltaY = player.getPosition().y - player.getLastPosition().y;

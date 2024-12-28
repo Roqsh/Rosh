@@ -12,7 +12,15 @@ const playerInvalidSprintBuffer = new Map();
  */
 export function sprintA(player) {
 
-    if (!config.modules.invalidsprintA.enabled || !player.isSprinting || player.isInWater) return;
+    if (!config.modules.invalidsprintA.enabled || 
+        !player.isSprinting || 
+        player.isInWater || 
+        player.isFlying ||
+        player.isGliding ||
+        player.ticksSinceFlighted < 20 ||
+        player.ticksSinceGlided < 20
+
+    ) return;
 
     // Define the threshold angle (e.g., 75 degrees) and buffer threshold (e.g., 9 events)
     const ANGLE_THRESHOLD = config.modules.invalidsprintA.angle_threshold || 75;

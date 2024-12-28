@@ -41,5 +41,20 @@ export function flyA(player) {
         if (isSlimeBouncing && upwardMotion > maxBounceHeight) {
             flag(player, "Fly", "A", "upward Motion", `${upwardMotion.toFixed(4)}/${maxBounceHeight.toFixed(4)}, exceeding=${Math.abs(maxBounceHeight - upwardMotion).toFixed(4)}, bounce-back percentage=${((upwardMotion / maxBounceHeight) * 100).toFixed(1)}`);
         }
+
+        if (
+            !player.isRiding() &&
+            !player.isSlimeBouncing() &&
+            !player.isInWater &&
+            !player.isClimbing &&
+            player.ticksSinceFlight > 20 &&
+            player.ticksSinceGlide > 20
+        ) {
+            const groundDistance = player.getPosition().y - player.lastGoodPosition.y;
+
+            if (groundDistance > 1.4 && player.getPosition().y > player.getLastPosition().y) {
+                flag(player, "Fly", "A", "ground Distance", `${groundDistance.toFixed(4)}, deltaY=${player.getMoveDirection().y.toFixed(4)}`);
+            }
+        }
     }
 }
