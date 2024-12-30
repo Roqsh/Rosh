@@ -7,6 +7,8 @@ import * as Minecraft from "@minecraft/server";
  */
 export function manageFootblock(player) {
 
+    player.lastGoodPosition ??= player.location;
+    
     if (player.isOnGround) {
         player.lastGoodPosition = player.location;
     }

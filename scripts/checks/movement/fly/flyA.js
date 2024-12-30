@@ -51,9 +51,13 @@ export function flyA(player) {
             player.ticksSinceGlide > 20
         ) {
             const groundDistance = player.getPosition().y - player.lastGoodPosition.y;
+            const goingUpwards = player.getPosition().y > player.getLastPosition().y
 
-            if (groundDistance > 1.4 && player.getPosition().y > player.getLastPosition().y) {
-                flag(player, "Fly", "A", "ground Distance", `${groundDistance.toFixed(4)}, deltaY=${player.getMoveDirection().y.toFixed(4)}`);
+            if (!player.isJumping && player.ticksSinceJump > 30 && groundDistance > 0 && goingUpwards) {
+                flag(player, "Fly", "A", "ground Distance", `${groundDistance.toFixed(4)} (nojump), deltaY=${player.getMoveDirection().y.toFixed(4)}`);
+
+            } else if (groundDistance > 1.4 && goingUpwards) {
+                flag(player, "Fly", "A", "ground Distance", `${groundDistance.toFixed(4)} (jump), deltaY=${player.getMoveDirection().y.toFixed(4)}`);
             }
         }
     }

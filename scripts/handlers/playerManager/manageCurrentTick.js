@@ -44,6 +44,10 @@ export function manageCurrentTick(player) {
     }
 
     // Timing stuff
+    player.ticksSinceFlight ??= 0;
+    player.ticksSinceGlide ??= 0;
+    player.ticksSinceJump ??= 0;
+
     if (player.isFlying) {
         player.ticksSinceFlight = 0;
     } else {
@@ -54,6 +58,12 @@ export function manageCurrentTick(player) {
         player.ticksSinceGlide = 0;
     } else {
         player.ticksSinceGlide++;
+    }
+
+    if (player.isJumping) {
+        player.ticksSinceJump = 0;
+    } else {
+        player.ticksSinceJump++;
     }
 
     // Other

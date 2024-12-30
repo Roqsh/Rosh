@@ -4,12 +4,12 @@ import config from "../../../data/config.js";
 import { flag } from "../../../util";
 
 /**
- * Checks for invalid gliding.
+ * Checks for invalid gliding. (Without a proper elytra)
  * @param {Minecraft.Player} player - The player to check.
  */
 export function badpacketsJ(player) {
 
-    if (!config.modules.badpacketsJ.enabled || !player.isGliding) return;
+    if (!config.modules.badpacketsJ.enabled || !player.isGliding || player.ticksSinceGlide < 10) return;
 
     const chestEquipment = player.getComponent(EntityEquippableComponent.componentId)?.getEquipment(EquipmentSlot.Chest);
     const durability = chestEquipment?.getComponent(ItemDurabilityComponent.componentId);

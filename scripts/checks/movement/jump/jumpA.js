@@ -28,7 +28,8 @@ export function jumpA(player) {
         player.isOnGround ||
         player.isGliding ||
         player.isFlying ||
-        player.ticksSinceFlight < 20
+        player.ticksSinceFlight < 20 ||
+        player.ticksSinceGlide < 20
     ) return;
 
     const deltaY = player.getPosition().y - player.getLastPosition().y;

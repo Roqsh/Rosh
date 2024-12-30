@@ -3,10 +3,11 @@ import config from "../../../data/config.js";
 import { flag, aroundAir, inAir } from "../../../util";
 
 const lastDeltaYMap = new Map();
+const lastDeltaXZMap = new Map();
 const bufferMap = new Map();
 
 /**
- * Checks for constant vertical movement.
+ * Checks for constant vertical or horizontal movement.
  * @param {Minecraft.Player} player - The player to check.
  * @remarks
  * 
@@ -37,24 +38,33 @@ export function flyF(player) {
         player.isOnStairs
     ) return;
 
-    const buffer = bufferMap.get(player.id) || 0;
-    const deltaY = player.getPosition().y - player.getLastPosition().y;
-    
-    if (Math.abs(deltaY) < 0.01) return;
-    
-    if (lastDeltaYMap.has(player.id)) {
+    const currentPos = player.getPosition();
+    const lastPos = player.getLastPosition();
 
-        const acceleration = Math.abs(deltaY - lastDeltaYMap.get(player.id));
+    const deltas = {
+        Y: currentPos.y - lastPos.y,
+        XZ: Math.hypot(currentPos.x - lastPos.x, currentPos.z - lastPos.z),
+    };
 
-        if (acceleration === 0) {
-            if (buffer >= 5) {
-                flag(player, "Fly", "F", "constant accel, deltaY", deltaY, true);
+    for (const [axis, delta] of Object.entries(deltas)) {
+        if (Math.abs(delta) < 0.01) continue;
+
+        const lastDeltaMap = axis === "Y" ? lastDeltaYMap : lastDeltaXZMap;
+        const bufferKey = `${player.id}_${axis}`;
+        const buffer = bufferMap.get(bufferKey) || 0;
+
+        if (lastDeltaMap.has(player.id)) {
+            const accel = Math.abs(delta - lastDeltaMap.get(player.id));
+            if (accel === 0) {
+                if (buffer >= 5) {
+                    flag(player, "Fly", "F", `constant accel, delta${axis}`, delta, true);
+                }
+                bufferMap.set(bufferKey, buffer + 1);
+            } else {
+                bufferMap.set(bufferKey, 0);
             }
-            bufferMap.set(player.id, buffer + 1);
-        } else {
-            bufferMap.set(player.id, 0);
         }
+
+        lastDeltaMap.set(player.id, delta);
     }
-    
-    lastDeltaYMap.set(player.id, deltaY);
 }

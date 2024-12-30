@@ -14,7 +14,7 @@ import { badpackets_b } from "./checks/misc/badpackets/badpacketsB.js";
 import { badpackets_c } from "./checks/misc/badpackets/badpacketsC.js";
 import { badpackets_e } from "./checks/misc/badpackets/badpacketsE.js";
 import { badpackets_f } from "./checks/misc/badpackets/badpacketsF.js";
-import { badpackets_h } from "./checks/misc/badpackets/badpacketsH.js";
+import { badpacketsH } from "./checks/misc/badpackets/badpacketsH.js";
 import { badpacketsJ } from "./checks/misc/badpackets/badpacketsJ.js";
 import { exploitA } from "./checks/misc/exploit/exploitA.js";
 import { namespoofA } from "./checks/misc/namespoof/namespoofA.js";
@@ -74,7 +74,7 @@ import { killauraD } from "./checks/combat/killaura/killauraD.js";
 import { killauraE } from "./checks/combat/killaura/killauraE.js";
 import { hitbox_a } from "./checks/combat/hitbox/hitboxA.js";
 import { hitbox_b } from "./checks/combat/hitbox/hitboxB.js";
-import { reach_a } from "./checks/combat/reach/reachA.js";
+import { reachA } from "./checks/combat/reach/reachA.js";
 import { autoclickerA } from "./checks/combat/autoclicker/autoclickerA.js";
 import { autoclickerB } from "./checks/combat/autoclicker/autoclickerB.js";
 import { autoclickerC } from "./checks/combat/autoclicker/autoclickerC.js";
@@ -171,7 +171,7 @@ system.runInterval(() => {
         
         badpackets_b(player);
         badpackets_f(player);
-        badpackets_h(player);
+        badpacketsH(player);
         badpacketsJ(player);
         
         exploitA(player);
@@ -527,7 +527,7 @@ world.afterEvents.entityHitEntity.subscribe((entityHitEntity) => {
         killauraE(player, entity);
     }
     
-    reach_a(player, entity);
+    reachA(player, entity);
     
     badpackets_c(player, entity);
     

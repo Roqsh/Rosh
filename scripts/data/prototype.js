@@ -592,10 +592,18 @@ export function loadPlayerPrototypes() {
 
     Player.prototype.isLoggedIn = function(ticks) {
 
-        if (!this.isValid()) return false;
-
         const playerInfo = Memory.get(this.id);  // Retrieve player info from Memory
     
+        /**
+         * Using /reload causes online players to not be checked anymore,
+         * as Memory.register only runs in a players login event. Therefore,
+         * every player that is still online after a reload is no longer registered
+         * and invisible to the Anticheat.
+         * 
+         * TODO: Come up with a better solution, as this could cause disablers!
+         * => Using /reload all is fine as players get kicked and therefore have
+         * to relog, leading to them being registered again since the login event is triggered.
+         */
         if (!playerInfo) {
             return false;
         }

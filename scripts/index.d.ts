@@ -37,6 +37,12 @@ declare module "@minecraft/server" {
         ticksSinceGlide: number;
 
         /**
+         * The number of ticks since the player last jumped.
+         * @Rosh
+         */
+        ticksSinceJump: number;
+
+        /**
          * Whether the block below the player is a type of ice.
          * @Rosh
          */

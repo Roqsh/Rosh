@@ -7,11 +7,11 @@ import { flag, getSpeed } from "../../../util";
  * @param {Minecraft.Player} player - The player to check.
  * @param {Minecraft.Player | Minecraft.Entity} entity - The hit entity.
  */
-export function reach_a(player, entity) {
+export function reachA(player, entity) {
 
     if (!config.modules.reachA.enabled) return;
 
-    const DISTANCE = player.getGameMode() === "creative" ? 6 : 3;
+    const DISTANCE = player.getGameMode() === "creative" ? 6 : 3.5;
 
     const targetName = entity.isPlayer() ? `, target=${entity.name}` : `, target=${entity.typeId.replace("minecraft:", "")}`;
 
@@ -25,6 +25,8 @@ export function reach_a(player, entity) {
 
         return; // We only want to run the raycast check when the player isnt moving, so the detection is stable
     }
+
+    if (player.isMobile()) return;
     
     let debugMessage = "§cNo entity was hit by the raycast!";
 
