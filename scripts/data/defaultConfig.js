@@ -448,6 +448,14 @@ export default {
             "minVlbeforePunishment": 3
         },
 
+        "fastclimbA": {
+            "enabled": true,
+            "description": "Checks for climbing too fast.",
+            "punishment": "kick",
+            "punishmentLength": "7d",
+            "minVlbeforePunishment": 9
+        },
+
         "flyA": {
             "enabled": true,
             "description": "Checks for excessive vertical movement.",

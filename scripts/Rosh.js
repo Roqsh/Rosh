@@ -26,6 +26,7 @@ import { timerA } from "./checks/misc/timer/timerA.js";
 // Import Movement related checks
 import { speed_a } from "./checks/movement/speed/speedA.js";
 import { speed_b } from "./checks/movement/speed/speedB.js";
+import { fastclimbA } from "./checks/movement/fastclimb/fastclimbA.js";
 import { motion_a } from "./checks/movement/motion/motionA.js";
 import { motion_b } from "./checks/movement/motion/motionB.js";
 import { motion_c } from "./checks/movement/motion/motionC.js";
@@ -150,6 +151,8 @@ system.runInterval(() => {
             motion_e(player);
 
             timerA(player, lagValue);
+
+            fastclimbA(player);
     
             speed_a(player);
             speed_b(player);
@@ -613,7 +616,16 @@ system.beforeEvents.watchdogTerminate.subscribe((watchdogTerminate) => {
 });
 
 
-// Gets executed once the /reload command is used
+/**
+ * Gets executed once the /reload command is used
+ * 
+ * TODO:
+ * As soon as we can listen to a command request in a before event,
+ * cancel the `/reload` command and bruteforce the `/reload all` command
+ * instead. This fixes players that are online during a /reload event not to become
+ * invisible to the Anticheat as /reload all forces all players to rejoin.
+ * => See JSDoc at isLoggedIn() in prototype.js file for further information why this is needed
+ */
 if ([...world.getPlayers()].length >= 1) {
 
     for (const player of world.getAllPlayers()) {
@@ -630,5 +642,7 @@ if ([...world.getPlayers()].length >= 1) {
         if (player.isOp()) {
             player.sendMessage(`${config.themecolor}Rosh §j> §aRosh has been successfully reloaded!`);
         }
+        
+        console.log(`Rosh > Rosh has been successfully reloaded!`);
     }
 };

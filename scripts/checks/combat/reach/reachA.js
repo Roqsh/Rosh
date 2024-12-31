@@ -9,7 +9,7 @@ import { flag, getSpeed } from "../../../util";
  */
 export function reachA(player, entity) {
 
-    if (!config.modules.reachA.enabled) return;
+    if (!config.modules.reachA.enabled || config.preset?.toLowerCase() === "stable") return;
 
     const DISTANCE = player.getGameMode() === "creative" ? 6 : 3.5;
 
