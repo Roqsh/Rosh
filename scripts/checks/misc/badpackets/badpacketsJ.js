@@ -9,7 +9,7 @@ import { flag } from "../../../util";
  */
 export function badpacketsJ(player) {
 
-    if (!config.modules.badpacketsJ.enabled || !player.isGliding || player.ticksSinceGlide < 10) return;
+    if (!config.modules.badpacketsJ.enabled || !player.isGliding) return;
 
     const chestEquipment = player.getComponent(EntityEquippableComponent.componentId)?.getEquipment(EquipmentSlot.Chest);
     const durability = chestEquipment?.getComponent(ItemDurabilityComponent.componentId);

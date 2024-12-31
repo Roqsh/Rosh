@@ -168,7 +168,7 @@ function handleKickPunishment(player, kickvl, check, checkType, themecolor) {
             data.recentLogs.push(message);
 
             tellStaff(`${themecolor}Rosh §j> §8${player.name} §chas been kicked for ${themecolor}${check}§j/${themecolor}${checkType.toUpperCase()} §c!`, "notify");
-            if (config.console_debug) console.warn(`${themecolor}Rosh §j> §8${player.name} §chas been kicked for ${themecolor}${check}§j/${themecolor}${checkType.toUpperCase()} §c!`);
+            if (config.console_debug) console.warn(`Rosh > ${player.name} has been kicked for ${check}/${checkType.toUpperCase()}!`);
 
             handleKickWebhook(player, check, checkType, kickvl)
 
@@ -232,13 +232,13 @@ function handleBanPunishment(player, check, checkType, themecolor, punishmentLen
             data.recentLogs.push(message);
 
             tellStaff(`${themecolor}Rosh §j> §8${player.name} §chas been banned for ${themecolor}${check}§j/${themecolor}${checkType.toUpperCase()} §c!`, "notify");
-            if (config.console_debug) console.warn(`§r${themecolor}Rosh §j> §8${player.name} §chas been banned for ${themecolor}${check}§j/${themecolor}${checkType.toUpperCase()} §c!`);
+            if (config.console_debug) console.warn(`Rosh > ${player.name} has been banned for ${check}/${checkType.toUpperCase()}!`);
 
             handleBanWebhook(player, check, checkType, duration);
 
         } else {
             tellStaff(`${themecolor}Rosh §j> §8${player.name} §cshould have been banned for ${themecolor}${check}§j/${themecolor}${checkType.toUpperCase()}§c, but '§8config.autoban§c' was disabled!`, "notify");
-            if (config.console_debug) console.warn(`${themecolor}Rosh §j> §8${player.name} §cshould have been banned for ${themecolor}${check}§j/${themecolor}${checkType.toUpperCase()}§c, but '§8config.autoban§c' was disabled!`);
+            if (config.console_debug) console.warn(`Rosh > ${player.name} should have been banned for ${check}/${checkType.toUpperCase()}, but 'config.autoban' was disabled!`);
         }
     } catch (error) {
         // Fallback in case of an error
@@ -273,7 +273,7 @@ function handleMutePunishment(player, check, checkType, themecolor) {
     data.recentLogs.push(message);
 
     tellStaff(`${themecolor}Rosh §j> §8${player.name} §chas been muted for ${themecolor}${check}§j/${themecolor}${checkType.toUpperCase()} §c!`, "notify");
-    if (config.console_debug) console.warn(`§r${themecolor}Rosh §j> §8${player.name} §chas been muted for ${themecolor}${check}§j/${themecolor}${checkType.toUpperCase()} §c!`);
+    if (config.console_debug) console.warn(`Rosh > ${player.name} has been muted for ${check}/${checkType.toUpperCase()}!`);
     
     resetWarns(player);
 }
@@ -334,7 +334,7 @@ function handleAlert(player, check, checkType, currentVl, debugName, debug, them
 
         // Log to console if enabled
         if (config.console_debug) {
-            console.warn(`${themecolor}Rosh §j> §8${player.name} §jfailed ${themecolor}${check}§j/${themecolor}${checkType.toUpperCase()}§j - {${debugName}=${debug}, §8${currentVl}x§j}`);
+            console.warn(`Rosh > ${player.name} failed ${check}/${checkType.toUpperCase()} - {${debugName}=${debug}, ${currentVl}x}`);
         }
 
     } else if (thememode === "Alice") {
@@ -379,7 +379,7 @@ function handleAlert(player, check, checkType, currentVl, debugName, debug, them
         
         // Log to console if enabled
         if (config.console_debug) {
-            console.warn(`${themecolor}Rosh §j> §8${player.name} §jfailed ${themecolor}${check}§j/${themecolor}${checkType.toUpperCase()}§j - {${debugName}=${debug}§j} [${volume}§j]`);
+            console.warn(`Rosh > ${player.name} failed ${check}/${checkType.toUpperCase()} - {${debugName}=${debug}} [${volume}]`);
         }
     }
 

@@ -10,6 +10,7 @@ import { flag, aroundAir, inAir, debug } from "../../../util";
  * - May produce false positives if the player has the fly ability in Education Edition (`ability <player> mayfly true`)
  * - May produce false positives if the player is `teleported upwards` (No API method yet to detect that)
  * - May produce false positives if you are dragged upwards to an entity when `riding` it
+ * - False flags upon huge knockback (TnT, wind charges...)
  */
 export function flyA(player) {
 

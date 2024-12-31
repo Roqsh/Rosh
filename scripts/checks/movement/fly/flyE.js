@@ -9,9 +9,9 @@ const bufferCounter = new Map();
  * Predicts the change in a player's vertical movement.
  * @param {Minecraft.Player} player - The player to check.
  * @remarks
- * 
  * **Notes:**
  *  - May produce false positives upon teleportation. (No API method yet to detect that)
+ *  - Unstable because of Scripting and lag => out of Beta once it is packet based
  */
 export function flyE(player) {
 
@@ -30,15 +30,17 @@ export function flyE(player) {
         player.getEffect("levitation") ||
         player.getEffect("jump_boost") ||
         player.getEffect("slow_falling") ||
-        player.hasTag("damaged")
-    ) return;
+        player.hasTag("damaged") ||
+        player.ticksSinceFlight < 8 ||
+        player.ticksSinceGlide < 8
+    ) {
+        if (lastDeltaY.has(player.id)) lastDeltaY.delete(player.id);
+        return;
+    }
 
     const buffer = bufferCounter.get(player.id) || 0; // Retrieve buffer or initialize
 
-    const currentPosition = player.getPosition();
-    const previousPosition = player.getLastPosition();
-
-    const deltaY = Math.abs(currentPosition.y - previousPosition.y);
+    const deltaY = player.getPosition().y - player.getLastPosition().y;
 
     if (lastDeltaY.has(player.id)) {
 
@@ -46,15 +48,16 @@ export function flyE(player) {
         const prediction = (lastDeltaY.get(player.id) - 0.08) * 0.98;
 
         // Calculate the difference between the prediction and the actual change
-        const delta = Math.abs(prediction - deltaY);
+        const delta = prediction - deltaY;
 
-        debug(player, "\nPredicted deltaY-position", `${prediction}\n§jReceived: §8${deltaY}\n§jDelta: §8${delta}`, "prediction");
+        debug(player, "\nPredicted deltaY-position", `${prediction}\n§jReceived: §8${deltaY}\n§jDelta: ${delta > 0.01 ? "§c" : "§a"}${delta}`, "prediction");
 
         // If the actual change is significantly different from the prediction, the player is flagged
         if (delta > 0.01) {
             
             if (buffer >= 2) {
                 flag(player, "Fly", "E", "predicted", `${prediction}, received=${deltaY}, delta=${delta}`, true);
+                lastDeltaY.delete(player.id);
                 bufferCounter.set(player.id, 0);
             }  
 

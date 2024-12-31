@@ -9,8 +9,7 @@ const bufferMap = new Map();
 /**
  * Checks for constant vertical or horizontal movement.
  * @param {Minecraft.Player} player - The player to check.
- * @remarks
- * 
+ * @remarks 
  * **Notes:**
  *  - May produce false positives upon teleportation. (No API method yet to detect that)
  */
@@ -36,7 +35,11 @@ export function flyF(player) {
         player.isClimbing ||
         player.isOnShulker ||
         player.isOnStairs
-    ) return;
+    ) {
+        if (lastDeltaYMap.has(player.id)) lastDeltaYMap.delete(player.id);
+        if (lastDeltaXZMap.has(player.id)) lastDeltaXZMap.delete(player.id);
+        return;
+    }
 
     const currentPos = player.getPosition();
     const lastPos = player.getLastPosition();

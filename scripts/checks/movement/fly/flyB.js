@@ -8,7 +8,6 @@ const flyDetectionCounter = new Map();
  * Checks for no vertical movement.
  * @param {Minecraft.Player} player - The player to check.
  * @remarks
- * 
  * **Notes:**
  * - May produce false positives if the player has the fly ability in Education Edition (`ability <player> mayfly true`).
  * - False flags if the player is repeatedly teleported to the same y-level mid-air. (No API method yet to detect that)

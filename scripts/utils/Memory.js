@@ -24,7 +24,7 @@ export class Memory {
 
         // Store player information
         this.playerData.set(player.id, playerInfo);
-        console.log(`[Rosh] Registered Player: ${player.name}, ID: ${player.id} at: ${loginTime} (ms: ${loginMs})`);
+        console.log(`Rosh > Registered Player: ${player.name}, ID: ${player.id} at: ${loginTime} (${loginMs}ms)`);
     }
 
     /**
@@ -34,7 +34,7 @@ export class Memory {
     static unregister(player) {
         if (this.playerData.has(player.id)) {
             this.playerData.delete(player.id);
-            console.log(`[Rosh] Unregistered Player: ${player.name}, ID: ${player.id} at: ${new Date()} (ms: ${Date.now()})`);
+            console.log(`Rosh > Unregistered Player: ${player.name}, ID: ${player.id} at: ${new Date()} (${Date.now()}ms)`);
         }
     }
 

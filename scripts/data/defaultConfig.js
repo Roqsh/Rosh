@@ -400,8 +400,6 @@ export default {
         "invalidsprintA": {
             "enabled": true,
             "description": "Checks for sprinting in invalid directions. (Omni-Sprint)",
-            "angle_threshold": 75,
-            "buffer_threshold": 9,
             "punishment": "kick",
             "punishmentLength": "1d",
             "minVlbeforePunishment": 7
@@ -411,7 +409,7 @@ export default {
             "enabled": true,
             "description": "Checks for sprinting while having the blindness effect.",
             "punishment": "kick",
-            "punishmentLength": "7d",
+            "punishmentLength": "1d",
             "minVlbeforePunishment": 6
         },
 
@@ -419,7 +417,7 @@ export default {
             "enabled": true,
             "description": "Checks for sprinting while using an item.",
             "punishment": "kick",
-            "punishmentLength": "7d",
+            "punishmentLength": "1d",
             "minVlbeforePunishment": 8
         },
 
@@ -427,7 +425,7 @@ export default {
             "enabled": true,
             "description": "Checks for jumping while in the air. (Air-Jump)",
             "punishment": "kick",
-            "punishmentLength": "1d",
+            "punishmentLength": "7d",
             "minVlbeforePunishment": 9
         },
 
@@ -492,7 +490,7 @@ export default {
 
         "flyF": {
             "enabled": true,
-            "description": "Checks for constant vertical movement.",
+            "description": "Checks for constant vertical or horizontal movement.",
             "punishment": "kick",
             "punishmentLength": "7d",
             "minVlbeforePunishment": 9
@@ -533,7 +531,7 @@ export default {
         },
 
         "motionE": {
-            "enabled": true,
+            "enabled": false,
             "description": "Checks for invalid speed changes",
             "punishment": "kick",
             "minVlbeforePunishment": 4

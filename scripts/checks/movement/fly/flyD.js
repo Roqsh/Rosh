@@ -9,9 +9,9 @@ const isInAirCounter = new Map();
  * Checks for not falling after being in the air for too long.
  * @param {Minecraft.Player} player - The player to check.
  * @remarks
- * 
  * **Notes:**
  *  - May produce false positives upon teleportation. (No API method yet to detect that)
+ *  - False flags upon huge knockback (TnT, wind charges...)
  */
 export function flyD(player) {
 

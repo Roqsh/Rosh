@@ -30,7 +30,11 @@ export function jumpA(player) {
         player.isFlying ||
         player.ticksSinceFlight < 20 ||
         player.ticksSinceGlide < 20
-    ) return;
+    ) {
+        if (lastDeltaYMap.has(player.id)) lastDeltaYMap.delete(player.id);
+        if (lastAccelerationMap.has(player.id)) lastAccelerationMap.delete(player.id);
+        return;
+    }
 
     const deltaY = player.getPosition().y - player.getLastPosition().y;
 

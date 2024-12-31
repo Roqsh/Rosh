@@ -14,7 +14,7 @@ export function debugHandler(player, tps) {
     const tick = getScore(player, "currentTick", 0);
 
     /** Dev testing stuff */
-    player.onScreenDisplay.setActionBar(`${config.themecolor}Debug §j> §8Ground-Distance: ${player.location.y - player.lastGoodPosition.y > 1.3 ? "§c" : "§8"}${(player.location.y - player.lastGoodPosition.y).toFixed(4)}§8, Jump-Ticks: ${player.ticksSinceJump}`);
+    //player.onScreenDisplay.setActionBar(`${config.themecolor}Debug §j> §8Ground-Distance: ${player.location.y - player.lastGoodPosition.y > 1.3 ? "§c" : "§8"}${(player.location.y - player.lastGoodPosition.y).toFixed(4)}§8, Jump-Ticks: ${player.ticksSinceJump}`);
     //player.onScreenDisplay.setActionBar(`${themecolor}Debug §j> §8Slime Bouncing: ${player.isSlimeBouncing() ? `§j(§8${player.getUpwardMotion() < player.getLastAvailableFallDistance() ? "§a" : "§c"}${player.getUpwardMotion().toFixed(4)}§j/§a${(player.getLastAvailableFallDistance() * 0.7).toFixed(4)}§j)` : "§cFalse"}`);
     //player.onScreenDisplay.setActionBar(`${themecolor}Debug §j> §8Trident Hovering: ${player.isTridentHovering() ? "§aTrue" : "§cFalse"}`);
     //if (player.getLastVelocity().y !== 0) player.sendMessage(`${themecolor}Debug §j> §8Y-Velocity: ${player.getVelocity().y < 0 ? "§c" : "§a"}${player.getVelocity().y}`);

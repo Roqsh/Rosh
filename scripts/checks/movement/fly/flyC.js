@@ -6,7 +6,6 @@ import { flag, getScore, aroundAir, inAir, debug } from "../../../util";
  * Checks for ground spoof.
  * @param {Minecraft.Player} player - The player to check.
  * @remarks
- * 
  * **Notes:**
  * - False flags upon teleportation. (No API method yet to detect that)
  */
