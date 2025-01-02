@@ -51,7 +51,7 @@ export function flyA(player) {
             player.ticksSinceFlight > 20 &&
             player.ticksSinceGlide > 20
         ) {
-            const groundDistance = player.getPosition().y - player.lastGoodPosition.y;
+            const groundDistance = player.getPosition().y - player.lastGroundPosition.y;
             const goingUpwards = player.getPosition().y > player.getLastPosition().y
 
             if (!player.isJumping && player.ticksSinceJump > 30 && groundDistance > 0 && goingUpwards) {

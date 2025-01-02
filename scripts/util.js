@@ -41,7 +41,7 @@ export function flag(player, check, checkType, debugName, debug, revertAction = 
 
     // Teleport player if needed
     if (revertAction && !config.silent) {
-        player.teleport(player.lastGoodPosition, {
+        player.teleport(player.lastGroundPosition, {
             dimension: player.dimension,
             rotation: {x: rotation.x, y: rotation.y},
         });
@@ -1372,7 +1372,7 @@ export function aroundAir(player) {
                 if (dx === 0 && dy === 0 && dz === 0) continue;
 
                 const block = dimension.getBlock({ x: x + dx, y: y + dy, z: z + dz });
-                if (block.typeId !== "minecraft:air") {
+                if (block?.typeId !== "minecraft:air") {
                     // Found a non-air block, early exit
                     return false;
                 }

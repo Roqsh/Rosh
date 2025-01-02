@@ -817,15 +817,14 @@ export default {
 
         "motionA": {
             "enabled": true,
-            "speed": 7.3,
-            "description": "Checks for really high speed",
+            "description": "Checks for switching directions mid-air.",
             "punishment": "kick",
-            "punishmentLength": "1m",
-            "minVlbeforePunishment": 1
+            "punishmentLength": "7d",
+            "minVlbeforePunishment": 9
         },
 
         "motionB": {
-            "enabled": true,
+            "enabled": false,
             "description": "Checks for high velocity changes",
             "punishment": "kick",
             "yVelocity": 30,
@@ -835,7 +834,7 @@ export default {
         },
 
         "motionC": {
-            "enabled": true,
+            "enabled": false,
             "description": "Checks for not moving when having velocity",
             "punishment": "kick",
             "min_velocity": 2.5,

@@ -85,6 +85,7 @@ declare module "@minecraft/server" {
         isSlimeBouncing(): boolean;
 
         /**
+         * Whether the player is hovering in the air after using a trident with the riptide enchantment.
          * @Rosh
          */
         isTridentHovering(): boolean;
@@ -411,7 +412,7 @@ declare module "@minecraft/server" {
          * Saves a safe position to teleport the player to when flagging a check. Safe positions are those where the player is on the ground.
          * @Rosh
          */
-        lastGoodPosition: Vector3;
+        lastGroundPosition: Vector3;
 
         /**
          * Gets the player's position.

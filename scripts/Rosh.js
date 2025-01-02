@@ -27,7 +27,7 @@ import { timerA } from "./checks/misc/timer/timerA.js";
 import { speed_a } from "./checks/movement/speed/speedA.js";
 import { speed_b } from "./checks/movement/speed/speedB.js";
 import { fastclimbA } from "./checks/movement/fastclimb/fastclimbA.js";
-import { motion_a } from "./checks/movement/motion/motionA.js";
+import { motionA } from "./checks/movement/motion/motionA.js";
 import { motion_b } from "./checks/movement/motion/motionB.js";
 import { motion_c } from "./checks/movement/motion/motionC.js";
 import { motion_d } from "./checks/movement/motion/motionD.js";
@@ -144,7 +144,7 @@ system.runInterval(() => {
             flyE(player);
             flyF(player);
             
-            motion_a(player);
+            motionA(player);
             motion_b(player);
             motion_c(player);
             motion_d(player);
@@ -290,13 +290,15 @@ world.beforeEvents.itemUse.subscribe((itemUse) => {
 
 world.beforeEvents.playerPlaceBlock.subscribe(async (placeBlock) => {
     
-    const { player, block } = placeBlock;
+    const { player, block, face, faceLocation } = placeBlock;
     
     if (!player.isValid() || !block.isValid()) return;
     
     if (!player.hasTag("placing")) {
         Minecraft.system.run(() => player.addTag("placing"));
     }
+
+    //player.sendMessage(`${config.themecolor}Rosh §j> §8${face}§j, §8X: ${faceLocation.x}§j, §8Y: ${faceLocation.y}§j, §8Z: ${faceLocation.z}`);
     
     reachB(player, block, placeBlock, Minecraft);
 
@@ -472,10 +474,6 @@ world.afterEvents.playerSpawn.subscribe((playerJoin) => {
     player.clicks = 0;
 	player.reports = [];
 
-	if (player.isOnGround) {
-        player.lastGoodPosition = player.location;
-    }
-
     // TODO: Update this code
 	//if (player.hasTag("notify")) {
 		//player.runCommandAsync('execute at @a[tag=reported] run tellraw @a[tag=notify] {"rawtext":[{"text":"§r§uRosh §j> §8"},{"selector":"@s"},{"text":" §chas been reported while your were offline."}]}');
@@ -633,10 +631,6 @@ if ([...world.getPlayers()].length >= 1) {
         player.lastTime = Date.now();
         player.clicks = 0;
         player.reports = [];
-        
-        if (player.isOnGround) {
-            player.lastGoodPosition = player.location;
-        }
         
         // Inform the player about the successfull reload
         if (player.isOp()) {

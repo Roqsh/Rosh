@@ -48,7 +48,7 @@ export function flyE(player) {
         const prediction = (lastDeltaY.get(player.id) - 0.08) * 0.98;
 
         // Calculate the difference between the prediction and the actual change
-        const delta = prediction - deltaY;
+        const delta = Math.abs(prediction - deltaY);
 
         debug(player, "\nPredicted deltaY-position", `${prediction}\n§jReceived: §8${deltaY}\n§jDelta: ${delta > 0.01 ? "§c" : "§a"}${delta}`, "prediction");
 
