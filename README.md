@@ -1,5 +1,5 @@
 > [!IMPORTANT]
-> This project is still in development and is currently undergoing a whole recode.
+> This project was undergoing a whole recode which hasnt been finished and is therefore outdated.
 
 # Rosh
 Rosh is an open-source Anticheat designed for Minecraft Bedrock Edition Dedicated Servers (BDS) that makes use of its in-build Scripting API.
