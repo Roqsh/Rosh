@@ -6,16 +6,16 @@ Rosh is an open-source Anticheat designed for Minecraft Bedrock Edition Dedicate
 It is currently in version 2.0.0 [Dev] and supports 1.21.51 (Previews excluded).
 
 ### Notes
-- Found any bugs, false flags, bypasses or want to suggest certain features? Be sure to check out Rosh's official discord server!
+- Found any bugs, false flags, bypasses or want to suggest certain features? Be sure to check out Rosh's official discord server:
   https://discord.gg/FNrJDvG95r
 - Feel free to take inspiration for learning purposes! <3
 
 ### Setup
-- It is required to edit the ```server.properties``` config file in your BDS folder and add the following line :
+If you want to run Rosh on a Bedrock Dedicated Server it is required to edit the ```server.properties``` config file in your BDS folder and add the following line :
 ```properties
 op-permission-level=2 #minimum=2, maximum=4
 ```
-- If you would like to enable Webhooks you must run Rosh on a Bedrock Dedicated Server and add the following to `config/default/permissions.json` :
+If you would like to enable Webhooks you must run Rosh on a Bedrock Dedicated Server and add the following to `config/default/permissions.json` in your BDS folder :
 ```json
 {
   "allowed_modules": [
